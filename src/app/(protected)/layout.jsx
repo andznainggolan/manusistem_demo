@@ -191,7 +191,7 @@ export default function ProtectedLayout({ children }) {
   const realInitials = (realUser?.name || '?').trim().split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
 
   const proxyBarHeight = isProxy ? 36 : 0
-  const topbarHeight   = 60
+  const topbarHeight   = 83
 
   return (
     <div className='flex flex-col min-h-screen bg-gray-50'>
@@ -234,14 +234,14 @@ export default function ProtectedLayout({ children }) {
         <div className='h-[3px]' style={{ background: 'linear-gradient(90deg,#8B1A1A 0%,#D7252B 40%,#f4a97a 80%,#f9d276 100%)' }} />
 
         {/* Main bar */}
-        <div className='h-[57px] flex items-center justify-between pl-1 pr-5 gap-3'>
+        <div className='h-[80px] flex items-center justify-between pl-1 pr-5 gap-3'>
 
           {/* Left: logo — default sama dengan logo halaman login */}
           <div className='flex items-center gap-2 flex-shrink-0 pl-2'>
             <img
               src={topbarLogo || '/logos/manusistem.png'}
               alt='Manusistem'
-              className='h-12 w-auto object-contain'
+              className='h-16 w-auto object-contain'
             />
           </div>
 
