@@ -191,8 +191,8 @@ export default function LoginPage() {
       </div>
 
       {/* Right: decorative panel */}
-      <div className='hidden md:flex flex-1 items-center justify-center px-12'>
-        <img src='/logos/aurora-borealis.png' alt='Aurora Borealis' className='max-w-full max-h-[420px] object-contain rounded-2xl' />
+      <div className='hidden md:block flex-1 relative overflow-hidden'>
+        <img src='/logos/aurora-borealis.png' alt='Aurora Borealis' className='absolute inset-0 w-full h-full object-cover' />
       </div>
     </div>
   )
