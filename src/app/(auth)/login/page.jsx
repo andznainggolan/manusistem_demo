@@ -78,7 +78,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className='flex' style={{ minHeight: 'calc(100vh / 0.85)', background: 'linear-gradient(120deg, #f4a97a 0%, #f8d5c0 30%, #fff 60%, #f9f0ee 100%)' }}>
+    <div className='relative flex' style={{ minHeight: 'calc(100vh / 0.85)' }}>
+
+      <img src='/logos/aurora-borealis.png' alt='' className='absolute inset-0 w-full h-full object-cover' />
+      <div className='absolute inset-0' style={{ background: 'linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 35%, rgba(0,0,0,0) 60%)' }} />
 
       {/* Left: login card column */}
       <div className='flex flex-col justify-center items-center w-full md:w-[520px] lg:w-[560px] px-8 py-12 relative z-10'>
@@ -190,10 +193,8 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right: decorative panel */}
-      <div className='hidden md:block flex-1 relative overflow-hidden'>
-        <img src='/logos/aurora-borealis.png' alt='Aurora Borealis' className='absolute inset-0 w-full h-full object-cover' />
-      </div>
+      {/* Right: empty spacer so the card stays docked left on wide screens */}
+      <div className='hidden md:block flex-1' />
     </div>
   )
 }
