@@ -92,11 +92,11 @@ export default function LoginPage() {
           <div className='px-10 pt-10 pb-6'>
 
             {/* Logo */}
-            <div className='mb-5'>
+            <div className='mb-5 flex justify-center'>
               <img
                 src={mounted && loginLogo ? loginLogo : '/logos/manusistem.png'}
                 alt='Manusistem'
-                className='h-12 w-auto object-contain'
+                className='h-24 w-auto object-contain'
               />
             </div>
 
