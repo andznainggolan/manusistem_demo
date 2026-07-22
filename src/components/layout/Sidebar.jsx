@@ -404,7 +404,7 @@ export default function Sidebar({ allow } = {}) {
     return pathname.startsWith('/' + sec.id)
   }
 
-  const topOffset = 60 + (realUser ? 36 : 0)
+  const topOffset = 83 + (realUser ? 36 : 0)
 
   return (
     <>
