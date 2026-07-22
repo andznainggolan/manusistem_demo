@@ -266,6 +266,10 @@ const SA_GROUPS = [
     { label: 'Userlists',           href: '/sysadmin/workflow/userlists',           icon: ic('list') },
     { label: 'Transaction Manager', href: '/sysadmin/workflow/transaction-manager', icon: ic('cpu') },
   ]},
+  { title: 'Branding', icon: ic('paint'), items: [
+    { label: 'Company Logo', href: '/sysadmin/branding/company-logo', icon: ic('building') },
+    { label: 'Login Theme',  href: '/sysadmin/branding/login-theme',  icon: ic('paint') },
+  ]},
 ]
 
 // ─── Restricted-account filtering ─────────────────────────────────────────────
