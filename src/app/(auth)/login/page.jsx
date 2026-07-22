@@ -148,7 +148,7 @@ export default function LoginPage() {
           </div>
 
           {/* Bottom stripe */}
-          <div className='h-1.5' style={{ background: 'linear-gradient(90deg,#8B1A1A,#D7252B,#f4a97a,#f9d276,#8B1A1A)' }} />
+          <div className='h-1.5' style={{ background: 'linear-gradient(90deg,#14532d,#16a34a,#86efac,#4ade80,#14532d)' }} />
 
           {/* Footer */}
           <div className='text-center py-2.5'>
