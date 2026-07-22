@@ -239,8 +239,8 @@ export default function ProtectedLayout({ children }) {
           {/* Left: logo — default sama dengan logo halaman login */}
           <div className='flex items-center gap-2 flex-shrink-0 pl-2'>
             <img
-              src={topbarLogo || '/logos/logo-kappabel-ng-CgxOnXu-.png'}
-              alt='Kappabel'
+              src={topbarLogo || '/logos/manusistem.png'}
+              alt='Manusistem'
               className='h-9 w-auto object-contain'
             />
           </div>

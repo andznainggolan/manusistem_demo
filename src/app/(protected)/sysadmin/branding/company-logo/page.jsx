@@ -138,7 +138,7 @@ export default function CompanyLogoPage() {
                 <div className='flex items-center px-4 py-2.5 gap-3'
                   style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
                     <img
-                    src={topbarLogo || '/logos/new-kappabel-prototype.png'}
+                    src={topbarLogo || '/logos/manusistem.png'}
                     alt='logo'
                     className='object-contain'
                     style={{height:'36px', maxWidth:'130px'}}
@@ -159,7 +159,7 @@ export default function CompanyLogoPage() {
                   style={{background:'linear-gradient(135deg,#1a1a2e,#8B1A1A)'}}>
                   <div className='bg-white rounded-xl px-8 py-5 w-full text-center'>
                     <img
-                      src={loginLogo || '/logos/new-kappabel-prototype.png'}
+                      src={loginLogo || '/logos/manusistem.png'}
                       alt='logo'
                       className='object-contain mx-auto mb-2'
                       style={{height:'60px', maxWidth:'160px'}}

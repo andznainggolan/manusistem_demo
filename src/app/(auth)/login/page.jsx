@@ -91,8 +91,8 @@ export default function LoginPage() {
             {/* Logo */}
             <div className='mb-5'>
               <img
-                src={mounted && loginLogo ? loginLogo : '/logos/FINAL%20LOGO%20KAPPABEL%20145%20x%2053.PNG'}
-                alt='Kappabel Prototype by Dexa Group'
+                src={mounted && loginLogo ? loginLogo : '/logos/manusistem.png'}
+                alt='Manusistem'
                 className='h-12 w-auto object-contain'
               />
             </div>
