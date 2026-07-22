@@ -241,7 +241,7 @@ export default function ProtectedLayout({ children }) {
             <img
               src={topbarLogo || '/logos/manusistem.png'}
               alt='Manusistem'
-              className='h-9 w-auto object-contain'
+              className='h-12 w-auto object-contain'
             />
           </div>
 
