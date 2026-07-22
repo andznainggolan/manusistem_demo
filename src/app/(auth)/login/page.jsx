@@ -98,7 +98,6 @@ export default function LoginPage() {
             </div>
 
             {/* Greeting */}
-            <h1 className='text-3xl font-bold text-gray-900 mb-0.5'>Hi, Dexan</h1>
             <div className='mb-6'>
               <p className='text-sm text-gray-400'>Welcome!</p>
             </div>
