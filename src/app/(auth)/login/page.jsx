@@ -192,7 +192,7 @@ export default function LoginPage() {
 
       {/* Right: decorative panel */}
       <div className='hidden md:flex flex-1 items-center justify-center px-12'>
-        <img src='/logos/kappabel-login-DFPmmq5m.png' alt='Dexa Group 56' className='max-w-full max-h-[420px] object-contain' />
+        <img src='/logos/aurora-borealis.png' alt='Aurora Borealis' className='max-w-full max-h-[420px] object-contain rounded-2xl' />
       </div>
     </div>
   )
