@@ -13,17 +13,28 @@ export default function PayslipPage() {
 
   const mine = currentUser
     ? payslips
-        .filter(p => p.userId === currentUser.id && p.status === 'Published')
+        .filter(p => p.empId === currentUser.id && p.status === 'Published')
         .sort((a, b) => b.period.localeCompare(a.period))
     : []
 
   const detail = mine.find(p => p.id === selected) || mine[0]
 
-  const rows = detail ? [
-    { label: t('Gaji Pokok','Basic Salary'), value: detail.basic,     type: 'income'    },
-    { label: t('Tunjangan','Allowance'),     value: detail.allowance,  type: 'income'    },
-    { label: t('Potongan','Deduction'),      value: detail.deduction,  type: 'deduction' },
+  const earnings = detail ? [
+    { label: t('Gaji Pokok','Basic Salary'), value: detail.basic },
+    { label: t('Tunjangan Tetap','Fixed Allowance'), value: detail.allowance },
+    ...(detail.overtime ? [{ label: t('Lembur','Overtime'), value: detail.overtime }] : []),
   ] : []
+
+  const deductions = detail ? [
+    { label: 'BPJS Kesehatan', value: detail.bpjsKesehatanEmployee },
+    { label: 'BPJS Ketenagakerjaan (JHT)', value: detail.jhtEmployee },
+    { label: 'BPJS Ketenagakerjaan (JP)', value: detail.jpEmployee },
+    { label: 'PPh 21', value: detail.pph21 },
+    ...(detail.otherDeduction ? [{ label: t('Potongan Lain','Other Deduction'), value: detail.otherDeduction }] : []),
+  ].filter(d => d.value != null) : []
+
+  const totalEarnings   = earnings.reduce((s, e) => s + (e.value || 0), 0)
+  const totalDeductions = deductions.reduce((s, d) => s + (d.value || 0), 0)
 
   return (
     <div>
@@ -61,6 +72,9 @@ export default function PayslipPage() {
               <div>
                 <h2 className='text-lg font-bold text-gray-800'>{detail.name}</h2>
                 <p className='text-sm text-gray-500'>{t('Periode','Period')}: {detail.period}</p>
+                {detail.ptkpStatus && (
+                  <p className='text-xs text-gray-400 mt-0.5'>PTKP: {detail.ptkpStatus} · NPWP: {detail.npwp ? t('Ada','Yes') : t('Tidak ada','No')}</p>
+                )}
               </div>
               <span className='text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-700'>
                 {t('Dipublish','Published')}
@@ -68,22 +82,45 @@ export default function PayslipPage() {
             </div>
 
             <div className='overflow-x-auto'>
-              <table className='w-full text-sm mb-6'>
+              <table className='w-full text-sm mb-4'>
                 <thead>
                   <tr className='bg-gray-50'>
-                    <th scope='col' className='text-left px-4 py-2.5 text-xs font-semibold text-gray-500'>{t('Komponen','Component')}</th>
+                    <th scope='col' className='text-left px-4 py-2.5 text-xs font-semibold text-gray-500'>{t('Pendapatan','Earnings')}</th>
                     <th scope='col' className='text-right px-4 py-2.5 text-xs font-semibold text-gray-500'>{t('Jumlah','Amount')}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((r, i) => (
+                  {earnings.map((r, i) => (
                     <tr key={i} className='border-t border-gray-100'>
                       <td className='px-4 py-2.5 text-gray-700'>{r.label}</td>
-                      <td className={`px-4 py-2.5 text-right font-medium ${r.type === 'deduction' ? 'text-red-600' : 'text-gray-800'}`}>
-                        {r.type === 'deduction' ? `- ${formatRp(r.value)}` : formatRp(r.value)}
-                      </td>
+                      <td className='px-4 py-2.5 text-right font-medium text-gray-800'>{formatRp(r.value)}</td>
                     </tr>
                   ))}
+                  <tr className='border-t border-gray-200'>
+                    <td className='px-4 py-2 font-semibold text-gray-700'>{t('Total Pendapatan','Total Earnings')}</td>
+                    <td className='px-4 py-2 text-right font-semibold text-gray-800'>{formatRp(totalEarnings)}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <table className='w-full text-sm mb-6'>
+                <thead>
+                  <tr className='bg-gray-50'>
+                    <th scope='col' className='text-left px-4 py-2.5 text-xs font-semibold text-gray-500'>{t('Potongan','Deductions')}</th>
+                    <th scope='col' className='text-right px-4 py-2.5 text-xs font-semibold text-gray-500'>{t('Jumlah','Amount')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {deductions.map((r, i) => (
+                    <tr key={i} className='border-t border-gray-100'>
+                      <td className='px-4 py-2.5 text-gray-700'>{r.label}</td>
+                      <td className='px-4 py-2.5 text-right font-medium text-red-600'>- {formatRp(r.value)}</td>
+                    </tr>
+                  ))}
+                  <tr className='border-t border-gray-200'>
+                    <td className='px-4 py-2 font-semibold text-gray-700'>{t('Total Potongan','Total Deductions')}</td>
+                    <td className='px-4 py-2 text-right font-semibold text-red-600'>- {formatRp(totalDeductions)}</td>
+                  </tr>
                   <tr className='border-t-2 border-gray-200'>
                     <td className='px-4 py-3 font-bold text-gray-800'>{t('Total Take-Home','Total Take-Home')}</td>
                     <td className='px-4 py-3 text-right font-bold text-red-600 text-base'>

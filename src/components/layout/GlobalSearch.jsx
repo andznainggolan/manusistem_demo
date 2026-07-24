@@ -60,7 +60,10 @@ const PAGES = [
   // HR - Absence
   { label: 'Holiday Calendar',          href: '/hr/absence/holiday-calendar',                  icon: '📅', section: 'HR · Absence' },
   // HR - Payroll
+  { label: 'Payroll',                   href: '/hr/payroll',                                   icon: '💼', section: 'HR · Payroll' },
   { label: 'Payroll Run',               href: '/hr/payroll/run',                               icon: '💼', section: 'HR · Payroll' },
+  { label: 'Payroll Setup',             href: '/hr/payroll/setup',                             icon: '🧾', section: 'HR · Payroll' },
+  { label: 'Payroll Settings',          href: '/hr/payroll/settings',                           icon: '⚙️', section: 'HR · Payroll' },
   // Sysadmin
   { label: 'User Management',           href: '/sysadmin/users',                               icon: '👥', section: 'System Administration' },
   { label: 'Leave Workflow',            href: '/sysadmin/leave-workflow',                      icon: '🔀', section: 'System Administration' },

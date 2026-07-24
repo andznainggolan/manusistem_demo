@@ -213,6 +213,11 @@ const HR_GROUPS = [
     { label: 'Employee Data',    href: '/hr/employee',       icon: ic('person') },
     { label: 'Apply Leave (HR)', href: '/hr/apply-leave',    icon: ic('calendar') },
   ]},
+  { title: 'Payroll', icon: ic('money'), items: [
+    { label: 'Payroll Run',      href: '/hr/payroll/run',      icon: ic('money') },
+    { label: 'Payroll Setup',    href: '/hr/payroll/setup',    icon: ic('list') },
+    { label: 'Payroll Settings', href: '/hr/payroll/settings', icon: ic('settings') },
+  ]},
   { title: 'Onboarding', icon: ic('target'), items: [
     { label: 'Employee Onboarding',         href: '/hr/onboarding/tracker',    icon: ic('users') },
     { label: 'Master Onboarding',          href: '/hr/onboarding/master',     icon: ic('clipboard') },

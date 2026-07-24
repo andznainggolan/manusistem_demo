@@ -29,7 +29,7 @@ function prime() {
 // Debounce writes per key so rapid state changes collapse into one request.
 const timers = {}
 const pending = {}
-function flush(key) {
+function flush(key, unloading = false) {
   if (!(key in pending)) return
   const value = pending[key]
   delete pending[key]
@@ -37,14 +37,17 @@ function flush(key) {
     method: 'PUT',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ value }),
-    keepalive: true,   // allow the write to finish even if the page is unloading
+    // Only set keepalive for the unload path below — browsers cap keepalive
+    // request bodies at ~64KB, which large stores (e.g. payroll with 1000+
+    // rows) can exceed, silently failing an otherwise-normal write.
+    ...(unloading ? { keepalive: true } : {}),
   }).catch(() => {})
 }
 
 // Flush every pending (debounced) write immediately — used on page unload so a
 // refresh/navigation can't drop a change and then reload a stale DB copy.
 function flushAll() {
-  for (const key of Object.keys(pending)) { clearTimeout(timers[key]); flush(key) }
+  for (const key of Object.keys(pending)) { clearTimeout(timers[key]); flush(key, true) }
 }
 if (typeof window !== 'undefined' && !window.__kpbDbStorageUnload) {
   window.__kpbDbStorageUnload = true
