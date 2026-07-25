@@ -1,12 +1,15 @@
 'use client'
 import Icon from '@/components/ui/Icon'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useEmployeeStore, ACTION_COLOR } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
+import { usePayrollStore, formatRp } from '@/store/payrollStore'
+import { PTKP_STATUSES } from '@/lib/payrollCalc'
 import { useT } from '@/store/languageStore'
+import { FormField, Input, Select, ActionButton } from '@/components/ui'
 
-const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History']
+const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History', 'Salary']
 
 const skillLevelColor = (level) => {
   if (level === 'Expert')       return 'bg-purple-100 text-purple-700'
@@ -45,10 +48,28 @@ export default function EmployeeProfilePage() {
   const t       = useT()
   const { employees } = useEmployeeStore()
   const { companies, divisions, businessUnits, departments, positions } = useStructureStore()
+  const { getProfile, setProfile } = usePayrollStore()
 
   const [tab, setTab] = useState('Employment')
+  const [salaryForm, setSalaryForm] = useState(null)
+  const [salarySaved, setSalarySaved] = useState(false)
 
   const emp = employees.find(e => String(e.id) === String(id))
+
+  useEffect(() => {
+    if (emp) setSalaryForm(getProfile(emp.id))
+  }, [emp?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // dbStorage rehydrates payroll profiles asynchronously — if this component
+  // mounts before that finishes, the effect above initializes the form from
+  // the pre-hydration default. Re-sync once hydration actually completes.
+  useEffect(() => {
+    const unsub = usePayrollStore.persist.onFinishHydration(() => {
+      if (emp) setSalaryForm(getProfile(emp.id))
+    })
+    if (usePayrollStore.persist.hasHydrated() && emp) setSalaryForm(getProfile(emp.id))
+    return unsub
+  }, [emp?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!emp) {
     return (
@@ -70,6 +91,19 @@ export default function EmployeeProfilePage() {
   const department   = departments.find(d => d.id === emp.departmentId)
   const position     = positions.find(p => p.id === emp.positionId)
   const manager      = employees.find(e => e.id === emp.managerId)
+
+  const saveSalary = () => {
+    setProfile(emp.id, {
+      basic: Number(salaryForm.basic) || 0,
+      allowance: Number(salaryForm.allowance) || 0,
+      ptkpStatus: salaryForm.ptkpStatus,
+      npwp: salaryForm.npwp,
+      bpjsKesehatan: salaryForm.bpjsKesehatan,
+      bpjsTk: salaryForm.bpjsTk,
+    })
+    setSalarySaved(true)
+    setTimeout(() => setSalarySaved(false), 3000)
+  }
 
   return (
     <div className='max-w-4xl mx-auto pb-10'>
@@ -317,6 +351,69 @@ export default function EmployeeProfilePage() {
                 </table>
               </div>
             )}
+          </div>
+        )}
+
+        {/* ── Salary ─────────────────────────────────────────────────── */}
+        {tab === 'Salary' && salaryForm && (
+          <div className='space-y-6'>
+            <div>
+              <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Komponen Gaji', 'Salary Components')}</h3>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4'>
+                <FormField label={t('Gaji Pokok', 'Basic Salary')}>
+                  <Input type='number' value={salaryForm.basic} onChange={e=>setSalaryForm(f=>({...f, basic:e.target.value}))} />
+                </FormField>
+                <FormField label={t('Tunjangan Tetap', 'Fixed Allowance')}>
+                  <Input type='number' value={salaryForm.allowance} onChange={e=>setSalaryForm(f=>({...f, allowance:e.target.value}))} />
+                </FormField>
+              </div>
+            </div>
+
+            <div className='border-t border-gray-100 pt-5'>
+              <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Pajak & BPJS', 'Tax & BPJS')}</h3>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 mb-4'>
+                <FormField label='PTKP'>
+                  <Select value={salaryForm.ptkpStatus} onChange={e=>setSalaryForm(f=>({...f, ptkpStatus:e.target.value}))}>
+                    {PTKP_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </Select>
+                </FormField>
+                <FormField label='NPWP'>
+                  <Select value={salaryForm.npwp ? '1' : '0'} onChange={e=>setSalaryForm(f=>({...f, npwp: e.target.value==='1'}))}>
+                    <option value='1'>{t('Ada','Yes')}</option>
+                    <option value='0'>{t('Tidak ada','No')}</option>
+                  </Select>
+                </FormField>
+              </div>
+              <div className='flex gap-5 text-sm'>
+                <label className='flex items-center gap-2'>
+                  <input type='checkbox' checked={salaryForm.bpjsKesehatan} onChange={e=>setSalaryForm(f=>({...f, bpjsKesehatan:e.target.checked}))} />
+                  BPJS Kesehatan
+                </label>
+                <label className='flex items-center gap-2'>
+                  <input type='checkbox' checked={salaryForm.bpjsTk} onChange={e=>setSalaryForm(f=>({...f, bpjsTk:e.target.checked}))} />
+                  BPJS Ketenagakerjaan
+                </label>
+              </div>
+            </div>
+
+            <div className='flex items-center gap-3 border-t border-gray-100 pt-5'>
+              <ActionButton onClick={saveSalary} icon='💾'>{t('Simpan','Save')}</ActionButton>
+              {salarySaved && (
+                <span className='text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg'>
+                  {t('Tersimpan.','Saved.')}
+                </span>
+              )}
+              <a href='/hr/payroll/run' className='ml-auto text-xs font-semibold text-red-700 hover:underline'>
+                {t('Lihat di Payroll Run →','View in Payroll Run →')}
+              </a>
+            </div>
+
+            <p className='text-xs text-gray-400 border-t border-gray-100 pt-4'>
+              {t(
+                `Data ini adalah sumber yang sama dengan Payroll Setup — akan otomatis dipakai saat generate payroll untuk periode berikutnya. Estimasi gaji bruto saat ini: ${formatRp(Number(salaryForm.basic || 0) + Number(salaryForm.allowance || 0))}/bulan.`,
+                `This is the same data as Payroll Setup — it will be used automatically when payroll is generated for the next period. Current gross estimate: ${formatRp(Number(salaryForm.basic || 0) + Number(salaryForm.allowance || 0))}/month.`
+              )}
+            </p>
           </div>
         )}
       </div>
