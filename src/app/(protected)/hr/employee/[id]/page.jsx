@@ -45,10 +45,15 @@ function KVRow({ label, value }) {
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
 
+// Sentinel "no end date yet" value (instead of null/blank) — standard
+// convention so an open-ended record can still sort/compare like a real date.
+const NO_END_DATE = '9999-01-01'
+const formatEndDate = (d) => (!d || d === NO_END_DATE) ? '—' : d
+
 const EMPLOYMENT_TYPES = ['Permanent', 'Contract', 'Intern']
 
 const EMPTY_RECORD = {
-  effectiveDate: todayStr(), effectiveEndDate: '', effectiveSeq: 1,
+  effectiveDate: todayStr(), effectiveEndDate: NO_END_DATE, effectiveSeq: 1,
   action: 'Salary Change', reason: '', note: '',
   companyId: '', departmentId: '', positionId: '', gradeId: '', employmentType: '',
   basic: '', allowance: '', variableAllowances: [], ptkpStatus: 'TK/0', npwp: true,
@@ -112,7 +117,7 @@ export default function EmployeeProfilePage() {
   // employee's join date + current static fields) instead of a blank
   // Effective Dates block, so there's always a first entry with an Action.
   const displayAssignment = activeAssignment || {
-    action: 'Hire', reason: 'New Hire', effectiveDate: emp.joinDate || today, effectiveEndDate: null, effectiveSeq: 1,
+    action: 'Hire', reason: 'New Hire', effectiveDate: emp.joinDate || today, effectiveEndDate: NO_END_DATE, effectiveSeq: 1,
     companyId: emp.companyId, departmentId: emp.departmentId, positionId: emp.positionId, gradeId: emp.gradeId,
     employmentType: emp.employmentType,
   }
@@ -135,7 +140,7 @@ export default function EmployeeProfilePage() {
       employmentType: employmentTypeEff || '',
     },
   })
-  const openEditRecord = (record) => setRecordModal({ mode: 'edit', form: { ...record, effectiveEndDate: record.effectiveEndDate || '' } })
+  const openEditRecord = (record) => setRecordModal({ mode: 'edit', form: { ...record, effectiveEndDate: record.effectiveEndDate || NO_END_DATE } })
   const closeModal = () => setRecordModal(null)
 
   const deleteRecord = (record) => {
@@ -160,7 +165,7 @@ export default function EmployeeProfilePage() {
     const f = recordModal.form
     const payload = {
       effectiveDate: f.effectiveDate,
-      effectiveEndDate: f.effectiveEndDate || null,
+      effectiveEndDate: f.effectiveEndDate || NO_END_DATE,
       effectiveSeq: Number(f.effectiveSeq) || 1,
       action: f.action, reason: f.reason, note: f.note || '',
       companyId: f.companyId ? Number(f.companyId) : '',
@@ -270,7 +275,7 @@ export default function EmployeeProfilePage() {
               <div className='grid grid-cols-1 sm:grid-cols-4 gap-x-8 gap-y-5'>
                 <KVRow label={t('Aksi','Action')}                          value={displayAssignment.action} />
                 <KVRow label={t('Efektif Mulai','Effective Start Date')}   value={displayAssignment.effectiveDate} />
-                <KVRow label={t('Efektif Sampai','Effective End Date')}    value={displayAssignment.effectiveEndDate} />
+                <KVRow label={t('Efektif Sampai','Effective End Date')}    value={formatEndDate(displayAssignment.effectiveEndDate)} />
                 <KVRow label={t('Sequence','Effective Sequence')}          value={displayAssignment.effectiveSeq} />
               </div>
               {!activeAssignment && (
@@ -500,7 +505,7 @@ export default function EmployeeProfilePage() {
                       return (
                         <tr key={r.id} className='border-t border-gray-100 hover:bg-gray-50'>
                           <td className='px-3 py-2.5 font-mono text-xs text-gray-700'>{r.effectiveDate}</td>
-                          <td className='px-3 py-2.5 font-mono text-xs text-gray-500'>{r.effectiveEndDate || '—'}</td>
+                          <td className='px-3 py-2.5 font-mono text-xs text-gray-500'>{formatEndDate(r.effectiveEndDate)}</td>
                           <td className='px-3 py-2.5'>
                             <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${ACTION_COLOR[r.action] || 'bg-gray-100 text-gray-600'}`}>{r.action}</span>
                           </td>
@@ -547,7 +552,7 @@ export default function EmployeeProfilePage() {
                 <Input type='date' value={recordModal.form.effectiveDate}
                   onChange={e=>setRecordModal(m=>({...m, form:{...m.form, effectiveDate:e.target.value}}))} />
               </FormField>
-              <FormField label={t('Efektif Sampai','Effective End')} hint={t('Kosongkan bila masih berlaku','Leave blank if still current')}>
+              <FormField label={t('Efektif Sampai','Effective End')} hint={t('Default 9999-01-01 = masih berlaku','Defaults to 9999-01-01 = still current')}>
                 <Input type='date' value={recordModal.form.effectiveEndDate}
                   onChange={e=>setRecordModal(m=>({...m, form:{...m.form, effectiveEndDate:e.target.value}}))} />
               </FormField>
