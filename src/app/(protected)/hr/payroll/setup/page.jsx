@@ -51,7 +51,7 @@ export default function PayrollSetupPage() {
                   <Td className='text-gray-500'>{e.department || '—'}</Td>
                   <Td className='text-gray-500'>
                     {hasHistory
-                      ? <span className='font-mono text-xs'>{getSalaryRecords(e.id)[0]?.effectiveStartDate}</span>
+                      ? <span className='font-mono text-xs'>{getSalaryRecords(e.id)[0]?.effectiveDate}</span>
                       : <StatusBadge tone='neutral'>{t('Default','Default')}</StatusBadge>}
                   </Td>
                   <Td align='right' className='text-gray-700'>{formatRp(p.basic)}</Td>

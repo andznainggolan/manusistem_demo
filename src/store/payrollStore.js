@@ -22,7 +22,6 @@ const SEED_PAYSLIPS = SEED_PAYSLIP_INPUTS.map((p) => ({
 }))
 
 let _id     = SEED_PAYSLIPS.length + 1
-let _recId  = 1
 
 const fmt = (n) => new Intl.NumberFormat('id-ID').format(Math.round(n || 0))
 export const formatRp = (n) => `Rp ${fmt(n)}`
@@ -52,47 +51,28 @@ const todayStr = () => new Date().toISOString().slice(0, 10)
 export const usePayrollStore = create(persist(
   (set, get) => ({
     payslips: SEED_PAYSLIPS.map(p => ({ ...p })),
-    profiles: {},          // empId -> legacy flat profile (kept for old saved data; new edits go to salaryHistory)
-    salaryHistory: {},     // empId -> [{ id, effectiveStartDate, effectiveEndDate, effectiveSeq, basic, allowance, variableAllowances, ptkpStatus, npwp, bpjsKesehatan, bpjsTk }]
+    profiles: {},          // empId -> legacy flat profile (kept only as a fallback for old saved data)
     settings: { ...DEFAULT_PAYROLL_SETTINGS },
 
-    getSalaryRecords: (empId) =>
-      [...(get().salaryHistory[empId] || [])].sort((a, b) =>
-        b.effectiveStartDate.localeCompare(a.effectiveStartDate) || b.effectiveSeq - a.effectiveSeq),
+    // Salary is one entry among an employee's unified History (company/dept/
+    // position/grade + comp fields on the same effective-dated timeline as
+    // Hire/Transfer/Promotion/etc — see employeeStore's history/addHistory).
+    // Only entries carrying a `basic` value count as salary records.
+    getSalaryRecords: (empId) => {
+      const emp = useEmployeeStore.getState().employees.find(e => e.id === empId)
+      return (emp?.history || [])
+        .filter(h => h.basic != null)
+        .sort((a, b) => b.effectiveDate.localeCompare(a.effectiveDate) || b.effectiveSeq - a.effectiveSeq)
+    },
 
-    addSalaryRecord: (empId, record) =>
-      set((s) => ({
-        salaryHistory: {
-          ...s.salaryHistory,
-          [empId]: [...(s.salaryHistory[empId] || []), { id: _recId++, effectiveSeq: 1, effectiveEndDate: null, ...record }],
-        },
-      })),
-
-    updateSalaryRecord: (empId, recordId, patch) =>
-      set((s) => ({
-        salaryHistory: {
-          ...s.salaryHistory,
-          [empId]: (s.salaryHistory[empId] || []).map(r => r.id === recordId ? { ...r, ...patch } : r),
-        },
-      })),
-
-    removeSalaryRecord: (empId, recordId) =>
-      set((s) => ({
-        salaryHistory: {
-          ...s.salaryHistory,
-          [empId]: (s.salaryHistory[empId] || []).filter(r => r.id !== recordId),
-        },
-      })),
-
-    // Salary record in effect on `asOfDate` ('YYYY-MM-DD'): the record whose
-    // Effective Start Date <= asOfDate <= Effective End Date (or no end date
+    // Salary record in effect on `asOfDate` ('YYYY-MM-DD'): the History entry
+    // whose effectiveDate <= asOfDate <= effectiveEndDate (or no end date
     // yet). Falls back to the old single-profile save, then to a grade-based
     // default, so payroll still works for employees without a dated record.
     getSalaryAsOf: (empId, asOfDate) => {
       const emp = useEmployeeStore.getState().employees.find(e => e.id === empId)
-      const records = (get().salaryHistory[empId] || [])
-        .filter(r => r.effectiveStartDate <= asOfDate && (!r.effectiveEndDate || r.effectiveEndDate >= asOfDate))
-        .sort((a, b) => b.effectiveStartDate.localeCompare(a.effectiveStartDate) || b.effectiveSeq - a.effectiveSeq)
+      const records = get().getSalaryRecords(empId)
+        .filter(r => r.effectiveDate <= asOfDate && (!r.effectiveEndDate || r.effectiveEndDate >= asOfDate))
 
       const legacy = get().profiles[empId]
 

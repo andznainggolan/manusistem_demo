@@ -2,9 +2,9 @@
 import Icon from '@/components/ui/Icon'
 import { useState } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
-import { useEmployeeStore, ACTION_COLOR } from '@/store/employeeStore'
+import { useEmployeeStore, ACTION_COLOR, HISTORY_ACTIONS, HISTORY_REASONS } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
-import { usePayrollStore, formatRp, sumVariableAllowances } from '@/store/payrollStore'
+import { formatRp, sumVariableAllowances } from '@/store/payrollStore'
 import { useMasterLookupStore } from '@/store/masterLookupStore'
 import { PTKP_STATUSES } from '@/lib/payrollCalc'
 import { useT } from '@/store/languageStore'
@@ -46,7 +46,9 @@ function KVRow({ label, value }) {
 const todayStr = () => new Date().toISOString().slice(0, 10)
 
 const EMPTY_RECORD = {
-  effectiveStartDate: todayStr(), effectiveEndDate: '', effectiveSeq: 1,
+  effectiveDate: todayStr(), effectiveEndDate: '', effectiveSeq: 1,
+  action: 'Salary Change', reason: '', note: '',
+  companyId: '', departmentId: '', positionId: '', gradeId: '',
   basic: '', allowance: '', variableAllowances: [], ptkpStatus: 'TK/0', npwp: true,
   bpjsKesehatan: true, bpjsTk: true,
 }
@@ -56,9 +58,8 @@ export default function EmployeeProfilePage() {
   const router  = useRouter()
   const searchParams = useSearchParams()
   const t       = useT()
-  const { employees } = useEmployeeStore()
-  const { companies, divisions, businessUnits, departments, positions } = useStructureStore()
-  const { addSalaryRecord, updateSalaryRecord, removeSalaryRecord } = usePayrollStore()
+  const { employees, addHistory, updateHistory, deleteHistory } = useEmployeeStore()
+  const { companies, divisions, businessUnits, departments, positions, grades } = useStructureStore()
   // Select the category object itself (a stable reference unless its items
   // actually change) and derive the active-only list in render — filtering
   // inside the selector would return a new array every call and trip
@@ -70,15 +71,6 @@ export default function EmployeeProfilePage() {
   const [recordModal, setRecordModal] = useState(null) // { mode: 'add'|'edit', form: {...} }
 
   const emp = employees.find(e => String(e.id) === String(id))
-  // Same stable-reference rule as allowanceCategory above: select the raw
-  // array (unchanged reference unless this employee's records changed),
-  // sort in render instead of inside the selector.
-  const salaryRecordsRaw = usePayrollStore(s => emp ? s.salaryHistory[emp.id] : undefined)
-  const salaryRecords = [...(salaryRecordsRaw || [])].sort((a, b) =>
-    b.effectiveStartDate.localeCompare(a.effectiveStartDate) || b.effectiveSeq - a.effectiveSeq)
-  const today = todayStr()
-  const activeRecordId = salaryRecords.find(r =>
-    r.effectiveStartDate <= today && (!r.effectiveEndDate || r.effectiveEndDate >= today))?.id
 
   if (!emp) {
     return (
@@ -101,14 +93,36 @@ export default function EmployeeProfilePage() {
   const position     = positions.find(p => p.id === emp.positionId)
   const manager      = employees.find(e => e.id === emp.managerId)
 
-  const openAddRecord = () => setRecordModal({ mode: 'add', form: { ...EMPTY_RECORD, effectiveStartDate: today } })
+  // Salary is one entry among the employee's unified History (job assignment
+  // + comp fields together on the same effective-dated timeline as
+  // Hire/Transfer/Promotion/etc) — only entries carrying a `basic` count.
+  const salaryRecords = (emp.history || [])
+    .filter(h => h.basic != null)
+    .sort((a, b) => b.effectiveDate.localeCompare(a.effectiveDate) || b.effectiveSeq - a.effectiveSeq)
+  const today = todayStr()
+  const activeRecordId = salaryRecords.find(r =>
+    r.effectiveDate <= today && (!r.effectiveEndDate || r.effectiveEndDate >= today))?.id
+
+  const openAddRecord = () => setRecordModal({
+    mode: 'add',
+    form: {
+      ...EMPTY_RECORD, effectiveDate: today,
+      companyId: emp.companyId || '', departmentId: emp.departmentId || '',
+      positionId: emp.positionId || '', gradeId: emp.gradeId || '',
+    },
+  })
   const openEditRecord = (record) => setRecordModal({ mode: 'edit', form: { ...record, effectiveEndDate: record.effectiveEndDate || '' } })
   const closeModal = () => setRecordModal(null)
 
   const deleteRecord = (record) => {
-    if (window.confirm(t(`Hapus riwayat gaji efektif ${record.effectiveStartDate}?`, `Delete salary record effective ${record.effectiveStartDate}?`))) {
-      removeSalaryRecord(emp.id, record.id)
+    if (window.confirm(t(`Hapus riwayat gaji efektif ${record.effectiveDate}?`, `Delete salary record effective ${record.effectiveDate}?`))) {
+      deleteHistory(emp.id, record.id)
     }
+  }
+
+  const handlePositionChange = (posId) => {
+    const p = positions.find(x => x.id === Number(posId))
+    setRecordModal(m => ({ ...m, form: { ...m.form, positionId: posId, gradeId: p?.gradeId || m.form.gradeId } }))
   }
 
   const addVariableRow = () =>
@@ -121,9 +135,14 @@ export default function EmployeeProfilePage() {
   const saveRecord = () => {
     const f = recordModal.form
     const payload = {
-      effectiveStartDate: f.effectiveStartDate,
+      effectiveDate: f.effectiveDate,
       effectiveEndDate: f.effectiveEndDate || null,
       effectiveSeq: Number(f.effectiveSeq) || 1,
+      action: f.action, reason: f.reason, note: f.note || '',
+      companyId: f.companyId ? Number(f.companyId) : '',
+      departmentId: f.departmentId ? Number(f.departmentId) : '',
+      positionId: f.positionId ? Number(f.positionId) : '',
+      gradeId: f.gradeId ? Number(f.gradeId) : '',
       basic: Number(f.basic) || 0,
       allowance: Number(f.allowance) || 0,
       variableAllowances: (f.variableAllowances || [])
@@ -134,12 +153,13 @@ export default function EmployeeProfilePage() {
       bpjsKesehatan: f.bpjsKesehatan,
       bpjsTk: f.bpjsTk,
     }
-    if (recordModal.mode === 'add') addSalaryRecord(emp.id, payload)
-    else updateSalaryRecord(emp.id, f.id, payload)
+    if (recordModal.mode === 'add') addHistory(emp.id, payload)
+    else updateHistory(emp.id, f.id, payload)
     closeModal()
   }
 
-  const canSave = recordModal && recordModal.form.effectiveStartDate && Number(recordModal.form.basic) > 0
+  const canSave = recordModal && recordModal.form.effectiveDate && recordModal.form.reason && Number(recordModal.form.basic) > 0
+  const reasonOptions = recordModal ? (HISTORY_REASONS[recordModal.form.action] || []) : []
 
   return (
     <div className='max-w-4xl mx-auto pb-10'>
@@ -396,7 +416,7 @@ export default function EmployeeProfilePage() {
             <div className='flex items-center justify-between mb-4'>
               <div>
                 <h3 className='text-sm font-bold text-gray-800'>{t('Riwayat Gaji', 'Salary History')}</h3>
-                <p className='text-xs text-gray-400'>{t('Tiap perubahan gaji punya tanggal efektif sendiri — dipakai Payroll Run untuk memilih nilai yang berlaku di periode tersebut.', 'Each salary change has its own effective date — Payroll Run uses it to pick the value that applies for a given period.')}</p>
+                <p className='text-xs text-gray-400'>{t('Bagian dari riwayat kepegawaian yang sama (lihat tab History) — tiap baris adalah snapshot gaji & jabatan di tanggal efektifnya, dipakai Payroll Run untuk memilih nilai yang berlaku di periode tersebut.', 'Part of the same unified employment history (see the History tab) — each row is a job + salary snapshot at its effective date, used by Payroll Run to pick the value that applies for a given period.')}</p>
               </div>
               <ActionButton size='sm' icon='➕' onClick={openAddRecord}>{t('Tambah Riwayat','Add Record')}</ActionButton>
             </div>
@@ -413,7 +433,8 @@ export default function EmployeeProfilePage() {
                     <tr className='bg-gray-50'>
                       <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Efektif Mulai','Effective Start')}</th>
                       <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Efektif Sampai','Effective End')}</th>
-                      <th className='px-3 py-2.5 text-center text-xs font-bold text-gray-500'>{t('Seq','Seq')}</th>
+                      <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Aksi','Action')}</th>
+                      <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Posisi','Position')}</th>
                       <th className='px-3 py-2.5 text-right text-xs font-bold text-gray-500'>{t('Gaji Pokok','Basic')}</th>
                       <th className='px-3 py-2.5 text-right text-xs font-bold text-gray-500'>{t('Total Bruto','Gross')}</th>
                       <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'></th>
@@ -422,12 +443,16 @@ export default function EmployeeProfilePage() {
                   </thead>
                   <tbody>
                     {salaryRecords.map(r => {
-                      const gross = r.basic + r.allowance + sumVariableAllowances(r.variableAllowances)
+                      const gross = r.basic + (r.allowance || 0) + sumVariableAllowances(r.variableAllowances)
+                      const pos = positions.find(p => p.id === r.positionId)
                       return (
                         <tr key={r.id} className='border-t border-gray-100 hover:bg-gray-50'>
-                          <td className='px-3 py-2.5 font-mono text-xs text-gray-700'>{r.effectiveStartDate}</td>
+                          <td className='px-3 py-2.5 font-mono text-xs text-gray-700'>{r.effectiveDate}</td>
                           <td className='px-3 py-2.5 font-mono text-xs text-gray-500'>{r.effectiveEndDate || '—'}</td>
-                          <td className='px-3 py-2.5 text-center text-gray-500'>{r.effectiveSeq}</td>
+                          <td className='px-3 py-2.5'>
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${ACTION_COLOR[r.action] || 'bg-gray-100 text-gray-600'}`}>{r.action}</span>
+                          </td>
+                          <td className='px-3 py-2.5 text-gray-600 text-xs'>{pos?.name || '—'}</td>
                           <td className='px-3 py-2.5 text-right text-gray-700'>{formatRp(r.basic)}</td>
                           <td className='px-3 py-2.5 text-right font-semibold text-gray-800'>{formatRp(gross)}</td>
                           <td className='px-3 py-2.5'>
@@ -467,8 +492,8 @@ export default function EmployeeProfilePage() {
 
             <div className='grid grid-cols-3 gap-3 mb-3'>
               <FormField label={t('Efektif Mulai','Effective Start')} required>
-                <Input type='date' value={recordModal.form.effectiveStartDate}
-                  onChange={e=>setRecordModal(m=>({...m, form:{...m.form, effectiveStartDate:e.target.value}}))} />
+                <Input type='date' value={recordModal.form.effectiveDate}
+                  onChange={e=>setRecordModal(m=>({...m, form:{...m.form, effectiveDate:e.target.value}}))} />
               </FormField>
               <FormField label={t('Efektif Sampai','Effective End')} hint={t('Kosongkan bila masih berlaku','Leave blank if still current')}>
                 <Input type='date' value={recordModal.form.effectiveEndDate}
@@ -481,14 +506,58 @@ export default function EmployeeProfilePage() {
             </div>
 
             <div className='grid grid-cols-2 gap-3 mb-3'>
-              <FormField label={t('Gaji Pokok', 'Basic Salary')} required>
-                <Input type='number' value={recordModal.form.basic}
-                  onChange={e=>setRecordModal(m=>({...m, form:{...m.form, basic:e.target.value}}))} />
+              <FormField label={t('Aksi','Action')} required>
+                <Select value={recordModal.form.action} onChange={e=>setRecordModal(m=>({...m, form:{...m.form, action:e.target.value, reason:''}}))}>
+                  {HISTORY_ACTIONS.map(a => <option key={a} value={a}>{a}</option>)}
+                </Select>
               </FormField>
-              <FormField label={t('Tunjangan Tetap', 'Fixed Allowance')}>
-                <Input type='number' value={recordModal.form.allowance}
-                  onChange={e=>setRecordModal(m=>({...m, form:{...m.form, allowance:e.target.value}}))} />
+              <FormField label={t('Alasan','Reason')} required>
+                <Select value={recordModal.form.reason} onChange={e=>setRecordModal(m=>({...m, form:{...m.form, reason:e.target.value}}))}>
+                  <option value=''>{t('— Pilih —','— Select —')}</option>
+                  {reasonOptions.map(r => <option key={r} value={r}>{r}</option>)}
+                </Select>
               </FormField>
+            </div>
+
+            <div className='border-t border-gray-100 pt-4 mb-3'>
+              <h4 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-2'>{t('Penempatan','Job Assignment')}</h4>
+              <div className='grid grid-cols-2 gap-3'>
+                <FormField label={t('Perusahaan','Company')}>
+                  <Select value={recordModal.form.companyId} onChange={e=>setRecordModal(m=>({...m, form:{...m.form, companyId:e.target.value}}))}>
+                    <option value=''>{t('— Pilih —','— Select —')}</option>
+                    {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  </Select>
+                </FormField>
+                <FormField label={t('Departemen','Department')}>
+                  <Select value={recordModal.form.departmentId} onChange={e=>setRecordModal(m=>({...m, form:{...m.form, departmentId:e.target.value}}))}>
+                    <option value=''>{t('— Pilih —','— Select —')}</option>
+                    {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                  </Select>
+                </FormField>
+                <FormField label={t('Posisi','Position')}>
+                  <Select value={recordModal.form.positionId} onChange={e=>handlePositionChange(e.target.value)}>
+                    <option value=''>{t('— Pilih —','— Select —')}</option>
+                    {positions.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  </Select>
+                </FormField>
+                <FormField label='Grade'>
+                  <Input value={grades.find(g => g.id === recordModal.form.gradeId)?.name || (recordModal.form.gradeId ? `PC ${recordModal.form.gradeId}` : '')} disabled />
+                </FormField>
+              </div>
+            </div>
+
+            <div className='border-t border-gray-100 pt-4 mb-3'>
+              <h4 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-2'>{t('Komponen Gaji','Salary Components')}</h4>
+              <div className='grid grid-cols-2 gap-3'>
+                <FormField label={t('Gaji Pokok', 'Basic Salary')} required>
+                  <Input type='number' value={recordModal.form.basic}
+                    onChange={e=>setRecordModal(m=>({...m, form:{...m.form, basic:e.target.value}}))} />
+                </FormField>
+                <FormField label={t('Tunjangan Tetap', 'Fixed Allowance')}>
+                  <Input type='number' value={recordModal.form.allowance}
+                    onChange={e=>setRecordModal(m=>({...m, form:{...m.form, allowance:e.target.value}}))} />
+                </FormField>
+              </div>
             </div>
 
             <div className='border-t border-gray-100 pt-4 mb-3'>
@@ -557,7 +626,7 @@ export default function EmployeeProfilePage() {
                   </Select>
                 </FormField>
               </div>
-              <div className='flex gap-5 text-sm'>
+              <div className='flex gap-5 text-sm mb-3'>
                 <label className='flex items-center gap-2'>
                   <input type='checkbox' checked={recordModal.form.bpjsKesehatan} onChange={e=>setRecordModal(m=>({...m, form:{...m.form, bpjsKesehatan:e.target.checked}}))} />
                   BPJS Kesehatan
@@ -567,6 +636,10 @@ export default function EmployeeProfilePage() {
                   BPJS Ketenagakerjaan
                 </label>
               </div>
+              <FormField label={t('Catatan','Note')}>
+                <textarea value={recordModal.form.note} onChange={e=>setRecordModal(m=>({...m, form:{...m.form, note:e.target.value}}))} rows={2}
+                  className='w-full px-3 py-2 border border-gray-200 rounded-xl text-sm outline-none focus:border-red-300 focus:ring-2 focus:ring-red-100 resize-none' />
+              </FormField>
             </div>
 
             <div className='flex gap-2'>
