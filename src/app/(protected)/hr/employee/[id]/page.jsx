@@ -45,10 +45,12 @@ function KVRow({ label, value }) {
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
 
+const EMPLOYMENT_TYPES = ['Permanent', 'Contract', 'Intern']
+
 const EMPTY_RECORD = {
   effectiveDate: todayStr(), effectiveEndDate: '', effectiveSeq: 1,
   action: 'Salary Change', reason: '', note: '',
-  companyId: '', departmentId: '', positionId: '', gradeId: '',
+  companyId: '', departmentId: '', positionId: '', gradeId: '', employmentType: '',
   basic: '', allowance: '', variableAllowances: [], ptkpStatus: 'TK/0', npwp: true,
   bpjsKesehatan: true, bpjsTk: true,
 }
@@ -86,29 +88,42 @@ export default function EmployeeProfilePage() {
     )
   }
 
-  const company      = companies.find(c => c.id === emp.companyId)
-  const division     = divisions.find(d => d.id === emp.divisionId)
-  const businessUnit = businessUnits.find(b => b.id === emp.businessUnitId)
-  const department   = departments.find(d => d.id === emp.departmentId)
-  const position     = positions.find(p => p.id === emp.positionId)
   const manager      = employees.find(e => e.id === emp.managerId)
 
-  // Salary is one entry among the employee's unified History (job assignment
-  // + comp fields together on the same effective-dated timeline as
-  // Hire/Transfer/Promotion/etc) — only entries carrying a `basic` count.
-  const salaryRecords = (emp.history || [])
-    .filter(h => h.basic != null)
-    .sort((a, b) => b.effectiveDate.localeCompare(a.effectiveDate) || b.effectiveSeq - a.effectiveSeq)
+  // The employee's unified History is the single source of truth for both
+  // job assignment (company/department/position/grade/employment type) and
+  // compensation, each entry effective-dated (Effective Start/End/Sequence) —
+  // same list as Hire/Transfer/Promotion/etc. "Assignment" records are any
+  // entry carrying a position; "salary" records are the subset that also
+  // carry a basic salary. The Employment tab reads the assignment record in
+  // effect today; falls back to the employee's static fields for employees
+  // that don't have a dated record yet.
   const today = todayStr()
+  const historyRecords = [...(emp.history || [])]
+    .sort((a, b) => b.effectiveDate.localeCompare(a.effectiveDate) || b.effectiveSeq - a.effectiveSeq)
+  const assignmentRecords = historyRecords.filter(h => h.positionId)
+  const activeAssignment = assignmentRecords.find(r =>
+    r.effectiveDate <= today && (!r.effectiveEndDate || r.effectiveEndDate >= today))
+  const salaryRecords = historyRecords.filter(h => h.basic != null)
   const activeRecordId = salaryRecords.find(r =>
     r.effectiveDate <= today && (!r.effectiveEndDate || r.effectiveEndDate >= today))?.id
+
+  const eff = activeAssignment || {}
+  const company        = companies.find(c => c.id === (eff.companyId ?? emp.companyId))
+  const division       = divisions.find(d => d.id === emp.divisionId)
+  const businessUnit   = businessUnits.find(b => b.id === emp.businessUnitId)
+  const department     = departments.find(d => d.id === (eff.departmentId ?? emp.departmentId))
+  const position       = positions.find(p => p.id === (eff.positionId ?? emp.positionId))
+  const gradeIdEff      = eff.gradeId ?? emp.gradeId
+  const employmentTypeEff = eff.employmentType || emp.employmentType
 
   const openAddRecord = () => setRecordModal({
     mode: 'add',
     form: {
       ...EMPTY_RECORD, effectiveDate: today,
-      companyId: emp.companyId || '', departmentId: emp.departmentId || '',
-      positionId: emp.positionId || '', gradeId: emp.gradeId || '',
+      companyId: eff.companyId ?? emp.companyId ?? '', departmentId: eff.departmentId ?? emp.departmentId ?? '',
+      positionId: eff.positionId ?? emp.positionId ?? '', gradeId: eff.gradeId ?? emp.gradeId ?? '',
+      employmentType: employmentTypeEff || '',
     },
   })
   const openEditRecord = (record) => setRecordModal({ mode: 'edit', form: { ...record, effectiveEndDate: record.effectiveEndDate || '' } })
@@ -143,6 +158,7 @@ export default function EmployeeProfilePage() {
       departmentId: f.departmentId ? Number(f.departmentId) : '',
       positionId: f.positionId ? Number(f.positionId) : '',
       gradeId: f.gradeId ? Number(f.gradeId) : '',
+      employmentType: f.employmentType || '',
       basic: Number(f.basic) || 0,
       allowance: Number(f.allowance) || 0,
       variableAllowances: (f.variableAllowances || [])
@@ -188,9 +204,9 @@ export default function EmployeeProfilePage() {
               <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${statusBg(emp.status)}`}>
                 {emp.status}
               </span>
-              {emp.employmentType && (
-                <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${empTypeBg(emp.employmentType)}`}>
-                  {emp.employmentType}
+              {employmentTypeEff && (
+                <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${empTypeBg(employmentTypeEff)}`}>
+                  {employmentTypeEff}
                 </span>
               )}
               {company?.companyCode && (
@@ -219,17 +235,42 @@ export default function EmployeeProfilePage() {
 
         {/* ── Employment ─────────────────────────────────────────────── */}
         {tab === 'Employment' && (
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5'>
-            <KVRow label={t('Perusahaan', 'Company')}      value={company?.name} />
-            <KVRow label={t('Divisi', 'Division')}         value={division?.name} />
-            <KVRow label={t('Business Unit', 'Business Unit')} value={businessUnit?.name} />
-            <KVRow label={t('Departemen', 'Department')}   value={department?.name} />
-            <KVRow label={t('Posisi', 'Position')}         value={position?.name} />
-            <KVRow label={t('Grade', 'Grade')}             value={emp.gradeId ? `PC ${emp.gradeId}` : null} />
-            <KVRow label={t('Tipe Kepegawaian', 'Employment Type')} value={emp.employmentType} />
-            <KVRow label={t('Tanggal Bergabung', 'Join Date')} value={emp.joinDate} />
-            {emp.endDate && <KVRow label={t('Tanggal Akhir', 'End Date')} value={emp.endDate} />}
-            <KVRow label={t('Atasan Langsung', 'Direct Manager')} value={manager?.name} />
+          <div>
+            <div className='flex items-center justify-between mb-4'>
+              <p className='text-xs text-gray-400 max-w-md'>
+                {t('Diambil dari riwayat kepegawaian (tab History) — record yang efektif hari ini.', 'Sourced from the employment history (History tab) — the record in effect today.')}
+              </p>
+              <ActionButton size='sm' icon='➕' onClick={openAddRecord}>{t('Tambah Riwayat','Add Record')}</ActionButton>
+            </div>
+
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5'>
+              <KVRow label={t('Perusahaan', 'Company')}      value={company?.name} />
+              <KVRow label={t('Divisi', 'Division')}         value={division?.name} />
+              <KVRow label={t('Business Unit', 'Business Unit')} value={businessUnit?.name} />
+              <KVRow label={t('Departemen', 'Department')}   value={department?.name} />
+              <KVRow label={t('Posisi', 'Position')}         value={position?.name} />
+              <KVRow label={t('Grade', 'Grade')}             value={gradeIdEff ? `PC ${gradeIdEff}` : null} />
+              <KVRow label={t('Tipe Kepegawaian', 'Employment Type')} value={employmentTypeEff} />
+              <KVRow label={t('Tanggal Bergabung', 'Join Date')} value={emp.joinDate} />
+              {emp.endDate && <KVRow label={t('Tanggal Akhir', 'End Date')} value={emp.endDate} />}
+              <KVRow label={t('Atasan Langsung', 'Direct Manager')} value={manager?.name} />
+            </div>
+
+            <div className='border-t border-gray-100 mt-6 pt-5'>
+              <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Tanggal Efektif', 'Effective Dates')}</h3>
+              {activeAssignment ? (
+                <div className='grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-5'>
+                  <KVRow label={t('Efektif Mulai','Effective Start Date')} value={activeAssignment.effectiveDate} />
+                  <KVRow label={t('Efektif Sampai','Effective End Date')}  value={activeAssignment.effectiveEndDate} />
+                  <KVRow label={t('Sequence','Effective Sequence')}        value={activeAssignment.effectiveSeq} />
+                </div>
+              ) : (
+                <p className='text-sm text-gray-400'>{t('Belum ada riwayat penempatan bertanggal — data di atas masih dari data karyawan statis.','No dated assignment record yet — the data above still comes from the employee\'s static fields.')}</p>
+              )}
+              <a href='#' onClick={(e)=>{e.preventDefault(); setTab('History')}} className='inline-block mt-3 text-xs font-semibold text-red-700 hover:underline'>
+                {t('Lihat semua riwayat →','View full history →')}
+              </a>
+            </div>
           </div>
         )}
 
@@ -542,6 +583,12 @@ export default function EmployeeProfilePage() {
                 </FormField>
                 <FormField label='Grade'>
                   <Input value={grades.find(g => g.id === recordModal.form.gradeId)?.name || (recordModal.form.gradeId ? `PC ${recordModal.form.gradeId}` : '')} disabled />
+                </FormField>
+                <FormField label={t('Tipe Kepegawaian','Employment Type')}>
+                  <Select value={recordModal.form.employmentType} onChange={e=>setRecordModal(m=>({...m, form:{...m.form, employmentType:e.target.value}}))}>
+                    <option value=''>{t('— Pilih —','— Select —')}</option>
+                    {EMPLOYMENT_TYPES.map(et => <option key={et} value={et}>{et}</option>)}
+                  </Select>
                 </FormField>
               </div>
             </div>
