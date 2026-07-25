@@ -1,14 +1,14 @@
 'use client'
 import Icon from '@/components/ui/Icon'
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useEmployeeStore, ACTION_COLOR } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
 import { usePayrollStore, formatRp, sumVariableAllowances } from '@/store/payrollStore'
 import { useMasterLookupStore } from '@/store/masterLookupStore'
 import { PTKP_STATUSES } from '@/lib/payrollCalc'
 import { useT } from '@/store/languageStore'
-import { FormField, Input, Select, ActionButton } from '@/components/ui'
+import { FormField, Input, Select, ActionButton, StatusBadge } from '@/components/ui'
 
 const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History', 'Salary']
 
@@ -43,13 +43,22 @@ function KVRow({ label, value }) {
   )
 }
 
+const todayStr = () => new Date().toISOString().slice(0, 10)
+
+const EMPTY_RECORD = {
+  effectiveStartDate: todayStr(), effectiveEndDate: '', effectiveSeq: 1,
+  basic: '', allowance: '', variableAllowances: [], ptkpStatus: 'TK/0', npwp: true,
+  bpjsKesehatan: true, bpjsTk: true,
+}
+
 export default function EmployeeProfilePage() {
   const { id } = useParams()
   const router  = useRouter()
+  const searchParams = useSearchParams()
   const t       = useT()
   const { employees } = useEmployeeStore()
   const { companies, divisions, businessUnits, departments, positions } = useStructureStore()
-  const { getProfile, setProfile } = usePayrollStore()
+  const { addSalaryRecord, updateSalaryRecord, removeSalaryRecord } = usePayrollStore()
   // Select the category object itself (a stable reference unless its items
   // actually change) and derive the active-only list in render — filtering
   // inside the selector would return a new array every call and trip
@@ -57,26 +66,19 @@ export default function EmployeeProfilePage() {
   const allowanceCategory = useMasterLookupStore(s => s.categories.find(c => c.key === 'variable-allowance'))
   const allowanceOptions = (allowanceCategory?.items || []).filter(i => i.active)
 
-  const [tab, setTab] = useState('Employment')
-  const [salaryForm, setSalaryForm] = useState(null)
-  const [salarySaved, setSalarySaved] = useState(false)
+  const [tab, setTab] = useState(() => TABS.includes(searchParams.get('tab')) ? searchParams.get('tab') : 'Employment')
+  const [recordModal, setRecordModal] = useState(null) // { mode: 'add'|'edit', form: {...} }
 
   const emp = employees.find(e => String(e.id) === String(id))
-
-  useEffect(() => {
-    if (emp) setSalaryForm(getProfile(emp.id))
-  }, [emp?.id]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // dbStorage rehydrates payroll profiles asynchronously — if this component
-  // mounts before that finishes, the effect above initializes the form from
-  // the pre-hydration default. Re-sync once hydration actually completes.
-  useEffect(() => {
-    const unsub = usePayrollStore.persist.onFinishHydration(() => {
-      if (emp) setSalaryForm(getProfile(emp.id))
-    })
-    if (usePayrollStore.persist.hasHydrated() && emp) setSalaryForm(getProfile(emp.id))
-    return unsub
-  }, [emp?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+  // Same stable-reference rule as allowanceCategory above: select the raw
+  // array (unchanged reference unless this employee's records changed),
+  // sort in render instead of inside the selector.
+  const salaryRecordsRaw = usePayrollStore(s => emp ? s.salaryHistory[emp.id] : undefined)
+  const salaryRecords = [...(salaryRecordsRaw || [])].sort((a, b) =>
+    b.effectiveStartDate.localeCompare(a.effectiveStartDate) || b.effectiveSeq - a.effectiveSeq)
+  const today = todayStr()
+  const activeRecordId = salaryRecords.find(r =>
+    r.effectiveStartDate <= today && (!r.effectiveEndDate || r.effectiveEndDate >= today))?.id
 
   if (!emp) {
     return (
@@ -99,28 +101,45 @@ export default function EmployeeProfilePage() {
   const position     = positions.find(p => p.id === emp.positionId)
   const manager      = employees.find(e => e.id === emp.managerId)
 
-  const addVariableRow = () =>
-    setSalaryForm(f => ({ ...f, variableAllowances: [...(f.variableAllowances||[]), { id: Date.now(), label: '', amount: '' }] }))
-  const updateVariableRow = (id, patch) =>
-    setSalaryForm(f => ({ ...f, variableAllowances: f.variableAllowances.map(r => r.id === id ? { ...r, ...patch } : r) }))
-  const removeVariableRow = (id) =>
-    setSalaryForm(f => ({ ...f, variableAllowances: f.variableAllowances.filter(r => r.id !== id) }))
+  const openAddRecord = () => setRecordModal({ mode: 'add', form: { ...EMPTY_RECORD, effectiveStartDate: today } })
+  const openEditRecord = (record) => setRecordModal({ mode: 'edit', form: { ...record, effectiveEndDate: record.effectiveEndDate || '' } })
+  const closeModal = () => setRecordModal(null)
 
-  const saveSalary = () => {
-    setProfile(emp.id, {
-      basic: Number(salaryForm.basic) || 0,
-      allowance: Number(salaryForm.allowance) || 0,
-      variableAllowances: (salaryForm.variableAllowances || [])
+  const deleteRecord = (record) => {
+    if (window.confirm(t(`Hapus riwayat gaji efektif ${record.effectiveStartDate}?`, `Delete salary record effective ${record.effectiveStartDate}?`))) {
+      removeSalaryRecord(emp.id, record.id)
+    }
+  }
+
+  const addVariableRow = () =>
+    setRecordModal(m => ({ ...m, form: { ...m.form, variableAllowances: [...(m.form.variableAllowances||[]), { id: Date.now(), label: '', amount: '' }] } }))
+  const updateVariableRow = (rowId, patch) =>
+    setRecordModal(m => ({ ...m, form: { ...m.form, variableAllowances: m.form.variableAllowances.map(r => r.id === rowId ? { ...r, ...patch } : r) } }))
+  const removeVariableRow = (rowId) =>
+    setRecordModal(m => ({ ...m, form: { ...m.form, variableAllowances: m.form.variableAllowances.filter(r => r.id !== rowId) } }))
+
+  const saveRecord = () => {
+    const f = recordModal.form
+    const payload = {
+      effectiveStartDate: f.effectiveStartDate,
+      effectiveEndDate: f.effectiveEndDate || null,
+      effectiveSeq: Number(f.effectiveSeq) || 1,
+      basic: Number(f.basic) || 0,
+      allowance: Number(f.allowance) || 0,
+      variableAllowances: (f.variableAllowances || [])
         .filter(r => r.label.trim() || Number(r.amount))
         .map(r => ({ id: r.id, label: r.label.trim(), amount: Number(r.amount) || 0 })),
-      ptkpStatus: salaryForm.ptkpStatus,
-      npwp: salaryForm.npwp,
-      bpjsKesehatan: salaryForm.bpjsKesehatan,
-      bpjsTk: salaryForm.bpjsTk,
-    })
-    setSalarySaved(true)
-    setTimeout(() => setSalarySaved(false), 3000)
+      ptkpStatus: f.ptkpStatus,
+      npwp: f.npwp,
+      bpjsKesehatan: f.bpjsKesehatan,
+      bpjsTk: f.bpjsTk,
+    }
+    if (recordModal.mode === 'add') addSalaryRecord(emp.id, payload)
+    else updateSalaryRecord(emp.id, f.id, payload)
+    closeModal()
   }
+
+  const canSave = recordModal && recordModal.form.effectiveStartDate && Number(recordModal.form.basic) > 0
 
   return (
     <div className='max-w-4xl mx-auto pb-10'>
@@ -372,23 +391,109 @@ export default function EmployeeProfilePage() {
         )}
 
         {/* ── Salary ─────────────────────────────────────────────────── */}
-        {tab === 'Salary' && salaryForm && (
-          <div className='space-y-6'>
-            <div>
-              <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Komponen Gaji', 'Salary Components')}</h3>
-              <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4'>
-                <FormField label={t('Gaji Pokok', 'Basic Salary')}>
-                  <Input type='number' value={salaryForm.basic} onChange={e=>setSalaryForm(f=>({...f, basic:e.target.value}))} />
-                </FormField>
-                <FormField label={t('Tunjangan Tetap', 'Fixed Allowance')}>
-                  <Input type='number' value={salaryForm.allowance} onChange={e=>setSalaryForm(f=>({...f, allowance:e.target.value}))} />
-                </FormField>
+        {tab === 'Salary' && (
+          <div>
+            <div className='flex items-center justify-between mb-4'>
+              <div>
+                <h3 className='text-sm font-bold text-gray-800'>{t('Riwayat Gaji', 'Salary History')}</h3>
+                <p className='text-xs text-gray-400'>{t('Tiap perubahan gaji punya tanggal efektif sendiri — dipakai Payroll Run untuk memilih nilai yang berlaku di periode tersebut.', 'Each salary change has its own effective date — Payroll Run uses it to pick the value that applies for a given period.')}</p>
               </div>
+              <ActionButton size='sm' icon='➕' onClick={openAddRecord}>{t('Tambah Riwayat','Add Record')}</ActionButton>
             </div>
 
-            <div className='border-t border-gray-100 pt-5'>
-              <div className='flex items-center justify-between mb-3'>
-                <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide'>{t('Tunjangan Variable', 'Variable Allowances')}</h3>
+            {salaryRecords.length === 0 ? (
+              <div className='flex flex-col items-center justify-center py-16 text-gray-400 gap-2'>
+                <span className='text-4xl'><Icon e='💰' size={15} /></span>
+                <p className='text-sm'>{t('Belum ada riwayat gaji.','No salary records yet.')}</p>
+              </div>
+            ) : (
+              <div className='overflow-x-auto'>
+                <table className='w-full text-sm'>
+                  <thead>
+                    <tr className='bg-gray-50'>
+                      <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Efektif Mulai','Effective Start')}</th>
+                      <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Efektif Sampai','Effective End')}</th>
+                      <th className='px-3 py-2.5 text-center text-xs font-bold text-gray-500'>{t('Seq','Seq')}</th>
+                      <th className='px-3 py-2.5 text-right text-xs font-bold text-gray-500'>{t('Gaji Pokok','Basic')}</th>
+                      <th className='px-3 py-2.5 text-right text-xs font-bold text-gray-500'>{t('Total Bruto','Gross')}</th>
+                      <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'></th>
+                      <th className='px-3 py-2.5 w-20'></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {salaryRecords.map(r => {
+                      const gross = r.basic + r.allowance + sumVariableAllowances(r.variableAllowances)
+                      return (
+                        <tr key={r.id} className='border-t border-gray-100 hover:bg-gray-50'>
+                          <td className='px-3 py-2.5 font-mono text-xs text-gray-700'>{r.effectiveStartDate}</td>
+                          <td className='px-3 py-2.5 font-mono text-xs text-gray-500'>{r.effectiveEndDate || '—'}</td>
+                          <td className='px-3 py-2.5 text-center text-gray-500'>{r.effectiveSeq}</td>
+                          <td className='px-3 py-2.5 text-right text-gray-700'>{formatRp(r.basic)}</td>
+                          <td className='px-3 py-2.5 text-right font-semibold text-gray-800'>{formatRp(gross)}</td>
+                          <td className='px-3 py-2.5'>
+                            {r.id === activeRecordId && <StatusBadge tone='success'>{t('Aktif','Active')}</StatusBadge>}
+                          </td>
+                          <td className='px-3 py-2.5 text-right whitespace-nowrap'>
+                            <button onClick={()=>openEditRecord(r)} className='text-xs font-semibold text-red-700 hover:underline mr-3'>{t('Edit','Edit')}</button>
+                            <button onClick={()=>deleteRecord(r)} className='text-gray-400 hover:text-red-600' aria-label={t('Hapus','Delete')}>
+                              <Icon e='🗑️' size={13} />
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <a href='/hr/payroll/run' className='inline-block mt-4 text-xs font-semibold text-red-700 hover:underline'>
+              {t('Lihat di Payroll Run →','View in Payroll Run →')}
+            </a>
+          </div>
+        )}
+      </div>
+
+      {/* Salary record modal */}
+      {recordModal && (
+        <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4' onClick={closeModal}>
+          <div className='bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto' onClick={e=>e.stopPropagation()}>
+            <div className='flex justify-between items-start mb-4'>
+              <h3 className='text-base font-bold text-gray-800'>
+                {recordModal.mode === 'add' ? t('Tambah Riwayat Gaji','Add Salary Record') : t('Edit Riwayat Gaji','Edit Salary Record')}
+              </h3>
+              <button onClick={closeModal} className='text-gray-400 hover:text-gray-600 text-xl font-bold leading-none'>×</button>
+            </div>
+
+            <div className='grid grid-cols-3 gap-3 mb-3'>
+              <FormField label={t('Efektif Mulai','Effective Start')} required>
+                <Input type='date' value={recordModal.form.effectiveStartDate}
+                  onChange={e=>setRecordModal(m=>({...m, form:{...m.form, effectiveStartDate:e.target.value}}))} />
+              </FormField>
+              <FormField label={t('Efektif Sampai','Effective End')} hint={t('Kosongkan bila masih berlaku','Leave blank if still current')}>
+                <Input type='date' value={recordModal.form.effectiveEndDate}
+                  onChange={e=>setRecordModal(m=>({...m, form:{...m.form, effectiveEndDate:e.target.value}}))} />
+              </FormField>
+              <FormField label={t('Sequence','Sequence')}>
+                <Input type='number' value={recordModal.form.effectiveSeq}
+                  onChange={e=>setRecordModal(m=>({...m, form:{...m.form, effectiveSeq:e.target.value}}))} />
+              </FormField>
+            </div>
+
+            <div className='grid grid-cols-2 gap-3 mb-3'>
+              <FormField label={t('Gaji Pokok', 'Basic Salary')} required>
+                <Input type='number' value={recordModal.form.basic}
+                  onChange={e=>setRecordModal(m=>({...m, form:{...m.form, basic:e.target.value}}))} />
+              </FormField>
+              <FormField label={t('Tunjangan Tetap', 'Fixed Allowance')}>
+                <Input type='number' value={recordModal.form.allowance}
+                  onChange={e=>setRecordModal(m=>({...m, form:{...m.form, allowance:e.target.value}}))} />
+              </FormField>
+            </div>
+
+            <div className='border-t border-gray-100 pt-4 mb-3'>
+              <div className='flex items-center justify-between mb-2'>
+                <h4 className='text-xs font-bold text-gray-400 uppercase tracking-wide'>{t('Tunjangan Variable', 'Variable Allowances')}</h4>
                 <button onClick={addVariableRow} type='button' className='text-xs font-semibold text-red-700 hover:underline flex items-center gap-1'>
                   <Icon e='➕' size={11} /> {t('Tambah','Add')}
                 </button>
@@ -401,62 +506,52 @@ export default function EmployeeProfilePage() {
                   </a>
                 </p>
               )}
-              {(!salaryForm.variableAllowances || salaryForm.variableAllowances.length === 0) ? (
+              {(!recordModal.form.variableAllowances || recordModal.form.variableAllowances.length === 0) ? (
                 <p className='text-sm text-gray-400'>{t('Belum ada tunjangan variable.','No variable allowances yet.')}</p>
               ) : (
-                <div className='overflow-x-auto'>
-                  <table className='w-full text-sm'>
-                    <thead>
-                      <tr className='bg-gray-50'>
-                        <th className='px-3 py-2 text-left text-xs font-bold text-gray-500'>{t('Nama Tunjangan','Allowance Name')}</th>
-                        <th className='px-3 py-2 text-right text-xs font-bold text-gray-500'>{t('Jumlah','Amount')}</th>
-                        <th className='px-3 py-2 w-8'></th>
+                <table className='w-full text-sm'>
+                  <tbody>
+                    {recordModal.form.variableAllowances.map(row => (
+                      <tr key={row.id}>
+                        <td className='py-1 pr-2'>
+                          <Select value={row.label} onChange={e=>updateVariableRow(row.id, { label: e.target.value })}>
+                            <option value=''>{t('— Pilih —','— Select —')}</option>
+                            {row.label && !allowanceOptions.some(o => o.label === row.label) && (
+                              <option value={row.label}>{row.label}</option>
+                            )}
+                            {allowanceOptions.map(o => <option key={o.id} value={o.label}>{o.label}</option>)}
+                          </Select>
+                        </td>
+                        <td className='py-1 pr-2 w-32'>
+                          <Input type='number' value={row.amount} placeholder='0'
+                            onChange={e=>updateVariableRow(row.id, { amount: e.target.value })} />
+                        </td>
+                        <td className='py-1 w-8 text-center'>
+                          <button onClick={()=>removeVariableRow(row.id)} type='button' className='text-gray-400 hover:text-red-600' aria-label={t('Hapus baris','Remove row')}>
+                            <Icon e='🗑️' size={13} />
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {salaryForm.variableAllowances.map(row => (
-                        <tr key={row.id} className='border-t border-gray-100'>
-                          <td className='px-3 py-2'>
-                            <Select value={row.label} onChange={e=>updateVariableRow(row.id, { label: e.target.value })}>
-                              <option value=''>{t('— Pilih —','— Select —')}</option>
-                              {row.label && !allowanceOptions.some(o => o.label === row.label) && (
-                                <option value={row.label}>{row.label}</option>
-                              )}
-                              {allowanceOptions.map(o => <option key={o.id} value={o.label}>{o.label}</option>)}
-                            </Select>
-                          </td>
-                          <td className='px-3 py-2'>
-                            <Input type='number' value={row.amount} placeholder='0'
-                              onChange={e=>updateVariableRow(row.id, { amount: e.target.value })} />
-                          </td>
-                          <td className='px-3 py-2 text-center'>
-                            <button onClick={()=>removeVariableRow(row.id)} type='button' className='text-gray-400 hover:text-red-600' aria-label={t('Hapus baris','Remove row')}>
-                              <Icon e='🗑️' size={13} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                      <tr className='border-t-2 border-gray-200'>
-                        <td className='px-3 py-2 font-semibold text-gray-700'>{t('Total Tunjangan Variable','Total Variable Allowances')}</td>
-                        <td className='px-3 py-2 text-right font-semibold text-gray-800'>{formatRp(sumVariableAllowances(salaryForm.variableAllowances))}</td>
-                        <td></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                    ))}
+                    <tr className='border-t border-gray-200'>
+                      <td className='py-1.5 pr-2 font-semibold text-gray-700 text-xs'>{t('Total','Total')}</td>
+                      <td className='py-1.5 pr-2 font-semibold text-gray-800 text-xs'>{formatRp(sumVariableAllowances(recordModal.form.variableAllowances))}</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
               )}
             </div>
 
-            <div className='border-t border-gray-100 pt-5'>
-              <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Pajak & BPJS', 'Tax & BPJS')}</h3>
-              <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 mb-4'>
+            <div className='border-t border-gray-100 pt-4 mb-4'>
+              <div className='grid grid-cols-2 gap-3 mb-3'>
                 <FormField label='PTKP'>
-                  <Select value={salaryForm.ptkpStatus} onChange={e=>setSalaryForm(f=>({...f, ptkpStatus:e.target.value}))}>
+                  <Select value={recordModal.form.ptkpStatus} onChange={e=>setRecordModal(m=>({...m, form:{...m.form, ptkpStatus:e.target.value}}))}>
                     {PTKP_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                   </Select>
                 </FormField>
                 <FormField label='NPWP'>
-                  <Select value={salaryForm.npwp ? '1' : '0'} onChange={e=>setSalaryForm(f=>({...f, npwp: e.target.value==='1'}))}>
+                  <Select value={recordModal.form.npwp ? '1' : '0'} onChange={e=>setRecordModal(m=>({...m, form:{...m.form, npwp: e.target.value==='1'}}))}>
                     <option value='1'>{t('Ada','Yes')}</option>
                     <option value='0'>{t('Tidak ada','No')}</option>
                   </Select>
@@ -464,37 +559,25 @@ export default function EmployeeProfilePage() {
               </div>
               <div className='flex gap-5 text-sm'>
                 <label className='flex items-center gap-2'>
-                  <input type='checkbox' checked={salaryForm.bpjsKesehatan} onChange={e=>setSalaryForm(f=>({...f, bpjsKesehatan:e.target.checked}))} />
+                  <input type='checkbox' checked={recordModal.form.bpjsKesehatan} onChange={e=>setRecordModal(m=>({...m, form:{...m.form, bpjsKesehatan:e.target.checked}}))} />
                   BPJS Kesehatan
                 </label>
                 <label className='flex items-center gap-2'>
-                  <input type='checkbox' checked={salaryForm.bpjsTk} onChange={e=>setSalaryForm(f=>({...f, bpjsTk:e.target.checked}))} />
+                  <input type='checkbox' checked={recordModal.form.bpjsTk} onChange={e=>setRecordModal(m=>({...m, form:{...m.form, bpjsTk:e.target.checked}}))} />
                   BPJS Ketenagakerjaan
                 </label>
               </div>
             </div>
 
-            <div className='flex items-center gap-3 border-t border-gray-100 pt-5'>
-              <ActionButton onClick={saveSalary} icon='💾'>{t('Simpan','Save')}</ActionButton>
-              {salarySaved && (
-                <span className='text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg'>
-                  {t('Tersimpan.','Saved.')}
-                </span>
-              )}
-              <a href='/hr/payroll/run' className='ml-auto text-xs font-semibold text-red-700 hover:underline'>
-                {t('Lihat di Payroll Run →','View in Payroll Run →')}
-              </a>
+            <div className='flex gap-2'>
+              <button onClick={closeModal} className='flex-1 py-2.5 text-sm font-semibold bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition'>
+                {t('Batal','Cancel')}
+              </button>
+              <ActionButton onClick={saveRecord} disabled={!canSave} className='flex-1'>{t('Simpan','Save')}</ActionButton>
             </div>
-
-            <p className='text-xs text-gray-400 border-t border-gray-100 pt-4'>
-              {t(
-                `Data ini adalah sumber yang sama dengan Payroll Setup — akan otomatis dipakai saat generate payroll untuk periode berikutnya. Estimasi gaji bruto saat ini: ${formatRp(Number(salaryForm.basic || 0) + Number(salaryForm.allowance || 0) + sumVariableAllowances(salaryForm.variableAllowances))}/bulan.`,
-                `This is the same data as Payroll Setup — it will be used automatically when payroll is generated for the next period. Current gross estimate: ${formatRp(Number(salaryForm.basic || 0) + Number(salaryForm.allowance || 0) + sumVariableAllowances(salaryForm.variableAllowances))}/month.`
-              )}
-            </p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

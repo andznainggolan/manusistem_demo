@@ -21,12 +21,13 @@ const SEED_PAYSLIPS = SEED_PAYSLIP_INPUTS.map((p) => ({
   }),
 }))
 
-let _id = SEED_PAYSLIPS.length + 1
+let _id     = SEED_PAYSLIPS.length + 1
+let _recId  = 1
 
 const fmt = (n) => new Intl.NumberFormat('id-ID').format(Math.round(n || 0))
 export const formatRp = (n) => `Rp ${fmt(n)}`
 
-// Default gaji pokok for an employee with no explicit payroll profile yet:
+// Default gaji pokok for an employee with no explicit salary record yet:
 // derive from their position's grade (Mercer PC) salary range midpoint, so
 // "Generate Payroll" is usable immediately without configuring every employee.
 function defaultBasicFor(emp) {
@@ -46,38 +47,83 @@ const EMPTY_PROFILE = {
 
 export const sumVariableAllowances = (rows) => (rows || []).reduce((s, r) => s + (Number(r.amount) || 0), 0)
 
+const todayStr = () => new Date().toISOString().slice(0, 10)
+
 export const usePayrollStore = create(persist(
   (set, get) => ({
     payslips: SEED_PAYSLIPS.map(p => ({ ...p })),
-    profiles: {},          // empId -> payroll profile (PTKP, NPWP, BPJS enrollment, overrides)
+    profiles: {},          // empId -> legacy flat profile (kept for old saved data; new edits go to salaryHistory)
+    salaryHistory: {},     // empId -> [{ id, effectiveStartDate, effectiveEndDate, effectiveSeq, basic, allowance, variableAllowances, ptkpStatus, npwp, bpjsKesehatan, bpjsTk }]
     settings: { ...DEFAULT_PAYROLL_SETTINGS },
 
-    getProfile: (empId) => {
+    getSalaryRecords: (empId) =>
+      [...(get().salaryHistory[empId] || [])].sort((a, b) =>
+        b.effectiveStartDate.localeCompare(a.effectiveStartDate) || b.effectiveSeq - a.effectiveSeq),
+
+    addSalaryRecord: (empId, record) =>
+      set((s) => ({
+        salaryHistory: {
+          ...s.salaryHistory,
+          [empId]: [...(s.salaryHistory[empId] || []), { id: _recId++, effectiveSeq: 1, effectiveEndDate: null, ...record }],
+        },
+      })),
+
+    updateSalaryRecord: (empId, recordId, patch) =>
+      set((s) => ({
+        salaryHistory: {
+          ...s.salaryHistory,
+          [empId]: (s.salaryHistory[empId] || []).map(r => r.id === recordId ? { ...r, ...patch } : r),
+        },
+      })),
+
+    removeSalaryRecord: (empId, recordId) =>
+      set((s) => ({
+        salaryHistory: {
+          ...s.salaryHistory,
+          [empId]: (s.salaryHistory[empId] || []).filter(r => r.id !== recordId),
+        },
+      })),
+
+    // Salary record in effect on `asOfDate` ('YYYY-MM-DD'): the record whose
+    // Effective Start Date <= asOfDate <= Effective End Date (or no end date
+    // yet). Falls back to the old single-profile save, then to a grade-based
+    // default, so payroll still works for employees without a dated record.
+    getSalaryAsOf: (empId, asOfDate) => {
       const emp = useEmployeeStore.getState().employees.find(e => e.id === empId)
-      const saved = get().profiles[empId] || {}
+      const records = (get().salaryHistory[empId] || [])
+        .filter(r => r.effectiveStartDate <= asOfDate && (!r.effectiveEndDate || r.effectiveEndDate >= asOfDate))
+        .sort((a, b) => b.effectiveStartDate.localeCompare(a.effectiveStartDate) || b.effectiveSeq - a.effectiveSeq)
+
+      const legacy = get().profiles[empId]
+
       return {
         ...EMPTY_PROFILE,
         basic: emp ? defaultBasicFor(emp) : 6_000_000,
         allowance: 0,
-        ...saved,
+        ...legacy,
+        ...records[0],
       }
     },
 
-    setProfile: (empId, data) =>
-      set((s) => ({ profiles: { ...s.profiles, [empId]: { ...(s.profiles[empId] || {}), ...data } } })),
+    // Kept for the few remaining callers that just want "current" salary
+    // (e.g. an estimate) without an as-of date.
+    getProfile: (empId) => get().getSalaryAsOf(empId, todayStr()),
 
     updateSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch } })),
 
     // Build Draft payslips for every active employee for `period` who doesn't
     // already have a payslip row that period (so re-running never clobbers a
     // Published or already-edited Draft — remove the row first to regenerate it).
+    // Salary is looked up as-of the last day of the period month, so a raise
+    // dated mid-period is already reflected in that period's payroll.
     generatePeriod: (period) => set((s) => {
       const employees = useEmployeeStore.getState().employees.filter(e => e.status === 'Active')
       const existing = new Set(s.payslips.filter(p => p.period === period).map(p => p.empId))
+      const asOfDate = `${period}-31`
       const rows = []
       employees.forEach((emp) => {
         if (existing.has(emp.id)) return
-        const profile = get().getProfile(emp.id)
+        const profile = get().getSalaryAsOf(emp.id, asOfDate)
         const basic = profile.basic ?? defaultBasicFor(emp)
         const allowance = profile.allowance || 0
         const variableAllowance = sumVariableAllowances(profile.variableAllowances)
