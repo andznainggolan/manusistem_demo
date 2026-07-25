@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEmployeeStore, ACTION_COLOR } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
 import { usePayrollStore, formatRp, sumVariableAllowances } from '@/store/payrollStore'
+import { useMasterLookupStore } from '@/store/masterLookupStore'
 import { PTKP_STATUSES } from '@/lib/payrollCalc'
 import { useT } from '@/store/languageStore'
 import { FormField, Input, Select, ActionButton } from '@/components/ui'
@@ -49,6 +50,12 @@ export default function EmployeeProfilePage() {
   const { employees } = useEmployeeStore()
   const { companies, divisions, businessUnits, departments, positions } = useStructureStore()
   const { getProfile, setProfile } = usePayrollStore()
+  // Select the category object itself (a stable reference unless its items
+  // actually change) and derive the active-only list in render — filtering
+  // inside the selector would return a new array every call and trip
+  // useSyncExternalStore's "getSnapshot should be cached" check.
+  const allowanceCategory = useMasterLookupStore(s => s.categories.find(c => c.key === 'variable-allowance'))
+  const allowanceOptions = (allowanceCategory?.items || []).filter(i => i.active)
 
   const [tab, setTab] = useState('Employment')
   const [salaryForm, setSalaryForm] = useState(null)
@@ -386,6 +393,14 @@ export default function EmployeeProfilePage() {
                   <Icon e='➕' size={11} /> {t('Tambah','Add')}
                 </button>
               </div>
+              {allowanceOptions.length === 0 && (
+                <p className='text-xs text-gray-400 mb-2'>
+                  {t('Belum ada pilihan nama tunjangan. ','No allowance name options yet. ')}
+                  <a href='/sysadmin/settings/master-lookup' className='text-red-700 hover:underline'>
+                    {t('Atur di Master Lookup →','Set up in Master Lookup →')}
+                  </a>
+                </p>
+              )}
               {(!salaryForm.variableAllowances || salaryForm.variableAllowances.length === 0) ? (
                 <p className='text-sm text-gray-400'>{t('Belum ada tunjangan variable.','No variable allowances yet.')}</p>
               ) : (
@@ -402,8 +417,13 @@ export default function EmployeeProfilePage() {
                       {salaryForm.variableAllowances.map(row => (
                         <tr key={row.id} className='border-t border-gray-100'>
                           <td className='px-3 py-2'>
-                            <Input value={row.label} placeholder={t('mis. Uang Makan','e.g. Meal Allowance')}
-                              onChange={e=>updateVariableRow(row.id, { label: e.target.value })} />
+                            <Select value={row.label} onChange={e=>updateVariableRow(row.id, { label: e.target.value })}>
+                              <option value=''>{t('— Pilih —','— Select —')}</option>
+                              {row.label && !allowanceOptions.some(o => o.label === row.label) && (
+                                <option value={row.label}>{row.label}</option>
+                              )}
+                              {allowanceOptions.map(o => <option key={o.id} value={o.label}>{o.label}</option>)}
+                            </Select>
                           </td>
                           <td className='px-3 py-2'>
                             <Input type='number' value={row.amount} placeholder='0'

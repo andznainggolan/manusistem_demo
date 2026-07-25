@@ -265,6 +265,7 @@ const SA_GROUPS = [
     { label: 'User Management',   href: '/sysadmin/users',                     icon: ic('users') },
     { label: 'Leave Workflow',    href: '/sysadmin/leave-workflow',             icon: ic('workflow') },
     { label: 'Role & Permission', href: '/sysadmin/learning/role-permission',   icon: ic('shield') },
+    { label: 'Master Lookup',     href: '/sysadmin/settings/master-lookup',     icon: ic('list') },
   ]},
   { title: 'Workflow', icon: ic('workflow'), items: [
     { label: 'Workflow Settings',   href: '/sysadmin/workflow/settings',            icon: ic('settings') },

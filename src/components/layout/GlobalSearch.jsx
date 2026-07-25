@@ -66,6 +66,7 @@ const PAGES = [
   { label: 'Payroll Settings',          href: '/hr/payroll/settings',                           icon: '⚙️', section: 'HR · Payroll' },
   // Sysadmin
   { label: 'User Management',           href: '/sysadmin/users',                               icon: '👥', section: 'System Administration' },
+  { label: 'Master Lookup',             href: '/sysadmin/settings/master-lookup',              icon: '🗂️', section: 'System Administration' },
   { label: 'Leave Workflow',            href: '/sysadmin/leave-workflow',                      icon: '🔀', section: 'System Administration' },
   { label: 'Workflow Settings',         href: '/sysadmin/workflow/settings',                   icon: '⚙️', section: 'System Administration' },
   { label: 'Userlists',                 href: '/sysadmin/workflow/userlists',                  icon: '👥', section: 'System Administration' },
