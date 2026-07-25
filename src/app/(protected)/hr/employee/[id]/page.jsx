@@ -1,6 +1,6 @@
 'use client'
 import Icon from '@/components/ui/Icon'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useEmployeeStore, ACTION_COLOR, HISTORY_ACTIONS, HISTORY_REASONS } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
@@ -65,7 +65,9 @@ export default function EmployeeProfilePage() {
   const router  = useRouter()
   const searchParams = useSearchParams()
   const t       = useT()
-  const { employees, addHistory, updateHistory, deleteHistory } = useEmployeeStore()
+  const { employees, addHistory, updateHistory, deleteHistory, setPhoto } = useEmployeeStore()
+  const photoInputRef = useRef(null)
+  const [photoError, setPhotoError] = useState(null)
   const { companies, divisions, businessUnits, departments, positions, grades } = useStructureStore()
   // Select the category object itself (a stable reference unless its items
   // actually change) and derive the active-only list in render — filtering
@@ -130,6 +132,17 @@ export default function EmployeeProfilePage() {
   const position       = positions.find(p => p.id === (eff.positionId ?? emp.positionId))
   const gradeIdEff      = eff.gradeId ?? emp.gradeId
   const employmentTypeEff = eff.employmentType || emp.employmentType
+
+  const PHOTO_MAX_BYTES = 2 * 1024 * 1024 // 2 MB
+  const handlePhotoFile = (file) => {
+    setPhotoError(null)
+    if (!file) return
+    if (!file.type.startsWith('image/')) { setPhotoError(t('File harus berupa gambar.','File must be an image.')); return }
+    if (file.size > PHOTO_MAX_BYTES) { setPhotoError(t('Ukuran gambar maksimal 2 MB.','Image must be under 2 MB.')); return }
+    const reader = new FileReader()
+    reader.onload = (e) => setPhoto(emp.id, e.target.result)
+    reader.readAsDataURL(file)
+  }
 
   const openAddRecord = () => setRecordModal({
     mode: 'add',
@@ -203,10 +216,19 @@ export default function EmployeeProfilePage() {
       {/* Header card */}
       <div className='rounded-2xl overflow-hidden shadow-sm mb-5' style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
         <div className='px-6 py-6 flex items-center gap-5'>
-          <div className='w-20 h-20 rounded-2xl bg-white/20 flex items-center justify-center overflow-hidden flex-shrink-0 border-2 border-white/30'>
-            {emp.photo
-              ? <img src={emp.photo} alt='' className='w-full h-full object-cover' />
-              : <span className='text-4xl'>{emp.gender === 'Female' ? '👩' : '👨'}</span>}
+          <div className='relative w-20 h-20 flex-shrink-0 group'>
+            <div className='w-20 h-20 rounded-2xl bg-white/20 flex items-center justify-center overflow-hidden border-2 border-white/30'>
+              {emp.photo
+                ? <img src={emp.photo} alt='' className='w-full h-full object-cover' />
+                : <span className='text-4xl'>{emp.gender === 'Female' ? '👩' : '👨'}</span>}
+            </div>
+            <input ref={photoInputRef} type='file' accept='image/*' className='hidden'
+              onChange={e => { handlePhotoFile(e.target.files?.[0]); e.target.value = '' }} />
+            <button type='button' onClick={() => photoInputRef.current?.click()}
+              title={t('Ubah foto','Change photo')}
+              className='absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-white text-red-700 shadow flex items-center justify-center hover:bg-red-50 transition opacity-0 group-hover:opacity-100 focus:opacity-100'>
+              <Icon e='📷' size={13} />
+            </button>
           </div>
           <div className='flex-1 min-w-0'>
             <h1 className='text-2xl font-bold text-white'>{emp.name}</h1>
@@ -232,6 +254,9 @@ export default function EmployeeProfilePage() {
           </div>
         </div>
       </div>
+      {photoError && (
+        <p className='text-xs text-red-600 font-semibold -mt-3 mb-4'>{photoError}</p>
+      )}
 
       {/* Tabs */}
       <div className='flex gap-1 bg-white rounded-xl shadow-sm px-3 py-2 mb-5 overflow-x-auto'>
