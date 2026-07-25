@@ -161,7 +161,9 @@ export default function EmployeeProfilePage() {
     ? employees.filter(e => e.positionId === positionIdEff && e.status === 'Active').sort((a, b) => a.id - b.id)
     : []
   const seatIndex = positionPeers.findIndex(e => e.id === emp.id)
-  const headcountTitle = position && seatIndex >= 0 ? `${position.name} ${toSeatLetter(seatIndex)}` : null
+  const headcountTitle = position && seatIndex >= 0
+    ? (positionPeers.length > 1 ? `${position.name} ${toSeatLetter(seatIndex)}` : position.name)
+    : null
 
   const PHOTO_MAX_BYTES = 2 * 1024 * 1024 // 2 MB
   const handlePhotoFile = (file) => {
