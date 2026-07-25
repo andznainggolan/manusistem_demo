@@ -110,6 +110,7 @@ export default function EmployeeProfilePage() {
 
   const manager      = employees.find(e => e.id === emp.managerId)
   const managerHeadcount = manager ? employees.filter(e => e.managerId === manager.id && e.status === 'Active').length : 0
+  const ownHeadcount = employees.filter(e => e.managerId === emp.id && e.status === 'Active').length
 
   // The employee's unified History is the single source of truth for both
   // job assignment (company/department/position/grade/employment type) and
@@ -324,6 +325,7 @@ export default function EmployeeProfilePage() {
               <KVRow label={t('Tipe Kepegawaian', 'Employment Type')} value={employmentTypeEff} />
               <KVRow label={t('Tanggal Bergabung', 'Join Date')} value={emp.joinDate} />
               {emp.endDate && <KVRow label={t('Tanggal Akhir', 'End Date')} value={emp.endDate} />}
+              <KVRow label={t('Headcount', 'Headcount')} value={String(ownHeadcount)} />
               <ManagerRow label={t('Atasan Langsung', 'Direct Manager')} manager={manager} headcount={managerHeadcount} />
             </div>
           </div>
