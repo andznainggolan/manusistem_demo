@@ -108,6 +108,15 @@ export default function EmployeeProfilePage() {
   const activeRecordId = salaryRecords.find(r =>
     r.effectiveDate <= today && (!r.effectiveEndDate || r.effectiveEndDate >= today))?.id
 
+  // No dated record yet? Show a synthetic "Hire" baseline (from the
+  // employee's join date + current static fields) instead of a blank
+  // Effective Dates block, so there's always a first entry with an Action.
+  const displayAssignment = activeAssignment || {
+    action: 'Hire', reason: 'New Hire', effectiveDate: emp.joinDate || today, effectiveEndDate: null, effectiveSeq: 1,
+    companyId: emp.companyId, departmentId: emp.departmentId, positionId: emp.positionId, gradeId: emp.gradeId,
+    employmentType: emp.employmentType,
+  }
+
   const eff = activeAssignment || {}
   const company        = companies.find(c => c.id === (eff.companyId ?? emp.companyId))
   const division       = divisions.find(d => d.id === emp.divisionId)
@@ -258,14 +267,16 @@ export default function EmployeeProfilePage() {
 
             <div className='border-t border-gray-100 mt-6 pt-5'>
               <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Tanggal Efektif', 'Effective Dates')}</h3>
-              {activeAssignment ? (
-                <div className='grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-5'>
-                  <KVRow label={t('Efektif Mulai','Effective Start Date')} value={activeAssignment.effectiveDate} />
-                  <KVRow label={t('Efektif Sampai','Effective End Date')}  value={activeAssignment.effectiveEndDate} />
-                  <KVRow label={t('Sequence','Effective Sequence')}        value={activeAssignment.effectiveSeq} />
-                </div>
-              ) : (
-                <p className='text-sm text-gray-400'>{t('Belum ada riwayat penempatan bertanggal — data di atas masih dari data karyawan statis.','No dated assignment record yet — the data above still comes from the employee\'s static fields.')}</p>
+              <div className='grid grid-cols-1 sm:grid-cols-4 gap-x-8 gap-y-5'>
+                <KVRow label={t('Aksi','Action')}                          value={displayAssignment.action} />
+                <KVRow label={t('Efektif Mulai','Effective Start Date')}   value={displayAssignment.effectiveDate} />
+                <KVRow label={t('Efektif Sampai','Effective End Date')}    value={displayAssignment.effectiveEndDate} />
+                <KVRow label={t('Sequence','Effective Sequence')}          value={displayAssignment.effectiveSeq} />
+              </div>
+              {!activeAssignment && (
+                <p className='text-xs text-gray-400 mt-3'>
+                  {t('Belum ada riwayat penempatan tersimpan — nilai di atas adalah default dari data Hire karyawan ini.','No assignment record saved yet — the values above default from this employee\'s Hire data.')}
+                </p>
               )}
               <a href='#' onClick={(e)=>{e.preventDefault(); setTab('History')}} className='inline-block mt-3 text-xs font-semibold text-red-700 hover:underline'>
                 {t('Lihat semua riwayat →','View full history →')}
