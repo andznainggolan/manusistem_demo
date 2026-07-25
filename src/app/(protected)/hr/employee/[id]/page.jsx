@@ -252,8 +252,7 @@ export default function EmployeeProfilePage() {
           <div>
             {/* Effective Start/End/Sequence — the primary key of this record */}
             <div className='rounded-xl p-4 mb-6' style={{ background: 'linear-gradient(135deg,#fdecea,#fdf3ea)', border: '1px solid #f5d5d0' }}>
-              <div className='flex items-center justify-between mb-3'>
-                <h3 className='text-xs font-bold text-red-800 uppercase tracking-wide'>{t('Tanggal Efektif (Primary Key)', 'Effective Dates (Primary Key)')}</h3>
+              <div className='flex items-center justify-end mb-3'>
                 <ActionButton size='sm' icon='➕' onClick={openAddRecord}>{t('Tambah Riwayat','Add Record')}</ActionButton>
               </div>
               <div className='grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-4'>
