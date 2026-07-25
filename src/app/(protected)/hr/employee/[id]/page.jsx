@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useEmployeeStore, ACTION_COLOR } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
-import { usePayrollStore, formatRp } from '@/store/payrollStore'
+import { usePayrollStore, formatRp, sumVariableAllowances } from '@/store/payrollStore'
 import { PTKP_STATUSES } from '@/lib/payrollCalc'
 import { useT } from '@/store/languageStore'
 import { FormField, Input, Select, ActionButton } from '@/components/ui'
@@ -92,10 +92,20 @@ export default function EmployeeProfilePage() {
   const position     = positions.find(p => p.id === emp.positionId)
   const manager      = employees.find(e => e.id === emp.managerId)
 
+  const addVariableRow = () =>
+    setSalaryForm(f => ({ ...f, variableAllowances: [...(f.variableAllowances||[]), { id: Date.now(), label: '', amount: '' }] }))
+  const updateVariableRow = (id, patch) =>
+    setSalaryForm(f => ({ ...f, variableAllowances: f.variableAllowances.map(r => r.id === id ? { ...r, ...patch } : r) }))
+  const removeVariableRow = (id) =>
+    setSalaryForm(f => ({ ...f, variableAllowances: f.variableAllowances.filter(r => r.id !== id) }))
+
   const saveSalary = () => {
     setProfile(emp.id, {
       basic: Number(salaryForm.basic) || 0,
       allowance: Number(salaryForm.allowance) || 0,
+      variableAllowances: (salaryForm.variableAllowances || [])
+        .filter(r => r.label.trim() || Number(r.amount))
+        .map(r => ({ id: r.id, label: r.label.trim(), amount: Number(r.amount) || 0 })),
       ptkpStatus: salaryForm.ptkpStatus,
       npwp: salaryForm.npwp,
       bpjsKesehatan: salaryForm.bpjsKesehatan,
@@ -370,6 +380,54 @@ export default function EmployeeProfilePage() {
             </div>
 
             <div className='border-t border-gray-100 pt-5'>
+              <div className='flex items-center justify-between mb-3'>
+                <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide'>{t('Tunjangan Variable', 'Variable Allowances')}</h3>
+                <button onClick={addVariableRow} type='button' className='text-xs font-semibold text-red-700 hover:underline flex items-center gap-1'>
+                  <Icon e='➕' size={11} /> {t('Tambah','Add')}
+                </button>
+              </div>
+              {(!salaryForm.variableAllowances || salaryForm.variableAllowances.length === 0) ? (
+                <p className='text-sm text-gray-400'>{t('Belum ada tunjangan variable.','No variable allowances yet.')}</p>
+              ) : (
+                <div className='overflow-x-auto'>
+                  <table className='w-full text-sm'>
+                    <thead>
+                      <tr className='bg-gray-50'>
+                        <th className='px-3 py-2 text-left text-xs font-bold text-gray-500'>{t('Nama Tunjangan','Allowance Name')}</th>
+                        <th className='px-3 py-2 text-right text-xs font-bold text-gray-500'>{t('Jumlah','Amount')}</th>
+                        <th className='px-3 py-2 w-8'></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {salaryForm.variableAllowances.map(row => (
+                        <tr key={row.id} className='border-t border-gray-100'>
+                          <td className='px-3 py-2'>
+                            <Input value={row.label} placeholder={t('mis. Uang Makan','e.g. Meal Allowance')}
+                              onChange={e=>updateVariableRow(row.id, { label: e.target.value })} />
+                          </td>
+                          <td className='px-3 py-2'>
+                            <Input type='number' value={row.amount} placeholder='0'
+                              onChange={e=>updateVariableRow(row.id, { amount: e.target.value })} />
+                          </td>
+                          <td className='px-3 py-2 text-center'>
+                            <button onClick={()=>removeVariableRow(row.id)} type='button' className='text-gray-400 hover:text-red-600' aria-label={t('Hapus baris','Remove row')}>
+                              <Icon e='🗑️' size={13} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      <tr className='border-t-2 border-gray-200'>
+                        <td className='px-3 py-2 font-semibold text-gray-700'>{t('Total Tunjangan Variable','Total Variable Allowances')}</td>
+                        <td className='px-3 py-2 text-right font-semibold text-gray-800'>{formatRp(sumVariableAllowances(salaryForm.variableAllowances))}</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            <div className='border-t border-gray-100 pt-5'>
               <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Pajak & BPJS', 'Tax & BPJS')}</h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 mb-4'>
                 <FormField label='PTKP'>
@@ -410,8 +468,8 @@ export default function EmployeeProfilePage() {
 
             <p className='text-xs text-gray-400 border-t border-gray-100 pt-4'>
               {t(
-                `Data ini adalah sumber yang sama dengan Payroll Setup — akan otomatis dipakai saat generate payroll untuk periode berikutnya. Estimasi gaji bruto saat ini: ${formatRp(Number(salaryForm.basic || 0) + Number(salaryForm.allowance || 0))}/bulan.`,
-                `This is the same data as Payroll Setup — it will be used automatically when payroll is generated for the next period. Current gross estimate: ${formatRp(Number(salaryForm.basic || 0) + Number(salaryForm.allowance || 0))}/month.`
+                `Data ini adalah sumber yang sama dengan Payroll Setup — akan otomatis dipakai saat generate payroll untuk periode berikutnya. Estimasi gaji bruto saat ini: ${formatRp(Number(salaryForm.basic || 0) + Number(salaryForm.allowance || 0) + sumVariableAllowances(salaryForm.variableAllowances))}/bulan.`,
+                `This is the same data as Payroll Setup — it will be used automatically when payroll is generated for the next period. Current gross estimate: ${formatRp(Number(salaryForm.basic || 0) + Number(salaryForm.allowance || 0) + sumVariableAllowances(salaryForm.variableAllowances))}/month.`
               )}
             </p>
           </div>

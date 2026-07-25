@@ -139,6 +139,7 @@ export default function PayrollRunPage() {
             <div className='space-y-1 text-sm mb-3'>
               <Row label={t('Gaji Pokok','Basic Salary')} value={detail.basic} />
               <Row label={t('Tunjangan Tetap','Fixed Allowance')} value={detail.allowance} />
+              {detail.variableAllowance ? <Row label={t('Tunjangan Variable','Variable Allowance')} value={detail.variableAllowance} /> : null}
               <Row label={t('Total Bruto','Gross Total')} value={detail.gross} bold />
             </div>
 

@@ -40,9 +40,11 @@ function defaultBasicFor(emp) {
 }
 
 const EMPTY_PROFILE = {
-  basic: null, allowance: null, ptkpStatus: 'TK/0', npwp: true,
+  basic: null, allowance: null, variableAllowances: [], ptkpStatus: 'TK/0', npwp: true,
   bpjsKesehatan: true, bpjsTk: true,
 }
+
+export const sumVariableAllowances = (rows) => (rows || []).reduce((s, r) => s + (Number(r.amount) || 0), 0)
 
 export const usePayrollStore = create(persist(
   (set, get) => ({
@@ -78,8 +80,9 @@ export const usePayrollStore = create(persist(
         const profile = get().getProfile(emp.id)
         const basic = profile.basic ?? defaultBasicFor(emp)
         const allowance = profile.allowance || 0
+        const variableAllowance = sumVariableAllowances(profile.variableAllowances)
         const calc = calcPayslip({
-          basic, allowance, overtime: 0, otherDeduction: 0,
+          basic, allowance, variableAllowance, overtime: 0, otherDeduction: 0,
           ptkpStatus: profile.ptkpStatus, hasNpwp: profile.npwp,
           bpjsKesehatan: profile.bpjsKesehatan, bpjsTk: profile.bpjsTk,
           settings: s.settings,
@@ -87,6 +90,7 @@ export const usePayrollStore = create(persist(
         rows.push({
           id: _id++, empId: emp.id, name: emp.name, period, status: 'Draft',
           ptkpStatus: profile.ptkpStatus, npwp: profile.npwp,
+          variableAllowances: profile.variableAllowances,
           ...calc,
         })
       })

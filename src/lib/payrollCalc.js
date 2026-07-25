@@ -95,11 +95,11 @@ export function calcPph21Monthly({ grossMonthly, ptkpStatus, hasNpwp, jhtEmploye
 
 // Full payslip breakdown for one employee for one period.
 export function calcPayslip({
-  basic, allowance = 0, overtime = 0, otherDeduction = 0,
+  basic, allowance = 0, variableAllowance = 0, overtime = 0, otherDeduction = 0,
   ptkpStatus = 'TK/0', hasNpwp = true, bpjsKesehatan = true, bpjsTk = true,
   settings = DEFAULT_PAYROLL_SETTINGS,
 }) {
-  const gross = basic + allowance + overtime
+  const gross = basic + allowance + variableAllowance + overtime
 
   const kesehatan = bpjsKesehatan ? calcBpjsKesehatan(basic, settings) : { employee: 0, employer: 0 }
   const jht       = bpjsTk        ? calcJht(basic, settings)           : { employee: 0, employer: 0 }
@@ -117,7 +117,7 @@ export function calcPayslip({
   const employerCost = gross + kesehatan.employer + jht.employer + jp.employer + jkk + jkm
 
   return {
-    basic, allowance, overtime, gross,
+    basic, allowance, variableAllowance, overtime, gross,
     bpjsKesehatanEmployee: kesehatan.employee, bpjsKesehatanEmployer: kesehatan.employer,
     jhtEmployee: jht.employee, jhtEmployer: jht.employer,
     jpEmployee: jp.employee, jpEmployer: jp.employer,

@@ -22,6 +22,7 @@ export default function PayslipPage() {
   const earnings = detail ? [
     { label: t('Gaji Pokok','Basic Salary'), value: detail.basic },
     { label: t('Tunjangan Tetap','Fixed Allowance'), value: detail.allowance },
+    ...(detail.variableAllowance ? [{ label: t('Tunjangan Variable','Variable Allowance'), value: detail.variableAllowance }] : []),
     ...(detail.overtime ? [{ label: t('Lembur','Overtime'), value: detail.overtime }] : []),
   ] : []
 
