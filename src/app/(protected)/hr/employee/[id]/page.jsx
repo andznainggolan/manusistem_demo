@@ -110,6 +110,9 @@ export default function EmployeeProfilePage() {
 
   const manager      = employees.find(e => e.id === emp.managerId)
   const managerHeadcount = manager ? employees.filter(e => e.managerId === manager.id && e.status === 'Active').length : 0
+  const directSubordinates = employees
+    .filter(e => e.managerId === emp.id && e.status === 'Active')
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   // The employee's unified History is the single source of truth for both
   // job assignment (company/department/position/grade/employment type) and
@@ -344,6 +347,38 @@ export default function EmployeeProfilePage() {
               {emp.endDate && <KVRow label={t('Tanggal Akhir', 'End Date')} value={emp.endDate} />}
               <KVRow label={t('Headcount Title', 'Headcount Title')} value={headcountTitle} />
               <ManagerRow label={t('Atasan Langsung', 'Direct Manager')} manager={manager} headcount={managerHeadcount} />
+            </div>
+
+            <div className='border-t border-gray-100 mt-6 pt-5'>
+              <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>
+                {t('Bawahan Langsung', 'Direct Subordinates')} ({directSubordinates.length})
+              </h3>
+              {directSubordinates.length === 0 ? (
+                <p className='text-sm text-gray-400'>{t('Tidak ada bawahan langsung.','No direct subordinates.')}</p>
+              ) : (
+                <div className='overflow-x-auto'>
+                  <table className='w-full text-sm'>
+                    <thead>
+                      <tr className='bg-gray-50'>
+                        <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Nama','Name')}</th>
+                        <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Posisi','Position')}</th>
+                        <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Employee Number','Employee Number')}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {directSubordinates.map(sub => (
+                        <tr key={sub.id} className='border-t border-gray-100 hover:bg-gray-50'>
+                          <td className='px-3 py-2.5'>
+                            <a href={`/hr/employee/${sub.id}`} className='font-semibold text-red-700 hover:underline'>{sub.name}</a>
+                          </td>
+                          <td className='px-3 py-2.5 text-gray-600'>{sub.position || positions.find(p => p.id === sub.positionId)?.name || '—'}</td>
+                          <td className='px-3 py-2.5 text-gray-500 font-mono text-xs'>{sub.nik}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         )}
