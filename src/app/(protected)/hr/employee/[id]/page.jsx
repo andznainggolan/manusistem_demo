@@ -43,6 +43,19 @@ function KVRow({ label, value }) {
   )
 }
 
+function ManagerRow({ label, manager, headcount }) {
+  if (!manager) return <KVRow label={label} value={null} />
+  return (
+    <div className='flex flex-col gap-0.5'>
+      <span className='text-xs text-gray-400 font-medium'>{label}</span>
+      <a href={`/hr/employee/${manager.id}`} className='text-sm font-semibold text-red-700 hover:underline'>
+        {manager.name}
+      </a>
+      <span className='text-xs text-gray-500'>{manager.nik} · Headcount: {headcount}</span>
+    </div>
+  )
+}
+
 const todayStr = () => new Date().toISOString().slice(0, 10)
 
 // Sentinel "no end date yet" value (instead of null/blank) — standard
@@ -96,6 +109,7 @@ export default function EmployeeProfilePage() {
   }
 
   const manager      = employees.find(e => e.id === emp.managerId)
+  const managerHeadcount = manager ? employees.filter(e => e.managerId === manager.id && e.status === 'Active').length : 0
 
   // The employee's unified History is the single source of truth for both
   // job assignment (company/department/position/grade/employment type) and
@@ -310,7 +324,7 @@ export default function EmployeeProfilePage() {
               <KVRow label={t('Tipe Kepegawaian', 'Employment Type')} value={employmentTypeEff} />
               <KVRow label={t('Tanggal Bergabung', 'Join Date')} value={emp.joinDate} />
               {emp.endDate && <KVRow label={t('Tanggal Akhir', 'End Date')} value={emp.endDate} />}
-              <KVRow label={t('Atasan Langsung', 'Direct Manager')} value={manager?.name} />
+              <ManagerRow label={t('Atasan Langsung', 'Direct Manager')} manager={manager} headcount={managerHeadcount} />
             </div>
           </div>
         )}
