@@ -110,7 +110,6 @@ export default function EmployeeProfilePage() {
 
   const manager      = employees.find(e => e.id === emp.managerId)
   const managerHeadcount = manager ? employees.filter(e => e.managerId === manager.id && e.status === 'Active').length : 0
-  const ownHeadcount = employees.filter(e => e.managerId === emp.id && e.status === 'Active').length
 
   // The employee's unified History is the single source of truth for both
   // job assignment (company/department/position/grade/employment type) and
@@ -144,9 +143,25 @@ export default function EmployeeProfilePage() {
   const division       = divisions.find(d => d.id === emp.divisionId)
   const businessUnit   = businessUnits.find(b => b.id === emp.businessUnitId)
   const department     = departments.find(d => d.id === (eff.departmentId ?? emp.departmentId))
-  const position       = positions.find(p => p.id === (eff.positionId ?? emp.positionId))
+  const positionIdEff   = eff.positionId ?? emp.positionId
+  const position       = positions.find(p => p.id === positionIdEff)
   const gradeIdEff      = eff.gradeId ?? emp.gradeId
   const employmentTypeEff = eff.employmentType || emp.employmentType
+
+  // Headcount Title: a unique seat label for this position — "Software
+  // Engineer" (Position Title) becomes "Software Engineer A" for the first
+  // active employee holding that position, "Software Engineer B" for the
+  // second, and so on (spreadsheet-style lettering: ..., Y, Z, AA, AB, ...).
+  const toSeatLetter = (n) => {
+    let s = '', i = n + 1
+    while (i > 0) { const rem = (i - 1) % 26; s = String.fromCharCode(65 + rem) + s; i = Math.floor((i - 1) / 26) }
+    return s
+  }
+  const positionPeers = positionIdEff
+    ? employees.filter(e => e.positionId === positionIdEff && e.status === 'Active').sort((a, b) => a.id - b.id)
+    : []
+  const seatIndex = positionPeers.findIndex(e => e.id === emp.id)
+  const headcountTitle = position && seatIndex >= 0 ? `${position.name} ${toSeatLetter(seatIndex)}` : null
 
   const PHOTO_MAX_BYTES = 2 * 1024 * 1024 // 2 MB
   const handlePhotoFile = (file) => {
@@ -325,7 +340,7 @@ export default function EmployeeProfilePage() {
               <KVRow label={t('Tipe Kepegawaian', 'Employment Type')} value={employmentTypeEff} />
               <KVRow label={t('Tanggal Bergabung', 'Join Date')} value={emp.joinDate} />
               {emp.endDate && <KVRow label={t('Tanggal Akhir', 'End Date')} value={emp.endDate} />}
-              <KVRow label={t('Headcount', 'Headcount')} value={String(ownHeadcount)} />
+              <KVRow label={t('Headcount Title', 'Headcount Title')} value={headcountTitle} />
               <ManagerRow label={t('Atasan Langsung', 'Direct Manager')} manager={manager} headcount={managerHeadcount} />
             </div>
           </div>
