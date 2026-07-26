@@ -1,7 +1,7 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'New Kappabel Prototype',
+  title: 'Manusistem',
 }
 
 export default function RootLayout({ children }) {
