@@ -222,32 +222,135 @@ function ManagerChartWidget({ leaves, team, t }) {
   )
 }
 
+/* ── HR: shared bucketing for the headcount & demography charts ─────────────── */
+// Count `rows` by whatever key `keyOf` returns, largest first, folding the tail
+// past topN into a single "Lainnya" row — an org with hundreds of departments
+// would otherwise render an unreadable wall of bars.
+function bucketCounts(rows, keyOf, t, topN = 7) {
+  const unset = t('Tidak diisi', 'Not set')
+  const counts = {}
+  rows.forEach(r => {
+    const k = keyOf(r) || unset
+    counts[k] = (counts[k] || 0) + 1
+  })
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1])
+  const top = sorted.slice(0, topN)
+  const rest = sorted.slice(topN).reduce((sum, [, v]) => sum + v, 0)
+  if (rest > 0) top.push([t('Lainnya', 'Other'), rest])
+  return top.map(([name, value]) => ({ name, value, color: '#2a78d6' }))
+}
+
+const barHeight = (data) => Math.max(140, data.length * 32)
+
 /* ── HR: headcount by department, org-wide ───────────────────────────────────── */
 function HRChartWidget({ employees, departments, t }) {
   // Legacy seed rows carry a plain `department` string; employees added since
-  // only have `departmentId`, resolved against Struktur Organisasi — fall back
-  // to the string, then bucket anything still unresolved into "Lainnya".
-  const deptName = (e) => departments.find(d => d.id === e.departmentId)?.name || e.department || null
-  const counts = {}
-  employees.filter(e => e.status === 'Active').forEach(e => {
-    const name = deptName(e) || t('Lainnya', 'Other')
-    counts[name] = (counts[name] || 0) + 1
-  })
-  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1])
-  // Cap the chart at the top 7 departments — an org with dozens/hundreds of
-  // departments would otherwise render an unreadable wall of bars.
-  const TOP_N = 7
-  const top = sorted.slice(0, TOP_N)
-  const otherTotal = sorted.slice(TOP_N).reduce((sum, [, v]) => sum + v, 0)
-  if (otherTotal > 0) top.push([t('Lainnya', 'Other'), otherTotal])
-  const data = top.map(([name, value]) => ({ name, value, color: '#2a78d6' }))
+  // only have `departmentId`, resolved against Struktur Organisasi.
+  const data = bucketCounts(
+    employees.filter(e => e.status === 'Active'),
+    (e) => departments.find(d => d.id === e.departmentId)?.name || e.department,
+    t,
+  )
   return (
     <MiniBarChart
       icon={CHART_ICON(<><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/></>)}
       title={t('Grafik Headcount per Departemen', 'Headcount by Department')}
       data={data}
       emptyLabel={t('Belum ada data karyawan', 'No employee data yet')}
-      height={Math.max(140, data.length * 32)}
+      height={barHeight(data)}
+    />
+  )
+}
+
+/* ── HR: employee demography ─────────────────────────────────────────────────── */
+const IC_DEMOGRAPHY = <><path d='M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75'/></>
+
+function DemographyGenderWidget({ employees, t }) {
+  const data = bucketCounts(employees.filter(e => e.status === 'Active'), (e) => e.gender, t)
+  return (
+    <MiniBarChart
+      icon={CHART_ICON(IC_DEMOGRAPHY)}
+      title={t('Demografi — Jenis Kelamin', 'Demography — Gender')}
+      data={data}
+      emptyLabel={t('Belum ada data karyawan', 'No employee data yet')}
+      height={barHeight(data)}
+    />
+  )
+}
+
+function DemographyReligionWidget({ employees, t }) {
+  const data = bucketCounts(employees.filter(e => e.status === 'Active'), (e) => e.religion, t)
+  return (
+    <MiniBarChart
+      icon={CHART_ICON(IC_DEMOGRAPHY)}
+      title={t('Demografi — Agama', 'Demography — Religion')}
+      data={data}
+      emptyLabel={t('Belum ada data karyawan', 'No employee data yet')}
+      height={barHeight(data)}
+    />
+  )
+}
+
+// Age bands stay in their natural order (never sorted by size) — an ordered
+// scale read out of sequence is misleading.
+const AGE_BANDS = [
+  { name: '< 25',  test: (a) => a < 25 },
+  { name: '25–34', test: (a) => a >= 25 && a <= 34 },
+  { name: '35–44', test: (a) => a >= 35 && a <= 44 },
+  { name: '45–54', test: (a) => a >= 45 && a <= 54 },
+  { name: '55+',   test: (a) => a >= 55 },
+]
+
+function ageOf(birthDate) {
+  if (!birthDate) return null
+  const b = new Date(birthDate)
+  if (Number.isNaN(b.getTime())) return null
+  const now = new Date()
+  let age = now.getFullYear() - b.getFullYear()
+  const m = now.getMonth() - b.getMonth()
+  if (m < 0 || (m === 0 && now.getDate() < b.getDate())) age--
+  return age >= 0 && age < 120 ? age : null
+}
+
+function DemographyAgeWidget({ employees, t }) {
+  const active = employees.filter(e => e.status === 'Active')
+  const ages = active.map(e => ageOf(e.birthDate))
+  const data = AGE_BANDS.map(band => ({
+    name: band.name,
+    value: ages.filter(a => a != null && band.test(a)).length,
+    color: '#2a78d6',
+  }))
+  const unknown = ages.filter(a => a == null).length
+  if (unknown > 0) data.push({ name: t('Tidak diisi', 'Not set'), value: unknown, color: '#2a78d6' })
+  return (
+    <MiniBarChart
+      icon={CHART_ICON(IC_DEMOGRAPHY)}
+      title={t('Demografi — Usia', 'Demography — Age')}
+      data={data}
+      emptyLabel={t('Belum ada data karyawan', 'No employee data yet')}
+      height={barHeight(data)}
+    />
+  )
+}
+
+function DemographyCompanyWidget({ employees, companies, t }) {
+  // Label by the short company code (AG, AM, …) — the legal names are far too
+  // long to sit in a chart's category axis.
+  const data = bucketCounts(
+    employees.filter(e => e.status === 'Active'),
+    (e) => {
+      const company = companies.find(co => co.id === e.companyId)
+      return company ? (company.companyCode || company.name) : null
+    },
+    t,
+  )
+  return (
+    <MiniBarChart
+      icon={CHART_ICON(<><rect x='3' y='7' width='18' height='14' rx='2'/><path d='M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2'/><line x1='3' y1='13' x2='21' y2='13'/></>)}
+      title={t('Demografi — Perusahaan', 'Demography — Company')}
+      data={data}
+      emptyLabel={t('Belum ada data karyawan', 'No employee data yet')}
+      height={barHeight(data)}
     />
   )
 }
@@ -311,7 +414,7 @@ export default function DashboardPage() {
   const { currentUser, userList } = useAuthStore()
   const { leaves, leaveTypes } = useLeaveStore()
   const { employees } = useEmployeeStore()
-  const { departments } = useStructureStore()
+  const { departments, companies } = useStructureStore()
   const { onboardings } = useOnboardingStore()
   const hayStore = useHayStore()
   const pipStore = usePipStore()
@@ -628,7 +731,11 @@ export default function DashboardPage() {
     leaveBalance:   <LeaveBalanceWidget key='leaveBalance' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />,
     leaveChart:     <EmployeeChartWidget key='leaveChart' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />,
     teamLeaveChart: <ManagerChartWidget key='teamLeaveChart' leaves={leaves} team={myTeam} t={t} />,
-    headcountChart: <HRChartWidget key='headcountChart' employees={employees} departments={departments} t={t} />,
+    headcountChart:     <HRChartWidget key='headcountChart' employees={employees} departments={departments} t={t} />,
+    demographyGender:   <DemographyGenderWidget key='demographyGender' employees={employees} t={t} />,
+    demographyReligion: <DemographyReligionWidget key='demographyReligion' employees={employees} t={t} />,
+    demographyAge:      <DemographyAgeWidget key='demographyAge' employees={employees} t={t} />,
+    demographyCompany:  <DemographyCompanyWidget key='demographyCompany' employees={employees} companies={companies} t={t} />,
     userRoleChart:  <SuperadminChartWidget key='userRoleChart' userList={userList} t={t} />,
   }
 

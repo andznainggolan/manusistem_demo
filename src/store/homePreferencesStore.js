@@ -24,6 +24,8 @@ const DEFAULT_PREFS = {
     teamLeaveChart: true,
     // HR
     headcountChart: true,
+    demographyGender: true, demographyReligion: true,
+    demographyAge: true, demographyCompany: true,
     // Superadmin
     userRoleChart: true,
   },
@@ -39,6 +41,8 @@ const DEFAULT_PREFS = {
     timeCard: 1, leaveBalance: 2, leaveChart: 3,
     teamLeaveChart: 1,
     headcountChart: 1,
+    demographyGender: 2, demographyReligion: 3,
+    demographyAge: 4, demographyCompany: 5,
     userRoleChart: 1,
   },
 }

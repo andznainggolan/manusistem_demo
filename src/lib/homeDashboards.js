@@ -35,7 +35,11 @@ export const DASHBOARDS = [
     label: ['HR Dashboard', 'HR Dashboard'],
     hint: ['Data kepegawaian seluruh organisasi.', 'Organisation-wide people data.'],
     widgets: [
-      { key: 'headcountChart', label: ['Grafik Headcount per Departemen', 'Headcount by Department'] },
+      { key: 'headcountChart',      label: ['Grafik Headcount per Departemen', 'Headcount by Department'] },
+      { key: 'demographyGender',    label: ['Demografi — Jenis Kelamin', 'Demography — Gender'] },
+      { key: 'demographyReligion',  label: ['Demografi — Agama', 'Demography — Religion'] },
+      { key: 'demographyAge',       label: ['Demografi — Usia', 'Demography — Age'] },
+      { key: 'demographyCompany',   label: ['Demografi — Perusahaan', 'Demography — Company'] },
     ],
   },
   {
