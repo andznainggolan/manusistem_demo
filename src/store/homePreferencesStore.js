@@ -3,28 +3,79 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
 
 // Per-user preferences for what shows on the home/dashboard page — set from
-// the "Preferensi Beranda" (Homepage Preferences) page, reachable via the
-// icon next to the user's name in the topbar.
+// the "Preferensi Beranda" (Homepage Preferences) page, reachable from the
+// user menu in the topbar.
+//
+// The home page is composed of top-level sections: Menu Shortcut, Things To
+// Do, and four role dashboards (ESS / MSS / HR / Superadmin). Which dashboards
+// a user may see at all is a role question answered in dashboard/page.jsx —
+// these preferences only decide what an eligible user chooses to show.
 const DEFAULT_PREFS = {
   showMenuShortcuts: true,
   showThingsToDo: true,
-  showDashboardWidgets: true,
-  // employeeChart/managerChart/hrChart/superadminChart are graphic widgets —
-  // only the one matching the viewer's own role ever renders (see
-  // ROLE_CHART in dashboard/page.jsx), so they can share defaults freely.
+  showEssDashboard: true,
+  showMssDashboard: true,
+  showHrDashboard: true,
+  showSuperadminDashboard: true,
   widgets: {
-    timeCard: true, leaveBalance: true,
-    employeeChart: true, managerChart: true, hrChart: true, superadminChart: true,
+    // ESS
+    timeCard: true, leaveBalance: true, leaveChart: true,
+    // MSS
+    teamLeaveChart: true,
+    // HR
+    headcountChart: true,
+    // Superadmin
+    userRoleChart: true,
   },
   hiddenShortcutIds: [],
-  // Display order — smaller number = higher up. All three top-level sections
-  // (menuShortcuts/thingsToDo/dashboardWidgets) stack in one ordered column;
-  // widgetOrder.* then reorders within the "Dashboard Widgets" section itself.
-  order: { menuShortcuts: 1, thingsToDo: 2, dashboardWidgets: 3 },
-  widgetOrder: {
-    timeCard: 1, leaveBalance: 2,
-    employeeChart: 3, managerChart: 3, hrChart: 3, superadminChart: 3,
+  // Display order — smaller number = higher up. All top-level sections stack
+  // in one ordered column; widgetOrder.* then reorders widgets *within* their
+  // own dashboard (each dashboard numbers its widgets from 1 independently).
+  order: {
+    menuShortcuts: 1, thingsToDo: 2,
+    essDashboard: 3, mssDashboard: 4, hrDashboard: 5, superadminDashboard: 6,
   },
+  widgetOrder: {
+    timeCard: 1, leaveBalance: 2, leaveChart: 3,
+    teamLeaveChart: 1,
+    headcountChart: 1,
+    userRoleChart: 1,
+  },
+}
+
+// Drop undefined values so a migration never overwrites a default with one.
+const defined = (obj) => Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined))
+
+// Prefs saved before the dashboard split had a single "Dashboard Widget"
+// section (showDashboardWidgets) holding every widget, with the role charts
+// keyed employeeChart/managerChart/hrChart/superadminChart. Carry that state
+// across rather than silently resetting a user's toggles.
+function migrate(saved) {
+  if (saved.showDashboardWidgets === undefined) return saved
+  const { showDashboardWidgets: shown, ...rest } = saved
+  const w = saved.widgets || {}
+  const wo = saved.widgetOrder || {}
+  return {
+    ...rest,
+    showEssDashboard: shown,
+    showMssDashboard: shown,
+    showHrDashboard: shown,
+    showSuperadminDashboard: shown,
+    widgets: defined({
+      timeCard: w.timeCard, leaveBalance: w.leaveBalance,
+      leaveChart: w.employeeChart,
+      teamLeaveChart: w.managerChart,
+      headcountChart: w.hrChart,
+      userRoleChart: w.superadminChart,
+    }),
+    // The old single section's position becomes the ESS dashboard's; the other
+    // three fall to their defaults, right after it.
+    order: defined({ ...(saved.order || {}), essDashboard: saved.order?.dashboardWidgets }),
+    widgetOrder: defined({
+      timeCard: wo.timeCard, leaveBalance: wo.leaveBalance,
+      leaveChart: wo.employeeChart,
+    }),
+  }
 }
 
 export const useHomePreferencesStore = create(persist(
@@ -32,7 +83,7 @@ export const useHomePreferencesStore = create(persist(
     prefs: {}, // userId -> preferences
 
     getPrefs: (userId) => {
-      const saved = get().prefs[userId] || {}
+      const saved = migrate(get().prefs[userId] || {})
       return {
         ...DEFAULT_PREFS,
         ...saved,

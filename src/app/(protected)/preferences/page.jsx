@@ -5,6 +5,8 @@ import { useAuthStore } from '@/store/authStore'
 import { useHomePreferencesStore } from '@/store/homePreferencesStore'
 import { dbStorage } from '@/lib/dbStorage'
 import { ALL_SHORTCUTS, SICONS } from '@/lib/dashboardShortcuts'
+import { accessibleDashboards } from '@/lib/homeDashboards'
+import { useEmployeeStore } from '@/store/employeeStore'
 import { useT } from '@/store/languageStore'
 import { PageHeader, SectionCard, ActionButton } from '@/components/ui'
 
@@ -45,20 +47,18 @@ export default function PreferencesPage() {
   const t = useT()
   const { currentUser } = useAuthStore()
   const { getPrefs, updatePrefs } = useHomePreferencesStore()
+  const { employees } = useEmployeeStore()
 
   const uid = currentUser?.id
   const role = currentUser?.role || 'employee'
   const shortcuts = ALL_SHORTCUTS[role] || ALL_SHORTCUTS.employee
 
-  // Each role gets one graphic dashboard widget — keyed to match ROLE_CHART
-  // in dashboard/page.jsx, so this is the only toggle/order control for it.
-  const ROLE_CHART_META = {
-    employee:   { key: 'employeeChart',   label: t('Grafik Cuti Saya', 'My Leave Chart') },
-    manager:    { key: 'managerChart',    label: t('Grafik Status Approval Tim', "Team's Leave Status Chart") },
-    hr:         { key: 'hrChart',         label: t('Grafik Headcount per Departemen', 'Headcount by Department Chart') },
-    superadmin: { key: 'superadminChart', label: t('Grafik Distribusi Role Pengguna', 'User Role Distribution Chart') },
-  }
-  const chartMeta = ROLE_CHART_META[role] || ROLE_CHART_META.employee
+  // Only offer the dashboards this user may actually see on Home — same
+  // gating dashboard/page.jsx applies when rendering them.
+  const myDashboards = accessibleDashboards({
+    role,
+    hasDirectReports: employees.some(e => e.managerId === uid && e.status === 'Active'),
+  })
 
   // Buffered draft — nothing is written to the store until "Simpan" is
   // pressed. Initialized from the saved prefs, and re-synced once dbStorage
@@ -134,44 +134,34 @@ export default function PreferencesPage() {
           order={draft.order.thingsToDo}
           onOrderChange={(v) => setOrder('thingsToDo', v)}
         />
-        <Toggle t={t}
-          label={t('Dashboard Widget', 'Dashboard Widgets')}
-          hint={t('Time Card, Leave Balance, dan grafik sesuai role kamu.', 'Time Card, Leave Balance, and your role\'s graphic widget.')}
-          checked={draft.showDashboardWidgets}
-          onChange={(v) => setDraft(d => ({ ...d, showDashboardWidgets: v }))}
-          order={draft.order.dashboardWidgets}
-          onOrderChange={(v) => setOrder('dashboardWidgets', v)}
-        />
+        {myDashboards.map(d => (
+          <Toggle key={d.id} t={t}
+            label={t(d.label[0], d.label[1])}
+            hint={t(d.hint[0], d.hint[1])}
+            checked={draft[d.showKey]}
+            onChange={(v) => setDraft(dr => ({ ...dr, [d.showKey]: v }))}
+            order={draft.order[d.orderKey]}
+            onOrderChange={(v) => setOrder(d.orderKey, v)}
+          />
+        ))}
       </SectionCard>
 
-      {draft.showDashboardWidgets && (
-        <SectionCard title={t('Widget Dashboard', 'Dashboard Widgets')}
-          subtitle={t('Urutan tampil di antara widget lainnya.', 'Order among the other widgets.')}
+      {myDashboards.filter(d => draft[d.showKey]).map(d => (
+        <SectionCard key={d.id}
+          title={t(`Widget ${d.label[0]}`, `${d.label[1]} Widgets`)}
+          subtitle={t('Urutan tampil di dalam dashboard ini.', 'Order within this dashboard.')}
           className='mb-5' bodyClass='divide-y divide-gray-100'>
-          <Toggle t={t}
-            label='My Time Card'
-            checked={draft.widgets.timeCard}
-            onChange={(v) => setWidget('timeCard', v)}
-            order={draft.widgetOrder.timeCard}
-            onOrderChange={(v) => setWidgetOrder('timeCard', v)}
-          />
-          <Toggle t={t}
-            label='Leave Balance'
-            checked={draft.widgets.leaveBalance}
-            onChange={(v) => setWidget('leaveBalance', v)}
-            order={draft.widgetOrder.leaveBalance}
-            onOrderChange={(v) => setWidgetOrder('leaveBalance', v)}
-          />
-          <Toggle t={t}
-            label={chartMeta.label}
-            hint={t('Widget grafik sesuai role kamu.', 'Graphic widget based on your role.')}
-            checked={draft.widgets[chartMeta.key]}
-            onChange={(v) => setWidget(chartMeta.key, v)}
-            order={draft.widgetOrder[chartMeta.key]}
-            onOrderChange={(v) => setWidgetOrder(chartMeta.key, v)}
-          />
+          {d.widgets.map(w => (
+            <Toggle key={w.key} t={t}
+              label={t(w.label[0], w.label[1])}
+              checked={draft.widgets[w.key]}
+              onChange={(v) => setWidget(w.key, v)}
+              order={draft.widgetOrder[w.key]}
+              onOrderChange={(v) => setWidgetOrder(w.key, v)}
+            />
+          ))}
         </SectionCard>
-      )}
+      ))}
 
       {draft.showMenuShortcuts && (
         <SectionCard title={t('Pilih Menu Shortcut', 'Choose Menu Shortcuts')}

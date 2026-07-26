@@ -15,6 +15,7 @@ import { useOffboardingNotifyStore } from '@/store/offboardingNotifyStore'
 import { offboardingActionItems } from '@/lib/offboarding'
 import { useHomePreferencesStore } from '@/store/homePreferencesStore'
 import { ALL_SHORTCUTS, SICONS } from '@/lib/dashboardShortcuts'
+import { accessibleDashboards } from '@/lib/homeDashboards'
 import { useT } from '@/store/languageStore'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LabelList, ResponsiveContainer } from 'recharts'
 
@@ -619,40 +620,48 @@ export default function DashboardPage() {
         </div>
       )
 
-  // Each role only ever sees its own graphic widget — matches the toggle
-  // Preferensi Beranda shows for that role.
-  const ROLE_CHART = {
-    employee:   { key: 'employeeChart',   order: prefs.widgetOrder.employeeChart,
-      node: <EmployeeChartWidget key='employeeChart' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} /> },
-    manager:    { key: 'managerChart',    order: prefs.widgetOrder.managerChart,
-      node: <ManagerChartWidget key='managerChart' leaves={leaves} team={myTeam} t={t} /> },
-    hr:         { key: 'hrChart',         order: prefs.widgetOrder.hrChart,
-      node: <HRChartWidget key='hrChart' employees={employees} departments={departments} t={t} /> },
-    superadmin: { key: 'superadminChart', order: prefs.widgetOrder.superadminChart,
-      node: <SuperadminChartWidget key='superadminChart' userList={userList} t={t} /> },
+  /* ── The four role dashboards ─────────────────────────────────────────── */
+  // One node per widget key, so a dashboard's contents come straight from the
+  // shared DASHBOARDS definition rather than being spelled out twice.
+  const WIDGET_NODE = {
+    timeCard:       <TimeCardWidget key='timeCard' t={t} />,
+    leaveBalance:   <LeaveBalanceWidget key='leaveBalance' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />,
+    leaveChart:     <EmployeeChartWidget key='leaveChart' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />,
+    teamLeaveChart: <ManagerChartWidget key='teamLeaveChart' leaves={leaves} team={myTeam} t={t} />,
+    headcountChart: <HRChartWidget key='headcountChart' employees={employees} departments={departments} t={t} />,
+    userRoleChart:  <SuperadminChartWidget key='userRoleChart' userList={userList} t={t} />,
   }
-  const roleChart = ROLE_CHART[role]
 
-  const widgetBlocks = [
-    { key: 'timeCard',      order: prefs.widgetOrder.timeCard,      node: prefs.widgets.timeCard && <TimeCardWidget key='timeCard' t={t} /> },
-    { key: 'leaveBalance',  order: prefs.widgetOrder.leaveBalance,  node: prefs.widgets.leaveBalance && (
-      <LeaveBalanceWidget key='leaveBalance' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />
-    ) },
-    { key: roleChart.key,   order: roleChart.order,                node: prefs.widgets[roleChart.key] && roleChart.node },
-  ].filter(s => s.node).sort((a, b) => a.order - b.order)
+  const myDashboards = accessibleDashboards({
+    role,
+    hasDirectReports: myTeam.length > 0,
+  })
 
-  const dashboardWidgetsBlock = prefs.showDashboardWidgets && widgetBlocks.length > 0 && (
-    <div key='dashboardWidgets' className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-      {widgetBlocks.map(w => w.node)}
-    </div>
-  )
+  const dashboardSections = myDashboards.map(d => {
+    const widgets = d.widgets
+      .filter(w => prefs.widgets[w.key])
+      .sort((a, b) => prefs.widgetOrder[a.key] - prefs.widgetOrder[b.key])
+    if (!prefs[d.showKey] || widgets.length === 0) return { key: d.id, node: null }
+    return {
+      key: d.id,
+      order: prefs.order[d.orderKey],
+      node: (
+        <section key={d.id}>
+          <h2 className='text-sm font-bold text-gray-700 mb-2.5'>{t(d.label[0], d.label[1])}</h2>
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+            {widgets.map(w => WIDGET_NODE[w.key])}
+          </div>
+        </section>
+      ),
+    }
+  })
 
   // Sections stack in one column, ordered by "Urutan" from Preferensi Beranda —
   // smallest number shows up top.
   const mainSections = [
-    { key: 'menuShortcuts',    order: prefs.order.menuShortcuts,    node: menuShortcutsBlock },
-    { key: 'thingsToDo',       order: prefs.order.thingsToDo,       node: thingsToDoBlock },
-    { key: 'dashboardWidgets', order: prefs.order.dashboardWidgets, node: dashboardWidgetsBlock },
+    { key: 'menuShortcuts', order: prefs.order.menuShortcuts, node: menuShortcutsBlock },
+    { key: 'thingsToDo',    order: prefs.order.thingsToDo,    node: thingsToDoBlock },
+    ...dashboardSections,
   ].filter(s => s.node).sort((a, b) => a.order - b.order)
 
   return (
