@@ -34,6 +34,8 @@ export const DEFAULT_PAYROLL_SETTINGS = {
   jkm:           { employerRate: 0.003 },
   biayaJabatan:  { rate: 0.05, monthlyCap: 500_000 }, // PMK 250/2008, max Rp 6.000.000/tahun
   npwpSurcharge: 0.20, // Pasal 21 ayat 5a UU PPh: +20% bila tanpa NPWP
+  // Identitas pemotong — dicetak di bagian C setiap bukti potong 1721-A1.
+  pemotong: { npwp: '', nama: '', alamat: '', penandatanganNama: '', penandatanganNpwp: '' },
 }
 
 const round = (n) => Math.round(n)

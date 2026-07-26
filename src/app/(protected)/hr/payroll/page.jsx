@@ -28,12 +28,15 @@ export default function PayrollOverviewPage() {
         </div>
       )}
 
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <SectionCard icon='💼' title='Payroll Run' subtitle={t('Generate & publish payroll bulanan.','Generate & publish monthly payroll.')}>
           <a href='/hr/payroll/run' className='text-sm font-semibold text-red-700 hover:underline'>{t('Buka','Open')} →</a>
         </SectionCard>
         <SectionCard icon='🧾' title='Payroll Setup' subtitle={t('Gaji pokok, PTKP, NPWP, BPJS per karyawan.','Basic salary, PTKP, NPWP, BPJS per employee.')}>
           <a href='/hr/payroll/setup' className='text-sm font-semibold text-red-700 hover:underline'>{t('Buka','Open')} →</a>
+        </SectionCard>
+        <SectionCard icon='🧾' title='SPT PPh 21 (1721-A1)' subtitle={t('Bukti potong PPh 21 tahunan per karyawan.','Annual PPh 21 certificates per employee.')}>
+          <a href='/hr/payroll/spt21' className='text-sm font-semibold text-red-700 hover:underline'>{t('Buka','Open')} →</a>
         </SectionCard>
         <SectionCard icon='⚙️' title='Payroll Settings' subtitle={t('Tarif & batas atas BPJS/PPh 21.','BPJS/PPh 21 rates & caps.')}>
           <a href='/hr/payroll/settings' className='text-sm font-semibold text-red-700 hover:underline'>{t('Buka','Open')} →</a>

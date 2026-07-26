@@ -216,6 +216,7 @@ const HR_GROUPS = [
   { title: 'Payroll', icon: ic('money'), items: [
     { label: 'Payroll Run',      href: '/hr/payroll/run',      icon: ic('money') },
     { label: 'Payroll Setup',    href: '/hr/payroll/setup',    icon: ic('list') },
+    { label: 'SPT PPh 21 (1721-A1)', href: '/hr/payroll/spt21', icon: ic('doc') },
     { label: 'Payroll Settings', href: '/hr/payroll/settings', icon: ic('settings') },
   ]},
   { title: 'Onboarding', icon: ic('target'), items: [
