@@ -480,11 +480,6 @@ export default function DashboardPage() {
         </div>
       )
 
-  const mainSections = [
-    { key: 'menuShortcuts', order: prefs.order.menuShortcuts, node: menuShortcutsBlock },
-    { key: 'thingsToDo',    order: prefs.order.thingsToDo,    node: thingsToDoBlock },
-  ].filter(s => s.node).sort((a, b) => a.order - b.order)
-
   const widgetBlocks = [
     { key: 'timeCard',      order: prefs.widgetOrder.timeCard,      node: prefs.widgets.timeCard && <TimeCardWidget key='timeCard' t={t} /> },
     { key: 'leaveBalance',  order: prefs.widgetOrder.leaveBalance,  node: prefs.widgets.leaveBalance && (
@@ -492,33 +487,35 @@ export default function DashboardPage() {
     ) },
   ].filter(s => s.node).sort((a, b) => a.order - b.order)
 
+  const dashboardWidgetsBlock = prefs.showDashboardWidgets && widgetBlocks.length > 0 && (
+    <div key='dashboardWidgets' className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+      {widgetBlocks.map(w => w.node)}
+    </div>
+  )
+
+  // Sections stack in one column, ordered by "Urutan" from Preferensi Beranda —
+  // smallest number shows up top.
+  const mainSections = [
+    { key: 'menuShortcuts',    order: prefs.order.menuShortcuts,    node: menuShortcutsBlock },
+    { key: 'thingsToDo',       order: prefs.order.thingsToDo,       node: thingsToDoBlock },
+    { key: 'dashboardWidgets', order: prefs.order.dashboardWidgets, node: dashboardWidgetsBlock },
+  ].filter(s => s.node).sort((a, b) => a.order - b.order)
+
   return (
-    <div className='flex gap-6'>
+    <div className='max-w-3xl mx-auto space-y-5'>
 
-      {/* ── Main column ────────────────────────────────────────────────── */}
-      <div className='flex-1 min-w-0 space-y-5'>
-
-        {/* Greeting */}
-        <div>
-          <h1 className='text-2xl font-bold text-red-800'>
-            {getGreeting(t)},
-          </h1>
-          <p className='text-xl font-semibold text-gray-800 mt-0.5'>{name}</p>
-          <p className='text-sm text-gray-400 mt-0.5'>
-            {new Date().toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}
-          </p>
-        </div>
-
-        {mainSections.map(s => s.node)}
+      {/* Greeting */}
+      <div>
+        <h1 className='text-2xl font-bold text-red-800'>
+          {getGreeting(t)},
+        </h1>
+        <p className='text-xl font-semibold text-gray-800 mt-0.5'>{name}</p>
+        <p className='text-sm text-gray-400 mt-0.5'>
+          {new Date().toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}
+        </p>
       </div>
 
-      {/* ── Right column ───────────────────────────────────────────────── */}
-      {prefs.showDashboardWidgets && widgetBlocks.length > 0 && (
-      <div className='w-72 shrink-0 space-y-4'>
-        {widgetBlocks.map(w => w.node)}
-      </div>
-      )}
-
+      {mainSections.map(s => s.node)}
     </div>
   )
 }
