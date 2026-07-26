@@ -1,10 +1,11 @@
 'use client'
 import Icon from '@/components/ui/Icon'
+import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/store/authStore'
 import { useHomePreferencesStore } from '@/store/homePreferencesStore'
 import { ALL_SHORTCUTS, SICONS } from '@/lib/dashboardShortcuts'
 import { useT } from '@/store/languageStore'
-import { PageHeader, SectionCard } from '@/components/ui'
+import { PageHeader, SectionCard, ActionButton } from '@/components/ui'
 
 function Toggle({ checked, onChange, label, hint, order, onOrderChange, t }) {
   return (
@@ -42,16 +43,39 @@ function Toggle({ checked, onChange, label, hint, order, onOrderChange, t }) {
 export default function PreferencesPage() {
   const t = useT()
   const { currentUser } = useAuthStore()
-  const { getPrefs, updatePrefs, toggleShortcut } = useHomePreferencesStore()
+  const { getPrefs, updatePrefs } = useHomePreferencesStore()
 
   const uid = currentUser?.id
   const role = currentUser?.role || 'employee'
-  const prefs = getPrefs(uid)
   const shortcuts = ALL_SHORTCUTS[role] || ALL_SHORTCUTS.employee
 
-  const setWidget = (key, val) => updatePrefs(uid, { widgets: { ...prefs.widgets, [key]: val } })
-  const setOrder = (key, val) => updatePrefs(uid, { order: { ...prefs.order, [key]: val } })
-  const setWidgetOrder = (key, val) => updatePrefs(uid, { widgetOrder: { ...prefs.widgetOrder, [key]: val } })
+  // Buffered draft — nothing is written to the store until "Simpan" is
+  // pressed. Initialized from the saved prefs, and re-synced once dbStorage
+  // finishes hydrating (in case this page mounted before that completed).
+  const [draft, setDraft] = useState(() => getPrefs(uid))
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    const unsub = useHomePreferencesStore.persist.onFinishHydration(() => setDraft(getPrefs(uid)))
+    if (useHomePreferencesStore.persist.hasHydrated()) setDraft(getPrefs(uid))
+    return unsub
+  }, [uid]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const setWidget = (key, val) => setDraft(d => ({ ...d, widgets: { ...d.widgets, [key]: val } }))
+  const setOrder = (key, val) => setDraft(d => ({ ...d, order: { ...d.order, [key]: val } }))
+  const setWidgetOrder = (key, val) => setDraft(d => ({ ...d, widgetOrder: { ...d.widgetOrder, [key]: val } }))
+  const toggleShortcutDraft = (id) => setDraft(d => ({
+    ...d,
+    hiddenShortcutIds: d.hiddenShortcutIds.includes(id)
+      ? d.hiddenShortcutIds.filter(x => x !== id)
+      : [...d.hiddenShortcutIds, id],
+  }))
+
+  const handleSave = () => {
+    updatePrefs(uid, draft)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 3000)
+  }
 
   return (
     <div className='max-w-2xl mx-auto pb-10'>
@@ -59,6 +83,16 @@ export default function PreferencesPage() {
         icon='⚙️'
         title={t('Preferensi Beranda', 'Homepage Preferences')}
         subtitle={t('Atur bagian apa saja yang tampil di halaman Beranda kamu.', 'Choose which sections show on your Home page.')}
+        actions={
+          <div className='flex items-center gap-3'>
+            {saved && (
+              <span className='text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg'>
+                {t('Tersimpan.','Saved.')}
+              </span>
+            )}
+            <ActionButton onClick={handleSave} icon='💾'>{t('Simpan','Save')}</ActionButton>
+          </div>
+        }
       />
 
       <SectionCard title={t('Tampilkan di Beranda', 'Show on Homepage')}
@@ -67,56 +101,56 @@ export default function PreferencesPage() {
         <Toggle t={t}
           label={t('Menu Shortcut', 'Menu Shortcuts')}
           hint={t('Grid ikon akses cepat ke halaman yang sering dipakai.', 'Quick-access icon grid to frequently used pages.')}
-          checked={prefs.showMenuShortcuts}
-          onChange={(v) => updatePrefs(uid, { showMenuShortcuts: v })}
-          order={prefs.order.menuShortcuts}
+          checked={draft.showMenuShortcuts}
+          onChange={(v) => setDraft(d => ({ ...d, showMenuShortcuts: v }))}
+          order={draft.order.menuShortcuts}
           onOrderChange={(v) => setOrder('menuShortcuts', v)}
         />
         <Toggle t={t}
           label={t('Things To Do', 'Things To Do')}
           hint={t('Daftar tugas dan informasi yang menunggu tindakanmu.', 'Tasks and FYI items waiting on you.')}
-          checked={prefs.showThingsToDo}
-          onChange={(v) => updatePrefs(uid, { showThingsToDo: v })}
-          order={prefs.order.thingsToDo}
+          checked={draft.showThingsToDo}
+          onChange={(v) => setDraft(d => ({ ...d, showThingsToDo: v }))}
+          order={draft.order.thingsToDo}
           onOrderChange={(v) => setOrder('thingsToDo', v)}
         />
         <Toggle t={t}
           label={t('Dashboard Widget', 'Dashboard Widgets')}
           hint={t('Panel di sisi kanan (Time Card, Leave Balance, dll).', 'Right-side panel (Time Card, Leave Balance, etc).')}
-          checked={prefs.showDashboardWidgets}
-          onChange={(v) => updatePrefs(uid, { showDashboardWidgets: v })}
-          order={prefs.order.dashboardWidgets}
+          checked={draft.showDashboardWidgets}
+          onChange={(v) => setDraft(d => ({ ...d, showDashboardWidgets: v }))}
+          order={draft.order.dashboardWidgets}
           onOrderChange={(v) => setOrder('dashboardWidgets', v)}
         />
       </SectionCard>
 
-      {prefs.showDashboardWidgets && (
+      {draft.showDashboardWidgets && (
         <SectionCard title={t('Widget Dashboard', 'Dashboard Widgets')}
           subtitle={t('Urutan tampil di panel kanan.', 'Order within the right-side panel.')}
           className='mb-5' bodyClass='divide-y divide-gray-100'>
           <Toggle t={t}
             label='My Time Card'
-            checked={prefs.widgets.timeCard}
+            checked={draft.widgets.timeCard}
             onChange={(v) => setWidget('timeCard', v)}
-            order={prefs.widgetOrder.timeCard}
+            order={draft.widgetOrder.timeCard}
             onOrderChange={(v) => setWidgetOrder('timeCard', v)}
           />
           <Toggle t={t}
             label='Leave Balance'
-            checked={prefs.widgets.leaveBalance}
+            checked={draft.widgets.leaveBalance}
             onChange={(v) => setWidget('leaveBalance', v)}
-            order={prefs.widgetOrder.leaveBalance}
+            order={draft.widgetOrder.leaveBalance}
             onOrderChange={(v) => setWidgetOrder('leaveBalance', v)}
           />
         </SectionCard>
       )}
 
-      {prefs.showMenuShortcuts && (
+      {draft.showMenuShortcuts && (
         <SectionCard title={t('Pilih Menu Shortcut', 'Choose Menu Shortcuts')}
           subtitle={t('Sembunyikan shortcut yang jarang kamu pakai.', 'Hide shortcuts you rarely use.')}
           bodyClass='divide-y divide-gray-100'>
           {shortcuts.map(s => {
-            const visible = !prefs.hiddenShortcutIds.includes(s.id)
+            const visible = !draft.hiddenShortcutIds.includes(s.id)
             return (
               <div key={s.id} className='flex items-center justify-between gap-4 py-3'>
                 <span className='flex items-center gap-3'>
@@ -129,7 +163,7 @@ export default function PreferencesPage() {
                   type='button'
                   role='switch'
                   aria-checked={visible}
-                  onClick={() => toggleShortcut(uid, s.id)}
+                  onClick={() => toggleShortcutDraft(s.id)}
                   className='relative flex-shrink-0 w-11 h-6 rounded-full transition-colors'
                   style={{ background: visible ? '#8B1A1A' : '#d1d5db' }}>
                   <span
@@ -142,6 +176,10 @@ export default function PreferencesPage() {
           })}
         </SectionCard>
       )}
+
+      <div className='flex justify-end mt-5'>
+        <ActionButton onClick={handleSave} icon='💾'>{t('Simpan','Save')}</ActionButton>
+      </div>
     </div>
   )
 }
