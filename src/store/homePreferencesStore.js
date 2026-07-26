@@ -11,13 +11,28 @@ const DEFAULT_PREFS = {
   showDashboardWidgets: true,
   widgets: { timeCard: true, leaveBalance: true },
   hiddenShortcutIds: [],
+  // Display order — smaller number = higher up. menuShortcuts/thingsToDo
+  // reorder within the main column; widgets.* reorders within the sidebar.
+  // dashboardWidgets' own number has no peer to sort against (it's a
+  // separate column) but is kept for consistency/future layouts.
+  order: { menuShortcuts: 1, thingsToDo: 2, dashboardWidgets: 3 },
+  widgetOrder: { timeCard: 1, leaveBalance: 2 },
 }
 
 export const useHomePreferencesStore = create(persist(
   (set, get) => ({
     prefs: {}, // userId -> preferences
 
-    getPrefs: (userId) => ({ ...DEFAULT_PREFS, ...(get().prefs[userId] || {}), widgets: { ...DEFAULT_PREFS.widgets, ...(get().prefs[userId]?.widgets || {}) } }),
+    getPrefs: (userId) => {
+      const saved = get().prefs[userId] || {}
+      return {
+        ...DEFAULT_PREFS,
+        ...saved,
+        widgets: { ...DEFAULT_PREFS.widgets, ...(saved.widgets || {}) },
+        order: { ...DEFAULT_PREFS.order, ...(saved.order || {}) },
+        widgetOrder: { ...DEFAULT_PREFS.widgetOrder, ...(saved.widgetOrder || {}) },
+      }
+    },
 
     updatePrefs: (userId, patch) => set((s) => ({
       prefs: { ...s.prefs, [userId]: { ...get().getPrefs(userId), ...patch } },

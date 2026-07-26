@@ -345,26 +345,9 @@ export default function DashboardPage() {
 
   const displayItems = taskTab === 'mytask' ? tasks : fyiItems
 
-  return (
-    <div className='flex gap-6'>
-
-      {/* ── Main column ────────────────────────────────────────────────── */}
-      <div className='flex-1 min-w-0 space-y-5'>
-
-        {/* Greeting */}
-        <div>
-          <h1 className='text-2xl font-bold text-red-800'>
-            {getGreeting(t)},
-          </h1>
-          <p className='text-xl font-semibold text-gray-800 mt-0.5'>{name}</p>
-          <p className='text-sm text-gray-400 mt-0.5'>
-            {new Date().toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}
-          </p>
-        </div>
-
-        {/* Menu shortcuts */}
-        {prefs.showMenuShortcuts && (
-        <div className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100'>
+  /* ── Main-column sections, reorderable via Preferensi Beranda ────────── */
+  const menuShortcutsBlock = prefs.showMenuShortcuts && (
+        <div key='menuShortcuts' className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100'>
           <div className='flex items-center justify-between px-5 pt-4 pb-3 border-b border-gray-100'>
             <div className='flex items-center gap-2 text-sm font-bold text-gray-700'>
               <svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
@@ -418,11 +401,10 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
-        )}
+      )
 
-        {/* Things To Do */}
-        {prefs.showThingsToDo && (
-        <div className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden'>
+  const thingsToDoBlock = prefs.showThingsToDo && (
+        <div key='thingsToDo' className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden'>
           {/* Main tabs */}
           <div className='flex border-b border-gray-100'>
             {[
@@ -496,21 +478,44 @@ export default function DashboardPage() {
           )}
 
         </div>
-        )}
+      )
+
+  const mainSections = [
+    { key: 'menuShortcuts', order: prefs.order.menuShortcuts, node: menuShortcutsBlock },
+    { key: 'thingsToDo',    order: prefs.order.thingsToDo,    node: thingsToDoBlock },
+  ].filter(s => s.node).sort((a, b) => a.order - b.order)
+
+  const widgetBlocks = [
+    { key: 'timeCard',      order: prefs.widgetOrder.timeCard,      node: prefs.widgets.timeCard && <TimeCardWidget key='timeCard' t={t} /> },
+    { key: 'leaveBalance',  order: prefs.widgetOrder.leaveBalance,  node: prefs.widgets.leaveBalance && (
+      <LeaveBalanceWidget key='leaveBalance' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />
+    ) },
+  ].filter(s => s.node).sort((a, b) => a.order - b.order)
+
+  return (
+    <div className='flex gap-6'>
+
+      {/* ── Main column ────────────────────────────────────────────────── */}
+      <div className='flex-1 min-w-0 space-y-5'>
+
+        {/* Greeting */}
+        <div>
+          <h1 className='text-2xl font-bold text-red-800'>
+            {getGreeting(t)},
+          </h1>
+          <p className='text-xl font-semibold text-gray-800 mt-0.5'>{name}</p>
+          <p className='text-sm text-gray-400 mt-0.5'>
+            {new Date().toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}
+          </p>
+        </div>
+
+        {mainSections.map(s => s.node)}
       </div>
 
       {/* ── Right column ───────────────────────────────────────────────── */}
-      {prefs.showDashboardWidgets && (prefs.widgets.timeCard || prefs.widgets.leaveBalance) && (
+      {prefs.showDashboardWidgets && widgetBlocks.length > 0 && (
       <div className='w-72 shrink-0 space-y-4'>
-        {prefs.widgets.timeCard && <TimeCardWidget t={t} />}
-        {prefs.widgets.leaveBalance && (
-          <LeaveBalanceWidget
-            leaves={leaves}
-            leaveTypes={leaveTypes}
-            userId={uid}
-            t={t}
-          />
-        )}
+        {widgetBlocks.map(w => w.node)}
       </div>
       )}
 
