@@ -3,6 +3,7 @@ import Icon from '@/components/ui/Icon'
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/store/authStore'
 import { useHomePreferencesStore } from '@/store/homePreferencesStore'
+import { dbStorage } from '@/lib/dbStorage'
 import { ALL_SHORTCUTS, SICONS } from '@/lib/dashboardShortcuts'
 import { useT } from '@/store/languageStore'
 import { PageHeader, SectionCard, ActionButton } from '@/components/ui'
@@ -54,6 +55,7 @@ export default function PreferencesPage() {
   // finishes hydrating (in case this page mounted before that completed).
   const [draft, setDraft] = useState(() => getPrefs(uid))
   const [saved, setSaved] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     const unsub = useHomePreferencesStore.persist.onFinishHydration(() => setDraft(getPrefs(uid)))
@@ -71,8 +73,14 @@ export default function PreferencesPage() {
       : [...d.hiddenShortcutIds, id],
   }))
 
-  const handleSave = () => {
+  const handleSave = async () => {
     updatePrefs(uid, draft)
+    setSaving(true)
+    // Skip the usual debounce and wait for the database write to land, so
+    // "Tersimpan" (and any navigation right after) reflects the real state
+    // instead of a stale copy the DB hasn't caught up to yet.
+    await dbStorage.flushNow('hcm-home-preferences-v1')
+    setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
   }
@@ -90,7 +98,9 @@ export default function PreferencesPage() {
                 {t('Tersimpan.','Saved.')}
               </span>
             )}
-            <ActionButton onClick={handleSave} icon='💾'>{t('Simpan','Save')}</ActionButton>
+            <ActionButton onClick={handleSave} disabled={saving} icon='💾'>
+              {saving ? t('Menyimpan...','Saving...') : t('Simpan','Save')}
+            </ActionButton>
           </div>
         }
       />

@@ -30,10 +30,10 @@ function prime() {
 const timers = {}
 const pending = {}
 function flush(key, unloading = false) {
-  if (!(key in pending)) return
+  if (!(key in pending)) return Promise.resolve()
   const value = pending[key]
   delete pending[key]
-  fetch(`/api/state/${encodeURIComponent(key)}`, {
+  return fetch(`/api/state/${encodeURIComponent(key)}`, {
     method: 'PUT',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ value }),
@@ -42,6 +42,14 @@ function flush(key, unloading = false) {
     // rows) can exceed, silently failing an otherwise-normal write.
     ...(unloading ? { keepalive: true } : {}),
   }).catch(() => {})
+}
+
+// Skip the debounce and write a key immediately, resolving once the PUT
+// lands — for actions like an explicit "Save" button, where the caller may
+// navigate right after and needs the database to already be caught up.
+function flushNow(key) {
+  clearTimeout(timers[key])
+  return flush(key)
 }
 
 // Flush every pending (debounced) write immediately — used on page unload so a
@@ -58,6 +66,8 @@ if (typeof window !== 'undefined' && !window.__kpbDbStorageUnload) {
 }
 
 export const dbStorage = {
+  flushNow,
+
   getItem: async (name) => {
     // Prefer the database (shared across devices); fall back to localStorage.
     const map = await prime()
