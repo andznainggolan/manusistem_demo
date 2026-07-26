@@ -1,6 +1,6 @@
 'use client'
 import Icon from '@/components/ui/Icon'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuthStore }     from '@/store/authStore'
 import Sidebar              from '@/components/layout/Sidebar'
@@ -88,6 +88,16 @@ export default function ProtectedLayout({ children }) {
   const onAllowedPath = !restriction || pathAllowed(restriction, pathname)
 
   const [loginAsOpen, setLoginAsOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const userMenuRef = useRef(null)
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) setUserMenuOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
   const { show: showToast } = useToastStore()
   const { onboardings, activateOnboarding } = useOnboardingStore()
   const { employees } = useEmployeeStore()
@@ -282,41 +292,52 @@ export default function ProtectedLayout({ children }) {
               </button>
             )}
 
-            {/* User avatar + name */}
-            <div className='flex items-center gap-2.5'>
-              <div className='relative'>
-                <div className='flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white flex-shrink-0'
-                  style={{ background: isProxy ? 'linear-gradient(135deg,#92400e,#d97706)' : 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
-                  {initials}
-                </div>
-                {/* Real user mini avatar when proxying */}
-                {isProxy && (
-                  <div className='absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center text-[8px] font-bold text-white'
-                    style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
-                    {realInitials[0]}
+            {/* User avatar + name — click to open account menu */}
+            <div className='relative' ref={userMenuRef}>
+              <button onClick={() => setUserMenuOpen(v => !v)}
+                className='flex items-center gap-2.5 rounded-lg px-1.5 py-1 hover:bg-gray-50 transition'>
+                <div className='relative'>
+                  <div className='flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white flex-shrink-0'
+                    style={{ background: isProxy ? 'linear-gradient(135deg,#92400e,#d97706)' : 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    {initials}
                   </div>
-                )}
-              </div>
-              <div className='hidden md:block leading-tight'>
-                <div className='text-sm font-semibold text-gray-800'>{currentUser?.name}</div>
-                <div className='text-[11px] text-gray-400'>
-                  {isProxy
-                    ? <span className='text-amber-600 font-semibold'>Proxy · {roleLabel(currentUser?.role)}</span>
-                    : roleLabel(currentUser?.role)
-                  }
+                  {/* Real user mini avatar when proxying */}
+                  {isProxy && (
+                    <div className='absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center text-[8px] font-bold text-white'
+                      style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                      {realInitials[0]}
+                    </div>
+                  )}
                 </div>
-              </div>
-            </div>
+                <div className='hidden md:block leading-tight text-left'>
+                  <div className='text-sm font-semibold text-gray-800'>{currentUser?.name}</div>
+                  <div className='text-[11px] text-gray-400'>
+                    {isProxy
+                      ? <span className='text-amber-600 font-semibold'>Proxy · {roleLabel(currentUser?.role)}</span>
+                      : roleLabel(currentUser?.role)
+                    }
+                  </div>
+                </div>
+                <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5'
+                  className={`hidden md:block text-gray-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`}>
+                  <polyline points='6 9 12 15 18 9'/>
+                </svg>
+              </button>
 
-            {/* Homepage preferences */}
-            <button onClick={() => router.push('/preferences')}
-              className='text-gray-400 hover:text-red-700 transition p-1.5 rounded-lg hover:bg-red-50'
-              title='Preferensi Beranda'>
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
-              </svg>
-            </button>
+              {userMenuOpen && (
+                <div className='absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg ring-1 ring-gray-100 py-1.5 z-50'>
+                  <button
+                    onClick={() => { setUserMenuOpen(false); router.push('/preferences') }}
+                    className='w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition text-left'>
+                    <svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+                      <circle cx='12' cy='12' r='3'/>
+                      <path d='M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z'/>
+                    </svg>
+                    Preferensi Beranda
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Logout */}
             <button onClick={handleLogout}
