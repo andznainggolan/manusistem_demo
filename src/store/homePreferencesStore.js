@@ -9,14 +9,22 @@ const DEFAULT_PREFS = {
   showMenuShortcuts: true,
   showThingsToDo: true,
   showDashboardWidgets: true,
-  widgets: { timeCard: true, leaveBalance: true },
+  // employeeChart/managerChart/hrChart/superadminChart are graphic widgets —
+  // only the one matching the viewer's own role ever renders (see
+  // ROLE_CHART in dashboard/page.jsx), so they can share defaults freely.
+  widgets: {
+    timeCard: true, leaveBalance: true,
+    employeeChart: true, managerChart: true, hrChart: true, superadminChart: true,
+  },
   hiddenShortcutIds: [],
-  // Display order — smaller number = higher up. menuShortcuts/thingsToDo
-  // reorder within the main column; widgets.* reorders within the sidebar.
-  // dashboardWidgets' own number has no peer to sort against (it's a
-  // separate column) but is kept for consistency/future layouts.
+  // Display order — smaller number = higher up. All three top-level sections
+  // (menuShortcuts/thingsToDo/dashboardWidgets) stack in one ordered column;
+  // widgetOrder.* then reorders within the "Dashboard Widgets" section itself.
   order: { menuShortcuts: 1, thingsToDo: 2, dashboardWidgets: 3 },
-  widgetOrder: { timeCard: 1, leaveBalance: 2 },
+  widgetOrder: {
+    timeCard: 1, leaveBalance: 2,
+    employeeChart: 3, managerChart: 3, hrChart: 3, superadminChart: 3,
+  },
 }
 
 export const useHomePreferencesStore = create(persist(

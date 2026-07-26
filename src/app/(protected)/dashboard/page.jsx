@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/authStore'
 import { useLeaveStore } from '@/store/leaveStore'
 import { useEmployeeStore } from '@/store/employeeStore'
+import { useStructureStore } from '@/store/structureStore'
 import { useOnboardingStore } from '@/store/onboardingStore'
 import { useHayStore } from '@/store/hayStore'
 import { usePipStore } from '@/store/pipStore'
@@ -15,6 +16,7 @@ import { offboardingActionItems } from '@/lib/offboarding'
 import { useHomePreferencesStore } from '@/store/homePreferencesStore'
 import { ALL_SHORTCUTS, SICONS } from '@/lib/dashboardShortcuts'
 import { useT } from '@/store/languageStore'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LabelList, ResponsiveContainer } from 'recharts'
 
 /* ── Greeting ──────────────────────────────────────────────────────────────── */
 function getGreeting(t) {
@@ -141,6 +143,142 @@ function LeaveBalanceWidget({ leaves, leaveTypes, userId, t }) {
   )
 }
 
+/* ── Mini bar chart shell (shared by the role graphic widgets below) ────────── */
+function MiniBarChart({ icon, title, data, emptyLabel, height = 180, barSize = 16 }) {
+  return (
+    <div className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden'>
+      <div className='flex items-center gap-2 px-4 py-3 border-b border-gray-100 text-gray-700 font-semibold text-sm'>
+        {icon}
+        {title}
+      </div>
+      <div className='px-2 py-3'>
+        {data.length === 0 ? (
+          <p className='text-xs text-gray-400 text-center py-10'>{emptyLabel}</p>
+        ) : (
+          <ResponsiveContainer width='100%' height={height}>
+            <BarChart data={data} layout='vertical' margin={{ top: 4, right: 28, left: 4, bottom: 4 }}>
+              <CartesianGrid horizontal={false} stroke='#e1e0d9' />
+              <XAxis type='number' allowDecimals={false} tick={{ fontSize: 11, fill: '#898781' }}
+                axisLine={{ stroke: '#c3c2b7' }} tickLine={false} />
+              <YAxis type='category' dataKey='name' width={96} tick={{ fontSize: 11, fill: '#52514e' }}
+                axisLine={{ stroke: '#c3c2b7' }} tickLine={false} />
+              <Tooltip cursor={{ fill: '#f9f9f7' }}
+                contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #e1e0d9', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }} />
+              <Bar dataKey='value' radius={[0, 4, 4, 0]} maxBarSize={barSize}>
+                {data.map((d, i) => <Cell key={i} fill={d.color} />)}
+                <LabelList dataKey='value' position='right' style={{ fontSize: 11, fill: '#52514e', fontWeight: 600 }} />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </div>
+    </div>
+  )
+}
+
+const CHART_ICON = (path) => (
+  <svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>{path}</svg>
+)
+
+/* ── Employee: my leave usage by type ────────────────────────────────────────── */
+function EmployeeChartWidget({ leaves, leaveTypes, userId, t }) {
+  const data = leaveTypes.filter(lt => lt.active).map(lt => ({
+    name: lt.name,
+    value: leaves.filter(l => l.userId === userId && l.status === 'Approved' && l.type === lt.name).length,
+    color: '#2a78d6',
+  }))
+  return (
+    <MiniBarChart
+      icon={CHART_ICON(<><path d='M3 3v18h18'/><path d='M18 17V9M13 17V5M8 17v-3'/></>)}
+      title={t('Grafik Cuti Saya', 'My Leave Usage')}
+      data={data}
+      emptyLabel={t('Belum ada data cuti', 'No leave data yet')}
+    />
+  )
+}
+
+/* ── Manager: team leave requests by status ──────────────────────────────────── */
+function ManagerChartWidget({ leaves, team, t }) {
+  const teamIds = new Set(team.map(e => e.id))
+  const counts = { Pending: 0, Approved: 0, Rejected: 0 }
+  leaves.filter(l => teamIds.has(l.userId)).forEach(l => {
+    if (l.status === 'Approved') counts.Approved++
+    else if (l.status === 'Rejected') counts.Rejected++
+    else counts.Pending++
+  })
+  const data = [
+    { name: t('Pending', 'Pending'),   value: counts.Pending,  color: '#fab219' },
+    { name: t('Disetujui', 'Approved'), value: counts.Approved, color: '#0ca30c' },
+    { name: t('Ditolak', 'Rejected'),   value: counts.Rejected, color: '#d03b3b' },
+  ]
+  return (
+    <MiniBarChart
+      icon={CHART_ICON(<><path d='M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75'/></>)}
+      title={t('Grafik Status Approval Tim', "Team's Leave Status")}
+      data={data}
+      emptyLabel={t('Belum ada pengajuan cuti tim', 'No team leave requests yet')}
+    />
+  )
+}
+
+/* ── HR: headcount by department, org-wide ───────────────────────────────────── */
+function HRChartWidget({ employees, departments, t }) {
+  // Legacy seed rows carry a plain `department` string; employees added since
+  // only have `departmentId`, resolved against Struktur Organisasi — fall back
+  // to the string, then bucket anything still unresolved into "Lainnya".
+  const deptName = (e) => departments.find(d => d.id === e.departmentId)?.name || e.department || null
+  const counts = {}
+  employees.filter(e => e.status === 'Active').forEach(e => {
+    const name = deptName(e) || t('Lainnya', 'Other')
+    counts[name] = (counts[name] || 0) + 1
+  })
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1])
+  // Cap the chart at the top 7 departments — an org with dozens/hundreds of
+  // departments would otherwise render an unreadable wall of bars.
+  const TOP_N = 7
+  const top = sorted.slice(0, TOP_N)
+  const otherTotal = sorted.slice(TOP_N).reduce((sum, [, v]) => sum + v, 0)
+  if (otherTotal > 0) top.push([t('Lainnya', 'Other'), otherTotal])
+  const data = top.map(([name, value]) => ({ name, value, color: '#2a78d6' }))
+  return (
+    <MiniBarChart
+      icon={CHART_ICON(<><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/></>)}
+      title={t('Grafik Headcount per Departemen', 'Headcount by Department')}
+      data={data}
+      emptyLabel={t('Belum ada data karyawan', 'No employee data yet')}
+      height={Math.max(140, data.length * 32)}
+    />
+  )
+}
+
+/* ── Superadmin: user role distribution, system-wide ─────────────────────────── */
+function SuperadminChartWidget({ userList, t }) {
+  const ROLE_LABEL = {
+    employee:   t('Employee', 'Employee'),
+    manager:    t('Manager', 'Manager'),
+    hr:         t('HR', 'HR'),
+    superadmin: t('Superadmin', 'Superadmin'),
+  }
+  const ROLE_COLOR = { employee: '#2a78d6', manager: '#eb6834', hr: '#1baf7a', superadmin: '#e34948', other: '#898781' }
+  const counts = { employee: 0, manager: 0, hr: 0, superadmin: 0, other: 0 }
+  userList.forEach(u => { counts[ROLE_LABEL[u.role] ? u.role : 'other']++ })
+  const data = [
+    { name: ROLE_LABEL.employee,           value: counts.employee,   color: ROLE_COLOR.employee },
+    { name: ROLE_LABEL.manager,            value: counts.manager,    color: ROLE_COLOR.manager },
+    { name: ROLE_LABEL.hr,                 value: counts.hr,         color: ROLE_COLOR.hr },
+    { name: ROLE_LABEL.superadmin,         value: counts.superadmin, color: ROLE_COLOR.superadmin },
+    { name: t('Lainnya', 'Other'),         value: counts.other,      color: ROLE_COLOR.other },
+  ].filter(d => d.value > 0)
+  return (
+    <MiniBarChart
+      icon={CHART_ICON(<><circle cx='12' cy='12' r='3'/><path d='M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z'/></>)}
+      title={t('Grafik Distribusi Role Pengguna', 'User Role Distribution')}
+      data={data}
+      emptyLabel={t('Belum ada data pengguna', 'No user data yet')}
+    />
+  )
+}
+
 /* ── Task items ─────────────────────────────────────────────────────────────── */
 function TaskItem({ icon, title, subtitle, badge, badgeColor, onClick }) {
   return (
@@ -169,9 +307,10 @@ function TaskItem({ icon, title, subtitle, badge, badgeColor, onClick }) {
 export default function DashboardPage() {
   const t = useT()
   const router = useRouter()
-  const { currentUser } = useAuthStore()
+  const { currentUser, userList } = useAuthStore()
   const { leaves, leaveTypes } = useLeaveStore()
   const { employees } = useEmployeeStore()
+  const { departments } = useStructureStore()
   const { onboardings } = useOnboardingStore()
   const hayStore = useHayStore()
   const pipStore = usePipStore()
@@ -480,11 +619,26 @@ export default function DashboardPage() {
         </div>
       )
 
+  // Each role only ever sees its own graphic widget — matches the toggle
+  // Preferensi Beranda shows for that role.
+  const ROLE_CHART = {
+    employee:   { key: 'employeeChart',   order: prefs.widgetOrder.employeeChart,
+      node: <EmployeeChartWidget key='employeeChart' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} /> },
+    manager:    { key: 'managerChart',    order: prefs.widgetOrder.managerChart,
+      node: <ManagerChartWidget key='managerChart' leaves={leaves} team={myTeam} t={t} /> },
+    hr:         { key: 'hrChart',         order: prefs.widgetOrder.hrChart,
+      node: <HRChartWidget key='hrChart' employees={employees} departments={departments} t={t} /> },
+    superadmin: { key: 'superadminChart', order: prefs.widgetOrder.superadminChart,
+      node: <SuperadminChartWidget key='superadminChart' userList={userList} t={t} /> },
+  }
+  const roleChart = ROLE_CHART[role]
+
   const widgetBlocks = [
     { key: 'timeCard',      order: prefs.widgetOrder.timeCard,      node: prefs.widgets.timeCard && <TimeCardWidget key='timeCard' t={t} /> },
     { key: 'leaveBalance',  order: prefs.widgetOrder.leaveBalance,  node: prefs.widgets.leaveBalance && (
       <LeaveBalanceWidget key='leaveBalance' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />
     ) },
+    { key: roleChart.key,   order: roleChart.order,                node: prefs.widgets[roleChart.key] && roleChart.node },
   ].filter(s => s.node).sort((a, b) => a.order - b.order)
 
   const dashboardWidgetsBlock = prefs.showDashboardWidgets && widgetBlocks.length > 0 && (

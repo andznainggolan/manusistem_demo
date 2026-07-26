@@ -50,6 +50,16 @@ export default function PreferencesPage() {
   const role = currentUser?.role || 'employee'
   const shortcuts = ALL_SHORTCUTS[role] || ALL_SHORTCUTS.employee
 
+  // Each role gets one graphic dashboard widget — keyed to match ROLE_CHART
+  // in dashboard/page.jsx, so this is the only toggle/order control for it.
+  const ROLE_CHART_META = {
+    employee:   { key: 'employeeChart',   label: t('Grafik Cuti Saya', 'My Leave Chart') },
+    manager:    { key: 'managerChart',    label: t('Grafik Status Approval Tim', "Team's Leave Status Chart") },
+    hr:         { key: 'hrChart',         label: t('Grafik Headcount per Departemen', 'Headcount by Department Chart') },
+    superadmin: { key: 'superadminChart', label: t('Grafik Distribusi Role Pengguna', 'User Role Distribution Chart') },
+  }
+  const chartMeta = ROLE_CHART_META[role] || ROLE_CHART_META.employee
+
   // Buffered draft — nothing is written to the store until "Simpan" is
   // pressed. Initialized from the saved prefs, and re-synced once dbStorage
   // finishes hydrating (in case this page mounted before that completed).
@@ -126,7 +136,7 @@ export default function PreferencesPage() {
         />
         <Toggle t={t}
           label={t('Dashboard Widget', 'Dashboard Widgets')}
-          hint={t('Panel di sisi kanan (Time Card, Leave Balance, dll).', 'Right-side panel (Time Card, Leave Balance, etc).')}
+          hint={t('Time Card, Leave Balance, dan grafik sesuai role kamu.', 'Time Card, Leave Balance, and your role\'s graphic widget.')}
           checked={draft.showDashboardWidgets}
           onChange={(v) => setDraft(d => ({ ...d, showDashboardWidgets: v }))}
           order={draft.order.dashboardWidgets}
@@ -136,7 +146,7 @@ export default function PreferencesPage() {
 
       {draft.showDashboardWidgets && (
         <SectionCard title={t('Widget Dashboard', 'Dashboard Widgets')}
-          subtitle={t('Urutan tampil di panel kanan.', 'Order within the right-side panel.')}
+          subtitle={t('Urutan tampil di antara widget lainnya.', 'Order among the other widgets.')}
           className='mb-5' bodyClass='divide-y divide-gray-100'>
           <Toggle t={t}
             label='My Time Card'
@@ -151,6 +161,14 @@ export default function PreferencesPage() {
             onChange={(v) => setWidget('leaveBalance', v)}
             order={draft.widgetOrder.leaveBalance}
             onOrderChange={(v) => setWidgetOrder('leaveBalance', v)}
+          />
+          <Toggle t={t}
+            label={chartMeta.label}
+            hint={t('Widget grafik sesuai role kamu.', 'Graphic widget based on your role.')}
+            checked={draft.widgets[chartMeta.key]}
+            onChange={(v) => setWidget(chartMeta.key, v)}
+            order={draft.widgetOrder[chartMeta.key]}
+            onOrderChange={(v) => setWidgetOrder(chartMeta.key, v)}
           />
         </SectionCard>
       )}
@@ -188,7 +206,9 @@ export default function PreferencesPage() {
       )}
 
       <div className='flex justify-end mt-5'>
-        <ActionButton onClick={handleSave} icon='💾'>{t('Simpan','Save')}</ActionButton>
+        <ActionButton onClick={handleSave} disabled={saving} icon='💾'>
+          {saving ? t('Menyimpan...','Saving...') : t('Simpan','Save')}
+        </ActionButton>
       </div>
     </div>
   )
