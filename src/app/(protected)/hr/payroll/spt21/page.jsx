@@ -14,121 +14,252 @@ import {
 
 const DEFAULT_PEMOTONG = { npwp: '', nama: '', alamat: '', penandatanganNama: '', penandatanganNpwp: '' }
 
-/* ── One numbered line of the form ──────────────────────────────────────── */
-function FormRow({ no, label, value, bold, indent }) {
+// The form's amount column is headed "JUMLAH (Rp)", so the cells carry plain
+// grouped numbers rather than a repeated "Rp" prefix.
+const num = (n) => new Intl.NumberFormat('id-ID').format(Math.round(n || 0))
+const pad2 = (n) => String(n).padStart(2, '0')
+
+/* ── Small form primitives, matching the printed 1721-A1 ─────────────────── */
+const Box = ({ children, className = '' }) => (
+  <span className={`inline-flex h-[18px] min-w-[18px] items-center justify-center border border-gray-800 px-1 text-[10px] leading-none ${className}`}>
+    {children}
+  </span>
+)
+
+const Check = ({ on }) => (
+  <span className='inline-flex h-[13px] w-[13px] items-center justify-center border border-gray-800 text-[10px] font-bold leading-none'>
+    {on ? '×' : ''}
+  </span>
+)
+
+// One numbered line in section B. `group` renders the sub-heading rows
+// (PENGHASILAN BRUTO / PENGURANGAN / PENGHITUNGAN PPh PASAL 21).
+function Line({ no, label, value, bold }) {
   return (
-    <div className={`flex items-start gap-3 px-4 py-1.5 ${bold ? 'bg-gray-50 font-semibold text-gray-800' : 'text-gray-700'}`}>
-      <span className='w-7 shrink-0 text-xs text-gray-400 tabular-nums'>{no}</span>
-      <span className={`flex-1 text-xs ${indent ? 'pl-4' : ''}`}>{label}</span>
-      <span className='w-40 shrink-0 text-right text-xs tabular-nums'>{value}</span>
-    </div>
+    <tr className={bold ? 'font-bold' : ''}>
+      <td className='w-8 border border-gray-800 px-1 py-[3px] text-center align-top text-[9px]'>{no}</td>
+      <td className='border border-gray-800 px-2 py-[3px] align-top text-[9px] uppercase leading-tight'>{label}</td>
+      <td className='w-40 border border-gray-800 px-2 py-[3px] text-right align-top text-[9px] tabular-nums'>{num(value)}</td>
+    </tr>
   )
 }
 
+const GroupRow = ({ label }) => (
+  <tr>
+    <td colSpan={3} className='border border-gray-800 bg-gray-100 px-2 py-[3px] text-[9px] font-bold uppercase'>{label}</td>
+  </tr>
+)
+
 /* ── Printable 1721-A1 ──────────────────────────────────────────────────── */
 function BuktiPotongDetail({ b, no, pemotong, onClose, t }) {
-  const masa = `${String(b.masaDari).padStart(2, '0')} — ${String(b.masaSampai).padStart(2, '0')}`
-  return (
-    <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4' onClick={onClose}>
-      <div className='bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[92vh] overflow-y-auto' onClick={e => e.stopPropagation()}>
-        {/* Only the form itself goes on paper. */}
-        <style>{`@media print {
-          body * { visibility: hidden !important; }
-          #bupot-print, #bupot-print * { visibility: visible !important; }
-          #bupot-print { position: absolute; left: 0; top: 0; width: 100%; }
-          .no-print { display: none !important; }
-        }`}</style>
+  const today = new Date()
+  const [nomorSuffix, tail] = (() => {
+    // NOMOR on the form is laid out as  1.1 - MM . YY - NNNNNNN
+    const m = no.match(/^1\.1-(\d{2})\.(\d{2})-(\d+)$/)
+    return m ? [`${m[1]}.${m[2]}`, m[3]] : ['', no]
+  })()
 
-        <div className='no-print flex items-center justify-between px-6 py-4 border-b border-gray-100'>
+  return (
+    <div className='fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4' onClick={onClose}>
+      <div className='w-full max-w-4xl rounded-2xl bg-white shadow-xl' onClick={e => e.stopPropagation()}>
+        {/* Only the form itself goes on paper. */}
+        <style>{`
+          @media print {
+            body * { visibility: hidden !important; }
+            #bupot-print, #bupot-print * { visibility: visible !important; }
+            #bupot-print { position: absolute; left: 0; top: 0; width: 100%; padding: 0 !important; }
+            .no-print { display: none !important; }
+            @page { size: A4 portrait; margin: 8mm; }
+          }
+        `}</style>
+
+        <div className='no-print flex items-center justify-between border-b border-gray-100 px-6 py-4'>
           <h3 className='text-base font-bold text-gray-800'>
-            {t('Bukti Potong 1721-A1', 'Withholding Certificate 1721-A1')}
+            {t('Bukti Potong 1721-A1', 'Withholding Certificate 1721-A1')} — {b.nama}
           </h3>
           <div className='flex items-center gap-2'>
             <ActionButton variant='secondary' size='sm' onClick={() => window.print()}>
               {t('Cetak', 'Print')}
             </ActionButton>
-            <button onClick={onClose} className='text-gray-400 hover:text-gray-600 text-xl font-bold leading-none px-1'>×</button>
+            <button onClick={onClose} className='px-1 text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
           </div>
         </div>
 
-        <div id='bupot-print' className='p-6'>
-          <div className='text-center mb-4'>
-            <p className='text-xs text-gray-500'>{t('LAMPIRAN I.A', 'ATTACHMENT I.A')}</p>
-            <h2 className='text-sm font-bold text-gray-900'>FORMULIR 1721 - A1</h2>
-            <p className='text-xs text-gray-600 mt-1'>
-              BUKTI PEMOTONGAN PAJAK PENGHASILAN PASAL 21<br />
-              BAGI PEGAWAI TETAP ATAU PENERIMA PENSIUN BERKALA
-            </p>
-          </div>
+        <div id='bupot-print' className='overflow-x-auto p-6'>
+          <div className='mx-auto w-[720px] border border-gray-800 text-gray-900'>
 
-          <div className='grid grid-cols-2 gap-3 text-xs mb-4'>
-            <div className='rounded-xl ring-1 ring-gray-200 p-3'>
-              <p className='font-semibold text-gray-500 mb-1'>{t('NOMOR', 'NUMBER')}</p>
-              <p className='font-bold text-gray-800 tabular-nums'>{no}</p>
+            {/* ── Kop ─────────────────────────────────────────────────── */}
+            <div className='flex border-b border-gray-800'>
+              <div className='w-[190px] border-r border-gray-800 px-2 py-2 text-[9px] font-bold leading-tight'>
+                KEMENTERIAN KEUANGAN RI<br />DIREKTORAT JENDERAL PAJAK
+              </div>
+              <div className='flex-1 border-r border-gray-800 px-2 py-2 text-center text-[10px] font-bold leading-tight'>
+                BUKTI PEMOTONGAN PAJAK PENGHASILAN<br />
+                PASAL 21 BAGI PEGAWAI TETAP ATAU<br />
+                PENERIMA PENSIUN ATAU TUNJANGAN HARI<br />
+                TUA/JAMINAN HARI TUA BERKALA
+              </div>
+              <div className='w-[190px] px-2 py-2 text-[9px] leading-tight'>
+                <p className='text-center text-[11px] font-bold'>FORMULIR 1721 - A1</p>
+                <p className='mt-1'>Lembar ke-1 : untuk Penerima Penghasilan</p>
+                <p>Lembar ke-2 : untuk Pemotong</p>
+              </div>
             </div>
-            <div className='rounded-xl ring-1 ring-gray-200 p-3'>
-              <p className='font-semibold text-gray-500 mb-1'>{t('MASA PEROLEHAN PENGHASILAN', 'INCOME PERIOD')}</p>
-              <p className='font-bold text-gray-800 tabular-nums'>{masa} / {b.year}</p>
-            </div>
-          </div>
 
-          <div className='rounded-xl ring-1 ring-gray-200 p-3 text-xs mb-4'>
-            <p className='font-bold text-gray-700 mb-2'>A. {t('IDENTITAS PENERIMA PENGHASILAN', 'RECIPIENT IDENTITY')}</p>
-            <div className='grid grid-cols-2 gap-x-6 gap-y-1'>
-              <p><span className='text-gray-500'>NPWP</span> : {b.npwp || '—'}</p>
-              <p><span className='text-gray-500'>NIK</span> : {b.nik || '—'}</p>
-              <p><span className='text-gray-500'>{t('Nama', 'Name')}</span> : {b.nama}</p>
-              <p><span className='text-gray-500'>{t('Jabatan', 'Position')}</span> : {b.jabatan || '—'}</p>
-              <p className='col-span-2'><span className='text-gray-500'>{t('Alamat', 'Address')}</span> : {b.alamat || '—'}</p>
-              <p><span className='text-gray-500'>{t('Status/Tanggungan', 'Tax Status')}</span> : {b.ptkpStatus}</p>
-              <p><span className='text-gray-500'>{t('Jumlah Bulan', 'Months')}</span> : {b.jumlahBulan}</p>
+            {/* ── Nomor / masa / pemotong ─────────────────────────────── */}
+            <div className='flex border-b border-gray-800'>
+              <div className='flex-1 border-r border-gray-800 px-2 py-1.5 text-[9px]'>
+                <div className='flex items-center gap-1'>
+                  <span className='font-bold'>NOMOR :</span>
+                  <Box>1</Box><span>.</span><Box>1</Box><span>-</span>
+                  <Box className='min-w-[42px]'>{nomorSuffix}</Box><span>-</span>
+                  <Box className='min-w-[74px]'>{tail}</Box>
+                </div>
+                <div className='mt-1.5 flex items-center gap-1'>
+                  <span className='w-[92px] font-bold'>NPWP PEMOTONG</span>
+                  <span>:</span>
+                  <Box className='min-w-[170px]'>{pemotong.npwp || ' '}</Box>
+                </div>
+                <div className='mt-1 flex items-center gap-1'>
+                  <span className='w-[92px] font-bold'>NAMA PEMOTONG</span>
+                  <span>:</span>
+                  <Box className='min-w-[170px]'>{pemotong.nama || ' '}</Box>
+                </div>
+              </div>
+              <div className='w-[190px] px-2 py-1.5 text-center text-[9px]'>
+                <p className='font-bold leading-tight'>MASA PEROLEHAN<br />PENGHASILAN [mm - mm]</p>
+                <div className='mt-1 flex items-center justify-center gap-1'>
+                  <Box className='min-w-[30px]'>{pad2(b.masaDari)}</Box>
+                  <span>-</span>
+                  <Box className='min-w-[30px]'>{pad2(b.masaSampai)}</Box>
+                  <span className='ml-1'>/ {b.year}</span>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className='rounded-xl ring-1 ring-gray-200 overflow-hidden mb-4'>
-            <p className='bg-gray-100 px-4 py-2 text-xs font-bold text-gray-700'>
-              B. {t('RINCIAN PENGHASILAN DAN PENGHITUNGAN PPh PASAL 21', 'INCOME DETAIL & PPh 21 CALCULATION')}
-            </p>
-            <div className='divide-y divide-gray-50'>
-              <FormRow no='1.' label={t('Gaji/Pensiun atau THT/JHT', 'Salary / Pension')} value={formatRp(b.gajiPokok)} />
-              <FormRow no='2.' label={t('Tunjangan (tetap & variabel)', 'Allowances (fixed & variable)')} value={formatRp(b.tunjangan)} />
-              <FormRow no='3.' label={t('Uang Lembur dan sejenisnya', 'Overtime and similar')} value={formatRp(b.lembur)} />
-              <FormRow no='4.' label={t('Premi asuransi dibayar pemberi kerja', 'Insurance premiums paid by employer')} value={formatRp(b.premiPemberiKerja)} />
-              <FormRow no='5.' label={t('JUMLAH PENGHASILAN BRUTO', 'TOTAL GROSS INCOME')} value={formatRp(b.bruto)} bold />
-              <FormRow no='6.' label={t('Biaya Jabatan', 'Occupational Cost')} value={formatRp(b.biayaJabatan)} />
-              <FormRow no='7.' label={t('Iuran Pensiun / JHT / JP', 'Pension / JHT / JP contributions')} value={formatRp(b.iuranPensiun)} />
-              <FormRow no='8.' label={t('JUMLAH PENGURANGAN', 'TOTAL DEDUCTIONS')} value={formatRp(b.totalPengurangan)} bold />
-              <FormRow no='9.' label={t('JUMLAH PENGHASILAN NETO', 'TOTAL NET INCOME')} value={formatRp(b.neto)} bold />
-              <FormRow no='10.' label={`${t('Penghasilan Tidak Kena Pajak (PTKP)', 'Non-Taxable Income (PTKP)')} — ${b.ptkpStatus}`} value={formatRp(b.ptkp)} />
-              <FormRow no='11.' label={t('PENGHASILAN KENA PAJAK (PKP)', 'TAXABLE INCOME (PKP)')} value={formatRp(b.pkp)} bold />
-              <FormRow no='12.' label={t('PPh Pasal 21 atas PKP setahun', 'Annual PPh 21 on PKP')} value={formatRp(b.pphTerutang)} />
-              {!b.hasNpwp && (
-                <FormRow no='' label={t('(termasuk tambahan 20% karena tidak ber-NPWP)', '(includes 20% surcharge for no NPWP)')} value='' indent />
-              )}
-              <FormRow no='13.' label={t('PPh Pasal 21 yang telah dipotong', 'PPh 21 already withheld')} value={formatRp(b.pphDipotong)} />
-              <FormRow no='14.'
-                label={b.selisih >= 0
-                  ? t('PPh Pasal 21 KURANG dipotong', 'PPh 21 UNDER-withheld')
-                  : t('PPh Pasal 21 LEBIH dipotong', 'PPh 21 OVER-withheld')}
-                value={formatRp(Math.abs(b.selisih))} bold />
+            {/* ── A. Identitas penerima ───────────────────────────────── */}
+            <div className='border-b border-gray-800 bg-gray-100 px-2 py-[3px] text-[9px] font-bold'>
+              A. IDENTITAS PENERIMA PENGHASILAN YANG DIPOTONG
             </div>
-          </div>
+            <div className='flex border-b border-gray-800 text-[9px]'>
+              <div className='flex-1 space-y-1 border-r border-gray-800 px-2 py-2'>
+                <div className='flex items-center gap-1'>
+                  <span className='w-[74px]'>1. NPWP</span><span>:</span>
+                  <Box className='min-w-[168px]'>{b.npwp || ' '}</Box>
+                </div>
+                <div className='flex items-center gap-1'>
+                  <span className='w-[74px] leading-tight'>2. NIK/NO.<br />&nbsp;&nbsp;&nbsp;PASPOR</span><span>:</span>
+                  <Box className='min-w-[168px]'>{b.nik || ' '}</Box>
+                </div>
+                <div className='flex items-center gap-1'>
+                  <span className='w-[74px]'>3. NAMA</span><span>:</span>
+                  <Box className='min-w-[168px]'>{b.nama}</Box>
+                </div>
+                <div className='flex items-start gap-1'>
+                  <span className='w-[74px]'>4. ALAMAT</span><span>:</span>
+                  <Box className='min-h-[30px] min-w-[168px] items-start'>{b.alamat || ' '}</Box>
+                </div>
+                <div className='flex items-center gap-2 pt-0.5'>
+                  <span>5. JENIS KELAMIN :</span>
+                  <span className='flex items-center gap-1'><Check on={/^m|laki/i.test(b.gender)} /> LAKI-LAKI</span>
+                  <span className='flex items-center gap-1'><Check on={/^f|perem|wanita/i.test(b.gender)} /> PEREMPUAN</span>
+                </div>
+              </div>
+              <div className='w-[300px] space-y-1.5 px-2 py-2'>
+                <p className='leading-tight'>6. STATUS /JUMLAH TANGGUNGAN KELUARGA UNTUK PTKP</p>
+                <div className='flex items-center gap-3'>
+                  <span className='flex items-center gap-1'>K/ <Box className='min-w-[24px]'>{b.ptkpPrefix === 'K' ? b.ptkpTanggungan : ' '}</Box></span>
+                  <span className='flex items-center gap-1'>TK/ <Box className='min-w-[24px]'>{b.ptkpPrefix === 'TK' ? b.ptkpTanggungan : ' '}</Box></span>
+                  <span className='flex items-center gap-1'>HB/ <Box className='min-w-[24px]'>{b.ptkpPrefix === 'HB' ? b.ptkpTanggungan : ' '}</Box></span>
+                </div>
+                <div className='flex items-center gap-1 pt-1'>
+                  <span>7. NAMA JABATAN :</span>
+                  <Box className='min-w-[150px]'>{b.jabatan || ' '}</Box>
+                </div>
+                <div className='flex items-center gap-2'>
+                  <span>8. KARYAWAN ASING :</span><Check on={b.isAsing} /> <span>YA</span>
+                </div>
+                <div className='flex items-center gap-1'>
+                  <span>9. KODE NEGARA DOMISILI :</span>
+                  <Box className='min-w-[70px]'>{b.kodeNegara || ' '}</Box>
+                </div>
+              </div>
+            </div>
 
-          <div className='rounded-xl ring-1 ring-gray-200 p-3 text-xs'>
-            <p className='font-bold text-gray-700 mb-2'>C. {t('IDENTITAS PEMOTONG', 'WITHHOLDER IDENTITY')}</p>
-            <div className='grid grid-cols-2 gap-x-6 gap-y-1'>
-              <p><span className='text-gray-500'>NPWP</span> : {pemotong.npwp || '—'}</p>
-              <p><span className='text-gray-500'>{t('Nama', 'Name')}</span> : {pemotong.nama || '—'}</p>
-              <p className='col-span-2'><span className='text-gray-500'>{t('Alamat', 'Address')}</span> : {pemotong.alamat || '—'}</p>
+            {/* ── B. Rincian penghasilan ──────────────────────────────── */}
+            <div className='border-b border-gray-800 bg-gray-100 px-2 py-[3px] text-[9px] font-bold'>
+              B. RINCIAN PENGHASILAN DAN PENGHITUNGAN PPh PASAL 21
             </div>
-            <div className='mt-5 flex justify-end'>
-              <div className='text-center'>
-                <p className='text-gray-500'>{t('Tanda tangan pemotong', 'Withholder signature')}</p>
-                <div className='h-14' />
-                <p className='font-semibold text-gray-800 border-t border-gray-300 pt-1 px-6'>
-                  {pemotong.penandatanganNama || '—'}
-                </p>
-                <p className='text-gray-500'>NPWP: {pemotong.penandatanganNpwp || '—'}</p>
+            <div className='flex items-center gap-3 border-b border-gray-800 px-2 py-1 text-[9px]'>
+              <span className='font-bold'>KODE OBJEK PAJAK :</span>
+              <span className='flex items-center gap-1'><Check on /> 21-100-01</span>
+              <span className='flex items-center gap-1'><Check on={false} /> 21-100-02</span>
+            </div>
+            <table className='w-full border-collapse'>
+              <thead>
+                <tr className='bg-gray-100 text-[9px] font-bold'>
+                  <th colSpan={2} className='border border-gray-800 px-2 py-[3px]'>URAIAN</th>
+                  <th className='w-40 border border-gray-800 px-2 py-[3px]'>JUMLAH (Rp)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <GroupRow label='Penghasilan Bruto :' />
+                <Line no='1.'  label='Gaji/Pensiun atau THT/JHT' value={b.gajiPokok} />
+                <Line no='2.'  label='Tunjangan PPh' value={b.tunjanganPph} />
+                <Line no='3.'  label='Tunjangan Lainnya, Uang Lembur dan Sebagainya' value={b.tunjanganLain} />
+                <Line no='4.'  label='Honorarium dan Imbalan Lain Sejenisnya' value={b.honorarium} />
+                <Line no='5.'  label='Premi Asuransi yang Dibayar Pemberi Kerja' value={b.premiPemberiKerja} />
+                <Line no='6.'  label='Penerimaan dalam Bentuk Natura dan Kenikmatan Lainnya yang Dikenakan Pemotongan PPh Pasal 21' value={b.natura} />
+                <Line no='7.'  label='Tantiem, Bonus, Gratifikasi, Jasa Produksi dan THR' value={b.bonus} />
+                <Line no='8.'  label='Jumlah Penghasilan Bruto (1 s.d. 7)' value={b.bruto} bold />
+                <GroupRow label='Pengurangan :' />
+                <Line no='9.'  label='Biaya Jabatan/Biaya Pensiun' value={b.biayaJabatan} />
+                <Line no='10.' label='Iuran Pensiun atau Iuran THT/JHT' value={b.iuranPensiun} />
+                <Line no='11.' label='Jumlah Pengurangan (9 s.d. 10)' value={b.totalPengurangan} bold />
+                <GroupRow label='Penghitungan PPh Pasal 21 :' />
+                <Line no='12.' label='Jumlah Penghasilan Neto (8 - 11)' value={b.neto} />
+                <Line no='13.' label='Penghasilan Neto Masa Sebelumnya' value={b.netoMasaSebelumnya} />
+                <Line no='14.' label='Jumlah Penghasilan Neto untuk Penghitungan PPh Pasal 21 (Setahun/Disetahunkan)' value={b.netoUntukPenghitungan} bold />
+                <Line no='15.' label={`Penghasilan Tidak Kena Pajak (PTKP) — ${b.ptkpStatus}`} value={b.ptkp} />
+                <Line no='16.' label='Penghasilan Kena Pajak Setahun/Disetahunkan (14 - 15)' value={b.pkp} bold />
+                <Line no='17.' label='PPh Pasal 21 atas Penghasilan Kena Pajak Setahun/Disetahunkan' value={b.pphAtasPkp} />
+                <Line no='18.' label='PPh Pasal 21 yang Telah Dipotong Masa Sebelumnya' value={b.pphDipotongMasaSebelumnya} />
+                <Line no='19.' label={`PPh Pasal 21 Terutang${!b.hasNpwp ? ' (termasuk tambahan 20% karena tidak ber-NPWP)' : ''}`} value={b.pphTerutang} bold />
+                <Line no='20.' label='PPh Pasal 21 dan PPh Pasal 26 yang Telah Dipotong dan Dilunasi' value={b.pphDipotong} bold />
+              </tbody>
+            </table>
+
+            {/* ── C. Identitas pemotong ───────────────────────────────── */}
+            <div className='border-y border-gray-800 bg-gray-100 px-2 py-[3px] text-[9px] font-bold'>
+              C. IDENTITAS PEMOTONG
+            </div>
+            <div className='flex text-[9px]'>
+              <div className='flex-1 space-y-1.5 border-r border-gray-800 px-2 py-2'>
+                <div className='flex items-center gap-1'>
+                  <span className='w-[56px]'>1. NPWP</span><span>:</span>
+                  <Box className='min-w-[170px]'>{pemotong.npwp || ' '}</Box>
+                </div>
+                <div className='flex items-center gap-1'>
+                  <span className='w-[56px]'>2. NAMA</span><span>:</span>
+                  <Box className='min-w-[170px]'>{pemotong.nama || ' '}</Box>
+                </div>
+                {pemotong.alamat && <p className='pt-1 text-[8px] text-gray-600'>{pemotong.alamat}</p>}
+              </div>
+              <div className='w-[300px] px-2 py-2'>
+                <p>3. TANGGAL &amp; TANDA TANGAN</p>
+                <div className='mt-1 flex items-center gap-1'>
+                  <Box className='min-w-[26px]'>{pad2(today.getDate())}</Box><span>-</span>
+                  <Box className='min-w-[26px]'>{pad2(today.getMonth() + 1)}</Box><span>-</span>
+                  <Box className='min-w-[42px]'>{today.getFullYear()}</Box>
+                  <span className='ml-1 text-[8px] text-gray-500'>[dd - mm - yyyy]</span>
+                </div>
+                <div className='mt-6 text-center'>
+                  <div className='h-10' />
+                  <p className='mx-auto w-[190px] border-t border-gray-800 pt-1 font-semibold'>
+                    {pemotong.penandatanganNama || ' '}
+                  </p>
+                  <p className='text-[8px] text-gray-600'>NPWP: {pemotong.penandatanganNpwp || '—'}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -203,7 +334,7 @@ export default function Spt21Page() {
         }
       />
 
-      <div className='grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6'>
+      <div className='mb-6 grid grid-cols-1 gap-4 sm:grid-cols-4'>
         <StatCard icon='👥' tone='gray'   label={t('Jumlah Pegawai', 'Employees')} value={String(list.length)} />
         <StatCard icon='💰' tone='blue'   label={t('Total Bruto', 'Total Gross')} value={formatRp(totalBruto)} />
         <StatCard icon='🧾' tone='orange' label={t('Total PPh 21 Terutang', 'Total PPh 21 Due')} value={formatRp(totalPph)} />
@@ -224,7 +355,7 @@ export default function Spt21Page() {
         }
       >
         {editPemotong ? (
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
             <FormField label={t('NPWP Pemotong', 'Withholder NPWP')}>
               <Input value={pemotong.npwp} onChange={e => setPemotong({ npwp: e.target.value })} placeholder='00.000.000.0-000.000' />
             </FormField>
@@ -242,10 +373,10 @@ export default function Spt21Page() {
             </FormField>
           </div>
         ) : (
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-3 text-sm'>
-            <p><span className='text-gray-400 text-xs block'>NPWP</span>{pemotong.npwp || '—'}</p>
-            <p><span className='text-gray-400 text-xs block'>{t('Nama', 'Name')}</span>{pemotong.nama || '—'}</p>
-            <p><span className='text-gray-400 text-xs block'>{t('Penandatangan', 'Signatory')}</span>{pemotong.penandatanganNama || '—'}</p>
+          <div className='grid grid-cols-1 gap-3 text-sm md:grid-cols-3'>
+            <p><span className='block text-xs text-gray-400'>NPWP</span>{pemotong.npwp || '—'}</p>
+            <p><span className='block text-xs text-gray-400'>{t('Nama', 'Name')}</span>{pemotong.nama || '—'}</p>
+            <p><span className='block text-xs text-gray-400'>{t('Penandatangan', 'Signatory')}</span>{pemotong.penandatanganNama || '—'}</p>
           </div>
         )}
       </SectionCard>
@@ -279,7 +410,7 @@ export default function Spt21Page() {
             const idx = list.indexOf(b)
             return (
               <Tr key={b.empId} onClick={() => setOpenIdx(idx)}>
-                <Td className='tabular-nums text-xs'>{nomorBuktiPotong(year, idx)}</Td>
+                <Td className='text-xs tabular-nums'>{nomorBuktiPotong(year, idx)}</Td>
                 <Td className='font-semibold text-gray-800'>{b.nama}</Td>
                 <Td className='text-xs'>{b.npwp || <span className='text-gray-300'>—</span>}</Td>
                 <Td align='center'>{b.ptkpStatus}</Td>
@@ -292,7 +423,7 @@ export default function Spt21Page() {
                 <Td align='right'>
                   {b.selisih === 0
                     ? <StatusBadge tone='success'>{t('Sesuai', 'Match')}</StatusBadge>
-                    : <span className={`tabular-nums font-semibold ${b.selisih > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                    : <span className={`font-semibold tabular-nums ${b.selisih > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                         {b.selisih > 0 ? '+' : '−'}{formatRp(Math.abs(b.selisih))}
                       </span>}
                 </Td>
