@@ -648,7 +648,7 @@ export default function DashboardPage() {
       node: (
         <section key={d.id}>
           <h2 className='text-sm font-bold text-gray-700 mb-2.5'>{t(d.label[0], d.label[1])}</h2>
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
             {widgets.map(w => WIDGET_NODE[w.key])}
           </div>
         </section>
@@ -665,7 +665,7 @@ export default function DashboardPage() {
   ].filter(s => s.node).sort((a, b) => a.order - b.order)
 
   return (
-    <div className='max-w-3xl mx-auto space-y-5'>
+    <div className='space-y-5'>
 
       {/* Greeting */}
       <div>

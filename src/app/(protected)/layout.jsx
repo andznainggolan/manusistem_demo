@@ -360,7 +360,9 @@ export default function ProtectedLayout({ children }) {
 
         <main className='flex-1 min-h-screen bg-gray-50'
           style={{ marginLeft: 56 }}>
-          <div className='mx-auto w-full max-w-[1400px] px-6 py-8 lg:px-8'>
+          {/* The dashboard lays its widgets out in a responsive grid, so it
+              uses the full window width; reading-oriented pages stay capped. */}
+          <div className={`mx-auto w-full px-6 py-8 lg:px-8 ${pathname === '/dashboard' ? '' : 'max-w-[1400px]'}`}>
             {children}
           </div>
         </main>
