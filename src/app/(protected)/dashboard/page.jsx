@@ -13,11 +13,11 @@ import { usePersonnelActionStore } from '@/store/personnelActionStore'
 import { useOffboardingChecklistStore } from '@/store/offboardingChecklistStore'
 import { useOffboardingNotifyStore } from '@/store/offboardingNotifyStore'
 import { offboardingActionItems } from '@/lib/offboarding'
-import { useHomePreferencesStore } from '@/store/homePreferencesStore'
+import { useHomePreferencesStore, CHART_TYPE_DEFAULT } from '@/store/homePreferencesStore'
 import { ALL_SHORTCUTS, SICONS } from '@/lib/dashboardShortcuts'
 import { accessibleDashboards } from '@/lib/homeDashboards'
 import { useT } from '@/store/languageStore'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LabelList, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LabelList, ResponsiveContainer, PieChart, Pie, Legend } from 'recharts'
 
 /* ── Greeting ──────────────────────────────────────────────────────────────── */
 function getGreeting(t) {
@@ -144,8 +144,22 @@ function LeaveBalanceWidget({ leaves, leaveTypes, userId, t }) {
   )
 }
 
-/* ── Mini bar chart shell (shared by the role graphic widgets below) ────────── */
-function MiniBarChart({ icon, title, data, emptyLabel, height = 180, barSize = 16 }) {
+/* ── Mini chart shell (shared by the role graphic widgets below) ────────────── */
+const TOOLTIP_STYLE = { fontSize: 12, borderRadius: 10, border: '1px solid #e1e0d9', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }
+
+// Fixed categorical order for pie slices. Only used when the data carries no
+// meaning in its own colours (the one-hue magnitude charts) — a pie needs a
+// distinct hue per slice, where a bar chart does not. Never cycled: every
+// chart here is capped at 8 rows, which is exactly the number of slots.
+const SLICE_COLORS = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#4a3aa7', '#e34948']
+
+function MiniChart({ icon, title, data, emptyLabel, height = 180, barSize = 16, type = 'bar' }) {
+  // Charts whose rows already encode meaning in colour (leave status, user
+  // role) keep those hues as slices; the all-one-hue ones get the categorical
+  // ramp, since a single-colour pie would be unreadable.
+  const uniform = data.every(d => d.color === data[0]?.color)
+  const sliceFill = (d, i) => (uniform ? SLICE_COLORS[i % SLICE_COLORS.length] : d.color)
+
   return (
     <div className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden'>
       <div className='flex items-center gap-2 px-4 py-3 border-b border-gray-100 text-gray-700 font-semibold text-sm'>
@@ -155,6 +169,25 @@ function MiniBarChart({ icon, title, data, emptyLabel, height = 180, barSize = 1
       <div className='px-2 py-3'>
         {data.length === 0 ? (
           <p className='text-xs text-gray-400 text-center py-10'>{emptyLabel}</p>
+        ) : type === 'pie' ? (
+          <ResponsiveContainer width='100%' height={Math.max(height, 200)}>
+            <PieChart margin={{ top: 4, right: 4, left: 4, bottom: 4 }}>
+              {/* Animation off: the widget re-renders on store ticks, which
+                  restarts recharts' entry animation and can leave later
+                  sectors unpainted. */}
+              <Pie data={data} dataKey='value' nameKey='name' isAnimationActive={false}
+                cx='34%' cy='50%' outerRadius='82%' stroke='#fcfcfb' strokeWidth={2}>
+                {data.map((d, i) => <Cell key={i} fill={sliceFill(d, i)} />)}
+              </Pie>
+              <Tooltip contentStyle={TOOLTIP_STYLE} />
+              <Legend layout='vertical' align='right' verticalAlign='middle'
+                iconType='circle' iconSize={8}
+                formatter={(name, entry) => (
+                  <span style={{ fontSize: 11, color: '#52514e' }}>{name} · <b>{entry?.payload?.value}</b></span>
+                )}
+              />
+            </PieChart>
+          </ResponsiveContainer>
         ) : (
           <ResponsiveContainer width='100%' height={height}>
             <BarChart data={data} layout='vertical' margin={{ top: 4, right: 28, left: 4, bottom: 4 }}>
@@ -163,9 +196,8 @@ function MiniBarChart({ icon, title, data, emptyLabel, height = 180, barSize = 1
                 axisLine={{ stroke: '#c3c2b7' }} tickLine={false} />
               <YAxis type='category' dataKey='name' width={96} tick={{ fontSize: 11, fill: '#52514e' }}
                 axisLine={{ stroke: '#c3c2b7' }} tickLine={false} />
-              <Tooltip cursor={{ fill: '#f9f9f7' }}
-                contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #e1e0d9', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }} />
-              <Bar dataKey='value' radius={[0, 4, 4, 0]} maxBarSize={barSize}>
+              <Tooltip cursor={{ fill: '#f9f9f7' }} contentStyle={TOOLTIP_STYLE} />
+              <Bar dataKey='value' radius={[0, 4, 4, 0]} maxBarSize={barSize} isAnimationActive={false}>
                 {data.map((d, i) => <Cell key={i} fill={d.color} />)}
                 <LabelList dataKey='value' position='right' style={{ fontSize: 11, fill: '#52514e', fontWeight: 600 }} />
               </Bar>
@@ -182,14 +214,14 @@ const CHART_ICON = (path) => (
 )
 
 /* ── Employee: my leave usage by type ────────────────────────────────────────── */
-function EmployeeChartWidget({ leaves, leaveTypes, userId, t }) {
+function EmployeeChartWidget({ leaves, leaveTypes, userId, t, type }) {
   const data = leaveTypes.filter(lt => lt.active).map(lt => ({
     name: lt.name,
     value: leaves.filter(l => l.userId === userId && l.status === 'Approved' && l.type === lt.name).length,
     color: '#2a78d6',
   }))
   return (
-    <MiniBarChart
+    <MiniChart type={type}
       icon={CHART_ICON(<><path d='M3 3v18h18'/><path d='M18 17V9M13 17V5M8 17v-3'/></>)}
       title={t('Grafik Cuti Saya', 'My Leave Usage')}
       data={data}
@@ -199,7 +231,7 @@ function EmployeeChartWidget({ leaves, leaveTypes, userId, t }) {
 }
 
 /* ── Manager: team leave requests by status ──────────────────────────────────── */
-function ManagerChartWidget({ leaves, team, t }) {
+function ManagerChartWidget({ leaves, team, t, type }) {
   const teamIds = new Set(team.map(e => e.id))
   const counts = { Pending: 0, Approved: 0, Rejected: 0 }
   leaves.filter(l => teamIds.has(l.userId)).forEach(l => {
@@ -213,7 +245,7 @@ function ManagerChartWidget({ leaves, team, t }) {
     { name: t('Ditolak', 'Rejected'),   value: counts.Rejected, color: '#d03b3b' },
   ]
   return (
-    <MiniBarChart
+    <MiniChart type={type}
       icon={CHART_ICON(<><path d='M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75'/></>)}
       title={t('Grafik Status Approval Tim', "Team's Leave Status")}
       data={data}
@@ -243,7 +275,7 @@ function bucketCounts(rows, keyOf, t, topN = 7) {
 const barHeight = (data) => Math.max(140, data.length * 32)
 
 /* ── HR: headcount by department, org-wide ───────────────────────────────────── */
-function HRChartWidget({ employees, departments, t }) {
+function HRChartWidget({ employees, departments, t, type }) {
   // Legacy seed rows carry a plain `department` string; employees added since
   // only have `departmentId`, resolved against Struktur Organisasi.
   const data = bucketCounts(
@@ -252,7 +284,7 @@ function HRChartWidget({ employees, departments, t }) {
     t,
   )
   return (
-    <MiniBarChart
+    <MiniChart type={type}
       icon={CHART_ICON(<><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/></>)}
       title={t('Grafik Headcount per Departemen', 'Headcount by Department')}
       data={data}
@@ -265,10 +297,10 @@ function HRChartWidget({ employees, departments, t }) {
 /* ── HR: employee demography ─────────────────────────────────────────────────── */
 const IC_DEMOGRAPHY = <><path d='M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75'/></>
 
-function DemographyGenderWidget({ employees, t }) {
+function DemographyGenderWidget({ employees, t, type }) {
   const data = bucketCounts(employees.filter(e => e.status === 'Active'), (e) => e.gender, t)
   return (
-    <MiniBarChart
+    <MiniChart type={type}
       icon={CHART_ICON(IC_DEMOGRAPHY)}
       title={t('Demografi — Jenis Kelamin', 'Demography — Gender')}
       data={data}
@@ -278,10 +310,10 @@ function DemographyGenderWidget({ employees, t }) {
   )
 }
 
-function DemographyReligionWidget({ employees, t }) {
+function DemographyReligionWidget({ employees, t, type }) {
   const data = bucketCounts(employees.filter(e => e.status === 'Active'), (e) => e.religion, t)
   return (
-    <MiniBarChart
+    <MiniChart type={type}
       icon={CHART_ICON(IC_DEMOGRAPHY)}
       title={t('Demografi — Agama', 'Demography — Religion')}
       data={data}
@@ -312,7 +344,7 @@ function ageOf(birthDate) {
   return age >= 0 && age < 120 ? age : null
 }
 
-function DemographyAgeWidget({ employees, t }) {
+function DemographyAgeWidget({ employees, t, type }) {
   const active = employees.filter(e => e.status === 'Active')
   const ages = active.map(e => ageOf(e.birthDate))
   const data = AGE_BANDS.map(band => ({
@@ -323,7 +355,7 @@ function DemographyAgeWidget({ employees, t }) {
   const unknown = ages.filter(a => a == null).length
   if (unknown > 0) data.push({ name: t('Tidak diisi', 'Not set'), value: unknown, color: '#2a78d6' })
   return (
-    <MiniBarChart
+    <MiniChart type={type}
       icon={CHART_ICON(IC_DEMOGRAPHY)}
       title={t('Demografi — Usia', 'Demography — Age')}
       data={data}
@@ -333,7 +365,7 @@ function DemographyAgeWidget({ employees, t }) {
   )
 }
 
-function DemographyCompanyWidget({ employees, companies, t }) {
+function DemographyCompanyWidget({ employees, companies, t, type }) {
   // Label by the short company code (AG, AM, …) — the legal names are far too
   // long to sit in a chart's category axis.
   const data = bucketCounts(
@@ -345,7 +377,7 @@ function DemographyCompanyWidget({ employees, companies, t }) {
     t,
   )
   return (
-    <MiniBarChart
+    <MiniChart type={type}
       icon={CHART_ICON(<><rect x='3' y='7' width='18' height='14' rx='2'/><path d='M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2'/><line x1='3' y1='13' x2='21' y2='13'/></>)}
       title={t('Demografi — Perusahaan', 'Demography — Company')}
       data={data}
@@ -356,7 +388,7 @@ function DemographyCompanyWidget({ employees, companies, t }) {
 }
 
 /* ── Superadmin: user role distribution, system-wide ─────────────────────────── */
-function SuperadminChartWidget({ userList, t }) {
+function SuperadminChartWidget({ userList, t, type }) {
   const ROLE_LABEL = {
     employee:   t('Employee', 'Employee'),
     manager:    t('Manager', 'Manager'),
@@ -374,7 +406,7 @@ function SuperadminChartWidget({ userList, t }) {
     { name: t('Lainnya', 'Other'),         value: counts.other,      color: ROLE_COLOR.other },
   ].filter(d => d.value > 0)
   return (
-    <MiniBarChart
+    <MiniChart type={type}
       icon={CHART_ICON(<><circle cx='12' cy='12' r='3'/><path d='M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z'/></>)}
       title={t('Grafik Distribusi Role Pengguna', 'User Role Distribution')}
       data={data}
@@ -726,17 +758,20 @@ export default function DashboardPage() {
   /* ── The four role dashboards ─────────────────────────────────────────── */
   // One node per widget key, so a dashboard's contents come straight from the
   // shared DASHBOARDS definition rather than being spelled out twice.
+  // Bar unless the user picked otherwise for that specific chart.
+  const chartType = (key) => prefs.chartType[key] || CHART_TYPE_DEFAULT
+
   const WIDGET_NODE = {
     timeCard:       <TimeCardWidget key='timeCard' t={t} />,
     leaveBalance:   <LeaveBalanceWidget key='leaveBalance' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />,
-    leaveChart:     <EmployeeChartWidget key='leaveChart' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />,
-    teamLeaveChart: <ManagerChartWidget key='teamLeaveChart' leaves={leaves} team={myTeam} t={t} />,
-    headcountChart:     <HRChartWidget key='headcountChart' employees={employees} departments={departments} t={t} />,
-    demographyGender:   <DemographyGenderWidget key='demographyGender' employees={employees} t={t} />,
-    demographyReligion: <DemographyReligionWidget key='demographyReligion' employees={employees} t={t} />,
-    demographyAge:      <DemographyAgeWidget key='demographyAge' employees={employees} t={t} />,
-    demographyCompany:  <DemographyCompanyWidget key='demographyCompany' employees={employees} companies={companies} t={t} />,
-    userRoleChart:  <SuperadminChartWidget key='userRoleChart' userList={userList} t={t} />,
+    leaveChart:     <EmployeeChartWidget key='leaveChart' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} type={chartType('leaveChart')} />,
+    teamLeaveChart: <ManagerChartWidget key='teamLeaveChart' leaves={leaves} team={myTeam} t={t} type={chartType('teamLeaveChart')} />,
+    headcountChart:     <HRChartWidget key='headcountChart' employees={employees} departments={departments} t={t} type={chartType('headcountChart')} />,
+    demographyGender:   <DemographyGenderWidget key='demographyGender' employees={employees} t={t} type={chartType('demographyGender')} />,
+    demographyReligion: <DemographyReligionWidget key='demographyReligion' employees={employees} t={t} type={chartType('demographyReligion')} />,
+    demographyAge:      <DemographyAgeWidget key='demographyAge' employees={employees} t={t} type={chartType('demographyAge')} />,
+    demographyCompany:  <DemographyCompanyWidget key='demographyCompany' employees={employees} companies={companies} t={t} type={chartType('demographyCompany')} />,
+    userRoleChart:  <SuperadminChartWidget key='userRoleChart' userList={userList} t={t} type={chartType('userRoleChart')} />,
   }
 
   const myDashboards = accessibleDashboards({

@@ -2,7 +2,7 @@
 import Icon from '@/components/ui/Icon'
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/store/authStore'
-import { useHomePreferencesStore } from '@/store/homePreferencesStore'
+import { useHomePreferencesStore, CHART_TYPE_DEFAULT } from '@/store/homePreferencesStore'
 import { dbStorage } from '@/lib/dbStorage'
 import { ALL_SHORTCUTS, SICONS } from '@/lib/dashboardShortcuts'
 import { accessibleDashboards } from '@/lib/homeDashboards'
@@ -10,13 +10,25 @@ import { useEmployeeStore } from '@/store/employeeStore'
 import { useT } from '@/store/languageStore'
 import { PageHeader, SectionCard, ActionButton } from '@/components/ui'
 
-function Toggle({ checked, onChange, label, hint, order, onOrderChange, t }) {
+function Toggle({ checked, onChange, label, hint, order, onOrderChange, chartType, onChartTypeChange, t }) {
   return (
     <div className='flex items-center justify-between gap-4 py-3'>
       <label className='flex-1 min-w-0 cursor-pointer'>
         <span className='block text-sm font-semibold text-gray-800'>{label}</span>
         {hint && <span className='block text-xs text-gray-400 mt-0.5'>{hint}</span>}
       </label>
+      {chartType != null && (
+        <label className='flex items-center gap-1.5 text-xs text-gray-500 flex-shrink-0'>
+          {t('Grafik','Chart')}
+          <select
+            value={chartType}
+            onChange={(e) => onChartTypeChange(e.target.value)}
+            className='rounded-lg border border-gray-200 px-2 py-1 text-sm text-gray-800 bg-white outline-none focus:border-red-300 focus:ring-2 focus:ring-red-100'>
+            <option value='bar'>Bar</option>
+            <option value='pie'>Pie</option>
+          </select>
+        </label>
+      )}
       {order != null && (
         <label className='flex items-center gap-1.5 text-xs text-gray-500 flex-shrink-0'>
           {t('Urutan','Order')}
@@ -76,6 +88,7 @@ export default function PreferencesPage() {
   const setWidget = (key, val) => setDraft(d => ({ ...d, widgets: { ...d.widgets, [key]: val } }))
   const setOrder = (key, val) => setDraft(d => ({ ...d, order: { ...d.order, [key]: val } }))
   const setWidgetOrder = (key, val) => setDraft(d => ({ ...d, widgetOrder: { ...d.widgetOrder, [key]: val } }))
+  const setChartType = (key, val) => setDraft(d => ({ ...d, chartType: { ...d.chartType, [key]: val } }))
   const toggleShortcutDraft = (id) => setDraft(d => ({
     ...d,
     hiddenShortcutIds: d.hiddenShortcutIds.includes(id)
@@ -158,6 +171,8 @@ export default function PreferencesPage() {
               onChange={(v) => setWidget(w.key, v)}
               order={draft.widgetOrder[w.key]}
               onOrderChange={(v) => setWidgetOrder(w.key, v)}
+              chartType={w.chart ? (draft.chartType[w.key] || CHART_TYPE_DEFAULT) : null}
+              onChartTypeChange={(v) => setChartType(w.key, v)}
             />
           ))}
         </SectionCard>

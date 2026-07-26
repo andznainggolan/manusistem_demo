@@ -30,6 +30,10 @@ const DEFAULT_PREFS = {
     userRoleChart: true,
   },
   hiddenShortcutIds: [],
+  // Shape of each chart widget: 'bar' | 'pie', keyed by widget key. Left empty
+  // because bar is the default — readers use CHART_TYPE_DEFAULT as the
+  // fallback, so a newly added chart needs no entry here.
+  chartType: {},
   // Display order — smaller number = higher up. All top-level sections stack
   // in one ordered column; widgetOrder.* then reorders widgets *within* their
   // own dashboard (each dashboard numbers its widgets from 1 independently).
@@ -46,6 +50,8 @@ const DEFAULT_PREFS = {
     userRoleChart: 1,
   },
 }
+
+export const CHART_TYPE_DEFAULT = 'bar'
 
 // Drop undefined values so a migration never overwrites a default with one.
 const defined = (obj) => Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined))
@@ -94,6 +100,7 @@ export const useHomePreferencesStore = create(persist(
         widgets: { ...DEFAULT_PREFS.widgets, ...(saved.widgets || {}) },
         order: { ...DEFAULT_PREFS.order, ...(saved.order || {}) },
         widgetOrder: { ...DEFAULT_PREFS.widgetOrder, ...(saved.widgetOrder || {}) },
+        chartType: { ...DEFAULT_PREFS.chartType, ...(saved.chartType || {}) },
       }
     },
 

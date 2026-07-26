@@ -5,6 +5,8 @@ import { HR_ROLES } from '@/constants/roles'
 // disagree about what exists, what it contains, or who may see it.
 //
 // Labels are [indonesian, english] tuples — the caller applies t().
+// `chart: true` marks a widget whose shape the user may switch between bar and
+// pie (prefs.chartType); widgets without it aren't charts at all.
 export const DASHBOARDS = [
   {
     id: 'ess',
@@ -15,7 +17,7 @@ export const DASHBOARDS = [
     widgets: [
       { key: 'timeCard',     label: ['My Time Card', 'My Time Card'] },
       { key: 'leaveBalance', label: ['Leave Balance', 'Leave Balance'] },
-      { key: 'leaveChart',   label: ['Grafik Cuti Saya', 'My Leave Usage'] },
+      { key: 'leaveChart',   label: ['Grafik Cuti Saya', 'My Leave Usage'], chart: true },
     ],
   },
   {
@@ -25,7 +27,7 @@ export const DASHBOARDS = [
     label: ['MSS Dashboard', 'MSS Dashboard'],
     hint: ['Data tim yang kamu pimpin.', 'Data for the team you manage.'],
     widgets: [
-      { key: 'teamLeaveChart', label: ['Grafik Status Approval Tim', "Team's Leave Status"] },
+      { key: 'teamLeaveChart', label: ['Grafik Status Approval Tim', "Team's Leave Status"], chart: true },
     ],
   },
   {
@@ -35,11 +37,11 @@ export const DASHBOARDS = [
     label: ['HR Dashboard', 'HR Dashboard'],
     hint: ['Data kepegawaian seluruh organisasi.', 'Organisation-wide people data.'],
     widgets: [
-      { key: 'headcountChart',      label: ['Grafik Headcount per Departemen', 'Headcount by Department'] },
-      { key: 'demographyGender',    label: ['Demografi — Jenis Kelamin', 'Demography — Gender'] },
-      { key: 'demographyReligion',  label: ['Demografi — Agama', 'Demography — Religion'] },
-      { key: 'demographyAge',       label: ['Demografi — Usia', 'Demography — Age'] },
-      { key: 'demographyCompany',   label: ['Demografi — Perusahaan', 'Demography — Company'] },
+      { key: 'headcountChart',      label: ['Grafik Headcount per Departemen', 'Headcount by Department'], chart: true },
+      { key: 'demographyGender',    label: ['Demografi — Jenis Kelamin', 'Demography — Gender'], chart: true },
+      { key: 'demographyReligion',  label: ['Demografi — Agama', 'Demography — Religion'], chart: true },
+      { key: 'demographyAge',       label: ['Demografi — Usia', 'Demography — Age'], chart: true },
+      { key: 'demographyCompany',   label: ['Demografi — Perusahaan', 'Demography — Company'], chart: true },
     ],
   },
   {
@@ -49,7 +51,7 @@ export const DASHBOARDS = [
     label: ['Superadmin Dashboard', 'Superadmin Dashboard'],
     hint: ['Data sistem dan pengguna.', 'System and user data.'],
     widgets: [
-      { key: 'userRoleChart', label: ['Grafik Distribusi Role Pengguna', 'User Role Distribution'] },
+      { key: 'userRoleChart', label: ['Grafik Distribusi Role Pengguna', 'User Role Distribution'], chart: true },
     ],
   },
 ]
