@@ -15,6 +15,7 @@ export const DASHBOARDS = [
     label: ['ESS Dashboard', 'ESS Dashboard'],
     hint: ['Data diri kamu sendiri.', 'Your own self-service data.'],
     widgets: [
+      { key: 'announcement', label: ['Announcement', 'Announcement'] },
       { key: 'timeCard',     label: ['My Time Card', 'My Time Card'] },
       { key: 'leaveBalance', label: ['Leave Balance', 'Leave Balance'] },
       { key: 'leaveChart',   label: ['Grafik Cuti Saya', 'My Leave Usage'], chart: true },

@@ -259,6 +259,9 @@ const HR_GROUPS = [
     { label: 'RKTK',                href: '/hr/people-planning/rktk',                icon: ic('money') },
     { label: 'Adjustment Planning', href: '/hr/people-planning/adjustment-planning', icon: ic('edit') },
   ]},
+  { title: 'Settings', icon: ic('settings'), items: [
+    { label: 'Announcement', href: '/hr/settings/announcement', icon: ic('bell') },
+  ]},
 ]
 
 const SA_GROUPS = [

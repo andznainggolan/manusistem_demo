@@ -19,7 +19,7 @@ const DEFAULT_PREFS = {
   showSuperadminDashboard: true,
   widgets: {
     // ESS
-    timeCard: true, leaveBalance: true, leaveChart: true,
+    announcement: true, timeCard: true, leaveBalance: true, leaveChart: true,
     // MSS
     teamLeaveChart: true,
     // HR
@@ -42,7 +42,7 @@ const DEFAULT_PREFS = {
     essDashboard: 3, mssDashboard: 4, hrDashboard: 5, superadminDashboard: 6,
   },
   widgetOrder: {
-    timeCard: 1, leaveBalance: 2, leaveChart: 3,
+    announcement: 1, timeCard: 2, leaveBalance: 3, leaveChart: 4,
     teamLeaveChart: 1,
     headcountChart: 1,
     demographyGender: 2, demographyReligion: 3,

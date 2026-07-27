@@ -16,6 +16,7 @@ import { offboardingActionItems } from '@/lib/offboarding'
 import { useHomePreferencesStore, CHART_TYPE_DEFAULT } from '@/store/homePreferencesStore'
 import { ALL_SHORTCUTS, SICONS } from '@/lib/dashboardShortcuts'
 import { accessibleDashboards } from '@/lib/homeDashboards'
+import { useAnnouncementStore, CATEGORY_TONE, isLive } from '@/store/announcementStore'
 import { useT } from '@/store/languageStore'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LabelList, ResponsiveContainer, PieChart, Pie, Legend } from 'recharts'
 
@@ -140,6 +141,46 @@ function LeaveBalanceWidget({ leaves, leaveTypes, userId, t }) {
           )
         })}
       </div>
+    </div>
+  )
+}
+
+/* ── Announcement widget ───────────────────────────────────────────────────── */
+function AnnouncementWidget({ announcements, t }) {
+  return (
+    <div className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden'>
+      <div className='flex items-center gap-2 px-4 py-3 border-b border-gray-100 text-gray-700 font-semibold text-sm'>
+        <svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+          <path d='M3 11l18-5v12L3 14v-3z' /><path d='M11.6 16.8a3 3 0 11-5.8-1.6' />
+        </svg>
+        {t('Pengumuman', 'Announcement')}
+        {announcements.length > 0 && (
+          <span className='ml-auto text-xs font-bold text-white rounded-full px-2 py-0.5'
+            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+            {announcements.length}
+          </span>
+        )}
+      </div>
+      {announcements.length === 0 ? (
+        <p className='text-xs text-gray-400 text-center py-10'>
+          {t('Belum ada pengumuman', 'No announcements')}
+        </p>
+      ) : (
+        <div className='divide-y divide-gray-50 max-h-72 overflow-y-auto'>
+          {announcements.map(a => (
+            <div key={a.id} className='px-4 py-3'>
+              <div className='flex items-start gap-2'>
+                {a.pinned && <span className='text-xs leading-5' title={t('Disematkan', 'Pinned')}>📌</span>}
+                <p className='flex-1 text-sm font-semibold text-gray-800 leading-snug'>{a.title}</p>
+                <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${CATEGORY_TONE[a.category] || CATEGORY_TONE.Umum}`}>
+                  {a.category}
+                </span>
+              </div>
+              {a.body && <p className='mt-1 text-xs text-gray-500 leading-relaxed'>{a.body}</p>}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -447,6 +488,9 @@ export default function DashboardPage() {
   const { leaves, leaveTypes } = useLeaveStore()
   const { employees } = useEmployeeStore()
   const { departments, companies } = useStructureStore()
+  // Select the stable array and filter in the render body — a selector that
+  // filters would hand React a new array every call.
+  const { announcements } = useAnnouncementStore()
   const { onboardings } = useOnboardingStore()
   const hayStore = useHayStore()
   const pipStore = usePipStore()
@@ -761,7 +805,12 @@ export default function DashboardPage() {
   // Bar unless the user picked otherwise for that specific chart.
   const chartType = (key) => prefs.chartType[key] || CHART_TYPE_DEFAULT
 
+  const liveAnnouncements = announcements
+    .filter(a => isLive(a))
+    .sort((a, b) => (b.pinned - a.pinned) || String(b.createdAt).localeCompare(String(a.createdAt)))
+
   const WIDGET_NODE = {
+    announcement:   <AnnouncementWidget key='announcement' announcements={liveAnnouncements} t={t} />,
     timeCard:       <TimeCardWidget key='timeCard' t={t} />,
     leaveBalance:   <LeaveBalanceWidget key='leaveBalance' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />,
     leaveChart:     <EmployeeChartWidget key='leaveChart' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} type={chartType('leaveChart')} />,
