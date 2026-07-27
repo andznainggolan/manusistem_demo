@@ -10,11 +10,18 @@ import { useEmployeeStore } from '@/store/employeeStore'
 import { useT } from '@/store/languageStore'
 import { PageHeader, SectionCard, ActionButton } from '@/components/ui'
 
-function Toggle({ checked, onChange, label, hint, order, onOrderChange, chartType, onChartTypeChange, t }) {
+function Toggle({ checked, onChange, label, hint, order, onOrderChange, chartType, onChartTypeChange, locked, t }) {
   return (
     <div className='flex items-center justify-between gap-4 py-3'>
-      <label className='flex-1 min-w-0 cursor-pointer'>
-        <span className='block text-sm font-semibold text-gray-800'>{label}</span>
+      <label className={`flex-1 min-w-0 ${locked ? '' : 'cursor-pointer'}`}>
+        <span className='block text-sm font-semibold text-gray-800'>
+          {label}
+          {locked && (
+            <span className='ml-2 align-middle rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-gray-500'>
+              🔒 {t('Wajib', 'Required')}
+            </span>
+          )}
+        </span>
         {hint && <span className='block text-xs text-gray-400 mt-0.5'>{hint}</span>}
       </label>
       {chartType != null && (
@@ -42,13 +49,15 @@ function Toggle({ checked, onChange, label, hint, order, onOrderChange, chartTyp
       <button
         type='button'
         role='switch'
-        aria-checked={checked}
-        onClick={() => onChange(!checked)}
-        className='relative flex-shrink-0 w-11 h-6 rounded-full transition-colors'
-        style={{ background: checked ? '#8B1A1A' : '#d1d5db' }}>
+        aria-checked={locked ? true : checked}
+        disabled={locked}
+        title={locked ? t('Pengumuman wajib tampil dan tidak dapat dinonaktifkan.', 'Announcements are required and cannot be turned off.') : undefined}
+        onClick={() => !locked && onChange(!checked)}
+        className={`relative flex-shrink-0 w-11 h-6 rounded-full transition-colors ${locked ? 'cursor-not-allowed opacity-60' : ''}`}
+        style={{ background: (locked || checked) ? '#8B1A1A' : '#d1d5db' }}>
         <span
           className='absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform'
-          style={{ transform: checked ? 'translateX(20px)' : 'translateX(0)' }}
+          style={{ transform: (locked || checked) ? 'translateX(20px)' : 'translateX(0)' }}
         />
       </button>
     </div>
@@ -131,6 +140,13 @@ export default function PreferencesPage() {
       <SectionCard title={t('Tampilkan di Beranda', 'Show on Homepage')}
         subtitle={t('Urutan: angka terkecil tampil paling atas.', 'Order: the smallest number shows up top.')}
         className='mb-5' bodyClass='divide-y divide-gray-100'>
+        <Toggle t={t}
+          locked
+          label='Announcement'
+          hint={t('Pengumuman perusahaan — selalu tampil, hanya urutannya yang bisa diatur.', 'Company announcements — always shown; only the order is adjustable.')}
+          order={draft.order.announcement}
+          onOrderChange={(v) => setOrder('announcement', v)}
+        />
         <Toggle t={t}
           label={t('Menu Shortcut', 'Menu Shortcuts')}
           hint={t('Grid ikon akses cepat ke halaman yang sering dipakai.', 'Quick-access icon grid to frequently used pages.')}

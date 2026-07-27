@@ -809,8 +809,13 @@ export default function DashboardPage() {
     .filter(a => isLive(a))
     .sort((a, b) => (b.pinned - a.pinned) || String(b.createdAt).localeCompare(String(a.createdAt)))
 
+  // Mandatory section — no show/hide pref, only an order. Skipped entirely
+  // when nothing is live, so an empty box never sits on the page.
+  const announcementBlock = liveAnnouncements.length > 0 && (
+    <AnnouncementWidget key='announcement' announcements={liveAnnouncements} t={t} />
+  )
+
   const WIDGET_NODE = {
-    announcement:   <AnnouncementWidget key='announcement' announcements={liveAnnouncements} t={t} />,
     timeCard:       <TimeCardWidget key='timeCard' t={t} />,
     leaveBalance:   <LeaveBalanceWidget key='leaveBalance' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />,
     leaveChart:     <EmployeeChartWidget key='leaveChart' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} type={chartType('leaveChart')} />,
@@ -850,6 +855,7 @@ export default function DashboardPage() {
   // Sections stack in one column, ordered by "Urutan" from Preferensi Beranda —
   // smallest number shows up top.
   const mainSections = [
+    { key: 'announcement',  order: prefs.order.announcement,  node: announcementBlock },
     { key: 'menuShortcuts', order: prefs.order.menuShortcuts, node: menuShortcutsBlock },
     { key: 'thingsToDo',    order: prefs.order.thingsToDo,    node: thingsToDoBlock },
     ...dashboardSections,

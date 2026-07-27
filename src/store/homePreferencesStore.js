@@ -6,10 +6,15 @@ import { dbStorage } from '@/lib/dbStorage'
 // the "Preferensi Beranda" (Homepage Preferences) page, reachable from the
 // user menu in the topbar.
 //
-// The home page is composed of top-level sections: Menu Shortcut, Things To
-// Do, and four role dashboards (ESS / MSS / HR / Superadmin). Which dashboards
-// a user may see at all is a role question answered in dashboard/page.jsx —
-// these preferences only decide what an eligible user chooses to show.
+// The home page is composed of top-level sections: Announcement, Menu
+// Shortcut, Things To Do, and four role dashboards (ESS / MSS / HR /
+// Superadmin). Which dashboards a user may see at all is a role question
+// answered in dashboard/page.jsx — these preferences only decide what an
+// eligible user chooses to show.
+//
+// Announcement is deliberately absent from the show/hide flags: company
+// announcements are mandatory, so a user may only reorder it (order.announcement),
+// never switch it off.
 const DEFAULT_PREFS = {
   showMenuShortcuts: true,
   showThingsToDo: true,
@@ -19,7 +24,7 @@ const DEFAULT_PREFS = {
   showSuperadminDashboard: true,
   widgets: {
     // ESS
-    announcement: true, timeCard: true, leaveBalance: true, leaveChart: true,
+    timeCard: true, leaveBalance: true, leaveChart: true,
     // MSS
     teamLeaveChart: true,
     // HR
@@ -38,11 +43,11 @@ const DEFAULT_PREFS = {
   // in one ordered column; widgetOrder.* then reorders widgets *within* their
   // own dashboard (each dashboard numbers its widgets from 1 independently).
   order: {
-    menuShortcuts: 1, thingsToDo: 2,
-    essDashboard: 3, mssDashboard: 4, hrDashboard: 5, superadminDashboard: 6,
+    announcement: 1, menuShortcuts: 2, thingsToDo: 3,
+    essDashboard: 4, mssDashboard: 5, hrDashboard: 6, superadminDashboard: 7,
   },
   widgetOrder: {
-    announcement: 1, timeCard: 2, leaveBalance: 3, leaveChart: 4,
+    timeCard: 1, leaveBalance: 2, leaveChart: 3,
     teamLeaveChart: 1,
     headcountChart: 1,
     demographyGender: 2, demographyReligion: 3,
