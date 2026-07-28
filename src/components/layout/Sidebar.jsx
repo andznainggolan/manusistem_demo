@@ -263,6 +263,14 @@ const HR_GROUPS = [
     { label: 'RKTK',                href: '/hr/people-planning/rktk',                icon: ic('money') },
     { label: 'Adjustment Planning', href: '/hr/people-planning/adjustment-planning', icon: ic('edit') },
   ]},
+  // Ordered the way a schedule is actually built up: shift → weekly pattern →
+  // schedule → who works it.
+  { title: 'Time & Labour', icon: ic('clock'), items: [
+    { label: 'Shift Setting',       href: '/hr/time-labour/shift-setting',       icon: ic('clock') },
+    { label: 'Shift Pattern',       href: '/hr/time-labour/shift-pattern',       icon: ic('grid') },
+    { label: 'Work Schedule',       href: '/hr/time-labour/work-schedule',       icon: ic('calendar') },
+    { label: 'Schedule Assignment', href: '/hr/time-labour/schedule-assignment', icon: ic('userCheck') },
+  ]},
   { title: 'Settings', icon: ic('settings'), items: [
     { label: 'Announcement', href: '/hr/settings/announcement', icon: ic('bell') },
   ]},
