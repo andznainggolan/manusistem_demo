@@ -83,13 +83,20 @@ export function calcAnnualTax(pkp) {
 // deduct biaya jabatan + employee JHT/JP + PTKP, tax the remainder progressively,
 // then divide back by 12. This is the basis the simplified monthly TER tables
 // are reconciled against every December, and stays accurate year-round.
-export function calcPph21Monthly({ grossMonthly, ptkpStatus, hasNpwp, jhtEmployee, jpEmployee, settings }) {
-  const annualGross = grossMonthly * 12
+//
+// `taxableMonthly` is the PPh 21 gross, which is NOT the same as take-home
+// gross: employer-paid BPJS Kesehatan/JKK/JKM premiums are the employee's
+// income for PPh 21 (they land on line 5 of form 1721-A1) even though no cash
+// reaches the employee. Employer JHT/JP are excluded — those are deferred.
+export function calcPph21Monthly({ taxableMonthly, ptkpStatus, hasNpwp, jhtEmployee, jpEmployee, settings }) {
+  const annualGross = taxableMonthly * 12
   const biayaJabatan = Math.min(annualGross * settings.biayaJabatan.rate, settings.biayaJabatan.monthlyCap * 12)
   const annualJht = jhtEmployee * 12
   const annualJp  = jpEmployee * 12
   const ptkp = PTKP_TABLE[ptkpStatus] ?? PTKP_TABLE['TK/0']
-  const pkp = Math.max(0, round((annualGross - biayaJabatan - annualJht - annualJp - ptkp) / 1000) * 1000)
+  // PKP is rounded DOWN to whole thousands of rupiah (dibulatkan ke bawah),
+  // which is also what the annual 1721-A1 does — so the two reconcile.
+  const pkp = Math.max(0, Math.floor((annualGross - biayaJabatan - annualJht - annualJp - ptkp) / 1000) * 1000)
   let annualTax = calcAnnualTax(pkp)
   if (!hasNpwp) annualTax *= (1 + settings.npwpSurcharge)
   return round(annualTax / 12)
@@ -109,8 +116,16 @@ export function calcPayslip({
   const jkk       = bpjsTk        ? calcJkk(basic, settings)           : 0
   const jkm       = bpjsTk        ? calcJkm(basic, settings)           : 0
 
+  // Employer-paid insurance premiums are the employee's income for PPh 21 but
+  // are never paid out in cash — so they raise the taxable base only, and
+  // leave gross, deductions and take-home untouched. This is the same base
+  // form 1721-A1 reports (line 5), so monthly withholding and the annual
+  // certificate now reconcile instead of drifting apart over the year.
+  const employerPremium = kesehatan.employer + jkk + jkm
+  const taxableGross = gross + employerPremium
+
   const pph21 = calcPph21Monthly({
-    grossMonthly: gross, ptkpStatus, hasNpwp,
+    taxableMonthly: taxableGross, ptkpStatus, hasNpwp,
     jhtEmployee: jht.employee, jpEmployee: jp.employee, settings,
   })
 
@@ -120,6 +135,7 @@ export function calcPayslip({
 
   return {
     basic, allowance, variableAllowance, overtime, gross,
+    employerPremium, taxableGross,
     bpjsKesehatanEmployee: kesehatan.employee, bpjsKesehatanEmployer: kesehatan.employer,
     jhtEmployee: jht.employee, jhtEmployer: jht.employer,
     jpEmployee: jp.employee, jpEmployer: jp.employer,
