@@ -17,6 +17,9 @@ import { useHomePreferencesStore, CHART_TYPE_DEFAULT } from '@/store/homePrefere
 import { ALL_SHORTCUTS, SICONS } from '@/lib/dashboardShortcuts'
 import { accessibleDashboards } from '@/lib/homeDashboards'
 import { useAnnouncementStore, CATEGORY_TONE, isLive } from '@/store/announcementStore'
+import { useShiftStore } from '@/store/shiftStore'
+import { useAttendanceStore, todayStr } from '@/store/attendanceStore'
+import { shiftFor, gradeTime, toMinutes, TONE_CLASS } from '@/lib/workSchedule'
 import { useT } from '@/store/languageStore'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LabelList, ResponsiveContainer, PieChart, Pie, Legend } from 'recharts'
 
@@ -29,24 +32,27 @@ function getGreeting(t) {
 }
 
 /* ── My Time Card widget ───────────────────────────────────────────────────── */
-function TimeCardWidget({ t }) {
-  const [clockIn,  setClockIn ] = useState(null)
-  const [clockOut, setClockOut] = useState(null)
-  const [now,      setNow     ] = useState(new Date())
-
+// Backed by the same attendance record as the Clock In/Out page, so the two
+// can never disagree, and times survive a reload.
+function TimeCardWidget({ t, userId, userName, sched, record, onClockIn, onClockOut, router }) {
+  const [now, setNow] = useState(null)
   useEffect(() => {
+    setNow(new Date())
     const id = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(id)
   }, [])
 
-  const fmt = (d) => d ? d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '--:--'
+  const inTime  = record?.checkIn  && record.checkIn  !== '-' ? record.checkIn  : null
+  const outTime = record?.checkOut && record.checkOut !== '-' ? record.checkOut : null
 
-  const workingMins = clockIn
-    ? Math.floor(((clockOut || now) - clockIn) / 60000)
-    : null
-  const workingStr = workingMins != null
-    ? `${Math.floor(workingMins / 60)}h ${workingMins % 60}m`
-    : '--'
+  const gin  = gradeTime(inTime,  sched?.shift.startTime, 'in')
+  const gout = gradeTime(outTime, sched?.shift.endTime,   'out')
+
+  // Worked time so far, from the recorded clock-in to clock-out (or now).
+  const startMin = toMinutes(inTime)
+  const endMin = outTime ? toMinutes(outTime) : (now ? now.getHours() * 60 + now.getMinutes() : null)
+  const workedMin = startMin != null && endMin != null ? Math.max(0, endMin - startMin) : null
+  const workingStr = workedMin != null ? `${Math.floor(workedMin / 60)}h ${workedMin % 60}m` : '--'
 
   return (
     <div className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden'>
@@ -57,27 +63,39 @@ function TimeCardWidget({ t }) {
           </svg>
           {t('My Time Card', 'My Time Card')}
         </div>
-        <button className='text-xs text-gray-400 hover:text-gray-600 font-medium transition'>
+        <button onClick={() => router.push('/ess/clock')}
+          className='text-xs text-gray-400 hover:text-gray-600 font-medium transition'>
           {t('Show More', 'Show More')}
         </button>
       </div>
+
+      {sched && (
+        <p className='px-4 pt-2 text-[11px] text-gray-400'>
+          {sched.shift.name} · {sched.shift.startTime}–{sched.shift.endTime}
+        </p>
+      )}
+
       <div className='px-4 py-3 grid grid-cols-2 divide-x divide-gray-100'>
         <div className='pr-4 text-center'>
-          <p className='text-lg font-bold text-green-600 font-mono'>{fmt(clockIn)}</p>
+          <p className={`text-lg font-bold font-mono ${inTime ? TONE_CLASS[gin.tone] : 'text-gray-300'}`}>
+            {inTime || '--:--'}
+          </p>
           <p className='text-xs text-gray-400 mt-0.5'>In</p>
-          {!clockIn && (
-            <button onClick={() => setClockIn(new Date())}
-              className='mt-2 text-xs text-white font-semibold px-3 py-1 rounded-full transition'
+          {!inTime && (
+            <button onClick={onClockIn} disabled={!userId}
+              className='mt-2 text-xs text-white font-semibold px-3 py-1 rounded-full transition disabled:opacity-50'
               style={{ background: 'linear-gradient(135deg,#059669,#34d399)' }}>
               Clock In
             </button>
           )}
         </div>
         <div className='pl-4 text-center'>
-          <p className='text-lg font-bold text-red-500 font-mono'>{fmt(clockOut)}</p>
+          <p className={`text-lg font-bold font-mono ${outTime ? TONE_CLASS[gout.tone] : 'text-gray-300'}`}>
+            {outTime || '--:--'}
+          </p>
           <p className='text-xs text-gray-400 mt-0.5'>Out</p>
-          {clockIn && !clockOut && (
-            <button onClick={() => setClockOut(new Date())}
+          {inTime && !outTime && (
+            <button onClick={onClockOut}
               className='mt-2 text-xs text-white font-semibold px-3 py-1 rounded-full transition'
               style={{ background: 'linear-gradient(135deg,#dc2626,#f87171)' }}>
               Clock Out
@@ -85,14 +103,10 @@ function TimeCardWidget({ t }) {
           )}
         </div>
       </div>
-      <div className='px-4 py-2.5 bg-gray-50 border-t border-gray-100 flex items-center justify-between'>
+      <div className='px-4 py-2.5 bg-gray-50 border-t border-gray-100'>
         <span className='text-xs text-gray-500'>
           {t('Working time', 'Working time')}: <span className='font-semibold text-gray-700'>{workingStr}</span>
         </span>
-        <button onClick={() => { setClockIn(null); setClockOut(null) }}
-          className='text-xs text-red-600 hover:text-red-800 font-medium transition'>
-          {t('Reset', 'Reset')}
-        </button>
       </div>
     </div>
   )
@@ -491,6 +505,8 @@ export default function DashboardPage() {
   // Select the stable array and filter in the render body — a selector that
   // filters would hand React a new array every call.
   const { announcements } = useAnnouncementStore()
+  const { assignments, schedules, patterns, shifts } = useShiftStore()
+  const { records: attendance, clockIn, clockOut } = useAttendanceStore()
   const { onboardings } = useOnboardingStore()
   const hayStore = useHayStore()
   const pipStore = usePipStore()
@@ -815,8 +831,25 @@ export default function DashboardPage() {
     <AnnouncementWidget key='announcement' announcements={liveAnnouncements} t={t} />
   )
 
+  const attDate = todayStr()
+  const mySched = uid ? shiftFor(uid, attDate, { assignments, schedules, patterns, shifts }) : null
+  const myAttendance = attendance.find(r => r.userId === uid && r.date === attDate) || null
+
+  const handleClockIn = () => {
+    const d = new Date()
+    const time = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+    const late = mySched ? gradeTime(time, mySched.shift.startTime, 'in').deviation > 0 : false
+    clockIn(uid, name, time, { date: attDate, status: late ? 'Late' : 'Present' })
+  }
+  const handleClockOut = () => {
+    const d = new Date()
+    clockOut(uid, `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`, { date: attDate })
+  }
+
   const WIDGET_NODE = {
-    timeCard:       <TimeCardWidget key='timeCard' t={t} />,
+    timeCard:       <TimeCardWidget key='timeCard' t={t} userId={uid} userName={name}
+                      sched={mySched} record={myAttendance} router={router}
+                      onClockIn={handleClockIn} onClockOut={handleClockOut} />,
     leaveBalance:   <LeaveBalanceWidget key='leaveBalance' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />,
     leaveChart:     <EmployeeChartWidget key='leaveChart' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} type={chartType('leaveChart')} />,
     teamLeaveChart: <ManagerChartWidget key='teamLeaveChart' leaves={leaves} team={myTeam} t={t} type={chartType('teamLeaveChart')} />,

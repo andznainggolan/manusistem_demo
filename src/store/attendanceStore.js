@@ -39,8 +39,10 @@ const genRecords = () => {
 
 let _id = 100
 
+export const todayStr = () => new Date().toISOString().slice(0, 10)
+
 export const useAttendanceStore = create(persist(
-  (set) => ({
+  (set, get) => ({
     records: genRecords(),
 
     addRecord: (r) =>
@@ -48,6 +50,29 @@ export const useAttendanceStore = create(persist(
 
     updateRecord: (id, d) =>
       set((s) => ({ records: s.records.map((r) => (r.id === id ? { ...r, ...d } : r)) })),
+
+    // One record per employee per day — Clock In creates it, Clock Out fills
+    // in the other half.
+    recordFor: (userId, date = todayStr()) =>
+      get().records.find(r => r.userId === userId && r.date === date) || null,
+
+    clockIn: (userId, name, time, { date = todayStr(), status = 'Present' } = {}) =>
+      set((s) => {
+        const existing = s.records.find(r => r.userId === userId && r.date === date)
+        if (existing) {
+          // Never overwrite an earlier clock-in; the first one of the day stands.
+          if (existing.checkIn && existing.checkIn !== '-') return s
+          return { records: s.records.map(r => r === existing ? { ...r, checkIn: time, status } : r) }
+        }
+        return { records: [...s.records, { id: _id++, userId, name, date, checkIn: time, checkOut: '-', status }] }
+      }),
+
+    clockOut: (userId, time, { date = todayStr() } = {}) =>
+      set((s) => ({
+        records: s.records.map(r =>
+          r.userId === userId && r.date === date ? { ...r, checkOut: time } : r,
+        ),
+      })),
   }),
   { name: 'hcm-attendance-v1', storage: createJSONStorage(() => dbStorage) }
 ))

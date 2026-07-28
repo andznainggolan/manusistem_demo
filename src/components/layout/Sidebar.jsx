@@ -121,6 +121,10 @@ const ESS_GROUPS = [
     { label: 'My Profile',           href: '/ess/profile',        icon: ic('user') },
     { label: 'My Onboarding',        href: '/ess/onboarding',     icon: ic('checkCircle') },
   ]},
+  { title: 'Time & Labor', icon: ic('clock'), items: [
+    { label: 'Clock In/Out',         href: '/ess/clock',          icon: ic('clock') },
+    { label: 'My Attendance',        href: '/ess/attendance',     icon: ic('list') },
+  ]},
   { title: 'Talent Management', icon: ic('star'), items: [
     { label: 'My Talent Profile',    href: '/ess/talent/profile',        icon: ic('star') },
     { label: 'My IDP',               href: '/ess/talent/idp',            icon: ic('target') },
