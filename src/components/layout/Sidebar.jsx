@@ -123,6 +123,7 @@ const ESS_GROUPS = [
   ]},
   { title: 'Time & Labor', icon: ic('clock'), items: [
     { label: 'Clock In/Out',         href: '/ess/clock',          icon: ic('clock') },
+    { label: 'My Calendar',          href: '/ess/calendar',       icon: ic('calendar') },
     { label: 'My Attendance',        href: '/ess/attendance',     icon: ic('list') },
   ]},
   { title: 'Talent Management', icon: ic('star'), items: [

@@ -1,9 +1,13 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { localDateStr } from '@/lib/workSchedule'
 
 const today = new Date()
-const fmt = (d) => d.toISOString().slice(0, 10)
+// Local calendar date, not toISOString() — that converts to UTC first, which
+// silently rolls WIB (UTC+7) dates back a day for roughly the first 7 hours
+// of every day.
+const fmt = localDateStr
 
 // Generate seed attendance for last 14 days
 const genRecords = () => {
@@ -39,7 +43,7 @@ const genRecords = () => {
 
 let _id = 100
 
-export const todayStr = () => new Date().toISOString().slice(0, 10)
+export const todayStr = () => localDateStr(new Date())
 
 export const useAttendanceStore = create(persist(
   (set, get) => ({

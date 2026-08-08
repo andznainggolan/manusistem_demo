@@ -19,6 +19,17 @@ export const toHHMM = (mins) => {
   return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
 }
 
+// A calendar date as 'YYYY-MM-DD' from LOCAL components — never via
+// toISOString(), which converts to UTC first. For any positive UTC offset
+// (WIB is UTC+7) that silently rolls local midnight back to the previous
+// day for roughly the first 7 hours of every day, and rolls every date built
+// as local midnight (e.g. `new Date(year, month, day)`, as a calendar grid
+// does) back a full day, always.
+export const localDateStr = (date) => {
+  const d = typeof date === 'string' ? new Date(date) : date
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 export const dayNameOf = (date) => DAY_NAMES[new Date(date).getDay()]
 
 /**
@@ -26,7 +37,7 @@ export const dayNameOf = (date) => DAY_NAMES[new Date(date).getDay()]
  * no assignment or the day is not in their pattern (a day off).
  */
 export function shiftFor(userId, date, { assignments = [], schedules = [], patterns = [], shifts = [] }) {
-  const ds = typeof date === 'string' ? date : new Date(date).toISOString().slice(0, 10)
+  const ds = typeof date === 'string' ? date : localDateStr(date)
 
   // Most recent assignment that had already started by this date.
   const assignment = assignments

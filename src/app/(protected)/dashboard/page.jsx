@@ -63,7 +63,7 @@ function TimeCardWidget({ t, userId, userName, sched, record, onClockIn, onClock
           </svg>
           {t('My Time Card', 'My Time Card')}
         </div>
-        <button onClick={() => router.push('/ess/clock')}
+        <button onClick={() => router.push('/ess/calendar')}
           className='text-xs text-gray-400 hover:text-gray-600 font-medium transition'>
           {t('Show More', 'Show More')}
         </button>
