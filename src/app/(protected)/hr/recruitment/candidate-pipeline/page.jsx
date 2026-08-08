@@ -3,7 +3,11 @@ import { useState, useMemo, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useRecruitmentStore, ACTIVE_STAGES, STAGES } from '@/store/recruitmentStore'
 import { useT } from '@/store/languageStore'
-import { PageHeader, Select, StatusBadge, EmptyState } from '@/components/ui'
+import { PageHeader, Select, SearchBar, StatusBadge, EmptyState } from '@/components/ui'
+
+// Caps a column's height so hundreds of candidates in one stage scroll
+// within their own column instead of stretching the whole page.
+const COLUMN_MAX_H = 'max-h-[calc(100vh-320px)]'
 
 const STAGE_COLOR = {
   Applied:   { bar: '#9ca3af', bg: 'bg-gray-50',    text: 'text-gray-600' },
@@ -51,8 +55,11 @@ function PipelineBody() {
   const { requisitions, candidates, updateCandidate } = useRecruitmentStore()
 
   const [reqId, setReqId] = useState(params.get('requisitionId') || 'all')
+  const [q, setQ] = useState('')
 
-  const filtered = reqId === 'all' ? candidates : candidates.filter(c => c.requisitionId === Number(reqId))
+  const byReq = reqId === 'all' ? candidates : candidates.filter(c => c.requisitionId === Number(reqId))
+  const needle = q.trim().toLowerCase()
+  const filtered = needle ? byReq.filter(c => c.name.toLowerCase().includes(needle)) : byReq
   const byStage = (stage) => filtered.filter(c => c.stage === stage)
 
   const move = (c, stage) => updateCandidate(c.id, { stage })
@@ -79,10 +86,18 @@ function PipelineBody() {
       {activeReqs.length === 0 && requisitions.length === 0 ? (
         <EmptyState icon='🔀' title={t('Belum ada lowongan.', 'No requisitions yet.')}
           description={t('Buat Job Requisition terlebih dahulu.', 'Create a Job Requisition first.')} />
-      ) : filtered.length === 0 ? (
+      ) : byReq.length === 0 ? (
         <EmptyState icon='🔀' title={t('Belum ada kandidat.', 'No candidates yet.')}
           description={t('Tambah kandidat lewat Candidate Database.', 'Add candidates from Candidate Database.')} />
       ) : (
+      <>
+        <div className='mb-4 max-w-sm'>
+          <SearchBar value={q} onChange={setQ} placeholder={t('Cari nama kandidat…', 'Search candidate name…')} />
+        </div>
+
+        {filtered.length === 0 ? (
+          <EmptyState icon='🔀' title={t('Tidak ada kandidat cocok.', 'No matching candidates.')} />
+        ) : (
         <div className='grid grid-cols-1 gap-4 overflow-x-auto sm:grid-cols-2 lg:grid-cols-6'>
           {STAGES.map(stage => {
             const col = byStage(stage)
@@ -96,7 +111,7 @@ function PipelineBody() {
                   </div>
                   <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${c.bg} ${c.text}`}>{col.length}</span>
                 </div>
-                <div className='space-y-2.5'>
+                <div className={`space-y-2.5 overflow-y-auto pr-1 ${COLUMN_MAX_H}`}>
                   {col.map(cand => (
                     <CandidateCard key={cand.id} c={cand} onMove={move} onReject={reject} t={t} />
                   ))}
@@ -106,6 +121,8 @@ function PipelineBody() {
             )
           })}
         </div>
+        )}
+      </>
       )}
     </div>
   )

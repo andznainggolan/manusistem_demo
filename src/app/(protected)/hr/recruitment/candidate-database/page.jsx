@@ -21,12 +21,15 @@ const EMPTY_FORM = {
   name: '', email: '', phone: '', requisitionId: '', source: CANDIDATE_SOURCES[0], appliedDate: '', notes: '',
 }
 
+const PAGE = 50
+
 export default function CandidateDatabasePage() {
   const t = useT()
   const { candidates, requisitions, addCandidate, updateCandidate, deleteCandidate } = useRecruitmentStore()
 
   const [q, setQ] = useState('')
   const [stage, setStage] = useState('all')
+  const [limit, setLimit] = useState(PAGE)
   const [modal, setModal] = useState(null)
   const [detail, setDetail] = useState(null)
   const [flash, setFlash] = useState('')
@@ -39,6 +42,7 @@ export default function CandidateDatabasePage() {
     .filter(c => stage === 'all' || c.stage === stage)
     .filter(c => !needle || c.name.toLowerCase().includes(needle) || c.email.toLowerCase().includes(needle))
     .sort((a, b) => b.appliedDate.localeCompare(a.appliedDate))
+  const shown = rows.slice(0, limit)
 
   const counts = { all: candidates.length }
   STAGES.forEach(s => { counts[s] = candidates.filter(c => c.stage === s).length })
@@ -88,10 +92,14 @@ export default function CandidateDatabasePage() {
       </div>
 
       <div className='mb-4 flex flex-col gap-3 sm:flex-row sm:items-center'>
-        <div className='flex-1'><SearchBar value={q} onChange={setQ} placeholder={t('Cari nama atau email…', 'Search name or email…')} /></div>
+        <div className='flex-1'>
+          <SearchBar value={q} onChange={v => { setQ(v); setLimit(PAGE) }} placeholder={t('Cari nama atau email…', 'Search name or email…')} />
+        </div>
         <FilterBar>
-          <FilterPill active={stage === 'all'} onClick={() => setStage('all')}>{t('Semua', 'All')}</FilterPill>
-          {STAGES.map(s => <FilterPill key={s} active={stage === s} onClick={() => setStage(s)}>{s}</FilterPill>)}
+          <FilterPill active={stage === 'all'} onClick={() => { setStage('all'); setLimit(PAGE) }}>{t('Semua', 'All')}</FilterPill>
+          {STAGES.map(s => (
+            <FilterPill key={s} active={stage === s} onClick={() => { setStage(s); setLimit(PAGE) }}>{s}</FilterPill>
+          ))}
         </FilterBar>
       </div>
 
@@ -99,30 +107,40 @@ export default function CandidateDatabasePage() {
         <EmptyState icon='🗂️' title={t('Tidak ada kandidat cocok.', 'No matching candidates.')}
           action={<ActionButton onClick={openAdd} icon='➕'>{t('Tambah Kandidat', 'Add Candidate')}</ActionButton>} />
       ) : (
-        <DataTable columns={[
-          t('Kandidat', 'Candidate'), t('Lowongan', 'Applied For'), t('Sumber', 'Source'),
-          { label: t('Tanggal Lamar', 'Applied Date'), align: 'center' }, { label: 'Rating', align: 'center' },
-          { label: 'Stage', align: 'center' }, { label: '', align: 'right' },
-        ]}>
-          {rows.map(c => (
-            <Tr key={c.id} onClick={() => setDetail(c)}>
-              <Td>
-                <p className='font-semibold text-gray-800'>{c.name}</p>
-                <p className='text-xs text-gray-400'>{c.email}</p>
-              </Td>
-              <Td className='text-sm text-gray-600'>{reqTitle(c.requisitionId)}</Td>
-              <Td className='text-xs text-gray-500'>{c.source}</Td>
-              <Td align='center' className='text-xs tabular-nums text-gray-500'>{c.appliedDate}</Td>
-              <Td align='center'>{c.rating > 0 ? <Stars n={c.rating} /> : <span className='text-gray-300'>—</span>}</Td>
-              <Td align='center'><StatusBadge tone={STAGE_TONE[c.stage]}>{c.stage}</StatusBadge></Td>
-              <Td align='right'>
-                <button onClick={(e) => { e.stopPropagation(); del(c) }} className='text-xs font-semibold text-gray-400 hover:text-red-600'>
-                  {t('Hapus', 'Delete')}
-                </button>
-              </Td>
-            </Tr>
-          ))}
-        </DataTable>
+        <>
+          <DataTable columns={[
+            t('Kandidat', 'Candidate'), t('Lowongan', 'Applied For'), t('Sumber', 'Source'),
+            { label: t('Tanggal Lamar', 'Applied Date'), align: 'center' }, { label: 'Rating', align: 'center' },
+            { label: 'Stage', align: 'center' }, { label: '', align: 'right' },
+          ]}>
+            {shown.map(c => (
+              <Tr key={c.id} onClick={() => setDetail(c)}>
+                <Td>
+                  <p className='font-semibold text-gray-800'>{c.name}</p>
+                  <p className='text-xs text-gray-400'>{c.email}</p>
+                </Td>
+                <Td className='text-sm text-gray-600'>{reqTitle(c.requisitionId)}</Td>
+                <Td className='text-xs text-gray-500'>{c.source}</Td>
+                <Td align='center' className='text-xs tabular-nums text-gray-500'>{c.appliedDate}</Td>
+                <Td align='center'>{c.rating > 0 ? <Stars n={c.rating} /> : <span className='text-gray-300'>—</span>}</Td>
+                <Td align='center'><StatusBadge tone={STAGE_TONE[c.stage]}>{c.stage}</StatusBadge></Td>
+                <Td align='right'>
+                  <button onClick={(e) => { e.stopPropagation(); del(c) }} className='text-xs font-semibold text-gray-400 hover:text-red-600'>
+                    {t('Hapus', 'Delete')}
+                  </button>
+                </Td>
+              </Tr>
+            ))}
+          </DataTable>
+          {rows.length > limit && (
+            <div className='mt-4 text-center'>
+              <ActionButton variant='secondary' size='sm' onClick={() => setLimit(l => l + PAGE)}>
+                {t(`Tampilkan ${Math.min(PAGE, rows.length - limit)} lagi`, `Show ${Math.min(PAGE, rows.length - limit)} more`)}
+                {' '}({limit}/{rows.length})
+              </ActionButton>
+            </div>
+          )}
+        </>
       )}
 
       {detail && (
