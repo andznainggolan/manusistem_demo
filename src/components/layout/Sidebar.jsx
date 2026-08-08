@@ -218,6 +218,12 @@ const HR_GROUPS = [
     { label: 'Employee Data',    href: '/hr/employee',       icon: ic('person') },
     { label: 'Apply Leave (HR)', href: '/hr/apply-leave',    icon: ic('calendar') },
   ]},
+  { title: 'Recruitment', icon: ic('briefcase'), items: [
+    { label: 'Job Requisition',   href: '/hr/recruitment/job-requisition',   icon: ic('briefcase') },
+    { label: 'Candidate Pipeline',href: '/hr/recruitment/candidate-pipeline',icon: ic('repeat') },
+    { label: 'Interview Schedule',href: '/hr/recruitment/interview-schedule',icon: ic('video') },
+    { label: 'Candidate Database',href: '/hr/recruitment/candidate-database',icon: ic('archive') },
+  ]},
   { title: 'Payroll', icon: ic('money'), items: [
     { label: 'Payroll Run',      href: '/hr/payroll/run',      icon: ic('money') },
     { label: 'Payroll Setup',    href: '/hr/payroll/setup',    icon: ic('list') },

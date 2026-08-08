@@ -1,0 +1,102 @@
+import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
+import { dbStorage } from '@/lib/dbStorage'
+
+// Recruitment / ATS: Job Requisition -> Candidate (attached to a requisition,
+// moves through STAGES) -> Interview (attached to a candidate). Candidate
+// Database is just the full candidate list with no requisition filter, so it
+// has no store surface of its own.
+
+export const REQ_STATUSES = ['Open', 'On Hold', 'Closed']
+export const REQ_PRIORITIES = ['Low', 'Medium', 'High']
+export const EMPLOYMENT_TYPES = ['Permanent', 'Contract', 'Internship']
+
+// Ordered — pipeline columns and "next stage" both walk this array in order.
+export const STAGES = ['Applied', 'Screening', 'Interview', 'Offer', 'Hired', 'Rejected']
+// Rejected is reachable from anywhere but never a "next" stage to walk into.
+export const ACTIVE_STAGES = STAGES.filter(s => s !== 'Rejected')
+
+export const CANDIDATE_SOURCES = ['Job Portal', 'LinkedIn', 'Referral', 'Career Site', 'Walk-in', 'Agency']
+
+export const INTERVIEW_TYPES = ['Phone', 'Video', 'Onsite']
+export const INTERVIEW_RESULTS = ['Scheduled', 'Passed', 'Failed', 'No Show']
+
+const SEED_REQUISITIONS = [
+  { id: 1, positionTitle: 'Software Engineer', departmentId: 1, companyId: 1, employmentType: 'Permanent',
+    headcount: 3, status: 'Open', priority: 'High',
+    requestedBy: 2, requestedByName: 'Dewi Rahayu', requestedDate: '2026-06-01', targetDate: '2026-09-30',
+    notes: 'Ekspansi tim backend untuk proyek Q3.' },
+  { id: 2, positionTitle: 'IT Support', departmentId: 3, companyId: 1, employmentType: 'Contract',
+    headcount: 1, status: 'Open', priority: 'Medium',
+    requestedBy: 4, requestedByName: 'Ahmad Fauzi', requestedDate: '2026-07-01', targetDate: '2026-08-15',
+    notes: '' },
+  { id: 3, positionTitle: 'Finance Analyst', departmentId: 4, companyId: 1, employmentType: 'Permanent',
+    headcount: 1, status: 'On Hold', priority: 'Low',
+    requestedBy: 4, requestedByName: 'Ahmad Fauzi', requestedDate: '2026-05-10', targetDate: '2026-10-01',
+    notes: 'Menunggu persetujuan budget.' },
+  { id: 4, positionTitle: 'HR Officer', departmentId: 5, companyId: 1, employmentType: 'Permanent',
+    headcount: 1, status: 'Closed', priority: 'Medium',
+    requestedBy: 3, requestedByName: 'Rina Marlina', requestedDate: '2026-03-01', targetDate: '2026-04-30',
+    notes: 'Posisi terisi.' },
+]
+
+const SEED_CANDIDATES = [
+  { id: 1, name: 'Putri Ayu Lestari', email: 'putri.ayu@mail.com', phone: '0812-3456-7801',
+    requisitionId: 1, source: 'LinkedIn', appliedDate: '2026-07-10', stage: 'Interview', rating: 4, notes: 'Portfolio kuat di React.' },
+  { id: 2, name: 'Bimo Aditya', email: 'bimo.aditya@mail.com', phone: '0812-3456-7802',
+    requisitionId: 1, source: 'Job Portal', appliedDate: '2026-07-12', stage: 'Screening', rating: 3, notes: '' },
+  { id: 3, name: 'Citra Wulandari', email: 'citra.w@mail.com', phone: '0812-3456-7803',
+    requisitionId: 1, source: 'Referral', appliedDate: '2026-07-15', stage: 'Applied', rating: 0, notes: 'Referensi dari Reza Firmansyah.' },
+  { id: 4, name: 'Doni Firmansyah', email: 'doni.f@mail.com', phone: '0812-3456-7804',
+    requisitionId: 1, source: 'Job Portal', appliedDate: '2026-06-20', stage: 'Offer', rating: 5, notes: 'Kandidat terkuat, negosiasi gaji.' },
+  { id: 5, name: 'Eka Prasetyo', email: 'eka.p@mail.com', phone: '0812-3456-7805',
+    requisitionId: 2, source: 'Walk-in', appliedDate: '2026-07-05', stage: 'Interview', rating: 3, notes: '' },
+  { id: 6, name: 'Fitri Handayani', email: 'fitri.h@mail.com', phone: '0812-3456-7806',
+    requisitionId: 3, source: 'Job Portal', appliedDate: '2026-05-20', stage: 'Rejected', rating: 2, notes: 'Pengalaman kurang sesuai.' },
+  { id: 7, name: 'Galih Nugroho', email: 'galih.n@mail.com', phone: '0812-3456-7807',
+    requisitionId: 4, source: 'Career Site', appliedDate: '2026-03-15', stage: 'Hired', rating: 5, notes: 'Onboarding 1 Mei 2026.' },
+]
+
+const SEED_INTERVIEWS = [
+  { id: 1, candidateId: 1, requisitionId: 1, date: '2026-08-05', time: '10:00', type: 'Video',
+    interviewerNames: 'Dewi Rahayu, Rizky Pratama', location: 'meet.google.com/abc-defg', result: 'Scheduled', notes: '' },
+  { id: 2, candidateId: 4, requisitionId: 1, date: '2026-07-28', time: '14:00', type: 'Onsite',
+    interviewerNames: 'Dewi Rahayu', location: 'Kantor Pusat - Lt 5', result: 'Passed', notes: 'Sangat komunikatif, siap masuk 2 minggu.' },
+  { id: 3, candidateId: 5, requisitionId: 2, date: '2026-08-01', time: '09:30', type: 'Phone',
+    interviewerNames: 'Ahmad Fauzi', location: '-', result: 'Scheduled', notes: '' },
+]
+
+let _reqId = SEED_REQUISITIONS.length + 1
+let _candId = SEED_CANDIDATES.length + 1
+let _ivId = SEED_INTERVIEWS.length + 1
+
+export const useRecruitmentStore = create(persist(
+  (set, get) => ({
+    requisitions: SEED_REQUISITIONS.map(r => ({ ...r })),
+    candidates: SEED_CANDIDATES.map(c => ({ ...c })),
+    interviews: SEED_INTERVIEWS.map(i => ({ ...i })),
+
+    addRequisition: (r) => set(s => ({ requisitions: [...s.requisitions, { id: _reqId++, ...r }] })),
+    updateRequisition: (id, patch) => set(s => ({
+      requisitions: s.requisitions.map(r => (r.id === id ? { ...r, ...patch } : r)),
+    })),
+    deleteRequisition: (id) => set(s => ({ requisitions: s.requisitions.filter(r => r.id !== id) })),
+
+    addCandidate: (c) => set(s => ({
+      candidates: [...s.candidates, { id: _candId++, stage: 'Applied', rating: 0, notes: '', ...c }],
+    })),
+    updateCandidate: (id, patch) => set(s => ({
+      candidates: s.candidates.map(c => (c.id === id ? { ...c, ...patch } : c)),
+    })),
+    deleteCandidate: (id) => set(s => ({ candidates: s.candidates.filter(c => c.id !== id) })),
+
+    addInterview: (i) => set(s => ({
+      interviews: [...s.interviews, { id: _ivId++, result: 'Scheduled', notes: '', ...i }],
+    })),
+    updateInterview: (id, patch) => set(s => ({
+      interviews: s.interviews.map(i => (i.id === id ? { ...i, ...patch } : i)),
+    })),
+    deleteInterview: (id) => set(s => ({ interviews: s.interviews.filter(i => i.id !== id) })),
+  }),
+  { name: 'hcm-recruitment-v1', storage: createJSONStorage(() => dbStorage) },
+))

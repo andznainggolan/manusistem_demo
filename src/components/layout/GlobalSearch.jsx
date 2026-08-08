@@ -25,6 +25,11 @@ const PAGES = [
   { label: 'Employee Data',             href: '/hr/employee',                                  icon: '📋', section: 'HR Administration' },
   { label: 'Apply Leave (HR)',          href: '/hr/apply-leave',                               icon: '📝', section: 'HR Administration' },
   { label: 'Org Chart',                 href: '/hr/org-chart',                                 icon: '🌳', section: 'HR Administration' },
+  // HR - Recruitment
+  { label: 'Job Requisition',           href: '/hr/recruitment/job-requisition',               icon: '💼', section: 'HR · Recruitment' },
+  { label: 'Candidate Pipeline',        href: '/hr/recruitment/candidate-pipeline',            icon: '🔀', section: 'HR · Recruitment' },
+  { label: 'Interview Schedule',        href: '/hr/recruitment/interview-schedule',            icon: '🎥', section: 'HR · Recruitment' },
+  { label: 'Candidate Database',        href: '/hr/recruitment/candidate-database',            icon: '🗂️', section: 'HR · Recruitment' },
   // HR - Personnel Action
   { label: 'Personnel Action',          href: '/hr/employee/personnel-action',                  icon: '🔄', section: 'HR · Personnel Action' },
   { label: 'Promote',                   href: '/hr/employee/personnel-action/promote',          icon: '⬆️', section: 'HR · Personnel Action' },
