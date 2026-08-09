@@ -11,7 +11,6 @@ import {
 
 const STATUS_TONE = { Open: 'success', 'Posted External': 'info', 'On Hold': 'warning', Closed: 'neutral' }
 const PRIORITY_TONE = { High: 'danger', Medium: 'warning', Low: 'neutral' }
-const PUBLISH_TONE = { Live: 'success', Terjadwal: 'info', Kedaluwarsa: 'neutral' }
 
 const EMPTY_FORM = {
   positionTitle: '', departmentId: '', companyId: '', employmentType: 'Permanent',
@@ -144,10 +143,11 @@ export default function JobRequisitionPage() {
           t('Posisi', 'Position'), t('Departemen', 'Department'), t('Perusahaan', 'Company'),
           { label: t('Kebutuhan', 'Headcount'), align: 'center' }, { label: t('Prioritas', 'Priority'), align: 'center' },
           { label: t('Target', 'Target Date'), align: 'center' }, { label: 'Status', align: 'center' },
-          { label: 'Career Site', align: 'center' }, { label: '', align: 'right' },
+          { label: '', align: 'right' },
         ]}>
           {rows.map(r => {
             const pubStatus = publishStatus(r)
+            const statusBadge = <StatusBadge tone={STATUS_TONE[r.status]}>{r.status}</StatusBadge>
             return (
             <Tr key={r.id}>
               <Td>
@@ -159,18 +159,19 @@ export default function JobRequisitionPage() {
               <Td align='center' className='font-mono text-sm'>{filledOf(r.id)}/{r.headcount}</Td>
               <Td align='center'><StatusBadge tone={PRIORITY_TONE[r.priority]}>{r.priority}</StatusBadge></Td>
               <Td align='center' className='text-xs tabular-nums text-gray-500'>{r.targetDate || '—'}</Td>
-              <Td align='center'><StatusBadge tone={STATUS_TONE[r.status]}>{r.status}</StatusBadge></Td>
               <Td align='center'>
-                {pubStatus ? (
-                  <div className='flex flex-col items-center gap-1'>
-                    <StatusBadge tone={PUBLISH_TONE[pubStatus]}>{pubStatus}</StatusBadge>
-                    {pubStatus === 'Live' && (
-                      <a href={`/careers?req=${r.id}`} target='_blank' rel='noreferrer' className='text-[11px] font-semibold text-red-700 hover:underline'>
-                        {t('Lihat ↗', 'View ↗')}
-                      </a>
-                    )}
-                  </div>
-                ) : <span className='text-gray-300'>—</span>}
+                {r.status === 'Posted External' ? (
+                  <a href={`/careers?req=${r.id}`} target='_blank' rel='noreferrer'
+                    title={pubStatus === 'Live'
+                      ? t('Tayang di Career Site — klik untuk lihat', 'Live on Career Site — click to view')
+                      : pubStatus === 'Terjadwal'
+                        ? t(`Belum tayang, mulai ${r.publishStartDate}`, `Not live yet, starts ${r.publishStartDate}`)
+                        : t(`Sudah tidak tayang sejak ${r.publishEndDate}`, `No longer live since ${r.publishEndDate}`)}
+                    className='inline-flex items-center gap-1 hover:underline decoration-blue-400 underline-offset-2'>
+                    {statusBadge}
+                    {pubStatus !== 'Live' && <span className='text-[10px] text-gray-400'>({pubStatus})</span>}
+                  </a>
+                ) : statusBadge}
               </Td>
               <Td align='right'>
                 <div className='flex justify-end gap-2'>
