@@ -6,11 +6,23 @@ import { useEmployeeStore, ACTION_COLOR, HISTORY_ACTIONS, HISTORY_REASONS } from
 import { useStructureStore } from '@/store/structureStore'
 import { formatRp, sumVariableAllowances } from '@/store/payrollStore'
 import { useMasterLookupStore } from '@/store/masterLookupStore'
+import { useEmployeeDocumentStore, DOCUMENT_CATEGORIES, DOCUMENT_MAX_BYTES } from '@/store/employeeDocumentStore'
+import { useAuthStore } from '@/store/authStore'
 import { PTKP_STATUSES } from '@/lib/payrollCalc'
 import { useT } from '@/store/languageStore'
 import { FormField, Input, Select, ActionButton, StatusBadge } from '@/components/ui'
 
-const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History', 'Salary']
+const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History', 'Salary', 'Personal Document']
+
+const DOC_ICON = (fileType) => {
+  if (fileType?.includes('pdf')) return '📄'
+  if (fileType?.startsWith('image/')) return '🖼️'
+  if (fileType?.includes('word') || fileType?.includes('document')) return '📝'
+  if (fileType?.includes('sheet') || fileType?.includes('excel')) return '📊'
+  return '📎'
+}
+
+const formatBytes = (n) => n < 1024 * 1024 ? `${Math.round(n / 1024)} KB` : `${(n / (1024 * 1024)).toFixed(1)} MB`
 
 const skillLevelColor = (level) => {
   if (level === 'Expert')       return 'bg-purple-100 text-purple-700'
@@ -82,6 +94,10 @@ export default function EmployeeProfilePage() {
   const photoInputRef = useRef(null)
   const [photoError, setPhotoError] = useState(null)
   const { companies, divisions, businessUnits, departments, positions, grades } = useStructureStore()
+  const { currentUser } = useAuthStore()
+  const { documents, addDocument, deleteDocument } = useEmployeeDocumentStore()
+  const docFileRef = useRef(null)
+  const [docModal, setDocModal] = useState(null) // { category, note, file, error }
   // Select the category object itself (a stable reference unless its items
   // actually change) and derive the active-only list in render — filtering
   // inside the selector would return a new array every call and trip
@@ -177,6 +193,39 @@ export default function EmployeeProfilePage() {
     const reader = new FileReader()
     reader.onload = (e) => setPhoto(emp.id, e.target.result)
     reader.readAsDataURL(file)
+  }
+
+  const myDocuments = documents
+    .filter(d => d.employeeId === emp.id)
+    .sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt))
+
+  const openDocModal = () => setDocModal({ category: DOCUMENT_CATEGORIES[0], note: '', file: null, error: null })
+  const closeDocModal = () => setDocModal(null)
+  const pickDocFile = (file) => {
+    if (!file) return
+    if (file.size > DOCUMENT_MAX_BYTES) {
+      setDocModal(m => ({ ...m, file: null, error: t(`Ukuran file maksimal ${formatBytes(DOCUMENT_MAX_BYTES)}.`, `File must be under ${formatBytes(DOCUMENT_MAX_BYTES)}.`) }))
+      return
+    }
+    setDocModal(m => ({ ...m, file, error: null }))
+  }
+  const saveDocument = () => {
+    if (!docModal.file) return
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      addDocument({
+        employeeId: emp.id, category: docModal.category, note: docModal.note.trim(),
+        fileName: docModal.file.name, fileType: docModal.file.type, fileSize: docModal.file.size,
+        dataUrl: e.target.result,
+        uploadedAt: new Date().toISOString(), uploadedBy: currentUser?.id, uploadedByName: currentUser?.name || '',
+      })
+      closeDocModal()
+    }
+    reader.readAsDataURL(docModal.file)
+  }
+  const removeDocument = (doc) => {
+    if (!window.confirm(t(`Hapus dokumen "${doc.fileName}"?`, `Delete "${doc.fileName}"?`))) return
+    deleteDocument(doc.id)
   }
 
   const openAddRecord = () => setRecordModal({
@@ -627,7 +676,100 @@ export default function EmployeeProfilePage() {
             </a>
           </div>
         )}
+
+        {tab === 'Personal Document' && (
+          <div>
+            <div className='flex items-center justify-between mb-4'>
+              <div>
+                <h3 className='text-sm font-bold text-gray-800'>{t('Dokumen Pribadi','Personal Document')}</h3>
+                <p className='text-xs text-gray-400'>
+                  {t(`Maks. ${formatBytes(DOCUMENT_MAX_BYTES)} per file — KTP, NPWP, ijazah, kontrak kerja, dll.`,
+                     `Max ${formatBytes(DOCUMENT_MAX_BYTES)} per file — ID card, tax card, diploma, employment contract, etc.`)}
+                </p>
+              </div>
+              <ActionButton size='sm' icon='➕' onClick={openDocModal}>{t('Upload Dokumen','Upload Document')}</ActionButton>
+            </div>
+
+            {myDocuments.length === 0 ? (
+              <div className='flex flex-col items-center justify-center py-16 text-gray-400 gap-2'>
+                <span className='text-4xl'><Icon e='📁' size={15} /></span>
+                <p className='text-sm'>{t('Belum ada dokumen.','No documents yet.')}</p>
+              </div>
+            ) : (
+              <div className='divide-y divide-gray-100'>
+                {myDocuments.map(doc => (
+                  <div key={doc.id} className='flex items-center gap-3 py-3'>
+                    <span className='text-2xl shrink-0'>{DOC_ICON(doc.fileType)}</span>
+                    <div className='flex-1 min-w-0'>
+                      <div className='flex items-center gap-2'>
+                        <a href={doc.dataUrl} download={doc.fileName} target='_blank' rel='noreferrer'
+                          className='text-sm font-semibold text-gray-800 hover:text-red-700 hover:underline truncate'>
+                          {doc.fileName}
+                        </a>
+                        <span className='shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600'>{doc.category}</span>
+                      </div>
+                      <p className='text-xs text-gray-400 mt-0.5'>
+                        {formatBytes(doc.fileSize)} · {t('diunggah oleh','uploaded by')} {doc.uploadedByName || '—'} · {new Date(doc.uploadedAt).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' })}
+                      </p>
+                      {doc.note && <p className='text-xs text-gray-500 mt-1'>{doc.note}</p>}
+                    </div>
+                    <button onClick={() => removeDocument(doc)} className='shrink-0 text-gray-400 hover:text-red-600' aria-label={t('Hapus','Delete')}>
+                      <Icon e='🗑️' size={13} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Personal Document upload modal */}
+      {docModal && (
+        <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4' onClick={closeDocModal}>
+          <div className='bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto' onClick={e=>e.stopPropagation()}>
+            <div className='flex justify-between items-start mb-4'>
+              <h3 className='text-base font-bold text-gray-800'>{t('Upload Dokumen','Upload Document')}</h3>
+              <button onClick={closeDocModal} className='text-gray-400 hover:text-gray-600 text-xl font-bold leading-none'>×</button>
+            </div>
+
+            <div className='space-y-4'>
+              <FormField label={t('Kategori','Category')} required>
+                <Select value={docModal.category} onChange={e => setDocModal(m => ({ ...m, category: e.target.value }))}>
+                  {DOCUMENT_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                </Select>
+              </FormField>
+
+              <div>
+                <span className='mb-1.5 block text-xs font-semibold text-gray-600'>
+                  {t('File','File')}<span className='text-red-500'> *</span>
+                </span>
+                <input ref={docFileRef} type='file' className='hidden'
+                  accept='.pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx'
+                  onChange={e => { pickDocFile(e.target.files?.[0]); e.target.value = '' }} />
+                <button type='button' onClick={() => docFileRef.current?.click()}
+                  className='w-full rounded-xl border-2 border-dashed border-gray-200 px-4 py-6 text-center text-sm text-gray-500 hover:border-red-300 hover:bg-red-50/40 transition'>
+                  {docModal.file ? (
+                    <span className='font-semibold text-gray-700'>{DOC_ICON(docModal.file.type)} {docModal.file.name} ({formatBytes(docModal.file.size)})</span>
+                  ) : (
+                    <span>{t('Klik untuk pilih file','Click to choose a file')}</span>
+                  )}
+                </button>
+                {docModal.error && <span className='mt-1 block text-xs text-red-500'>{docModal.error}</span>}
+              </div>
+
+              <FormField label={t('Catatan (opsional)','Note (optional)')}>
+                <Input value={docModal.note} onChange={e => setDocModal(m => ({ ...m, note: e.target.value }))} />
+              </FormField>
+            </div>
+
+            <div className='flex justify-end gap-2 mt-6'>
+              <button onClick={closeDocModal} className='px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700'>{t('Batal','Cancel')}</button>
+              <ActionButton icon='💾' onClick={saveDocument} disabled={!docModal.file}>{t('Simpan','Save')}</ActionButton>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Salary record modal */}
       {recordModal && (
