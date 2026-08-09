@@ -8,7 +8,7 @@ import { useT }              from '@/store/languageStore'
 import { ACTION_COLOR }      from '@/store/employeeStore'
 import { useEmployeeDocumentStore, DOCUMENT_MAX_BYTES } from '@/store/employeeDocumentStore'
 import { useDocumentTypeStore } from '@/store/documentTypeStore'
-import { FormField, Input, Select, ActionButton } from '@/components/ui'
+import { FormField, Input, Select, ActionButton, DocCompletionDonut } from '@/components/ui'
 
 const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History', 'Personal Document']
 
@@ -71,7 +71,9 @@ export default function MyProfilePage() {
   const myDocuments = documents
     .filter(d => d.employeeId === emp.id)
     .sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt))
-  const missingMandatory = activeDocTypes.filter(dt => dt.mandatory && !myDocuments.some(d => d.category === dt.name))
+  const mandatoryDocTypes = activeDocTypes.filter(dt => dt.mandatory)
+  const missingMandatory = mandatoryDocTypes.filter(dt => !myDocuments.some(d => d.category === dt.name))
+  const completedMandatoryCount = mandatoryDocTypes.length - missingMandatory.length
 
   const openDocModal = () => setDocModal({
     documentTypeId: activeDocTypes[0]?.id ?? '', issuedDate: '', effectiveStartDate: '', effectiveEndDate: '',
@@ -345,6 +347,18 @@ export default function MyProfilePage() {
               </div>
               <ActionButton size='sm' icon='➕' onClick={openDocModal}>{t('Upload Dokumen','Upload Document')}</ActionButton>
             </div>
+
+            {mandatoryDocTypes.length > 0 && (
+              <div className='mb-4 flex items-center gap-4 rounded-xl bg-gray-50 p-4 ring-1 ring-gray-100'>
+                <DocCompletionDonut completed={completedMandatoryCount} total={mandatoryDocTypes.length} />
+                <div>
+                  <p className='text-sm font-bold text-gray-800'>{t('Kelengkapan Dokumen Wajib','Mandatory Document Completeness')}</p>
+                  <p className='mt-0.5 text-xs text-gray-500'>
+                    {completedMandatoryCount} / {mandatoryDocTypes.length} {t('dokumen wajib sudah diunggah','mandatory documents uploaded')}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {missingMandatory.length > 0 && (
               <div className='mb-4 rounded-xl bg-amber-50 px-4 py-3 text-xs text-amber-800 ring-1 ring-amber-100'>

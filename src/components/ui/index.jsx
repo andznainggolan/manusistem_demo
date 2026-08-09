@@ -9,6 +9,7 @@
  */
 import Link from 'next/link'
 import Icon from './Icon'
+export { default as DocCompletionDonut } from './DocCompletionDonut'
 
 /* ---------------------------------------------------------------- tokens */
 export const BRAND_GRADIENT = 'linear-gradient(135deg, #8B1A1A, #D7252B)'
