@@ -7,7 +7,9 @@ import { dbStorage } from '@/lib/dbStorage'
 // Database is just the full candidate list with no requisition filter, so it
 // has no store surface of its own.
 
-export const REQ_STATUSES = ['Open', 'On Hold', 'Closed']
+// 'Posted External' is what actually publishes a requisition to the public
+// Career Site (/careers) — being merely 'Open' keeps it internal-only.
+export const REQ_STATUSES = ['Open', 'Posted External', 'On Hold', 'Closed']
 export const REQ_PRIORITIES = ['Low', 'Medium', 'High']
 export const EMPLOYMENT_TYPES = ['Permanent', 'Contract', 'Internship']
 
@@ -23,20 +25,24 @@ export const INTERVIEW_RESULTS = ['Scheduled', 'Passed', 'Failed', 'No Show']
 
 const SEED_REQUISITIONS = [
   { id: 1, positionTitle: 'Software Engineer', departmentId: 1, companyId: 1, employmentType: 'Permanent',
-    headcount: 3, status: 'Open', priority: 'High',
+    headcount: 3, status: 'Posted External', priority: 'High',
     requestedBy: 2, requestedByName: 'Dewi Rahayu', requestedDate: '2026-06-01', targetDate: '2026-09-30',
+    publishStartDate: '2026-06-05', publishEndDate: '2026-09-30',
     notes: 'Ekspansi tim backend untuk proyek Q3.' },
   { id: 2, positionTitle: 'IT Support', departmentId: 3, companyId: 1, employmentType: 'Contract',
     headcount: 1, status: 'Open', priority: 'Medium',
     requestedBy: 4, requestedByName: 'Ahmad Fauzi', requestedDate: '2026-07-01', targetDate: '2026-08-15',
+    publishStartDate: '', publishEndDate: '',
     notes: '' },
   { id: 3, positionTitle: 'Finance Analyst', departmentId: 4, companyId: 1, employmentType: 'Permanent',
     headcount: 1, status: 'On Hold', priority: 'Low',
     requestedBy: 4, requestedByName: 'Ahmad Fauzi', requestedDate: '2026-05-10', targetDate: '2026-10-01',
+    publishStartDate: '', publishEndDate: '',
     notes: 'Menunggu persetujuan budget.' },
   { id: 4, positionTitle: 'HR Officer', departmentId: 5, companyId: 1, employmentType: 'Permanent',
     headcount: 1, status: 'Closed', priority: 'Medium',
     requestedBy: 3, requestedByName: 'Rina Marlina', requestedDate: '2026-03-01', targetDate: '2026-04-30',
+    publishStartDate: '', publishEndDate: '',
     notes: 'Posisi terisi.' },
 ]
 
@@ -65,6 +71,27 @@ const SEED_INTERVIEWS = [
   { id: 3, candidateId: 5, requisitionId: 2, date: '2026-08-01', time: '09:30', type: 'Phone',
     interviewerNames: 'Ahmad Fauzi', location: '-', result: 'Scheduled', notes: '' },
 ]
+
+const todayStr = () => new Date().toISOString().slice(0, 10)
+
+// Live on the public Career Site right now: status is 'Posted External' AND
+// today falls inside the publish window (an empty bound means open-ended).
+export function isPublished(req, on = todayStr()) {
+  if (req.status !== 'Posted External') return false
+  if (req.publishStartDate && req.publishStartDate > on) return false
+  if (req.publishEndDate && req.publishEndDate < on) return false
+  return true
+}
+
+// For the admin list: distinguishes "not yet" and "expired" from "live",
+// same idea as Announcement's status — a requisition marked Posted External
+// that isn't actually showing should say why.
+export function publishStatus(req, on = todayStr()) {
+  if (req.status !== 'Posted External') return null
+  if (req.publishStartDate && req.publishStartDate > on) return 'Terjadwal'
+  if (req.publishEndDate && req.publishEndDate < on) return 'Kedaluwarsa'
+  return 'Live'
+}
 
 let _reqId = SEED_REQUISITIONS.length + 1
 let _candId = SEED_CANDIDATES.length + 1

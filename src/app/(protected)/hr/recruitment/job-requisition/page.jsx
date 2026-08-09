@@ -1,6 +1,6 @@
 'use client'
 import { useState, useMemo } from 'react'
-import { useRecruitmentStore, REQ_STATUSES, REQ_PRIORITIES, EMPLOYMENT_TYPES } from '@/store/recruitmentStore'
+import { useRecruitmentStore, REQ_STATUSES, REQ_PRIORITIES, EMPLOYMENT_TYPES, isPublished, publishStatus } from '@/store/recruitmentStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useAuthStore } from '@/store/authStore'
 import { useT } from '@/store/languageStore'
@@ -9,12 +9,14 @@ import {
   ActionButton, StatusBadge, EmptyState, FormField, Input, Select, inputClass,
 } from '@/components/ui'
 
-const STATUS_TONE = { Open: 'success', 'On Hold': 'warning', Closed: 'neutral' }
+const STATUS_TONE = { Open: 'success', 'Posted External': 'info', 'On Hold': 'warning', Closed: 'neutral' }
 const PRIORITY_TONE = { High: 'danger', Medium: 'warning', Low: 'neutral' }
+const PUBLISH_TONE = { Live: 'success', Terjadwal: 'info', Kedaluwarsa: 'neutral' }
 
 const EMPTY_FORM = {
   positionTitle: '', departmentId: '', companyId: '', employmentType: 'Permanent',
-  headcount: 1, priority: 'Medium', targetDate: '', notes: '',
+  headcount: 1, priority: 'Medium', status: 'Open', targetDate: '',
+  publishStartDate: '', publishEndDate: '', notes: '',
 }
 
 export default function JobRequisitionPage() {
@@ -40,14 +42,11 @@ export default function JobRequisitionPage() {
     .filter(r => !needle || r.positionTitle.toLowerCase().includes(needle))
     .sort((a, b) => b.requestedDate.localeCompare(a.requestedDate))
 
-  const counts = {
-    all: requisitions.length,
-    Open: requisitions.filter(r => r.status === 'Open').length,
-    'On Hold': requisitions.filter(r => r.status === 'On Hold').length,
-    Closed: requisitions.filter(r => r.status === 'Closed').length,
-  }
+  const counts = { all: requisitions.length }
+  REQ_STATUSES.forEach(s => { counts[s] = requisitions.filter(r => r.status === s).length })
   const totalHeadcount = requisitions.filter(r => r.status !== 'Closed').reduce((s, r) => s + r.headcount, 0)
   const totalFilled = requisitions.reduce((s, r) => s + filledOf(r.id), 0)
+  const totalLive = requisitions.filter(r => isPublished(r)).length
 
   const deptName = (id) => departments.find(d => d.id === id)?.name || '—'
   const companyName = (id) => companies.find(c => c.id === id)?.companyCode || companies.find(c => c.id === id)?.name || '—'
@@ -56,24 +55,29 @@ export default function JobRequisitionPage() {
   const openEdit = (r) => setModal({
     mode: 'edit', id: r.id,
     form: { positionTitle: r.positionTitle, departmentId: String(r.departmentId), companyId: String(r.companyId),
-            employmentType: r.employmentType, headcount: r.headcount, priority: r.priority,
-            targetDate: r.targetDate, notes: r.notes },
+            employmentType: r.employmentType, headcount: r.headcount, priority: r.priority, status: r.status,
+            targetDate: r.targetDate, publishStartDate: r.publishStartDate || '', publishEndDate: r.publishEndDate || '',
+            notes: r.notes },
   })
   const close = () => setModal(null)
   const setField = (patch) => setModal(m => ({ ...m, form: { ...m.form, ...patch } }))
 
+  const dateRangeInvalid = modal?.form.publishStartDate && modal?.form.publishEndDate
+    && modal.form.publishEndDate < modal.form.publishStartDate
+
   const save = () => {
     const f = modal.form
-    if (!f.positionTitle.trim() || !f.departmentId || !f.companyId) return
+    if (!f.positionTitle.trim() || !f.departmentId || !f.companyId || dateRangeInvalid) return
     const payload = {
       positionTitle: f.positionTitle.trim(),
       departmentId: Number(f.departmentId), companyId: Number(f.companyId),
       employmentType: f.employmentType, headcount: Math.max(1, Number(f.headcount) || 1),
-      priority: f.priority, targetDate: f.targetDate, notes: f.notes,
+      priority: f.priority, status: f.status, targetDate: f.targetDate,
+      publishStartDate: f.publishStartDate, publishEndDate: f.publishEndDate, notes: f.notes,
     }
     if (modal.mode === 'add') {
       addRequisition({
-        ...payload, status: 'Open',
+        ...payload,
         requestedBy: currentUser?.id, requestedByName: currentUser?.name || '',
         requestedDate: new Date().toISOString().slice(0, 10),
       })
@@ -114,10 +118,11 @@ export default function JobRequisitionPage() {
         }
       />
 
-      <div className='mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4'>
+      <div className='mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5'>
         <StatCard icon='📋' tone='brand' label={t('Total Requisition', 'Total Requisitions')} value={String(counts.all)} />
         <StatCard icon='🟢' tone='green' label='Open' value={String(counts.Open)} />
-        <StatCard icon='🎯' tone='blue' label={t('Kebutuhan Terbuka', 'Open Headcount')} value={String(totalHeadcount)} />
+        <StatCard icon='🌐' tone='blue' label={t('Live di Career Site', 'Live on Career Site')} value={String(totalLive)} />
+        <StatCard icon='🎯' tone='purple' label={t('Kebutuhan Terbuka', 'Open Headcount')} value={String(totalHeadcount)} />
         <StatCard icon='✅' tone='orange' label={t('Sudah Terisi (Hired)', 'Filled (Hired)')} value={String(totalFilled)} />
       </div>
 
@@ -138,9 +143,12 @@ export default function JobRequisitionPage() {
         <DataTable columns={[
           t('Posisi', 'Position'), t('Departemen', 'Department'), t('Perusahaan', 'Company'),
           { label: t('Kebutuhan', 'Headcount'), align: 'center' }, { label: t('Prioritas', 'Priority'), align: 'center' },
-          { label: t('Target', 'Target Date'), align: 'center' }, { label: 'Status', align: 'center' }, { label: '', align: 'right' },
+          { label: t('Target', 'Target Date'), align: 'center' }, { label: 'Status', align: 'center' },
+          { label: 'Career Site', align: 'center' }, { label: '', align: 'right' },
         ]}>
-          {rows.map(r => (
+          {rows.map(r => {
+            const pubStatus = publishStatus(r)
+            return (
             <Tr key={r.id}>
               <Td>
                 <p className='font-semibold text-gray-800'>{r.positionTitle}</p>
@@ -152,6 +160,18 @@ export default function JobRequisitionPage() {
               <Td align='center'><StatusBadge tone={PRIORITY_TONE[r.priority]}>{r.priority}</StatusBadge></Td>
               <Td align='center' className='text-xs tabular-nums text-gray-500'>{r.targetDate || '—'}</Td>
               <Td align='center'><StatusBadge tone={STATUS_TONE[r.status]}>{r.status}</StatusBadge></Td>
+              <Td align='center'>
+                {pubStatus ? (
+                  <div className='flex flex-col items-center gap-1'>
+                    <StatusBadge tone={PUBLISH_TONE[pubStatus]}>{pubStatus}</StatusBadge>
+                    {pubStatus === 'Live' && (
+                      <a href={`/careers?req=${r.id}`} target='_blank' rel='noreferrer' className='text-[11px] font-semibold text-red-700 hover:underline'>
+                        {t('Lihat ↗', 'View ↗')}
+                      </a>
+                    )}
+                  </div>
+                ) : <span className='text-gray-300'>—</span>}
+              </Td>
               <Td align='right'>
                 <div className='flex justify-end gap-2'>
                   <a href={`/hr/recruitment/candidate-pipeline?requisitionId=${r.id}`}
@@ -166,7 +186,8 @@ export default function JobRequisitionPage() {
                 </div>
               </Td>
             </Tr>
-          ))}
+            )
+          })}
         </DataTable>
       )}
 
@@ -217,13 +238,33 @@ export default function JobRequisitionPage() {
                   <Input type='date' value={modal.form.targetDate} onChange={e => setField({ targetDate: e.target.value })} />
                 </FormField>
               </div>
+              <FormField label='Status' hint={t(
+                "Pilih \"Posted External\" untuk mempublikasikan ke Career Site.",
+                'Choose "Posted External" to publish this to the Career Site.',
+              )}>
+                <Select value={modal.form.status} onChange={e => setField({ status: e.target.value })}>
+                  {REQ_STATUSES.map(x => <option key={x} value={x}>{x}</option>)}
+                </Select>
+              </FormField>
+              {modal.form.status === 'Posted External' && (
+                <div className='grid grid-cols-2 gap-4 rounded-xl bg-blue-50/60 p-3'>
+                  <FormField label={t('Publish Start Date', 'Publish Start Date')} hint={t('Kosong = langsung tampil', 'Empty = immediately')}>
+                    <Input type='date' value={modal.form.publishStartDate} onChange={e => setField({ publishStartDate: e.target.value })} />
+                  </FormField>
+                  <FormField label={t('Publish End Date', 'Publish End Date')} hint={t('Kosong = tanpa batas', 'Empty = open-ended')}
+                    error={dateRangeInvalid ? t('Harus setelah tanggal mulai.', 'Must be after the start date.') : ''}>
+                    <Input type='date' value={modal.form.publishEndDate} onChange={e => setField({ publishEndDate: e.target.value })} />
+                  </FormField>
+                </div>
+              )}
               <FormField label={t('Catatan', 'Notes')}>
                 <textarea rows={3} className={inputClass} value={modal.form.notes} onChange={e => setField({ notes: e.target.value })} />
               </FormField>
             </div>
             <div className='mt-6 flex justify-end gap-2'>
               <ActionButton variant='secondary' onClick={close}>{t('Batal', 'Cancel')}</ActionButton>
-              <ActionButton onClick={save} icon='💾' disabled={!modal.form.positionTitle.trim() || !modal.form.departmentId || !modal.form.companyId}>
+              <ActionButton onClick={save} icon='💾'
+                disabled={!modal.form.positionTitle.trim() || !modal.form.departmentId || !modal.form.companyId || dateRangeInvalid}>
                 {t('Simpan', 'Save')}
               </ActionButton>
             </div>
