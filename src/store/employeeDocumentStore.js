@@ -12,11 +12,9 @@ import { dbStorage } from '@/lib/dbStorage'
 // add weight to every page load, not just this one. DOCUMENT_MAX_BYTES below
 // keeps that in check; raise it only alongside real file storage.
 
-export const DOCUMENT_CATEGORIES = [
-  'KTP', 'NPWP', 'Kartu Keluarga', 'Ijazah', 'CV / Resume',
-  'Kontrak Kerja', 'Kartu BPJS Kesehatan', 'Kartu BPJS Ketenagakerjaan',
-  'Sertifikat', 'Lainnya',
-]
+// The available categories and which extra fields each one asks for are
+// configured under System Admin > Settings > Master Document Types
+// (documentTypeStore), not hardcoded here.
 
 export const DOCUMENT_MAX_BYTES = 5 * 1024 * 1024 // 5 MB
 
@@ -24,7 +22,10 @@ let _id = 1
 
 export const useEmployeeDocumentStore = create(persist(
   (set, get) => ({
-    documents: [], // { id, employeeId, category, fileName, fileType, fileSize, dataUrl, note, uploadedAt, uploadedBy, uploadedByName }
+    // { id, employeeId, category, fileName, fileType, fileSize, dataUrl,
+    //   issuedDate, effectiveStartDate, effectiveEndDate, note, customFieldValue,
+    //   uploadedAt, uploadedBy, uploadedByName }
+    documents: [],
 
     documentsFor: (employeeId) => get().documents
       .filter(d => d.employeeId === employeeId)

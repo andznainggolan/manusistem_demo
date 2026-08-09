@@ -6,7 +6,8 @@ import { useEmployeeStore, ACTION_COLOR, HISTORY_ACTIONS, HISTORY_REASONS } from
 import { useStructureStore } from '@/store/structureStore'
 import { formatRp, sumVariableAllowances } from '@/store/payrollStore'
 import { useMasterLookupStore } from '@/store/masterLookupStore'
-import { useEmployeeDocumentStore, DOCUMENT_CATEGORIES, DOCUMENT_MAX_BYTES } from '@/store/employeeDocumentStore'
+import { useEmployeeDocumentStore, DOCUMENT_MAX_BYTES } from '@/store/employeeDocumentStore'
+import { useDocumentTypeStore } from '@/store/documentTypeStore'
 import { useAuthStore } from '@/store/authStore'
 import { PTKP_STATUSES } from '@/lib/payrollCalc'
 import { useT } from '@/store/languageStore'
@@ -96,8 +97,10 @@ export default function EmployeeProfilePage() {
   const { companies, divisions, businessUnits, departments, positions, grades } = useStructureStore()
   const { currentUser } = useAuthStore()
   const { documents, addDocument, deleteDocument } = useEmployeeDocumentStore()
+  const { types: docTypes } = useDocumentTypeStore()
+  const activeDocTypes = docTypes.filter(x => x.active)
   const docFileRef = useRef(null)
-  const [docModal, setDocModal] = useState(null) // { category, note, file, error }
+  const [docModal, setDocModal] = useState(null) // { documentTypeId, issuedDate, effectiveStartDate, effectiveEndDate, note, customFieldValue, file, error }
   // Select the category object itself (a stable reference unless its items
   // actually change) and derive the active-only list in render — filtering
   // inside the selector would return a new array every call and trip
@@ -199,8 +202,17 @@ export default function EmployeeProfilePage() {
     .filter(d => d.employeeId === emp.id)
     .sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt))
 
-  const openDocModal = () => setDocModal({ category: DOCUMENT_CATEGORIES[0], note: '', file: null, error: null })
+  // Mandatory types with no uploaded document yet (matched by category name —
+  // a type stays "satisfied" even if later renamed, since renaming updates
+  // this same name every existing document already carries).
+  const missingMandatory = activeDocTypes.filter(dt => dt.mandatory && !myDocuments.some(d => d.category === dt.name))
+
+  const openDocModal = () => setDocModal({
+    documentTypeId: activeDocTypes[0]?.id ?? '', issuedDate: '', effectiveStartDate: '', effectiveEndDate: '',
+    note: '', customFieldValue: '', file: null, error: null,
+  })
   const closeDocModal = () => setDocModal(null)
+  const selectedDocType = docModal ? docTypes.find(x => x.id === Number(docModal.documentTypeId)) : null
   const pickDocFile = (file) => {
     if (!file) return
     if (file.size > DOCUMENT_MAX_BYTES) {
@@ -210,11 +222,18 @@ export default function EmployeeProfilePage() {
     setDocModal(m => ({ ...m, file, error: null }))
   }
   const saveDocument = () => {
-    if (!docModal.file) return
+    if (!docModal.file || !selectedDocType) return
+    const f = selectedDocType.fields
     const reader = new FileReader()
     reader.onload = (e) => {
       addDocument({
-        employeeId: emp.id, category: docModal.category, note: docModal.note.trim(),
+        employeeId: emp.id, category: selectedDocType.name,
+        issuedDate: f.issuedDate ? docModal.issuedDate : '',
+        effectiveStartDate: f.effectiveStartDate ? docModal.effectiveStartDate : '',
+        effectiveEndDate: f.effectiveEndDate ? docModal.effectiveEndDate : '',
+        note: f.note ? docModal.note.trim() : '',
+        customFieldLabel: f.customField ? selectedDocType.customFieldLabel : '',
+        customFieldValue: f.customField ? docModal.customFieldValue.trim() : '',
         fileName: docModal.file.name, fileType: docModal.file.type, fileSize: docModal.file.size,
         dataUrl: e.target.result,
         uploadedAt: new Date().toISOString(), uploadedBy: currentUser?.id, uploadedByName: currentUser?.name || '',
@@ -690,6 +709,13 @@ export default function EmployeeProfilePage() {
               <ActionButton size='sm' icon='➕' onClick={openDocModal}>{t('Upload Dokumen','Upload Document')}</ActionButton>
             </div>
 
+            {missingMandatory.length > 0 && (
+              <div className='mb-4 rounded-xl bg-amber-50 px-4 py-3 text-xs text-amber-800 ring-1 ring-amber-100'>
+                <span className='font-semibold'>⚠️ {t('Dokumen wajib belum lengkap:', 'Missing mandatory documents:')}</span>{' '}
+                {missingMandatory.map(dt => dt.title).join(', ')}
+              </div>
+            )}
+
             {myDocuments.length === 0 ? (
               <div className='flex flex-col items-center justify-center py-16 text-gray-400 gap-2'>
                 <span className='text-4xl'><Icon e='📁' size={15} /></span>
@@ -711,6 +737,15 @@ export default function EmployeeProfilePage() {
                       <p className='text-xs text-gray-400 mt-0.5'>
                         {formatBytes(doc.fileSize)} · {t('diunggah oleh','uploaded by')} {doc.uploadedByName || '—'} · {new Date(doc.uploadedAt).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' })}
                       </p>
+                      {(doc.issuedDate || doc.effectiveStartDate || doc.effectiveEndDate || doc.customFieldValue) && (
+                        <p className='text-xs text-gray-500 mt-1 flex flex-wrap gap-x-3'>
+                          {doc.issuedDate && <span>{t('Diterbitkan','Issued')}: {doc.issuedDate}</span>}
+                          {(doc.effectiveStartDate || doc.effectiveEndDate) && (
+                            <span>{t('Berlaku','Valid')}: {doc.effectiveStartDate || '—'} → {doc.effectiveEndDate || '—'}</span>
+                          )}
+                          {doc.customFieldValue && <span>{doc.customFieldLabel || t('Custom Field','Custom Field')}: {doc.customFieldValue}</span>}
+                        </p>
+                      )}
                       {doc.note && <p className='text-xs text-gray-500 mt-1'>{doc.note}</p>}
                     </div>
                     <button onClick={() => removeDocument(doc)} className='shrink-0 text-gray-400 hover:text-red-600' aria-label={t('Hapus','Delete')}>
@@ -733,10 +768,18 @@ export default function EmployeeProfilePage() {
               <button onClick={closeDocModal} className='text-gray-400 hover:text-gray-600 text-xl font-bold leading-none'>×</button>
             </div>
 
+            {activeDocTypes.length === 0 ? (
+              <p className='text-sm text-gray-500'>
+                {t('Belum ada document type aktif. Atur dulu di ', 'No active document types yet. Set them up under ')}
+                <a href='/sysadmin/settings/master-document-types' className='font-semibold text-red-700 hover:underline'>
+                  System Admin → Settings → Master Document Types
+                </a>.
+              </p>
+            ) : (
             <div className='space-y-4'>
               <FormField label={t('Kategori','Category')} required>
-                <Select value={docModal.category} onChange={e => setDocModal(m => ({ ...m, category: e.target.value }))}>
-                  {DOCUMENT_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                <Select value={docModal.documentTypeId} onChange={e => setDocModal(m => ({ ...m, documentTypeId: e.target.value }))}>
+                  {activeDocTypes.map(x => <option key={x.id} value={x.id}>{x.title}{x.mandatory ? ' *' : ''}</option>)}
                 </Select>
               </FormField>
 
@@ -758,14 +801,41 @@ export default function EmployeeProfilePage() {
                 {docModal.error && <span className='mt-1 block text-xs text-red-500'>{docModal.error}</span>}
               </div>
 
-              <FormField label={t('Catatan (opsional)','Note (optional)')}>
-                <Input value={docModal.note} onChange={e => setDocModal(m => ({ ...m, note: e.target.value }))} />
-              </FormField>
+              {selectedDocType?.fields.issuedDate && (
+                <FormField label={t('Issued Date','Issued Date')}>
+                  <Input type='date' value={docModal.issuedDate} onChange={e => setDocModal(m => ({ ...m, issuedDate: e.target.value }))} />
+                </FormField>
+              )}
+              {(selectedDocType?.fields.effectiveStartDate || selectedDocType?.fields.effectiveEndDate) && (
+                <div className='grid grid-cols-2 gap-4'>
+                  {selectedDocType.fields.effectiveStartDate && (
+                    <FormField label={t('Effective Start Date','Effective Start Date')}>
+                      <Input type='date' value={docModal.effectiveStartDate} onChange={e => setDocModal(m => ({ ...m, effectiveStartDate: e.target.value }))} />
+                    </FormField>
+                  )}
+                  {selectedDocType.fields.effectiveEndDate && (
+                    <FormField label={t('Effective End Date','Effective End Date')}>
+                      <Input type='date' value={docModal.effectiveEndDate} onChange={e => setDocModal(m => ({ ...m, effectiveEndDate: e.target.value }))} />
+                    </FormField>
+                  )}
+                </div>
+              )}
+              {selectedDocType?.fields.customField && (
+                <FormField label={selectedDocType.customFieldLabel || t('Custom Field','Custom Field')}>
+                  <Input value={docModal.customFieldValue} onChange={e => setDocModal(m => ({ ...m, customFieldValue: e.target.value }))} />
+                </FormField>
+              )}
+              {selectedDocType?.fields.note && (
+                <FormField label={t('Catatan (opsional)','Note (optional)')}>
+                  <Input value={docModal.note} onChange={e => setDocModal(m => ({ ...m, note: e.target.value }))} />
+                </FormField>
+              )}
             </div>
+            )}
 
             <div className='flex justify-end gap-2 mt-6'>
               <button onClick={closeDocModal} className='px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700'>{t('Batal','Cancel')}</button>
-              <ActionButton icon='💾' onClick={saveDocument} disabled={!docModal.file}>{t('Simpan','Save')}</ActionButton>
+              <ActionButton icon='💾' onClick={saveDocument} disabled={!docModal.file || !selectedDocType}>{t('Simpan','Save')}</ActionButton>
             </div>
           </div>
         </div>
