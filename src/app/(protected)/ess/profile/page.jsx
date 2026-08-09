@@ -1,12 +1,26 @@
 'use client'
-import { useState } from 'react'
+import Icon from '@/components/ui/Icon'
+import { useState, useRef } from 'react'
 import { useAuthStore }      from '@/store/authStore'
 import { useEmployeeStore }  from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useT }              from '@/store/languageStore'
 import { ACTION_COLOR }      from '@/store/employeeStore'
+import { useEmployeeDocumentStore, DOCUMENT_MAX_BYTES } from '@/store/employeeDocumentStore'
+import { useDocumentTypeStore } from '@/store/documentTypeStore'
+import { FormField, Input, Select, ActionButton } from '@/components/ui'
 
-const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History']
+const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History', 'Personal Document']
+
+const DOC_ICON = (fileType) => {
+  if (fileType?.includes('pdf')) return '📄'
+  if (fileType?.startsWith('image/')) return '🖼️'
+  if (fileType?.includes('word') || fileType?.includes('document')) return '📝'
+  if (fileType?.includes('sheet') || fileType?.includes('excel')) return '📊'
+  return '📎'
+}
+
+const formatBytes = (n) => n < 1024 * 1024 ? `${Math.round(n / 1024)} KB` : `${(n / (1024 * 1024)).toFixed(1)} MB`
 
 const LEVEL_COLOR = {
   Expert:       'bg-purple-100 text-purple-700',
@@ -38,6 +52,11 @@ export default function MyProfilePage() {
   const { currentUser } = useAuthStore()
   const { employees }   = useEmployeeStore()
   const { companies, divisions, businessUnits, departments, positions } = useStructureStore()
+  const { documents, addDocument, deleteDocument } = useEmployeeDocumentStore()
+  const { types: docTypes } = useDocumentTypeStore()
+  const activeDocTypes = docTypes.filter(x => x.active)
+  const docFileRef = useRef(null)
+  const [docModal, setDocModal] = useState(null) // { documentTypeId, issuedDate, effectiveStartDate, effectiveEndDate, note, customFieldValue, file, error }
 
   const [tab, setTab] = useState('Employment')
 
@@ -48,6 +67,51 @@ export default function MyProfilePage() {
       {t('Data profil tidak ditemukan.', 'Profile data not found.')}
     </div>
   )
+
+  const myDocuments = documents
+    .filter(d => d.employeeId === emp.id)
+    .sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt))
+  const missingMandatory = activeDocTypes.filter(dt => dt.mandatory && !myDocuments.some(d => d.category === dt.name))
+
+  const openDocModal = () => setDocModal({
+    documentTypeId: activeDocTypes[0]?.id ?? '', issuedDate: '', effectiveStartDate: '', effectiveEndDate: '',
+    note: '', customFieldValue: '', file: null, error: null,
+  })
+  const closeDocModal = () => setDocModal(null)
+  const selectedDocType = docModal ? docTypes.find(x => x.id === Number(docModal.documentTypeId)) : null
+  const pickDocFile = (file) => {
+    if (!file) return
+    if (file.size > DOCUMENT_MAX_BYTES) {
+      setDocModal(m => ({ ...m, file: null, error: t(`Ukuran file maksimal ${formatBytes(DOCUMENT_MAX_BYTES)}.`, `File must be under ${formatBytes(DOCUMENT_MAX_BYTES)}.`) }))
+      return
+    }
+    setDocModal(m => ({ ...m, file, error: null }))
+  }
+  const saveDocument = () => {
+    if (!docModal.file || !selectedDocType) return
+    const f = selectedDocType.fields
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      addDocument({
+        employeeId: emp.id, category: selectedDocType.name,
+        issuedDate: f.issuedDate ? docModal.issuedDate : '',
+        effectiveStartDate: f.effectiveStartDate ? docModal.effectiveStartDate : '',
+        effectiveEndDate: f.effectiveEndDate ? docModal.effectiveEndDate : '',
+        note: f.note ? docModal.note.trim() : '',
+        customFieldLabel: f.customField ? selectedDocType.customFieldLabel : '',
+        customFieldValue: f.customField ? docModal.customFieldValue.trim() : '',
+        fileName: docModal.file.name, fileType: docModal.file.type, fileSize: docModal.file.size,
+        dataUrl: e.target.result,
+        uploadedAt: new Date().toISOString(), uploadedBy: currentUser?.id, uploadedByName: currentUser?.name || '',
+      })
+      closeDocModal()
+    }
+    reader.readAsDataURL(docModal.file)
+  }
+  const removeDocument = (doc) => {
+    if (!window.confirm(t(`Hapus dokumen "${doc.fileName}"?`, `Delete "${doc.fileName}"?`))) return
+    deleteDocument(doc.id)
+  }
 
   const company  = companies.find(c => c.id === emp.companyId)
   const division = divisions.find(d => d.id === emp.divisionId)
@@ -268,7 +332,149 @@ export default function MyProfilePage() {
               </div>
         )}
 
+        {/* Personal Document */}
+        {tab === 'Personal Document' && (
+          <div>
+            <div className='flex items-center justify-between mb-4'>
+              <div>
+                <h3 className='text-sm font-bold text-gray-800'>{t('Dokumen Pribadi','Personal Document')}</h3>
+                <p className='text-xs text-gray-400'>
+                  {t(`Maks. ${formatBytes(DOCUMENT_MAX_BYTES)} per file — KTP, NPWP, ijazah, kontrak kerja, dll.`,
+                     `Max ${formatBytes(DOCUMENT_MAX_BYTES)} per file — ID card, tax card, diploma, employment contract, etc.`)}
+                </p>
+              </div>
+              <ActionButton size='sm' icon='➕' onClick={openDocModal}>{t('Upload Dokumen','Upload Document')}</ActionButton>
+            </div>
+
+            {missingMandatory.length > 0 && (
+              <div className='mb-4 rounded-xl bg-amber-50 px-4 py-3 text-xs text-amber-800 ring-1 ring-amber-100'>
+                <span className='font-semibold'>⚠️ {t('Dokumen wajib belum lengkap:', 'Missing mandatory documents:')}</span>{' '}
+                {missingMandatory.map(dt => dt.title).join(', ')}
+              </div>
+            )}
+
+            {myDocuments.length === 0 ? (
+              <div className='flex flex-col items-center justify-center py-16 text-gray-400 gap-2'>
+                <span className='text-4xl'><Icon e='📁' size={15} /></span>
+                <p className='text-sm'>{t('Belum ada dokumen.','No documents yet.')}</p>
+              </div>
+            ) : (
+              <div className='divide-y divide-gray-100'>
+                {myDocuments.map(doc => (
+                  <div key={doc.id} className='flex items-center gap-3 py-3'>
+                    <span className='text-2xl shrink-0'>{DOC_ICON(doc.fileType)}</span>
+                    <div className='flex-1 min-w-0'>
+                      <div className='flex items-center gap-2'>
+                        <a href={doc.dataUrl} download={doc.fileName} target='_blank' rel='noreferrer'
+                          className='text-sm font-semibold text-gray-800 hover:text-red-700 hover:underline truncate'>
+                          {doc.fileName}
+                        </a>
+                        <span className='shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600'>{doc.category}</span>
+                      </div>
+                      <p className='text-xs text-gray-400 mt-0.5'>
+                        {formatBytes(doc.fileSize)} · {t('diunggah oleh','uploaded by')} {doc.uploadedByName || '—'} · {new Date(doc.uploadedAt).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' })}
+                      </p>
+                      {(doc.issuedDate || doc.effectiveStartDate || doc.effectiveEndDate || doc.customFieldValue) && (
+                        <p className='text-xs text-gray-500 mt-1 flex flex-wrap gap-x-3'>
+                          {doc.issuedDate && <span>{t('Diterbitkan','Issued')}: {doc.issuedDate}</span>}
+                          {(doc.effectiveStartDate || doc.effectiveEndDate) && (
+                            <span>{t('Berlaku','Valid')}: {doc.effectiveStartDate || '—'} → {doc.effectiveEndDate || '—'}</span>
+                          )}
+                          {doc.customFieldValue && <span>{doc.customFieldLabel || t('Custom Field','Custom Field')}: {doc.customFieldValue}</span>}
+                        </p>
+                      )}
+                      {doc.note && <p className='text-xs text-gray-500 mt-1'>{doc.note}</p>}
+                    </div>
+                    <button onClick={() => removeDocument(doc)} className='shrink-0 text-gray-400 hover:text-red-600' aria-label={t('Hapus','Delete')}>
+                      <Icon e='🗑️' size={13} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
       </div>
+
+      {/* Personal Document upload modal */}
+      {docModal && (
+        <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4' onClick={closeDocModal}>
+          <div className='bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto' onClick={e=>e.stopPropagation()}>
+            <div className='flex justify-between items-start mb-4'>
+              <h3 className='text-base font-bold text-gray-800'>{t('Upload Dokumen','Upload Document')}</h3>
+              <button onClick={closeDocModal} className='text-gray-400 hover:text-gray-600 text-xl font-bold leading-none'>×</button>
+            </div>
+
+            {activeDocTypes.length === 0 ? (
+              <p className='text-sm text-gray-500'>
+                {t('Belum ada document type aktif. Hubungi HR/Admin.', 'No active document types yet. Contact HR/Admin.')}
+              </p>
+            ) : (
+            <div className='space-y-4'>
+              <FormField label={t('Kategori','Category')} required>
+                <Select value={docModal.documentTypeId} onChange={e => setDocModal(m => ({ ...m, documentTypeId: e.target.value }))}>
+                  {activeDocTypes.map(x => <option key={x.id} value={x.id}>{x.title}{x.mandatory ? ' *' : ''}</option>)}
+                </Select>
+              </FormField>
+
+              <div>
+                <span className='mb-1.5 block text-xs font-semibold text-gray-600'>
+                  {t('File','File')}<span className='text-red-500'> *</span>
+                </span>
+                <input ref={docFileRef} type='file' className='hidden'
+                  accept='.pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx'
+                  onChange={e => { pickDocFile(e.target.files?.[0]); e.target.value = '' }} />
+                <button type='button' onClick={() => docFileRef.current?.click()}
+                  className='w-full rounded-xl border-2 border-dashed border-gray-200 px-4 py-6 text-center text-sm text-gray-500 hover:border-red-300 hover:bg-red-50/40 transition'>
+                  {docModal.file ? (
+                    <span className='font-semibold text-gray-700'>{DOC_ICON(docModal.file.type)} {docModal.file.name} ({formatBytes(docModal.file.size)})</span>
+                  ) : (
+                    <span>{t('Klik untuk pilih file','Click to choose a file')}</span>
+                  )}
+                </button>
+                {docModal.error && <span className='mt-1 block text-xs text-red-500'>{docModal.error}</span>}
+              </div>
+
+              {selectedDocType?.fields.issuedDate && (
+                <FormField label={t('Issued Date','Issued Date')}>
+                  <Input type='date' value={docModal.issuedDate} onChange={e => setDocModal(m => ({ ...m, issuedDate: e.target.value }))} />
+                </FormField>
+              )}
+              {(selectedDocType?.fields.effectiveStartDate || selectedDocType?.fields.effectiveEndDate) && (
+                <div className='grid grid-cols-2 gap-4'>
+                  {selectedDocType.fields.effectiveStartDate && (
+                    <FormField label={t('Effective Start Date','Effective Start Date')}>
+                      <Input type='date' value={docModal.effectiveStartDate} onChange={e => setDocModal(m => ({ ...m, effectiveStartDate: e.target.value }))} />
+                    </FormField>
+                  )}
+                  {selectedDocType.fields.effectiveEndDate && (
+                    <FormField label={t('Effective End Date','Effective End Date')}>
+                      <Input type='date' value={docModal.effectiveEndDate} onChange={e => setDocModal(m => ({ ...m, effectiveEndDate: e.target.value }))} />
+                    </FormField>
+                  )}
+                </div>
+              )}
+              {selectedDocType?.fields.customField && (
+                <FormField label={selectedDocType.customFieldLabel || t('Custom Field','Custom Field')}>
+                  <Input value={docModal.customFieldValue} onChange={e => setDocModal(m => ({ ...m, customFieldValue: e.target.value }))} />
+                </FormField>
+              )}
+              {selectedDocType?.fields.note && (
+                <FormField label={t('Catatan (opsional)','Note (optional)')}>
+                  <Input value={docModal.note} onChange={e => setDocModal(m => ({ ...m, note: e.target.value }))} />
+                </FormField>
+              )}
+            </div>
+            )}
+
+            <div className='flex justify-end gap-2 mt-6'>
+              <button onClick={closeDocModal} className='px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700'>{t('Batal','Cancel')}</button>
+              <ActionButton icon='💾' onClick={saveDocument} disabled={!docModal.file || !selectedDocType}>{t('Simpan','Save')}</ActionButton>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
