@@ -2,6 +2,8 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useRecruitmentStore, isPublished } from '@/store/recruitmentStore'
+import { useDocumentTypeStore } from '@/store/documentTypeStore'
+import { useCandidateDocumentStore, CANDIDATE_DOCUMENT_MAX_BYTES } from '@/store/candidateDocumentStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useBrandingStore } from '@/store/brandingStore'
 
@@ -10,24 +12,60 @@ import { useBrandingStore } from '@/store/brandingStore'
 // up here only when isPublished() says so: status 'Posted External' and
 // inside its publish date window.
 
+const formatBytes = (n) => n < 1024 * 1024 ? `${Math.round(n / 1024)} KB` : `${(n / (1024 * 1024)).toFixed(1)} MB`
+
+const readAsDataURL = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader()
+  reader.onload = () => resolve(reader.result)
+  reader.onerror = reject
+  reader.readAsDataURL(file)
+})
+
 const EMPTY_FORM = { name: '', email: '', phone: '', notes: '' }
 
 function ApplyModal({ req, deptName, companyName, onClose }) {
   const { addCandidate } = useRecruitmentStore()
+  const { types: docTypes } = useDocumentTypeStore()
+  const { addDocument: addCandidateDocument } = useCandidateDocumentStore()
+  const mandatoryDocTypes = docTypes.filter(x => x.active && x.mandatory)
+
   const [form, setForm] = useState(EMPTY_FORM)
+  const [docFiles, setDocFiles] = useState({})
+  const [docErrors, setDocErrors] = useState({})
   const [sent, setSent] = useState(false)
   const setField = (patch) => setForm(f => ({ ...f, ...patch }))
 
-  const valid = form.name.trim() && /\S+@\S+\.\S+/.test(form.email)
+  const setDocFile = (typeId, file) => {
+    if (!file) return
+    if (file.size > CANDIDATE_DOCUMENT_MAX_BYTES) {
+      setDocErrors(e => ({ ...e, [typeId]: `Ukuran file maksimal ${formatBytes(CANDIDATE_DOCUMENT_MAX_BYTES)}.` }))
+      return
+    }
+    setDocFiles(f => ({ ...f, [typeId]: file }))
+    setDocErrors(e => ({ ...e, [typeId]: null }))
+  }
 
-  const submit = () => {
+  const missingMandatoryDocs = mandatoryDocTypes.filter(dt => !docFiles[dt.id])
+  const valid = form.name.trim() && /\S+@\S+\.\S+/.test(form.email) && missingMandatoryDocs.length === 0
+
+  const submit = async () => {
     if (!valid) return
-    addCandidate({
+    const newId = addCandidate({
       name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(),
       requisitionId: req.id, source: 'Career Site',
       appliedDate: new Date().toISOString().slice(0, 10),
       notes: form.notes.trim(),
     })
+    for (const dt of mandatoryDocTypes) {
+      const file = docFiles[dt.id]
+      if (!file) continue
+      const dataUrl = await readAsDataURL(file)
+      addCandidateDocument({
+        candidateId: newId, category: dt.name,
+        fileName: file.name, fileType: file.type, fileSize: file.size, dataUrl,
+        uploadedAt: new Date().toISOString(),
+      })
+    }
     setSent(true)
   }
 
@@ -77,6 +115,29 @@ function ApplyModal({ req, deptName, companyName, onClose }) {
                 <textarea rows={3} value={form.notes} onChange={e => setField({ notes: e.target.value })}
                   className='w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-red-300 focus:ring-2 focus:ring-red-100' />
               </div>
+
+              {mandatoryDocTypes.length > 0 && (
+                <div className='rounded-xl bg-gray-50 p-3'>
+                  <p className='mb-2 text-xs font-semibold text-gray-600'>Dokumen Wajib</p>
+                  <div className='space-y-2'>
+                    {mandatoryDocTypes.map(dt => (
+                      <div key={dt.id}>
+                        <input type='file' id={`apply-doc-${dt.id}`} className='hidden'
+                          accept='.pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx'
+                          onChange={e => setDocFile(dt.id, e.target.files?.[0])} />
+                        <label htmlFor={`apply-doc-${dt.id}`}
+                          className='flex cursor-pointer items-center justify-between gap-2 rounded-lg border border-dashed border-gray-200 bg-white px-3 py-2 text-xs hover:border-red-300 hover:bg-red-50/40'>
+                          <span className='font-medium text-gray-700'>{dt.title} <span className='text-red-500'>*</span></span>
+                          <span className='truncate text-gray-400'>
+                            {docFiles[dt.id] ? `📎 ${docFiles[dt.id].name}` : 'Pilih file'}
+                          </span>
+                        </label>
+                        {docErrors[dt.id] && <span className='mt-1 block text-[11px] text-red-500'>{docErrors[dt.id]}</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             <button onClick={submit} disabled={!valid}
               className='mt-5 w-full rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition disabled:opacity-40'

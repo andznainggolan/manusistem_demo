@@ -109,9 +109,13 @@ export const useRecruitmentStore = create(persist(
     })),
     deleteRequisition: (id) => set(s => ({ requisitions: s.requisitions.filter(r => r.id !== id) })),
 
-    addCandidate: (c) => set(s => ({
-      candidates: [...s.candidates, { id: _candId++, stage: 'Applied', rating: 0, notes: '', ...c }],
-    })),
+    addCandidate: (c) => {
+      const id = _candId++
+      set(s => ({
+        candidates: [...s.candidates, { id, stage: 'Applied', rating: 0, notes: '', ...c }],
+      }))
+      return id
+    },
     updateCandidate: (id, patch) => set(s => ({
       candidates: s.candidates.map(c => (c.id === id ? { ...c, ...patch } : c)),
     })),

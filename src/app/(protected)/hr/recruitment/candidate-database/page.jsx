@@ -1,6 +1,8 @@
 'use client'
 import { useState } from 'react'
 import { useRecruitmentStore, STAGES, CANDIDATE_SOURCES } from '@/store/recruitmentStore'
+import { useDocumentTypeStore } from '@/store/documentTypeStore'
+import { useCandidateDocumentStore, CANDIDATE_DOCUMENT_MAX_BYTES } from '@/store/candidateDocumentStore'
 import { useT } from '@/store/languageStore'
 import {
   PageHeader, StatCard, DataTable, Tr, Td, SearchBar, FilterBar, FilterPill,
@@ -17,8 +19,18 @@ const Stars = ({ n }) => (
   </span>
 )
 
+const formatBytes = (n) => n < 1024 * 1024 ? `${Math.round(n / 1024)} KB` : `${(n / (1024 * 1024)).toFixed(1)} MB`
+
+const readAsDataURL = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader()
+  reader.onload = () => resolve(reader.result)
+  reader.onerror = reject
+  reader.readAsDataURL(file)
+})
+
 const EMPTY_FORM = {
   name: '', email: '', phone: '', requisitionId: '', source: CANDIDATE_SOURCES[0], appliedDate: '', notes: '',
+  docFiles: {}, docErrors: {},
 }
 
 const PAGE = 50
@@ -26,6 +38,9 @@ const PAGE = 50
 export default function CandidateDatabasePage() {
   const t = useT()
   const { candidates, requisitions, addCandidate, updateCandidate, deleteCandidate } = useRecruitmentStore()
+  const { types: docTypes } = useDocumentTypeStore()
+  const { documents: candidateDocs, addDocument: addCandidateDocument } = useCandidateDocumentStore()
+  const mandatoryDocTypes = docTypes.filter(x => x.active && x.mandatory)
 
   const [q, setQ] = useState('')
   const [stage, setStage] = useState('all')
@@ -47,17 +62,39 @@ export default function CandidateDatabasePage() {
   const counts = { all: candidates.length }
   STAGES.forEach(s => { counts[s] = candidates.filter(c => c.stage === s).length })
 
-  const openAdd = () => setModal({ mode: 'add', form: { ...EMPTY_FORM, appliedDate: new Date().toISOString().slice(0, 10) } })
+  const openAdd = () => setModal({ mode: 'add', form: { ...EMPTY_FORM, docFiles: {}, docErrors: {}, appliedDate: new Date().toISOString().slice(0, 10) } })
   const close = () => setModal(null)
   const setField = (patch) => setModal(m => ({ ...m, form: { ...m.form, ...patch } }))
 
-  const save = () => {
+  const setDocFile = (typeId, file) => {
+    if (!file) return
+    if (file.size > CANDIDATE_DOCUMENT_MAX_BYTES) {
+      setModal(m => ({ ...m, form: { ...m.form, docErrors: { ...m.form.docErrors, [typeId]: t(`Maks. ${formatBytes(CANDIDATE_DOCUMENT_MAX_BYTES)}.`, `Max ${formatBytes(CANDIDATE_DOCUMENT_MAX_BYTES)}.`) } } }))
+      return
+    }
+    setModal(m => ({ ...m, form: { ...m.form, docFiles: { ...m.form.docFiles, [typeId]: file }, docErrors: { ...m.form.docErrors, [typeId]: null } } }))
+  }
+
+  const missingMandatoryDocs = modal ? mandatoryDocTypes.filter(dt => !modal.form.docFiles[dt.id]) : []
+
+  const save = async () => {
     const f = modal.form
     if (!f.name.trim() || !f.requisitionId) return
-    addCandidate({
+    if (missingMandatoryDocs.length > 0) return
+    const newId = addCandidate({
       name: f.name.trim(), email: f.email.trim(), phone: f.phone.trim(),
       requisitionId: Number(f.requisitionId), source: f.source, appliedDate: f.appliedDate, notes: f.notes,
     })
+    for (const dt of mandatoryDocTypes) {
+      const file = f.docFiles[dt.id]
+      if (!file) continue
+      const dataUrl = await readAsDataURL(file)
+      addCandidateDocument({
+        candidateId: newId, category: dt.name,
+        fileName: file.name, fileType: file.type, fileSize: file.size, dataUrl,
+        uploadedAt: new Date().toISOString(),
+      })
+    }
     say(t('Kandidat ditambahkan.', 'Candidate added.'))
     close()
   }
@@ -160,6 +197,20 @@ export default function CandidateDatabasePage() {
               <p><span className='text-gray-400'>Stage:</span> <StatusBadge tone={STAGE_TONE[detail.stage]}>{detail.stage}</StatusBadge></p>
               {detail.rating > 0 && <p><span className='text-gray-400'>Rating:</span> <Stars n={detail.rating} /></p>}
               {detail.notes && <p className='rounded-xl bg-gray-50 p-3 text-xs text-gray-600'>{detail.notes}</p>}
+              {candidateDocs.filter(d => d.candidateId === detail.id).length > 0 && (
+                <div className='pt-2'>
+                  <p className='mb-1.5 text-xs font-semibold text-gray-500'>{t('Dokumen', 'Documents')}</p>
+                  <div className='space-y-1.5'>
+                    {candidateDocs.filter(d => d.candidateId === detail.id).map(doc => (
+                      <a key={doc.id} href={doc.dataUrl} download={doc.fileName} target='_blank' rel='noreferrer'
+                        className='flex items-center justify-between rounded-lg bg-gray-50 px-3 py-1.5 text-xs hover:bg-gray-100'>
+                        <span className='font-medium text-gray-700'>{doc.category}</span>
+                        <span className='text-gray-400'>{doc.fileName}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             <div className='mt-5 flex justify-end gap-2'>
               <a href={`/hr/recruitment/candidate-pipeline?requisitionId=${detail.requisitionId}`}
@@ -214,10 +265,33 @@ export default function CandidateDatabasePage() {
               <FormField label={t('Catatan', 'Notes')}>
                 <textarea rows={3} className={inputClass} value={modal.form.notes} onChange={e => setField({ notes: e.target.value })} />
               </FormField>
+
+              {mandatoryDocTypes.length > 0 && (
+                <div className='rounded-xl bg-gray-50 p-3'>
+                  <p className='mb-2 text-xs font-semibold text-gray-600'>{t('Dokumen Wajib', 'Mandatory Documents')}</p>
+                  <div className='space-y-2'>
+                    {mandatoryDocTypes.map(dt => (
+                      <div key={dt.id}>
+                        <input type='file' id={`cand-doc-${dt.id}`} className='hidden'
+                          accept='.pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx'
+                          onChange={e => setDocFile(dt.id, e.target.files?.[0])} />
+                        <label htmlFor={`cand-doc-${dt.id}`}
+                          className='flex cursor-pointer items-center justify-between gap-2 rounded-lg border border-dashed border-gray-200 bg-white px-3 py-2 text-xs hover:border-red-300 hover:bg-red-50/40'>
+                          <span className='font-medium text-gray-700'>{dt.title} <span className='text-red-500'>*</span></span>
+                          <span className='truncate text-gray-400'>
+                            {modal.form.docFiles[dt.id] ? `📎 ${modal.form.docFiles[dt.id].name}` : t('Pilih file', 'Choose file')}
+                          </span>
+                        </label>
+                        {modal.form.docErrors[dt.id] && <span className='mt-1 block text-[11px] text-red-500'>{modal.form.docErrors[dt.id]}</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             <div className='mt-6 flex justify-end gap-2'>
               <ActionButton variant='secondary' onClick={close}>{t('Batal', 'Cancel')}</ActionButton>
-              <ActionButton onClick={save} icon='💾' disabled={!modal.form.name.trim() || !modal.form.requisitionId}>
+              <ActionButton onClick={save} icon='💾' disabled={!modal.form.name.trim() || !modal.form.requisitionId || missingMandatoryDocs.length > 0}>
                 {t('Simpan', 'Save')}
               </ActionButton>
             </div>
