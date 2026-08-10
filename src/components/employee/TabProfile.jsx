@@ -72,7 +72,7 @@ export default function TabProfile({ emp, addEdu, updateEdu, delEdu, addCert, up
         <div className='flex gap-2 mb-4'>
           <button onClick={saveEdu}
             className='px-4 py-1.5 text-white text-xs font-semibold rounded-lg hover:opacity-90'
-            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
             {editingEdu ? t('Simpan', 'Save') : `+ ${t('Tambah', 'Add')}`}
           </button>
           {editingEdu && (
@@ -126,7 +126,7 @@ export default function TabProfile({ emp, addEdu, updateEdu, delEdu, addCert, up
         <div className='flex gap-2 mb-4'>
           <button onClick={saveCert}
             className='px-4 py-1.5 text-white text-xs font-semibold rounded-lg hover:opacity-90'
-            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
             {editingCert ? t('Simpan', 'Save') : `+ ${t('Tambah', 'Add')}`}
           </button>
           {editingCert && (
@@ -170,7 +170,7 @@ export default function TabProfile({ emp, addEdu, updateEdu, delEdu, addCert, up
           </div>
           <button onClick={saveSkill}
             className='px-4 py-2 text-white text-xs font-semibold rounded-lg hover:opacity-90 flex-shrink-0'
-            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
             {editingSkill ? t('Simpan', 'Save') : `+ ${t('Tambah', 'Add')}`}
           </button>
           {editingSkill && (

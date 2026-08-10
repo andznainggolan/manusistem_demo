@@ -41,7 +41,7 @@ export default function MssNotificationsPage() {
         {types.map(type=>(
           <button key={type} onClick={()=>setFilter(type)}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${filter===type?'text-white':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-            style={filter===type?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+            style={filter===type?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
             {type==='Semua'?t('Semua','All'):type}
           </button>
         ))}

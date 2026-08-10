@@ -9,7 +9,7 @@ import {
 } from '@/components/ui'
 
 const BLANK = { divisionId:'', code:'', companyCode:'', name:'', legalEntity:'PT', country:'Indonesia', status:'Active' }
-const BRAND = 'linear-gradient(135deg,#8B1A1A,#D7252B)'
+const BRAND = 'linear-gradient(135deg,#052B52,#039299)'
 
 const COUNTRIES = [
   'Indonesia',

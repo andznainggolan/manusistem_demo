@@ -164,7 +164,7 @@ function DetailPopup({ notif, currentUser, employees, leaves, onboardings,
       <div className='bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col overflow-hidden'
         onClick={e => e.stopPropagation()}>
 
-        <div style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}
+        <div style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}
           className='px-5 py-4 flex items-center justify-between'>
           <div className='flex items-center gap-2'>
             <span className='text-xl'><Icon e={notif.icon} size={16} /></span>
@@ -174,7 +174,7 @@ function DetailPopup({ notif, currentUser, employees, leaves, onboardings,
                   ? t('Detail Pengajuan Cuti', 'Leave Request Detail')
                   : t('Detail Onboarding', 'Onboarding Detail')}
               </p>
-              <p className='text-red-300 text-xs mt-0.5'>{notif.text}</p>
+              <p className='text-teal-100 text-xs mt-0.5'>{notif.text}</p>
             </div>
           </div>
           <button onClick={onClose}
@@ -274,7 +274,7 @@ function DetailPopup({ notif, currentUser, employees, leaves, onboardings,
                   <p className='text-xs text-gray-500'>{t('Catatan (opsional)', 'Note (optional)')}</p>
                   <input value={note} onChange={e => setNote(e.target.value)}
                     placeholder={t('Tambahkan catatan…', 'Add a note…')}
-                    className='w-full px-3 py-2 text-xs border border-gray-200 rounded-lg outline-none focus:border-red-400' />
+                    className='w-full px-3 py-2 text-xs border border-gray-200 rounded-lg outline-none focus:border-teal-400' />
                   <div className='flex gap-2 mt-1'>
                     <button onClick={handleApprove}
                       className='flex-1 py-2 text-sm font-bold text-white rounded-xl bg-green-500 hover:bg-green-600 transition'><Icon e='✓' size={14} className='inline align-[-2px]' /> Approve
@@ -662,7 +662,7 @@ export default function NotificationBell() {
           {unread.length > 0 && (
             <span className='absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1
               flex items-center justify-center rounded-full
-              bg-red-500 text-white text-[10px] font-bold leading-none'>
+              bg-teal-600 text-white text-[10px] font-bold leading-none'>
               {unread.length > 9 ? '9+' : unread.length}
             </span>
           )}
@@ -674,14 +674,14 @@ export default function NotificationBell() {
               <span className='text-sm font-bold text-gray-800'>
                 {t('Notifikasi', 'Notifications')}
                 {unread.length > 0 && (
-                  <span className='ml-2 text-xs font-semibold text-white bg-red-500 px-1.5 py-0.5 rounded-full'>
+                  <span className='ml-2 text-xs font-semibold text-white bg-teal-600 px-1.5 py-0.5 rounded-full'>
                     {unread.length}
                   </span>
                 )}
               </span>
               {unread.length > 0 && (
                 <button onClick={markAllRead}
-                  className='text-xs text-red-600 hover:text-red-800 font-medium transition'>
+                  className='text-xs text-teal-700 hover:text-teal-900 font-medium transition'>
                   {t('Tandai semua dibaca', 'Mark all as read')}
                 </button>
               )}
@@ -698,7 +698,7 @@ export default function NotificationBell() {
                   <li key={n.id}
                     onClick={() => handleItemClick(n)}
                     className={`flex items-start gap-3 px-4 py-3 cursor-pointer transition
-                      ${isUnread ? 'bg-red-50/60 hover:bg-red-50' : 'hover:bg-gray-50'}`}>
+                      ${isUnread ? 'bg-teal-50/60 hover:bg-teal-50' : 'hover:bg-gray-50'}`}>
                     <span className='text-xl flex-shrink-0 mt-0.5'><Icon e={n.icon} size={16} /></span>
                     <div className='flex-1 min-w-0'>
                       <p className={`text-xs leading-relaxed ${isUnread ? 'text-gray-800 font-medium' : 'text-gray-600'}`}>
@@ -707,7 +707,7 @@ export default function NotificationBell() {
                       {n.at && <p className='text-[11px] text-gray-400 mt-0.5'>{timeAgo(n.at)}</p>}
                     </div>
                     <div className='flex items-center gap-1.5 flex-shrink-0 mt-0.5'>
-                      {isUnread && <span className='w-2 h-2 rounded-full bg-red-500' />}
+                      {isUnread && <span className='w-2 h-2 rounded-full bg-teal-600' />}
                       <svg xmlns='http://www.w3.org/2000/svg' className='w-3.5 h-3.5 text-gray-300'
                         fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth='2'>
                         <path strokeLinecap='round' strokeLinejoin='round' d='M9 5l7 7-7 7' />

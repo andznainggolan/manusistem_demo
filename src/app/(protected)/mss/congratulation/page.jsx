@@ -7,7 +7,7 @@ import { useEvaluationStore }         from '@/store/evaluationStore'
 import { useCongratulationStore }     from '@/store/congratulationStore'
 import { useT }                       from '@/store/languageStore'
 
-const HEADER_GRAD = { background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }
+const HEADER_GRAD = { background: 'linear-gradient(135deg,#052B52,#039299)' }
 const PASSED      = 'Passed to be Permanent'
 
 export default function CongratulationPage() {

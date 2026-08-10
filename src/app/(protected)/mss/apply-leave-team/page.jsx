@@ -106,7 +106,7 @@ export default function ApplyLeaveTeamPage() {
                       form.empId === String(e.id) ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:bg-gray-50'
                     }`}>
                     <div className='w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0 overflow-hidden'
-                      style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                      style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                       {e.photo ? <img src={e.photo} className='w-full h-full object-cover' /> : (e.name||'?').trim().split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}
                     </div>
                     <div className='flex-1 min-w-0'>
@@ -136,7 +136,7 @@ export default function ApplyLeaveTeamPage() {
           {selectedEmp && (
             <div className='flex items-center gap-3 p-3 bg-red-50 border border-red-100 rounded-xl mb-4'>
               <div className='w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white overflow-hidden flex-shrink-0'
-                style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                 {selectedEmp.photo ? <img src={selectedEmp.photo} className='w-full h-full object-cover' /> : (selectedEmp.name||'?').trim().split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}
               </div>
               <div>
@@ -213,7 +213,7 @@ export default function ApplyLeaveTeamPage() {
 
           <button onClick={handleSubmit}
             className='mt-4 px-6 py-2.5 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition'
-            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
             {t('Ajukan Cuti', 'Submit Leave')}
           </button>
         </div>

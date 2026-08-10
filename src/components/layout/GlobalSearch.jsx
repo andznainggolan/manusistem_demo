@@ -160,7 +160,7 @@ export default function GlobalSearch() {
 
   return (
     <div ref={boxRef} className='relative w-72'>
-      <div className='flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-gray-300 hover:bg-gray-50 transition focus-within:border-red-300 focus-within:bg-white'>
+      <div className='flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-gray-300 hover:bg-gray-50 transition focus-within:border-teal-400 focus-within:bg-white'>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input
           ref={inputRef}
@@ -196,9 +196,9 @@ export default function GlobalSearch() {
               </div>
               {matchedEmps.map((e, i) => (
                 <button key={e.id} onClick={() => navigate({ type:'employee', ...e })}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition ${cursor===i ? 'bg-red-50' : 'hover:bg-gray-50'}`}>
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition ${cursor===i ? 'bg-teal-50' : 'hover:bg-gray-50'}`}>
                   <div className='w-8 h-8 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 text-[10px] font-bold text-white'
-                    style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                     {e.photo
                       ? <img src={e.photo} className='w-full h-full object-cover' />
                       : (e.name||'?').trim().split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()
@@ -210,7 +210,7 @@ export default function GlobalSearch() {
                         <Highlight text={e.name} q={q} />
                       </span>
                       {companyCode(e.companyId) && (
-                        <span className='font-mono font-bold text-xs bg-red-50 text-red-700 px-1.5 py-0.5 rounded tracking-widest flex-shrink-0'>
+                        <span className='font-mono font-bold text-xs bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded tracking-widest flex-shrink-0'>
                           {companyCode(e.companyId)}
                         </span>
                       )}
@@ -238,7 +238,7 @@ export default function GlobalSearch() {
                 const idx = matchedEmps.length + i
                 return (
                   <button key={p.href} onClick={() => navigate({ type:'page', ...p })}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition ${cursor===idx ? 'bg-red-50' : 'hover:bg-gray-50'}`}>
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition ${cursor===idx ? 'bg-teal-50' : 'hover:bg-gray-50'}`}>
                     <span className='text-base flex-shrink-0 w-6 text-center'><Icon e={p.icon} size={16} /></span>
                     <div className='flex-1 min-w-0'>
                       <div className='text-sm font-semibold text-gray-800'>

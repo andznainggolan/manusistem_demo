@@ -52,7 +52,7 @@ export default function TeamAssignmentPage() {
         </div>
         <button onClick={()=>setShowForm(!showForm)}
           className='px-4 py-2 text-sm font-semibold text-white rounded-lg hover:opacity-90'
-          style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+          style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
           {t('+ Buat Assignment','+ Create Assignment')}
         </button>
       </div>
@@ -103,7 +103,7 @@ export default function TeamAssignmentPage() {
             </div>
           </div>
           <div className='flex gap-3'>
-            <button onClick={handleSave} className='px-6 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>{t('Simpan','Save')}</button>
+            <button onClick={handleSave} className='px-6 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>{t('Simpan','Save')}</button>
             <button onClick={()=>setShowForm(false)} className='px-6 py-2 text-sm font-semibold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200'>{t('Batal','Cancel')}</button>
           </div>
         </div>

@@ -75,12 +75,12 @@ function FlyItem({ label, href, onClick }) {
     <Link href={href} onClick={onClick}
       className={`group relative flex items-center gap-2.5 pl-5 pr-3 py-1.5 mx-1 rounded-lg text-[13px] transition-colors ${
         active
-          ? 'bg-red-50 text-red-800 font-semibold'
+          ? 'bg-teal-50 text-teal-900 font-semibold'
           : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
       }`}>
       {/* Minimal bullet indicator instead of a per-item icon */}
       <span className={`absolute left-2.5 h-1.5 w-1.5 rounded-full transition-colors ${
-        active ? 'bg-red-600' : 'bg-gray-300 group-hover:bg-gray-400'
+        active ? 'bg-teal-600' : 'bg-gray-300 group-hover:bg-gray-400'
       }`} />
       <span className='leading-snug'>{label}</span>
     </Link>
@@ -100,15 +100,15 @@ function CascadeRow({ label, icon, active, hasChild, onEnter }) {
   return (
     <button onMouseEnter={onEnter} onFocus={onEnter}
       className={`mx-1 flex w-[calc(100%-8px)] items-center justify-between gap-2 rounded-lg px-3 py-2 text-left transition ${
-        active ? 'bg-red-50' : 'hover:bg-gray-50'
+        active ? 'bg-teal-50' : 'hover:bg-gray-50'
       }`}>
       <span className='flex min-w-0 items-center gap-2.5'>
         {icon && (
           <span className={`flex h-7 w-7 flex-none items-center justify-center rounded-lg transition-colors ${
-            active ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500'
+            active ? 'bg-teal-100 text-teal-700' : 'bg-gray-100 text-gray-500'
           }`}>{icon}</span>
         )}
-        <span className={`truncate text-[13px] font-semibold ${active ? 'text-red-800' : 'text-gray-700'}`}>{label}</span>
+        <span className={`truncate text-[13px] font-semibold ${active ? 'text-teal-900' : 'text-gray-700'}`}>{label}</span>
       </span>
       {hasChild && <ChevronRight dim={!active} />}
     </button>
@@ -449,7 +449,7 @@ export default function Sidebar({ allow } = {}) {
               onClick={() => handleIconClick(sec)}
               className='relative w-10 h-10 rounded-xl flex items-center justify-center transition-all'
               style={{
-                background: active || flyOpen ? '#8B1A1A' : 'transparent',
+                background: active || flyOpen ? '#052B52' : 'transparent',
                 color:      active || flyOpen ? '#fff'    : '#6b7280',
               }}
               onMouseEnter={e => { if (!active && !flyOpen) { e.currentTarget.style.background='#f3f4f6'; e.currentTarget.style.color='#1f2937' }}}

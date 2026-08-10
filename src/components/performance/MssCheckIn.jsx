@@ -240,7 +240,7 @@ export default function MssCheckInPage({ pipOnly = false }) {
           ].map(([key, label]) => (
             <button key={key} onClick={() => setActiveTab(key)}
               className={`px-5 py-2 rounded-lg text-sm font-semibold transition ${activeTab === key ? 'text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-              style={activeTab === key ? { background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' } : {}}>
+              style={activeTab === key ? { background: 'linear-gradient(135deg,#052B52,#039299)' } : {}}>
               {label}
             </button>
           ))}
@@ -300,7 +300,7 @@ export default function MssCheckInPage({ pipOnly = false }) {
               <div className='flex gap-3 mt-5'>
                 <button onClick={handleCreate}
                   className='px-6 py-2.5 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition'
-                  style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                  style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                   {t('Simpan Sesi HAY', 'Save HAY Session')}
                 </button>
                 <button onClick={() => setHayView('list')}
@@ -321,7 +321,7 @@ export default function MssCheckInPage({ pipOnly = false }) {
                     {['All', 'Pending Manager', 'Completed', 'Pending Employee'].map(f => (
                       <button key={f} onClick={() => setHayFilter(f)}
                         className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${hayFilter === f ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                        style={hayFilter === f ? { background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' } : {}}>
+                        style={hayFilter === f ? { background: 'linear-gradient(135deg,#052B52,#039299)' } : {}}>
                         {f === 'All' ? t('Semua', 'All')
                           : f === 'Pending Manager' ? t('Perlu Diisi', 'Fill Now')
                           : f === 'Completed' ? t('Selesai', 'Completed')
@@ -331,7 +331,7 @@ export default function MssCheckInPage({ pipOnly = false }) {
                   </div>
                   <button onClick={() => setHayView('create')}
                     className='px-2.5 py-1 rounded-lg text-xs font-semibold text-white transition'
-                    style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                     + {t('Buat', 'Create')}
                   </button>
                 </div>
@@ -347,7 +347,7 @@ export default function MssCheckInPage({ pipOnly = false }) {
                       <button key={h.id} onClick={() => { setSelectedHayId(h.id); setManagerFillForm(EMPTY_HAY) }}
                         className={`w-full flex items-start gap-3 px-4 py-3.5 hover:bg-gray-50 transition text-left ${selectedHayId === h.id ? 'bg-red-50/40' : ''}`}>
                         <div className='w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0 mt-0.5'
-                          style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                          style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                           {h.employeeName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                         </div>
                         <div className='flex-1 min-w-0'>
@@ -405,7 +405,7 @@ export default function MssCheckInPage({ pipOnly = false }) {
                       <div className='grid grid-cols-1 xl:grid-cols-2 gap-4'>
                         <div>
                           <div className='flex items-center gap-2 mb-2'>
-                            <div className='w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold' style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                            <div className='w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold' style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                               {(selectedHay.employeeName||'?').split(' ').map(n=>n[0]).slice(0,2).join('')}
                             </div>
                             <p className='text-xs font-bold text-gray-600'>{selectedHay.employeeName} — {t('Jawaban Karyawan', 'Employee Answers')}</p>
@@ -449,7 +449,7 @@ export default function MssCheckInPage({ pipOnly = false }) {
                         {/* Left: employee answers as reference */}
                         <div>
                           <div className='flex items-center gap-2 mb-2'>
-                            <div className='w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold' style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                            <div className='w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold' style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                               {(selectedHay.employeeName||'?').split(' ').map(n=>n[0]).slice(0,2).join('')}
                             </div>
                             <p className='text-xs font-bold text-gray-600'>{selectedHay.employeeName} — {t('Jawaban Karyawan (Referensi)', 'Employee Answers (Reference)')}</p>
@@ -484,7 +484,7 @@ export default function MssCheckInPage({ pipOnly = false }) {
                           </div>
                           <button onClick={handleManagerFill}
                             className='px-5 py-2 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition'
-                            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                             {t('Simpan Jawaban Saya', 'Save My Answers')}
                           </button>
                         </div>
@@ -711,7 +711,7 @@ export default function MssCheckInPage({ pipOnly = false }) {
                           flash(t('Nilai dikirim ke karyawan untuk diterima.', 'Rating sent to the employee for acknowledgement.'))
                         }}
                         className='px-5 py-2 text-white text-sm font-bold rounded-xl transition'
-                        style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                        style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                         <Icon e='⭐' size={14} className='inline align-[-2px]' /> {t('Kirim Nilai ke Karyawan', 'Send Rating to Employee')}
                         <span className='ml-2 font-normal opacity-80'>({t('bobot', 'weighted')}: {computeWeightedScore(selectedVip.topics.map(tp => ({ ...tp, score: vipTopicScores[tp.id] }))) ?? '—'})</span>
                       </button>
@@ -915,7 +915,7 @@ export default function MssCheckInPage({ pipOnly = false }) {
               <div className='flex gap-3'>
                 <button onClick={handlePipCreate}
                   className='px-6 py-2.5 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition'
-                  style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                  style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                   <Icon name='upload' size={14} className='inline align-[-2px]' /> {t('Kirim PIP ke HR untuk Review', 'Send PIP to HR for Review')}
                 </button>
                 <button onClick={() => setPipView('list')}
@@ -935,7 +935,7 @@ export default function MssCheckInPage({ pipOnly = false }) {
                   <p className='text-xs font-semibold text-gray-500'>{teamPip.length} {t('PIP', 'PIP')}</p>
                   <button onClick={() => setPipView('create')}
                     className='px-2.5 py-1 rounded-lg text-xs font-semibold text-white'
-                    style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                     + {t('Buat PIP', 'Create PIP')}
                   </button>
                 </div>
@@ -1028,7 +1028,7 @@ export default function MssCheckInPage({ pipOnly = false }) {
                         {selectedPip.hrRejectNote && <p className='text-xs text-red-600 mb-3'>"{selectedPip.hrRejectNote}"</p>}
                         <button onClick={() => { resubmitPip(selectedPip.id); flash(t('PIP diajukan ulang ke HR.', 'PIP resubmitted to HR.')) }}
                           className='px-4 py-2 text-white text-xs font-semibold rounded-lg hover:opacity-90 transition'
-                          style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                          style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                           <Icon name='repeat' size={14} className='inline align-[-2px]' /> {t('Perbaiki & Ajukan Ulang', 'Revise & Resubmit')}
                         </button>
                       </div>

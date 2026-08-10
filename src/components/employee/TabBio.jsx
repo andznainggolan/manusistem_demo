@@ -100,7 +100,7 @@ export default function TabBio({ emp, update, flash }) {
 
       <button onClick={save}
         className='px-6 py-2.5 text-white text-sm font-semibold rounded-lg hover:opacity-90'
-        style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+        style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
         <Icon e='💾' size={14} className='inline align-[-2px]' /> {t('Simpan Bio', 'Save Bio')}
       </button>
     </div>

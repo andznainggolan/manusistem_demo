@@ -233,7 +233,7 @@ export default function LeaderboardSettingPage() {
           <div className='flex items-center gap-2'>
             {gForm && <button onClick={cancelGlobal} className='rounded-lg bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-200'>Batal</button>}
             <button onClick={()=>{ setGForm({ ...DEFAULT_CONFIG }); }} className='rounded-lg border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50'>Reset ke Bawaan</button>
-            <button onClick={saveGlobal} className='rounded-lg px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>Simpan Global</button>
+            <button onClick={saveGlobal} className='rounded-lg px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>Simpan Global</button>
           </div>
         }>
         <div className='mb-5'>
@@ -260,7 +260,7 @@ export default function LeaderboardSettingPage() {
               <ConfigFields cfg={modal.cfg} set={setM} />
             </div>
             <div className='sticky bottom-0 flex gap-3 border-t border-gray-100 bg-white px-6 py-4'>
-              <button onClick={saveCompany} className='flex-1 rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>Simpan Konfigurasi</button>
+              <button onClick={saveCompany} className='flex-1 rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>Simpan Konfigurasi</button>
               <button onClick={()=>setModal(null)} className='flex-1 rounded-xl bg-gray-100 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200'>Batal</button>
             </div>
           </div>

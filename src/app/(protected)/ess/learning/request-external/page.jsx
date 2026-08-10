@@ -68,7 +68,7 @@ export default function RequestExternalTrainingPage() {
               ))}
             </div>
             <button onClick={()=>setStep('form')} className='px-5 py-2.5 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition'
-              style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>{t('+ Buat Pengajuan Baru','+ Create New Request')}</button>
+              style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>{t('+ Buat Pengajuan Baru','+ Create New Request')}</button>
           </div>
 
           <div className='space-y-4'>
@@ -90,7 +90,7 @@ export default function RequestExternalTrainingPage() {
                     {(r.status==='Approved' || r.status==='Completed') && !r.recorded && (
                       <button onClick={()=>handleMarkRecorded(r.id)}
                         className='px-3 py-1.5 text-xs font-semibold text-white rounded-lg hover:opacity-90'
-                        style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                        style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                         <Icon e='📝' size={14} className='inline align-[-2px]' /> {t('Record Hasil','Record Result')}
                       </button>
                     )}
@@ -172,7 +172,7 @@ export default function RequestExternalTrainingPage() {
           </div>
           <div className='flex gap-3 mt-6'>
             <button onClick={handleSubmit} className='flex-1 py-2.5 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition'
-              style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>{t('Submit Pengajuan','Submit Request')}</button>
+              style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>{t('Submit Pengajuan','Submit Request')}</button>
             <button onClick={()=>{
               if (!form.training_name) return flash(t('Nama training wajib diisi untuk disimpan sebagai Draft.','Training name is required to save as Draft.'), 'error')
               setRequests(prev=>[...prev,{id:Date.now(),...form,cost:Number(form.cost)||0,status:'Draft',submitted:new Date().toISOString().slice(0,10),approvedBy:'',approvedDate:'',recorded:false}])

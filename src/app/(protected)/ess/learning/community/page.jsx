@@ -84,7 +84,7 @@ export default function LearningCommunityPage() {
         {MAIN_TABS.map(t_=>(
           <button key={t_} onClick={()=>setMainTab(t_)}
             className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition ${mainTab===t_?'text-white':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-            style={mainTab===t_?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+            style={mainTab===t_?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
             {t_}
           </button>
         ))}
@@ -126,7 +126,7 @@ export default function LearningCommunityPage() {
                   ))}
                   <div className='flex items-center justify-between mt-2'>
                     <span className='text-xs text-gray-400'>{t('Terakhir aktif','Last active')}: {c.lastPost}</span>
-                    <button className='px-3 py-1.5 text-xs font-semibold rounded-lg text-white' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>{t('Buka Forum →','Open Forum →')}</button>
+                    <button className='px-3 py-1.5 text-xs font-semibold rounded-lg text-white' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>{t('Buka Forum →','Open Forum →')}</button>
                   </div>
                 </div>
               ))}
@@ -189,7 +189,7 @@ export default function LearningCommunityPage() {
                       <p className='text-xs text-gray-400 mt-1'>MP4, MOV, AVI • Max 500 MB</p>
                     </div>
                   </div>
-                  <button onClick={handlePublish} className='w-full py-2.5 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                  <button onClick={handlePublish} className='w-full py-2.5 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                     <Icon e='📤' size={14} className='inline align-[-2px]' /> {t('Submit Video','Submit Video')}
                   </button>
                 </div>
@@ -228,7 +228,7 @@ export default function LearningCommunityPage() {
             ))}
             <button onClick={()=>setShowPropose(true)}
               className='ml-auto px-4 py-2 text-sm font-semibold text-white rounded-lg hover:opacity-90'
-              style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+              style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
               {t('+ Usulkan Topik','+ Propose Topic')}
             </button>
           </div>
@@ -271,7 +271,7 @@ export default function LearningCommunityPage() {
                 </div>
               </div>
               <div className='flex gap-3'>
-                <button onClick={handlePropose} className='px-6 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>{t('Kirim Proposal','Submit Proposal')}</button>
+                <button onClick={handlePropose} className='px-6 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>{t('Kirim Proposal','Submit Proposal')}</button>
                 <button onClick={()=>setShowPropose(false)} className='px-6 py-2 text-sm font-semibold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200'>{t('Batal','Cancel')}</button>
               </div>
             </div>
@@ -319,7 +319,7 @@ export default function LearningCommunityPage() {
                     {s.status==='Upcoming' && (
                       <button onClick={()=>setRegistered(p=>({...p,[s.id]:!p[s.id]}))}
                         className={`px-4 py-2 text-xs font-semibold rounded-lg transition ${registered[s.id]?'bg-red-50 text-red-600 border border-red-200':'text-white hover:opacity-90'}`}
-                        style={!registered[s.id]?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+                        style={!registered[s.id]?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
                         {registered[s.id]?t('Batal Daftar','Cancel Registration'):t('Daftar Sekarang','Register Now')}
                       </button>
                     )}

@@ -81,7 +81,7 @@ function ApplyModal({ req, deptName, companyName, onClose }) {
             </p>
             <button onClick={onClose}
               className='mt-5 rounded-xl px-5 py-2.5 text-sm font-semibold text-white'
-              style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
               Tutup
             </button>
           </div>
@@ -141,7 +141,7 @@ function ApplyModal({ req, deptName, companyName, onClose }) {
             </div>
             <button onClick={submit} disabled={!valid}
               className='mt-5 w-full rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition disabled:opacity-40'
-              style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
               Kirim Lamaran
             </button>
           </>
@@ -167,7 +167,7 @@ function JobCard({ req, deptName, companyName, highlighted, onApply }) {
         </div>
         <button onClick={() => onApply(req)}
           className='shrink-0 rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:shadow-md'
-          style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+          style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
           Lamar Sekarang
         </button>
       </div>

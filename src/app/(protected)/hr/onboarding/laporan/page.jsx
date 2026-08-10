@@ -111,7 +111,7 @@ export default function LaporanOnboardingPage() {
                 </div>
                 <div className='w-full bg-gray-100 rounded-full h-2'>
                   <div className='h-2 rounded-full transition-all'
-                    style={{ width: `${d.avgPct}%`, background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }} />
+                    style={{ width: `${d.avgPct}%`, background: 'linear-gradient(135deg,#052B52,#039299)' }} />
                 </div>
               </div>
             ))}

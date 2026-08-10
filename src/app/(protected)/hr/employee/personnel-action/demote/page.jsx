@@ -196,7 +196,7 @@ export default function DemotePage() {
                     <td className='px-4 py-3'><span className='font-mono text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded'>{pa.paNumber}</span></td>
                     <td className='px-4 py-3'>
                       <div className='flex items-center gap-2'>
-                        <div className='w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-white' style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                        <div className='w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-white' style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                           {(e?.name||'?').trim().split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}
                         </div>
                         <div><p className='font-semibold text-gray-800 text-xs'>{e?.name || '—'}</p><p className='text-xs text-gray-400'>{e?.nik}</p></div>

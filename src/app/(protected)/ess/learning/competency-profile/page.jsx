@@ -68,7 +68,7 @@ export default function CompetencyProfilePage() {
         {TABS.map(t_=>(
           <button key={t_} onClick={()=>setTab(t_)}
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition ${tab===t_?'text-white':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-            style={tab===t_?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+            style={tab===t_?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
             {t_}
           </button>
         ))}
@@ -139,7 +139,7 @@ export default function CompetencyProfilePage() {
               <p className='font-semibold text-blue-700'>{t('Rekomendasi Pengembangan','Development Recommendation')}</p>
               <p className='text-xs text-blue-600 mt-0.5'>{t('Berdasarkan gap kompetensi Anda, 3 course disarankan:','Based on your competency gaps, 3 courses are recommended:')} <span className='font-semibold'>Leadership Fundamentals L1</span>, <span className='font-semibold'>Team Building Workshop</span>, {t('dan','and')} <span className='font-semibold'>SAP Financial Module</span>.</p>
             </div>
-            <button onClick={()=>setTab(TABS[1])} className='ml-auto px-4 py-2 text-xs font-semibold text-white rounded-lg whitespace-nowrap hover:opacity-90' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>{t('Lihat Skill Gap →','View Skill Gap →')}</button>
+            <button onClick={()=>setTab(TABS[1])} className='ml-auto px-4 py-2 text-xs font-semibold text-white rounded-lg whitespace-nowrap hover:opacity-90' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>{t('Lihat Skill Gap →','View Skill Gap →')}</button>
           </div>
         </div>
       )}

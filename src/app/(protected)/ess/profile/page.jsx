@@ -136,11 +136,11 @@ export default function MyProfilePage() {
 
       {/* Header card */}
       <div className='rounded-2xl overflow-hidden shadow-sm ring-1 ring-gray-100 mb-6'>
-        <div className='h-24' style={{ background: 'linear-gradient(135deg,#8B1A1A 0%,#D7252B 50%,#f4a97a 100%)' }} />
+        <div className='h-24' style={{ background: 'linear-gradient(135deg,#052B52 0%,#039299 50%,#4FD1D9 100%)' }} />
         <div className='bg-white px-6 pb-5'>
           <div className='flex items-end gap-4 -mt-10 mb-4'>
             <div className='w-20 h-20 rounded-2xl border-4 border-white shadow flex items-center justify-center text-2xl font-bold text-white flex-shrink-0'
-              style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
               {emp.photo
                 ? <img src={emp.photo} alt='' className='w-full h-full object-cover rounded-xl' />
                 : initials}
@@ -167,7 +167,7 @@ export default function MyProfilePage() {
         {TABS.map(tb => (
           <button key={tb} onClick={() => setTab(tb)}
             className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${tab === tb ? 'text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-            style={tab === tb ? { background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' } : {}}>
+            style={tab === tb ? { background: 'linear-gradient(135deg,#052B52,#039299)' } : {}}>
             {t(tb, tb)}
           </button>
         ))}

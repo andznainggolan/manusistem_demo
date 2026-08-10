@@ -177,7 +177,7 @@ function EvalSectionTable({ title, items, sectionKey, setDraft }) {
         <div className='overflow-x-auto rounded-xl border border-gray-200'>
           <table className='w-full text-xs'>
             <thead>
-              <tr style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              <tr style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                 {['No', 'Aspek Penilaian', 'Key Behaviors / Indikator', ''].map((h, i) => (
                   <th key={i} className='text-left px-3 py-2 text-white font-semibold whitespace-nowrap'
                     style={{ width: i === 0 ? 48 : i === 1 ? 180 : i === 3 ? 32 : undefined }}>{h}</th>
@@ -389,7 +389,7 @@ function EvaluasiEditor({ draft, setDraft }) {
           <div className='overflow-x-auto rounded-xl border border-gray-200'>
             <table className='w-full text-sm'>
               <thead>
-                <tr style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                <tr style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                   {['No', 'Materi / Topik', 'Bagian (Section)', ''].map((h, i) => (
                     <th key={i} className='text-left px-3 py-2 text-white font-semibold text-xs whitespace-nowrap'>{h}</th>
                   ))}

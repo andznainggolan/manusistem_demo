@@ -44,7 +44,7 @@ export default function NotificationsPage() {
         {TYPE_OPTS.map(typ=>(
           <button key={typ} onClick={()=>setFilter(typ)}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${filter===typ?'text-white':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-            style={filter===typ?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+            style={filter===typ?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
             {typ}
           </button>
         ))}

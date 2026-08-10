@@ -172,7 +172,7 @@ export default function ProtectedLayout({ children }) {
 
   if (!_hydrated) return (
     <div className='min-h-screen flex items-center justify-center bg-gray-50'>
-      <div className='w-10 h-10 rounded-xl animate-pulse' style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }} />
+      <div className='w-10 h-10 rounded-xl animate-pulse' style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }} />
     </div>
   )
 
@@ -181,7 +181,7 @@ export default function ProtectedLayout({ children }) {
   // While the restricted redirect resolves, don't flash other content.
   if (locked && !onAllowedPath) return (
     <div className='min-h-screen flex items-center justify-center bg-gray-50'>
-      <div className='w-10 h-10 rounded-xl animate-pulse' style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }} />
+      <div className='w-10 h-10 rounded-xl animate-pulse' style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }} />
     </div>
   )
 
@@ -241,7 +241,7 @@ export default function ProtectedLayout({ children }) {
       <header className='fixed left-0 right-0 z-50 bg-white'
         style={{ top: proxyBarHeight, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
         {/* Gradient accent strip */}
-        <div className='h-[3px]' style={{ background: 'linear-gradient(90deg,#8B1A1A 0%,#D7252B 40%,#f4a97a 80%,#f9d276 100%)' }} />
+        <div className='h-[3px]' style={{ background: 'linear-gradient(90deg,#052B52 0%,#039299 40%,#4FD1D9 80%,#B2F5EA 100%)' }} />
 
         {/* Main bar */}
         <div className='h-[80px] flex items-center justify-between pl-1 pr-5 gap-3'>
@@ -298,13 +298,13 @@ export default function ProtectedLayout({ children }) {
                 className='flex items-center gap-2.5 rounded-lg px-1.5 py-1 hover:bg-gray-50 transition'>
                 <div className='relative'>
                   <div className='flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white flex-shrink-0'
-                    style={{ background: isProxy ? 'linear-gradient(135deg,#92400e,#d97706)' : 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    style={{ background: isProxy ? 'linear-gradient(135deg,#92400e,#d97706)' : 'linear-gradient(135deg,#052B52,#039299)' }}>
                     {initials}
                   </div>
                   {/* Real user mini avatar when proxying */}
                   {isProxy && (
                     <div className='absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center text-[8px] font-bold text-white'
-                      style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                      style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                       {realInitials[0]}
                     </div>
                   )}

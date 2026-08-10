@@ -201,7 +201,7 @@ function EvaluatorPicker({ evaluators = [], employees = [], onChange }) {
 function ReviewHead({ t }) {
   return (
     <thead>
-      <tr style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+      <tr style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
         {['NO', t('Agenda','Agenda'), t('Evaluation Type','Evaluation Type'), t('Frekuensi','Frequency'), t('Evaluators','Evaluators'), ''].map((h, i) => (
           <th key={i} className='text-left px-3 py-2 text-white font-semibold text-xs whitespace-nowrap'
             style={{ minWidth: i === 1 ? 220 : i === 2 ? 200 : i === 3 ? 150 : i === 4 ? 220 : i === 0 ? 40 : 36 }}>
@@ -217,7 +217,7 @@ function ReviewHead({ t }) {
 function TableHead({ t }) {
   return (
     <thead>
-      <tr style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+      <tr style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
         {['No', t('Agenda','Agenda'), t('Jatuh Tempo (H+)','Due Date (H+)'), 'Type', t('Link / Referensi','Link / Reference'),
           t('Mentor','Mentor'), t('Wajib','Mandatory'), t('Assignee','Assignee'), ''].map((h, i) => (
           <th key={i} className='text-left px-3 py-2 text-white font-semibold text-xs whitespace-nowrap'
@@ -490,7 +490,7 @@ export default function MasterOnboardingPage() {
               return (
                 <div key={ms.id} className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden'>
                   <div className='flex items-center gap-2 px-6 py-4 border-b border-gray-100'>
-                    <div className='w-1 h-5 rounded-full flex-shrink-0' style={{ background: 'linear-gradient(#8B1A1A,#D7252B)' }} />
+                    <div className='w-1 h-5 rounded-full flex-shrink-0' style={{ background: 'linear-gradient(#052B52,#039299)' }} />
                     <span className='text-xs font-semibold text-gray-400 uppercase tracking-wide flex-shrink-0'>Main Section</span>
                     <span className='text-sm font-bold text-gray-800'>{ms.type}</span>
                     <span className='text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full flex-shrink-0'>{ms.items.length} {t('baris','rows')}</span>
@@ -510,7 +510,7 @@ export default function MasterOnboardingPage() {
             <div key={ms.id} className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden'>
               <div className='flex items-center justify-between px-6 py-4 border-b border-gray-100'>
                 <div className='flex items-center gap-2 min-w-0'>
-                  <div className='w-1 h-5 rounded-full flex-shrink-0' style={{ background: 'linear-gradient(#8B1A1A,#D7252B)' }} />
+                  <div className='w-1 h-5 rounded-full flex-shrink-0' style={{ background: 'linear-gradient(#052B52,#039299)' }} />
                   <span className='text-xs font-semibold text-gray-400 uppercase tracking-wide flex-shrink-0'>
                     Main Section
                   </span>
@@ -642,7 +642,7 @@ export default function MasterOnboardingPage() {
             <div className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden'>
               <div className='flex items-center justify-between px-6 py-4 border-b border-gray-100'>
                 <div className='flex items-center gap-2'>
-                  <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#8B1A1A,#D7252B)' }} />
+                  <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#052B52,#039299)' }} />
                   <h2 className='text-sm font-bold text-gray-800'>
                     {t('Evaluasi Berkala','Periodic Evaluation')}
                   </h2>

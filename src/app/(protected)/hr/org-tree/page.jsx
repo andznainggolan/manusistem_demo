@@ -454,7 +454,7 @@ export default function OrgTreePage() {
           <div className='relative'>
             <button onClick={() => setShowExport(v => !v)} disabled={exporting}
               className='flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold text-white rounded-lg hover:opacity-90 disabled:opacity-60 transition'
-              style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>
               {exporting ? <><span className='animate-spin'><Icon e='⏳' size={15} /></span> Exporting…</> : <><span><Icon e='⬇' size={15} /></span> Export</>}
             </button>
             {showExport && (

@@ -126,7 +126,7 @@ function AgendaHead({ t, showCompleted = false }) {
   if (showCompleted) cols.push(t('Completed','Completed'))
   return (
     <thead>
-      <tr style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+      <tr style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
         {cols.map((h, i) => (
           <th key={i} className='text-left px-3 py-2 text-white font-semibold whitespace-nowrap'
             style={{ minWidth: i===2?180 : i===4?160 : i===0?40 : i===cols.length-1&&showCompleted?80 : 100 }}>{h}</th>
@@ -146,7 +146,7 @@ function FeedbackModal({ reviewItem, employeeId, employeeName, getFeedback, onCl
       <div className='bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden'>
         {/* Header */}
         <div className='px-5 py-4 flex items-center justify-between'
-          style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+          style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
           <div>
             <h3 className='text-sm font-bold text-white'><Icon name='message' size={14} className='inline align-[-2px]' /> {t('Form Feedback','Form Feedback')}</h3>
             <p className='text-[11px] text-red-200 mt-0.5'>
@@ -545,7 +545,7 @@ export default function ApproveOnboardingPage() {
       <div className='bg-white rounded-xl shadow-sm overflow-hidden mb-5'>
 
         {/* Header gradient */}
-        <div style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }} className='px-6 py-4'>
+        <div style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }} className='px-6 py-4'>
           <h2 className='text-sm font-bold text-white mb-3'>
             {t('FORMULIR ONBOARDING / INDUKSI KARYAWAN', 'EMPLOYEE ONBOARDING / INDUCTION FORM')}
           </h2>
@@ -580,7 +580,7 @@ export default function ApproveOnboardingPage() {
           return (
             <div className='px-6 pt-5 pb-2'>
               <div className='flex items-center gap-2 mb-3'>
-                <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#8B1A1A,#D7252B)' }} />
+                <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#052B52,#039299)' }} />
                 <h3 className='text-sm font-bold text-gray-800'><Icon name='chart' size={14} className='inline align-[-2px]' /> {t('Ringkasan Progress','Progress Summary')}</h3>
               </div>
               <div className='grid grid-cols-3 gap-3'>
@@ -612,7 +612,7 @@ export default function ApproveOnboardingPage() {
           return (
             <div key={ms.id} className='px-6 pt-5 pb-2'>
               <div className='flex items-center gap-2 mb-3'>
-                <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#8B1A1A,#D7252B)' }} />
+                <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#052B52,#039299)' }} />
                 <h3 className='text-sm font-bold text-gray-800'>{ms.type}</h3>
               </div>
               <div className='overflow-x-auto rounded-lg border border-gray-200'>
@@ -626,7 +626,7 @@ export default function ApproveOnboardingPage() {
                   return (
                     <table key={sec.id} className='w-full text-xs border-b border-gray-100 last:border-b-0'>
                       <thead>
-                        <tr style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                        <tr style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                           {['NO', t('Tanggal','Date'), t('AGENDA','AGENDA'), 'Type', t('Nama Mentor','Mentor'),
                             t('Assignee','Assignee'), t('Completed','Completed'), ''].map((h, i) => (
                             <th key={i} className='text-left px-3 py-2 text-white font-semibold whitespace-nowrap'
@@ -691,7 +691,7 @@ export default function ApproveOnboardingPage() {
         {localMainSections.length === 0 && <>
         <div className='px-6 pt-5 pb-2'>
           <div className='flex items-center gap-2 mb-3'>
-            <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#8B1A1A,#D7252B)' }} />
+            <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#052B52,#039299)' }} />
             <h3 className='text-sm font-bold text-gray-800'>{t('Onboarding General','General Induction Material')}</h3>
           </div>
           <div className='overflow-x-auto rounded-lg border border-gray-200'>
@@ -766,7 +766,7 @@ export default function ApproveOnboardingPage() {
         {/* ── SECTION 2: Onboarding Teknis (legacy format) ── */}
         <div className='px-6 pt-5 pb-2'>
           <div className='flex items-center gap-2 mb-3'>
-            <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#8B1A1A,#D7252B)' }} />
+            <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#052B52,#039299)' }} />
             <h3 className='text-sm font-bold text-gray-800'>{t('Onboarding Teknis','Technical Induction Material')}</h3>
           </div>
           <div className='overflow-x-auto rounded-lg border border-gray-200'>
@@ -842,13 +842,13 @@ export default function ApproveOnboardingPage() {
         {/* ── SECTION 3: Periodic Review ── */}
         <div className='px-6 pt-5 pb-2'>
           <div className='flex items-center gap-2 mb-3'>
-            <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#8B1A1A,#D7252B)' }} />
+            <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#052B52,#039299)' }} />
             <h3 className='text-sm font-bold text-gray-800'>{t('Evaluasi Berkala','Periodic Evaluation')}</h3>
           </div>
           <div className='overflow-x-auto rounded-lg border border-gray-200'>
             <table className='w-full text-xs'>
               <thead>
-                <tr style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                <tr style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                   {[
                     'NO', t('Tanggal','Date'), t('Agenda','Agenda'), t('Form','Form'),
                     t('Evaluators','Evaluators'),
@@ -919,7 +919,7 @@ export default function ApproveOnboardingPage() {
         {/* ── Assign Buddy ── */}
         <div className='px-6 pt-5 pb-2'>
           <div className='flex items-center gap-2 mb-3'>
-            <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#8B1A1A,#D7252B)' }} />
+            <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#052B52,#039299)' }} />
             <h3 className='text-sm font-bold text-gray-800'><Icon name='users' size={14} className='inline align-[-2px]' /> {t('Assign Buddy','Assign Buddy')}</h3>
           </div>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 bg-white rounded-xl border border-gray-200 p-5'>
@@ -1066,7 +1066,7 @@ export default function ApproveOnboardingPage() {
         return (
           <div className='bg-white rounded-xl shadow-sm overflow-hidden mb-5'>
             <div className='px-6 py-4 border-b border-gray-100 flex items-center gap-2'>
-              <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#8B1A1A,#D7252B)' }} />
+              <div className='w-1 h-5 rounded-full' style={{ background: 'linear-gradient(#052B52,#039299)' }} />
               <h3 className='text-sm font-bold text-gray-800'><Icon name='settings' size={14} className='inline align-[-2px]' /> {t('Onboarding Teknis','Technical Induction')}</h3>
               <span className='text-xs bg-amber-100 text-amber-700 font-semibold px-2 py-0.5 rounded-full'>
                 {rows.filter(i => i.completed).length}/{rows.length} {t('selesai','done')}
@@ -1084,7 +1084,7 @@ export default function ApproveOnboardingPage() {
               <div className='overflow-x-auto'>
                 <table className='w-full text-xs'>
                   <thead>
-                    <tr style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    <tr style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                       {['NO', t('Tanggal','Date'), t('AGENDA','AGENDA'), 'Type', 'Link',
                         t('Nama Mentor','Mentor'), t('Assignee','Assignee'), t('Completed','Completed'), ''].map((h, i) => (
                         <th key={i} className='text-left px-3 py-2 text-white font-semibold whitespace-nowrap'

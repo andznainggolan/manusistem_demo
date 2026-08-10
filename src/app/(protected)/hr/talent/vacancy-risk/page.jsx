@@ -202,7 +202,7 @@ export default function VacancyRiskPage() {
             </div>
             <button onClick={()=>setConfirm(null)}
               className='mt-5 w-full rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90'
-              style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>Selesai</button>
+              style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>Selesai</button>
           </div>
         </div>
       )}
@@ -295,7 +295,7 @@ export default function VacancyRiskPage() {
             <div className='flex gap-3 px-6 pb-5'>
               <button onClick={handleSave} disabled={!form.retirement}
                 className='flex-1 rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50'
-                style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>Simpan Penilaian</button>
+                style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>Simpan Penilaian</button>
               <button onClick={closeModal}
                 className='flex-1 rounded-xl bg-gray-100 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200'>Batal</button>
             </div>

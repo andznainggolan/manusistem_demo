@@ -5,7 +5,7 @@ import { useT } from '@/store/languageStore'
 import { PageHeader, SectionCard, DataTable, Tr, Td, FilterBar, FilterPill, StatusBadge, ActionButton, EmptyState, FormField, Input, Select } from '@/components/ui'
 
 const COUNTRIES = ['ID','SG']
-const BRAND     = 'linear-gradient(135deg,#8B1A1A,#D7252B)'
+const BRAND     = 'linear-gradient(135deg,#052B52,#039299)'
 const BLANK     = { name:'', date:'', type:'National', recurring:false }
 
 export default function HolidayCalendarPage() {

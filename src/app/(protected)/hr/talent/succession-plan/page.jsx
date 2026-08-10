@@ -138,7 +138,7 @@ export default function SuccessionPlanPage() {
             <div className='hidden sm:block w-56'><SearchBar value={query} onChange={setQuery} placeholder='Cari posisi / successor…' /></div>
             <button onClick={openNew}
               className='whitespace-nowrap rounded-lg px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-90'
-              style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>+ Buat Succession Plan</button>
+              style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>+ Buat Succession Plan</button>
           </div>
         }>
         {plans.length === 0 ? (
@@ -294,7 +294,7 @@ export default function SuccessionPlanPage() {
             <div className='sticky bottom-0 flex gap-3 border-t border-gray-100 bg-white px-6 py-4'>
               <button onClick={handleSave}
                 className='flex-1 rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90'
-                style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>{editId ? 'Simpan Perubahan' : 'Buat Succession Plan'}</button>
+                style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>{editId ? 'Simpan Perubahan' : 'Buat Succession Plan'}</button>
               <button onClick={closeModal}
                 className='flex-1 rounded-xl bg-gray-100 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200'>Batal</button>
             </div>

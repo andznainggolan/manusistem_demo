@@ -65,7 +65,7 @@ export default function TeamCompetencyPage() {
             <button className='w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition text-left'
               onClick={()=>setSelected(selected===m.name?null:m.name)}>
               <div className='w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0'
-                style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                 {m.name.split(' ').map(n=>n[0]).join('').slice(0,2)}
               </div>
               <div className='flex-1'>
@@ -106,7 +106,7 @@ export default function TeamCompetencyPage() {
                     <span><Icon e='⚠️' size={15} /></span>
                     <span>{Object.values(m.competencies).filter(v=>v<=2).length} {t('kompetensi perlu dikembangkan','competencies need development')}</span>
                   </div>
-                  <button className='px-3 py-1.5 text-xs font-semibold text-white rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                  <button className='px-3 py-1.5 text-xs font-semibold text-white rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                     {t('Lihat Rekomendasi Kursus', 'View Course Recommendations')} →
                   </button>
                 </div>

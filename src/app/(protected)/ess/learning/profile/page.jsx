@@ -31,7 +31,7 @@ export default function LearningProfilePage() {
     { label:t('Course Selesai','Completed Courses'), value:16, icon:'🎓', color:'#7c3aed' },
     { label:'CPD Points', value:'420', icon:'⭐', color:'#d97706' },
     { label:t('Sertifikat','Certificates'), value:3, icon:'🏆', color:'#059669' },
-    { label:'Learning Hours', value:'142 jam', icon:'⏱️', color:'#8B1A1A' },
+    { label:'Learning Hours', value:'142 jam', icon:'⏱️', color:'#052B52' },
     { label:'Assessments', value:9, icon:'📝', color:'#2563eb' },
     { label:'Learning Streak', value:'7 hari', icon:'🔥', color:'#dc2626' },
   ]
@@ -48,7 +48,7 @@ export default function LearningProfilePage() {
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
         <div>
           <div className='bg-white rounded-xl p-6 shadow-sm text-center mb-4'>
-            <div className='w-20 h-20 rounded-full mx-auto mb-3 flex items-center justify-center text-3xl font-bold text-white' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+            <div className='w-20 h-20 rounded-full mx-auto mb-3 flex items-center justify-center text-3xl font-bold text-white' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
               AF
             </div>
             <h2 className='font-bold text-gray-800 text-lg'>{profile.name}</h2>
@@ -60,7 +60,7 @@ export default function LearningProfilePage() {
             </div>
             <button onClick={()=>setEditMode(!editMode)}
               className='mt-4 w-full py-2 text-sm font-semibold text-white rounded-lg hover:opacity-90 transition'
-              style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+              style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
               {editMode ? t('Batal Edit','Cancel Edit') : t('Edit Profil','Edit Profile')}
             </button>
           </div>
@@ -87,7 +87,7 @@ export default function LearningProfilePage() {
                     className='w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm outline-none focus:border-red-400 resize-none' />
                 </div>
                 <div className='flex gap-3'>
-                  <button onClick={handleSave} className='px-6 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>{t('Simpan','Save')}</button>
+                  <button onClick={handleSave} className='px-6 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>{t('Simpan','Save')}</button>
                   <button onClick={()=>setEditMode(false)} className='px-6 py-2 text-sm font-semibold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200'>{t('Batal','Cancel')}</button>
                 </div>
               </div>

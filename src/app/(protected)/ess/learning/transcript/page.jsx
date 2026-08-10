@@ -29,7 +29,7 @@ export default function LearningTranscriptPage() {
           <input value={search} onChange={e=>setSearch(e.target.value)} placeholder={t('Cari course...','Search courses...')}
             className='w-full max-w-sm px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-red-400' />
           <button className='px-4 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition'
-            style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}><Icon e='⬇️' size={14} className='inline align-[-2px]' /> {t('Export PDF','Export PDF')}</button>
+            style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}><Icon e='⬇️' size={14} className='inline align-[-2px]' /> {t('Export PDF','Export PDF')}</button>
         </div>
         <div className='overflow-x-auto'>
           <table className='w-full text-sm'>

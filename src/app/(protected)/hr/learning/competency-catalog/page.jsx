@@ -115,7 +115,7 @@ export default function CompetencyCatalogPage() {
                 <option value=''>Semua Domain</option>
                 {COMPETENCY_DOMAINS.map(d=><option key={d} value={d}>{d}</option>)}
               </Select>
-              <button onClick={openNew} className='whitespace-nowrap rounded-lg px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>+ Add Competency</button>
+              <button onClick={openNew} className='whitespace-nowrap rounded-lg px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>+ Add Competency</button>
             </div>
           }>
           {filtered.length === 0 ? (
@@ -253,7 +253,7 @@ export default function CompetencyCatalogPage() {
         {/* ── Actions ── */}
         <div className='flex justify-end gap-3'>
           <button onClick={cancel} className='rounded-xl bg-gray-100 px-6 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200'>Batal</button>
-          <button onClick={save} className='rounded-xl px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>{editId ? 'Simpan Perubahan' : 'Simpan Competency'}</button>
+          <button onClick={save} className='rounded-xl px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>{editId ? 'Simpan Perubahan' : 'Simpan Competency'}</button>
         </div>
       </div>
     </div>

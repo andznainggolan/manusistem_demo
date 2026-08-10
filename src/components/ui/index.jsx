@@ -2,7 +2,7 @@
 /*
  * Shared enterprise design system for the Kappabel HRIS prototype.
  * Workday / Darwinbox / Stripe-inspired: clean, calm, subtle shadows,
- * no heavy borders. Brand color #8B1A1A → #D7252B.
+ * no heavy borders. Brand color #052B52 → #039299.
  *
  * Tailwind only. Import what you need:
  *   import { PageHeader, StatCard, DataTable, ... } from '@/components/ui'
@@ -12,8 +12,8 @@ import Icon from './Icon'
 export { default as DocCompletionDonut } from './DocCompletionDonut'
 
 /* ---------------------------------------------------------------- tokens */
-export const BRAND_GRADIENT = 'linear-gradient(135deg, #8B1A1A, #D7252B)'
-export const BRAND = '#8B1A1A'
+export const BRAND_GRADIENT = 'linear-gradient(135deg, #052B52, #039299)'
+export const BRAND = '#052B52'
 
 // Render an icon prop: a string (emoji) is converted to a professional SVG
 // line icon (falls back to the emoji itself if unmapped); a node is used as-is.
@@ -47,7 +47,7 @@ export function PageHeader({ title, subtitle, icon, actions, children }) {
 
 /* -------------------------------------------------------------- StatCard */
 const STAT_TONES = {
-  brand:  { bar: '#8B1A1A', soft: 'bg-red-50',    text: 'text-red-700'    },
+  brand:  { bar: '#052B52', soft: 'bg-teal-50',   text: 'text-teal-700'   },
   blue:   { bar: '#3b82f6', soft: 'bg-blue-50',   text: 'text-blue-700'   },
   green:  { bar: '#10b981', soft: 'bg-emerald-50',text: 'text-emerald-700'},
   orange: { bar: '#f59e0b', soft: 'bg-amber-50',  text: 'text-amber-700'  },
@@ -117,7 +117,7 @@ export function Tr({ children, onClick, active = false, className = '' }) {
     <tr
       onClick={onClick}
       className={`transition-colors ${onClick ? 'cursor-pointer' : ''} ${
-        active ? 'bg-red-50/60' : 'hover:bg-gray-50'
+        active ? 'bg-teal-50/60' : 'hover:bg-gray-50'
       } ${className}`}
     >
       {children}
@@ -140,7 +140,7 @@ export function SearchBar({ value, onChange, placeholder = 'Search…', onSubmit
         onChange={(e) => onChange?.(e.target.value)}
         onKeyDown={(e) => { if (e.key === 'Enter') onSubmit?.() }}
         placeholder={placeholder}
-        className='w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 placeholder-gray-400 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100'
+        className='w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 placeholder-gray-400 shadow-sm transition focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100'
       />
     </div>
   )
@@ -157,7 +157,7 @@ export function FilterPill({ active, onClick, children }) {
       onClick={onClick}
       className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
         active
-          ? 'bg-red-700 text-white shadow-sm'
+          ? 'bg-teal-700 text-white shadow-sm'
           : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-900'
       }`}
     >
@@ -236,7 +236,7 @@ export function FormField({ label, required, hint, error, children, className = 
 }
 
 export const inputClass =
-  'w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100 disabled:bg-gray-50 disabled:text-gray-400'
+  'w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 shadow-sm transition focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100 disabled:bg-gray-50 disabled:text-gray-400'
 
 export function Input(props) {
   return <input {...props} className={`${inputClass} ${props.className || ''}`} />

@@ -60,7 +60,7 @@ export default function TeamProgressPage() {
             <button className='w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition text-left'
               onClick={()=>setSelected(selected===p.name?null:p.name)}>
               <div className='w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0'
-                style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                 {p.name.split(' ').map(n=>n[0]).join('').slice(0,2)}
               </div>
               <div className='flex-1'>

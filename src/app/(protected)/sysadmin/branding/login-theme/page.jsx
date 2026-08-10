@@ -174,7 +174,7 @@ export default function LoginThemePage() {
             <div className='flex gap-2 pt-1'>
               <button onClick={handleSave}
                 className='flex-1 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90'
-                style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                 {editing ? t('Simpan','Save') : t('Tambah','Add')}
               </button>
               {editing && (
@@ -280,7 +280,7 @@ export default function LoginThemePage() {
         if (!t) return null
         return (
           <div className='fixed inset-0 z-[999] flex items-center justify-center'
-            style={{ background: t.image ? `url(${t.image}) center/cover no-repeat` : 'linear-gradient(135deg,#1a1a2e,#8B1A1A)' }}>
+            style={{ background: t.image ? `url(${t.image}) center/cover no-repeat` : 'linear-gradient(135deg,#1a1a2e,#052B52)' }}>
             <div className='absolute inset-0 bg-black/40' onClick={() => setPreview(null)} />
             <div className='relative bg-white rounded-2xl p-10 w-96 shadow-2xl z-10 text-center'>
               <p className='text-2xl font-bold text-gray-900 mb-1' style={{fontFamily:'Georgia,serif'}}>
@@ -290,7 +290,7 @@ export default function LoginThemePage() {
               <div className='space-y-3 mb-4'>
                 <div className='h-9 bg-gray-100 rounded-lg' />
                 <div className='h-9 bg-gray-100 rounded-lg' />
-                <div className='h-10 rounded-lg' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}} />
+                <div className='h-10 rounded-lg' style={{background:'linear-gradient(135deg,#052B52,#039299)'}} />
               </div>
               <p className='text-xs text-gray-400 italic'>Preview: {t.name}</p>
               <button onClick={() => setPreview(null)}

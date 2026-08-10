@@ -75,7 +75,7 @@ export default function BehaviorEvalPage() {
                 {e.status==='Pending' && (
                   <button onClick={()=>setSelected(selected===e.id?null:e.id)}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${selected===e.id?'bg-gray-100 text-gray-600':'text-white hover:opacity-90'}`}
-                    style={selected!==e.id?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+                    style={selected!==e.id?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
                     {selected===e.id ? t('Tutup', 'Close') : t('Evaluasi', 'Evaluate')}
                   </button>
                 )}
@@ -106,7 +106,7 @@ export default function BehaviorEvalPage() {
                     className='w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm outline-none focus:border-red-400 resize-none' placeholder={t('Contoh perilaku konkret yang diamati...', 'Examples of concrete behaviors observed...')} />
                 </div>
                 <button onClick={()=>handleSubmit(e.id)}
-                  className='px-6 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                  className='px-6 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                   {t('Submit Evaluasi', 'Submit Evaluation')}
                 </button>
               </div>

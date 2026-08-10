@@ -120,7 +120,7 @@ export default function EmployeeProfilePage() {
         <p className='text-sm font-semibold'>{t('Karyawan tidak ditemukan.', 'Employee not found.')}</p>
         <button onClick={() => router.push('/hr/employee')}
           className='px-4 py-2 text-sm font-semibold text-white rounded-lg hover:opacity-90 transition'
-          style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+          style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
           {t('Kembali', 'Back')}
         </button>
       </div>
@@ -319,7 +319,7 @@ export default function EmployeeProfilePage() {
       </button>
 
       {/* Header card */}
-      <div className='rounded-2xl overflow-hidden shadow-sm mb-5' style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+      <div className='rounded-2xl overflow-hidden shadow-sm mb-5' style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
         <div className='px-6 py-6 flex items-center gap-5'>
           <div className='relative w-20 h-20 flex-shrink-0 group'>
             <div className='w-20 h-20 rounded-2xl bg-white/20 flex items-center justify-center overflow-hidden border-2 border-white/30'>
@@ -368,7 +368,7 @@ export default function EmployeeProfilePage() {
         {TABS.map(name => (
           <button key={name} onClick={() => setTab(name)}
             className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition ${tab === name ? 'text-white' : 'text-gray-500 hover:bg-gray-50'}`}
-            style={tab === name ? { background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' } : {}}>
+            style={tab === name ? { background: 'linear-gradient(135deg,#052B52,#039299)' } : {}}>
             {name}
           </button>
         ))}
@@ -537,7 +537,7 @@ export default function EmployeeProfilePage() {
                 <div className='space-y-3'>
                   {emp.education.map((ed, i) => (
                     <div key={ed.id ?? i} className='flex items-start gap-3 p-3 border border-gray-100 rounded-xl'>
-                      <div className='w-9 h-9 rounded-lg flex items-center justify-center text-lg flex-shrink-0' style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                      <div className='w-9 h-9 rounded-lg flex items-center justify-center text-lg flex-shrink-0' style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                         <span className='text-white text-xs font-bold'>{ed.level}</span>
                       </div>
                       <div>

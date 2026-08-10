@@ -111,7 +111,7 @@ export default function LearningPathPage() {
               {!enrolled[p.id] && (
                 <button onClick={e=>{e.stopPropagation();setEnrolled(prev=>({...prev,[p.id]:true}))}}
                   className='w-full py-2 text-sm font-semibold text-white rounded-lg hover:opacity-90 transition'
-                  style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                  style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                   {t('Daftar Sekarang','Enroll Now')}
                 </button>
               )}

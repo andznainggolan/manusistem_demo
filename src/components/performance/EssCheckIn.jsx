@@ -259,7 +259,7 @@ export default function EssCheckInPage({ pipOnly = false }) {
           <button
             onClick={() => setView('type-select')}
             className='px-4 py-2 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition shrink-0'
-            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
             + {t('New Check-In', 'New Check-In')}
           </button>
         )}
@@ -289,7 +289,7 @@ export default function EssCheckInPage({ pipOnly = false }) {
             <button
               onClick={() => setView('new-hay')}
               className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-6 text-left hover:shadow-md hover:ring-red-200 transition group'>
-              <div className='w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-4' style={{ background: '#8B1A1A22' }}><Icon name='handshake' size={22} /></div>
+              <div className='w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-4' style={{ background: '#052B5222' }}><Icon name='handshake' size={22} /></div>
               <h3 className='font-bold text-gray-800 mb-1'>HAY — How Are You?</h3>
               <p className='text-xs text-gray-500 mb-3'>{t('Framework T-G-R-O-W untuk sesi coaching & refleksi diri bersama atasan.', 'T-G-R-O-W framework for coaching & self-reflection sessions with your manager.')}</p>
               <div className='flex flex-wrap gap-1.5'>
@@ -368,7 +368,7 @@ export default function EssCheckInPage({ pipOnly = false }) {
           <div className='flex gap-3 mt-6'>
             <button onClick={handleHaySubmit}
               className='px-6 py-2.5 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition'
-              style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
               {t('Kirim ke Atasan', 'Send to Manager')}
             </button>
             <button onClick={() => setView('type-select')}
@@ -525,7 +525,7 @@ export default function EssCheckInPage({ pipOnly = false }) {
               {selectedHay.employeeAnswers && (
                 <div className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-5'>
                   <div className='flex items-center gap-2 mb-4 pb-3 border-b border-gray-100'>
-                    <div className='w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold' style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    <div className='w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold' style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                       {(selectedHay.employeeName||'?').split(' ').map(n=>n[0]).slice(0,2).join('')}
                     </div>
                     <div>
@@ -606,7 +606,7 @@ export default function EssCheckInPage({ pipOnly = false }) {
               {/* Right: employee fill form */}
               <div className='bg-white rounded-2xl shadow-sm ring-1 ring-blue-200 p-5 border border-blue-100'>
                 <div className='flex items-center gap-2 mb-2 pb-3 border-b border-blue-100'>
-                  <div className='w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold' style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                  <div className='w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold' style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                     {(selectedHay.employeeName||'?').split(' ').map(n=>n[0]).slice(0,2).join('')}
                   </div>
                   <div>
@@ -632,7 +632,7 @@ export default function EssCheckInPage({ pipOnly = false }) {
                 <div className='flex gap-3 mt-5'>
                   <button onClick={handleEmployeeFill}
                     className='px-6 py-2.5 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition'
-                    style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                     {t('Simpan Jawaban Saya', 'Save My Answers')}
                   </button>
                   <button onClick={() => setView('list')}
@@ -697,7 +697,7 @@ export default function EssCheckInPage({ pipOnly = false }) {
                   className='flex-1 min-w-[180px] px-3 py-2 text-sm border border-blue-200 rounded-lg outline-none focus:border-blue-400' />
                 <button onClick={handleSelfAssess}
                   className='px-5 py-2 text-white text-sm font-bold rounded-xl transition'
-                  style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                  style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                   {t('Kirim Self-Assessment', 'Submit Self-Assessment')}
                 </button>
               </div>
@@ -799,7 +799,7 @@ export default function EssCheckInPage({ pipOnly = false }) {
             </p>
             <button onClick={() => setView('type-select')}
               className='shrink-0 px-3 py-1.5 text-xs font-semibold text-white rounded-lg hover:opacity-90 transition'
-              style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
               + {t('Mulai HAY', 'Start HAY')}
             </button>
           </div>
@@ -1078,7 +1078,7 @@ export default function EssCheckInPage({ pipOnly = false }) {
 
                       <button onClick={handleSavePipResults}
                         className='px-5 py-2 text-white text-sm font-bold rounded-xl transition'
-                        style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                        style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                         <Icon name='save' size={14} className='inline align-[-2px]' /> {t('Simpan Hasil', 'Save Results')}
                       </button>
                     </div>
@@ -1157,7 +1157,7 @@ export default function EssCheckInPage({ pipOnly = false }) {
                           <button onClick={() => setShowPipApprove(true)}
                             disabled={!pipChecked.every(Boolean)}
                             className='w-full py-3 text-white text-sm font-semibold rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90'
-                            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                             <Icon name='check' size={14} className='inline align-[-2px]' /> {t('Saya Menerima & Mengetahui Form PIP Ini', 'I Acknowledge This PIP Form')}
                           </button>
                           <button onClick={() => setShowPipDispute(true)}
@@ -1197,7 +1197,7 @@ export default function EssCheckInPage({ pipOnly = false }) {
                           <div className='flex gap-2'>
                             <button onClick={handlePipApprove}
                               className='px-5 py-2 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition'
-                              style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                              style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                               <Icon name='check' size={14} className='inline align-[-2px]' /> {t('Ya, Saya Terima', 'Yes, I Acknowledge')}
                             </button>
                             <button onClick={() => setShowPipApprove(false)}

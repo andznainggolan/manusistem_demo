@@ -43,7 +43,7 @@ export default function MssRequestExternalPage() {
         <h2 className='font-bold text-gray-700'><Icon e='📋' size={14} className='inline align-[-2px]' /> Daftar Request</h2>
         <button onClick={()=>setShowForm(!showForm)}
           className='px-4 py-2 text-sm font-semibold text-white rounded-lg hover:opacity-90'
-          style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+          style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
           + Ajukan Request
         </button>
       </div>
@@ -87,7 +87,7 @@ export default function MssRequestExternalPage() {
             </div>
           </div>
           <div className='flex gap-3'>
-            <button onClick={handleSave} className='px-6 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>Kirim ke HR</button>
+            <button onClick={handleSave} className='px-6 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>Kirim ke HR</button>
             <button onClick={()=>setShowForm(false)} className='px-6 py-2 text-sm font-semibold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200'>{t('Batal','Cancel')}</button>
           </div>
         </div>

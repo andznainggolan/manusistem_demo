@@ -9,7 +9,7 @@ import { useOnboardingStore }     from '@/store/onboardingStore'
 import { useFeedbackStore }       from '@/store/feedbackStore'
 import { useT }                   from '@/store/languageStore'
 
-const HEADER_GRAD = { background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }
+const HEADER_GRAD = { background: 'linear-gradient(135deg,#052B52,#039299)' }
 
 const BLANK = {
   effectiveDate:   '',

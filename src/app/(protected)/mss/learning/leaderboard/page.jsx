@@ -31,7 +31,7 @@ export default function MssLeaderboardPage() {
       <h1 className='text-2xl font-bold text-gray-800 mb-1'>{t('Team Leaderboard','Team Leaderboard')}</h1>
       <p className='text-gray-500 text-sm mb-6'>{t('Peringkat learning anggota tim Anda dan perbandingan antar departemen.','Learning rankings of your team members and cross-department comparisons.')}</p>
 
-      <div className='p-5 rounded-xl text-white mb-6' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+      <div className='p-5 rounded-xl text-white mb-6' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
         <div className='flex items-center justify-between'>
           <div>
             <div className='text-xs text-white/70'>{t('Peringkat Tim Anda','Your Team Ranking')}</div>
@@ -50,7 +50,7 @@ export default function MssLeaderboardPage() {
         {[['my-team',t('Tim Saya','My Team')],['cross-dept',t('Antar Departemen','Cross-Department')]].map(([key,label])=>(
           <button key={key} onClick={()=>setTab(key)}
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition ${tab===key?'text-white':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-            style={tab===key?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+            style={tab===key?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
             {label}
           </button>
         ))}
@@ -64,7 +64,7 @@ export default function MssLeaderboardPage() {
                 {u.rank<=3 ? rankIcon(u.rank) : <span className='text-gray-500 text-base'>#{u.rank}</span>}
               </div>
               <div className='w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0'
-                style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                 {u.name.split(' ').map(n=>n[0]).join('').slice(0,2)}
               </div>
               <div className='flex-1'>

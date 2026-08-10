@@ -56,7 +56,7 @@ export default function AssessmentsPage() {
                 </div>
               </div>
               <button className='px-5 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition'
-                style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}><Icon e='🚀' size={14} className='inline align-[-2px]' /> {t('Mulai Assessment','Start Assessment')}</button>
+                style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}><Icon e='🚀' size={14} className='inline align-[-2px]' /> {t('Mulai Assessment','Start Assessment')}</button>
             </div>
           ))}
           {PENDING.length===0 && <div className='bg-white rounded-xl p-12 text-center text-gray-400 shadow-sm'>{t('Tidak ada assessment yang perlu dikerjakan.','No assessments to complete.')} ✅</div>}
@@ -93,7 +93,7 @@ export default function AssessmentsPage() {
               </div>
               {e.filled
                 ? <span className='text-xs px-3 py-1 bg-green-50 text-green-700 rounded-full font-semibold'>{t('Sudah Diisi','Submitted')}</span>
-                : <button className='px-4 py-2 text-white text-xs font-semibold rounded-lg' style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>{t('Isi Evaluasi','Fill Evaluation')}</button>
+                : <button className='px-4 py-2 text-white text-xs font-semibold rounded-lg' style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>{t('Isi Evaluasi','Fill Evaluation')}</button>
               }
             </div>
           ))}

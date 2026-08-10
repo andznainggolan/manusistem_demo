@@ -120,7 +120,7 @@ export default function IDPPage() {
                 {CATEGORIES.map(c=><option key={c}>{c}</option>)}</select></div>
             <div className='flex gap-3'>
               <button onClick={handleSave} className='flex-1 py-2.5 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition'
-                style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>{editing?t('Simpan Perubahan','Save Changes'):t('Buat IDP','Create IDP')}</button>
+                style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>{editing?t('Simpan Perubahan','Save Changes'):t('Buat IDP','Create IDP')}</button>
               <button onClick={()=>{setEditing(null);setForm(EMPTY_GOAL);setTab('view')}} className='px-5 py-2.5 bg-gray-100 text-gray-600 text-sm font-semibold rounded-lg hover:bg-gray-200 transition'>{t('Batal','Cancel')}</button>
             </div>
           </div>

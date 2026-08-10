@@ -374,7 +374,7 @@ export default function ReadinessAssessmentPage() {
             <div className='sticky bottom-0 border-t border-gray-100 bg-white px-6 py-4'>
               <button onClick={()=>setManageKp(null)}
                 className='w-full rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90'
-                style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>Selesai</button>
+                style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>Selesai</button>
             </div>
           </div>
         </div>

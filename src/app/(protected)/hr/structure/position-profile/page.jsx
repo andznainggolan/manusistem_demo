@@ -5,7 +5,7 @@ import { useStructureStore }       from '@/store/structureStore'
 import { usePositionProfileStore } from '@/store/positionProfileStore'
 import { useT }                    from '@/store/languageStore'
 
-const GRAD = { background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }
+const GRAD = { background: 'linear-gradient(135deg,#052B52,#039299)' }
 
 const SECTIONS = [
   { key: 'coreCompetency',      label: 'A. Core Competency',      note: '' },

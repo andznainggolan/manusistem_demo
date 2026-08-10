@@ -40,7 +40,7 @@ export default function GapAnalysisPage() {
         {GAP_DATA.map(p=>(
           <button key={p.name} onClick={()=>setSelected(p.name)}
             className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${selected===p.name?'text-white':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-            style={selected===p.name?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+            style={selected===p.name?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
             {p.name}
           </button>
         ))}
@@ -50,7 +50,7 @@ export default function GapAnalysisPage() {
         <>
           <div className='bg-white rounded-xl p-5 shadow-sm mb-4 flex items-center gap-4'>
             <div className='w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold text-white'
-              style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+              style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
               {person.name.split(' ').map(n=>n[0]).join('').slice(0,2)}
             </div>
             <div className='flex-1'>
@@ -123,7 +123,7 @@ export default function GapAnalysisPage() {
               <li>{t('Susun IDP formal dengan target penyelesaian 6–12 bulan', 'Create a formal IDP with a 6–12 month completion target')}</li>
               <li>{t('Lakukan monthly check-in untuk monitor progress gap', 'Conduct monthly check-ins to monitor gap progress')}</li>
             </ol>
-            <button className='mt-4 px-5 py-2 text-sm font-semibold text-white rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+            <button className='mt-4 px-5 py-2 text-sm font-semibold text-white rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
               {t('Buat IDP Berdasarkan Gap', 'Create IDP Based on Gap')} →
             </button>
           </div>

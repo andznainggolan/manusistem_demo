@@ -146,7 +146,7 @@ function LeaveBalanceWidget({ leaves, leaveTypes, userId, t }) {
               </div>
               <div className='w-full h-1.5 bg-gray-100 rounded-full overflow-hidden'>
                 <div className='h-full rounded-full transition-all'
-                  style={{ width: `${pct}%`, background: pct > 80 ? '#dc2626' : 'linear-gradient(90deg,#8B1A1A,#D7252B)' }} />
+                  style={{ width: `${pct}%`, background: pct > 80 ? '#dc2626' : 'linear-gradient(90deg,#052B52,#039299)' }} />
               </div>
               <p className='text-[10px] text-gray-400 mt-1'>
                 {t('Expired on', 'Expired on')} {expiry.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })}
@@ -170,7 +170,7 @@ function AnnouncementWidget({ announcements, t }) {
         {t('Pengumuman', 'Announcement')}
         {announcements.length > 0 && (
           <span className='ml-auto text-xs font-bold text-white rounded-full px-2 py-0.5'
-            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
             {announcements.length}
           </span>
         )}
@@ -751,7 +751,7 @@ export default function DashboardPage() {
                 }`}>
                 {label}
                 {mainTab === key && (
-                  <span className='absolute bottom-0 left-4 right-4 h-0.5 rounded-full' style={{ background: 'linear-gradient(90deg,#8B1A1A,#D7252B)' }} />
+                  <span className='absolute bottom-0 left-4 right-4 h-0.5 rounded-full' style={{ background: 'linear-gradient(90deg,#052B52,#039299)' }} />
                 )}
               </button>
             ))}
@@ -772,7 +772,7 @@ export default function DashboardPage() {
                         ? 'text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
-                    style={taskTab === key ? { background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' } : {}}>
+                    style={taskTab === key ? { background: 'linear-gradient(135deg,#052B52,#039299)' } : {}}>
                     {label}{count > 0 ? ` (${count})` : ''}
                   </button>
                 ))}

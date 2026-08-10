@@ -28,7 +28,7 @@ function Avatar({ emp }) {
   const initials = (emp?.name || '?').trim().split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
   return (
     <div className='w-8 h-8 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0'
-      style={{ background: emp?.photo ? undefined : 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+      style={{ background: emp?.photo ? undefined : 'linear-gradient(135deg,#052B52,#039299)' }}>
       {emp?.photo
         ? <img src={emp.photo} alt='' className='w-full h-full object-cover' />
         : <span className='text-[11px] font-bold text-white'>{initials}</span>}
@@ -175,7 +175,7 @@ export default function EmployeeDataPage() {
           </button>
           <button onClick={() => { setForm(EMPTY_EMP); setShowNew(true) }}
             className='inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white rounded-lg hover:opacity-90 transition'
-            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
             <span className='text-sm leading-none'>+</span> {t('Karyawan Baru', 'New Employee')}
           </button>
         </div>
@@ -333,7 +333,7 @@ export default function EmployeeDataPage() {
               </button>
               <button onClick={handleSaveNew}
                 className='px-4 py-2 text-white text-xs font-semibold rounded-lg hover:opacity-90 transition'
-                style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                 {t('Simpan', 'Save')}
               </button>
             </div>

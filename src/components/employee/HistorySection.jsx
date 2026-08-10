@@ -59,7 +59,7 @@ export default function HistorySection({ emp, S, grade, flash, addHistory, updat
           <button
             onClick={() => setShowForm(true)}
             className='px-3 py-1.5 text-white text-xs font-semibold rounded-lg hover:opacity-90'
-            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}
+            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}
           >
             + {t('Tambah Action', 'Add Action')}
           </button>
@@ -135,7 +135,7 @@ export default function HistorySection({ emp, S, grade, flash, addHistory, updat
             <button
               onClick={handleSave}
               className={`px-5 py-2 text-white text-xs font-semibold rounded-lg hover:opacity-90 ${isTermination ? 'bg-red-600' : ''}`}
-              style={isTermination ? {} : { background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}
+              style={isTermination ? {} : { background: 'linear-gradient(135deg,#052B52,#039299)' }}
             >
               {editing ? t('Simpan', 'Save') : isTermination ? t('Simpan Termination', 'Save Termination') : t('Tambah', 'Add')}
             </button>

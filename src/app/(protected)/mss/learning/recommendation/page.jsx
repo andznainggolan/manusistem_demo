@@ -48,7 +48,7 @@ export default function RecommendationPage() {
         {['Semua', ...employees].map(e=>(
           <button key={e} onClick={()=>setFilter(e)}
             className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${filter===e?'text-white':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-            style={filter===e?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+            style={filter===e?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
             {e==='Semua'?t('Semua','All'):e}
           </button>
         ))}
@@ -77,7 +77,7 @@ export default function RecommendationPage() {
               <div className='flex gap-2'>
                 <button onClick={()=>handleAssign(r.id)}
                   className='px-4 py-1.5 text-xs font-semibold text-white rounded-lg hover:opacity-90'
-                  style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                  style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                   {t('Assign ke Karyawan','Assign to Employee')}
                 </button>
                 <button onClick={()=>handleIgnore(r.id)}

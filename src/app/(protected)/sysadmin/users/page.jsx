@@ -11,7 +11,7 @@ import {
 } from '@/components/ui'
 import { ROLES, ROLE_LABELS } from '@/constants/roles'
 
-const BRAND = 'linear-gradient(135deg,#8B1A1A,#D7252B)'
+const BRAND = 'linear-gradient(135deg,#052B52,#039299)'
 
 const ROLE_STYLE = {
   employee:   'bg-gray-100 text-gray-600',

@@ -49,7 +49,7 @@ export default function LeaderboardPage() {
       <h1 className='text-2xl font-bold text-gray-800 mb-1'>{t('Leaderboard & Achievement','Leaderboard & Achievement')}</h1>
       <p className='text-gray-500 text-sm mb-6'>{t('Lihat posisi Anda, kumpulkan badge, dan terus semangat belajar!','See your rank, collect badges, and keep the learning momentum!')}</p>
 
-      <div className='p-5 rounded-xl text-white mb-6' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+      <div className='p-5 rounded-xl text-white mb-6' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
         <div className='flex items-center justify-between'>
           <div className='flex items-center gap-4'>
             <div className='w-14 h-14 rounded-full bg-white/20 flex items-center justify-center font-bold text-xl'>{MY_RANK.avatar}</div>
@@ -74,7 +74,7 @@ export default function LeaderboardPage() {
         {TABS.map(t_=>(
           <button key={t_} onClick={()=>setTab(t_)}
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition ${tab===t_?'text-white':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-            style={tab===t_?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+            style={tab===t_?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
             {t_}
           </button>
         ))}
@@ -86,7 +86,7 @@ export default function LeaderboardPage() {
             {[t('Bulan Ini','This Month'),t('Kuartal Ini','This Quarter'),t('Tahun Ini','This Year')].map(p=>(
               <button key={p} onClick={()=>setPeriod(p)}
                 className={`px-4 py-2 text-sm font-semibold rounded-lg transition ${period===p?'text-white':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-                style={period===p?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+                style={period===p?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
                 {p}
               </button>
             ))}
@@ -104,7 +104,7 @@ export default function LeaderboardPage() {
                     <div className={`w-8 text-center font-bold text-lg ${rankColor(u.rank)}`}>
                       {u.rank<=3 ? ['🥇','🥈','🥉'][u.rank-1] : `#${u.rank}`}
                     </div>
-                    <div className='w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                    <div className='w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                       {u.avatar}
                     </div>
                     <div className='flex-1'>
@@ -135,7 +135,7 @@ export default function LeaderboardPage() {
                 </div>
                 <div className='text-xs text-gray-500 mb-2 text-center'>{t('Butuh','Need')} <span className='font-bold text-red-700'>80 {t('poin','points')}</span> {t('lagi','more')}</div>
                 <div className='w-full bg-gray-200 rounded-full h-3'>
-                  <div className='h-3 rounded-full' style={{width:'84%',background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}></div>
+                  <div className='h-3 rounded-full' style={{width:'84%',background:'linear-gradient(135deg,#052B52,#039299)'}}></div>
                 </div>
                 <div className='flex justify-between text-xs text-gray-400 mt-1'>
                   <span>420 pts</span><span>500 pts</span>

@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
 
 export const THEMES = [
-  { id:'navy',    label:'Navy Corporate',    primary:'#8B1A1A', accent:'#D7252B', bg:'#f0f4ff', border:'#8B1A1A', text:'#8B1A1A' },
+  { id:'navy',    label:'Navy Corporate',    primary:'#052B52', accent:'#039299', bg:'#f0f4ff', border:'#052B52', text:'#052B52' },
   { id:'maroon',  label:'Maroon Prestige',   primary:'#7b1d1d', accent:'#b91c1c', bg:'#fff5f5', border:'#7b1d1d', text:'#7b1d1d' },
   { id:'forest',  label:'Forest Green',      primary:'#14532d', accent:'#166534', bg:'#f0fdf4', border:'#14532d', text:'#14532d' },
   { id:'gold',    label:'Gold Executive',    primary:'#78350f', accent:'#d97706', bg:'#fffbeb', border:'#92400e', text:'#78350f' },

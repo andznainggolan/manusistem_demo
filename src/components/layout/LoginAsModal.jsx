@@ -57,7 +57,7 @@ export default function LoginAsModal({ onClose }) {
             </div>
             <button onClick={onClose} className='text-gray-400 hover:text-gray-600 transition text-lg leading-none'><Icon e='✕' size={15} /></button>
           </div>
-          <div className='flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 focus-within:border-red-300 transition'>
+          <div className='flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 focus-within:border-teal-400 transition'>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className='shrink-0'>
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
@@ -85,9 +85,9 @@ export default function LoginAsModal({ onClose }) {
               const initials = user.name.trim().split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()
               return (
                 <button key={user.id} onClick={() => handleSelect(user)}
-                  className='w-full flex items-center gap-3 px-5 py-3 hover:bg-red-50 transition text-left border-b border-gray-50 last:border-0 group'>
+                  className='w-full flex items-center gap-3 px-5 py-3 hover:bg-teal-50 transition text-left border-b border-gray-50 last:border-0 group'>
                   <div className='w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0'
-                    style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                     {initials}
                   </div>
                   <div className='flex-1 min-w-0'>
@@ -103,7 +103,7 @@ export default function LoginAsModal({ onClose }) {
                       {user.dept     && <> · {user.dept}</>}
                     </div>
                   </div>
-                  <span className='text-gray-300 group-hover:text-red-500 text-xs shrink-0 transition'>Masuk →</span>
+                  <span className='text-gray-300 group-hover:text-teal-600 text-xs shrink-0 transition'>Masuk →</span>
                 </button>
               )
             })

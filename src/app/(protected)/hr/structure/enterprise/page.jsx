@@ -8,7 +8,7 @@ import {
 } from '@/components/ui'
 
 const BLANK = { code:'', name:'', country:'Indonesia', industry:'', status:'Active' }
-const BRAND = 'linear-gradient(135deg,#8B1A1A,#D7252B)'
+const BRAND = 'linear-gradient(135deg,#052B52,#039299)'
 
 export default function EnterprisePage() {
   const t = useT()

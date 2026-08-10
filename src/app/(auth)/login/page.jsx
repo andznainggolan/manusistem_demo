@@ -110,7 +110,7 @@ export default function LoginPage() {
               <label className='block text-sm font-semibold text-gray-700 mb-1.5'>Username</label>
               <input value={username} onChange={e => { setUsername(e.target.value); setFieldErr(p => ({ ...p, username: '' })) }}
                 onKeyDown={e => e.key === 'Enter' && handleLogin()}
-                className={`w-full px-4 py-3 rounded-xl text-sm outline-none transition border ${fieldErr.username ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 focus:border-red-400 focus:bg-white'}`}
+                className={`w-full px-4 py-3 rounded-xl text-sm outline-none transition border ${fieldErr.username ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 focus:border-teal-500 focus:bg-white'}`}
                 placeholder='Enter your username' disabled={loading} />
               {fieldErr.username && <p className='text-xs text-red-500 mt-1'>{fieldErr.username}</p>}
             </div>
@@ -122,7 +122,7 @@ export default function LoginPage() {
                 <input type={showPass ? 'text' : 'password'} value={password}
                   onChange={e => { setPassword(e.target.value); setFieldErr(p => ({ ...p, password: '' })) }}
                   onKeyDown={e => e.key === 'Enter' && handleLogin()}
-                  className={`w-full px-4 py-3 pr-11 rounded-xl text-sm outline-none transition border ${fieldErr.password ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 focus:border-red-400 focus:bg-white'}`}
+                  className={`w-full px-4 py-3 pr-11 rounded-xl text-sm outline-none transition border ${fieldErr.password ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 focus:border-teal-500 focus:bg-white'}`}
                   placeholder='Enter password' disabled={loading} />
                 <button type='button' onClick={() => setShowPass(v => !v)}
                   className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition'>
@@ -142,7 +142,7 @@ export default function LoginPage() {
 
             <button onClick={handleLogin} disabled={loading}
               className='w-full py-3.5 rounded-xl text-white font-semibold text-sm transition hover:opacity-90 disabled:opacity-60'
-              style={{ background: '#8B1A1A' }}>
+              style={{ background: '#052B52' }}>
               {loading ? 'Signing in...' : 'Login'}
             </button>
           </div>
@@ -177,12 +177,12 @@ export default function LoginPage() {
                   <div className='space-y-1'>
                     {g.accounts.map(a => (
                       <button key={a.username} type='button' onClick={() => fillDemo(a.username, a.password)}
-                        className='w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-left bg-gray-50 hover:bg-red-50 border border-gray-100 hover:border-red-200 transition group'>
+                        className='w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-left bg-gray-50 hover:bg-teal-50 border border-gray-100 hover:border-teal-200 transition group'>
                         <div className='min-w-0'>
                           <div className='text-xs font-semibold text-gray-800 truncate'>{a.label}</div>
                           <div className='text-[11px] text-gray-400 truncate'>{a.username} · {a.password}</div>
                         </div>
-                        <span className='text-[10px] font-semibold text-red-700 opacity-0 group-hover:opacity-100 transition flex-shrink-0'>Isi →</span>
+                        <span className='text-[10px] font-semibold text-teal-700 opacity-0 group-hover:opacity-100 transition flex-shrink-0'>Isi →</span>
                       </button>
                     ))}
                   </div>

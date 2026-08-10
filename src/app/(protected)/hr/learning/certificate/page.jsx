@@ -76,7 +76,7 @@ function PasswordGateModal({ signatoryName, expectedPassword, onConfirm, onCance
   return (
     <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-[70] p-4' onClick={onCancel}>
       <div className='bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden' onClick={e => e.stopPropagation()}>
-        <div className='px-6 py-4 flex items-center justify-between' style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+        <div className='px-6 py-4 flex items-center justify-between' style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
           <div>
             <h2 className='text-white font-bold text-sm'><Icon name='lock' size={13} className='inline align-[-2px]' /> Verifikasi Password</h2>
             <p className='text-red-200 text-xs mt-0.5'>{signatoryName}</p>
@@ -95,7 +95,7 @@ function PasswordGateModal({ signatoryName, expectedPassword, onConfirm, onCance
           <div className='flex gap-2'>
             <button onClick={submit}
               className='flex-1 py-2.5 text-sm font-bold text-white rounded-xl hover:opacity-90 transition'
-              style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
               Konfirmasi
             </button>
             <button onClick={onCancel} className='px-5 py-2.5 text-sm font-semibold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition'>
@@ -162,7 +162,7 @@ function SignatoryManager() {
         <p className='text-sm text-gray-500'>{signatories.length} penandatangan terdaftar</p>
         <button onClick={() => setForm({ name:'', title:'', department:'', signatureImage: null, status:'Active' })}
           className='px-5 py-2.5 text-sm font-semibold text-white rounded-xl hover:opacity-90 flex items-center gap-2 transition'
-          style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+          style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>
           + Tambah Penandatangan
         </button>
       </div>
@@ -170,12 +170,12 @@ function SignatoryManager() {
       <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5'>
         {signatories.map(sg => (
           <div key={sg.id} className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden hover:shadow-md transition'>
-            <div className='h-1.5' style={{ background: 'linear-gradient(90deg,#8B1A1A,#D7252B)' }} />
+            <div className='h-1.5' style={{ background: 'linear-gradient(90deg,#052B52,#039299)' }} />
             <div className='p-5'>
               <div className='mb-4 flex items-center justify-between'>
                 <div className='flex items-center gap-3'>
                   <div className='w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0'
-                    style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                     {initials(sg.name)}
                   </div>
                   <div>
@@ -213,7 +213,7 @@ function SignatoryManager() {
               <div className='flex gap-1.5'>
                 <button onClick={() => withPassword(sg, () => setForm({ ...sg }))}
                   className='flex-1 py-1.5 text-xs font-semibold text-white rounded-lg hover:opacity-90 transition'
-                  style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                  style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>
                   {sg.password ? <><Icon name='lock' size={12} className='inline align-[-2px]' /> Edit</> : <><Icon name='edit' size={12} className='inline align-[-2px]' /> Edit</>}
                 </button>
                 <button onClick={() => withPassword(sg, () => setPreview(sg))} title='Pratinjau tanda tangan'
@@ -243,7 +243,7 @@ function SignatoryManager() {
         <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4' onClick={() => setForm(null)}>
           <div className='bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col overflow-hidden' style={{ maxHeight: '90vh' }} onClick={e=>e.stopPropagation()}>
             <div className='px-6 py-4 flex items-center justify-between flex-shrink-0'
-              style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>
               <h2 className='text-white font-bold text-sm'>
                 {form.id ? 'Edit Penandatangan' : 'Tambah Penandatangan'}
               </h2>
@@ -274,7 +274,7 @@ function SignatoryManager() {
               <div>
                 <label className='block text-xs font-bold text-gray-500 mb-2'>Gambar Tanda Tangan</label>
                 <div className='border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition'
-                  style={{ borderColor: form.signatureImage ? '#D7252B' : '#d1d5db' }}
+                  style={{ borderColor: form.signatureImage ? '#039299' : '#d1d5db' }}
                   onClick={() => sigRef.current?.click()}>
                   <input ref={sigRef} type='file' accept='image/*' className='hidden'
                     onChange={e=>handleUpload(e.target.files[0])} />
@@ -326,7 +326,7 @@ function SignatoryManager() {
               <div className='flex gap-2 pt-2'>
                 <button onClick={handleSave}
                   className='flex-1 py-2.5 text-sm font-bold text-white rounded-xl hover:opacity-90 transition'
-                  style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                  style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>
                   {form.id ? 'Simpan Perubahan' : 'Tambahkan'}
                 </button>
                 <button onClick={() => setForm(null)}
@@ -345,7 +345,7 @@ function SignatoryManager() {
           <div className='bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center' onClick={e=>e.stopPropagation()}>
             <div className='flex items-center gap-3 mb-4'>
               <div className='w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white'
-                style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>
                 {initials(preview.name)}
               </div>
               <div className='text-left'>
@@ -444,7 +444,7 @@ function SignatoryPicker({ signatoryIds, onChange, onInsertToCanvas, signatories
         <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4' onClick={() => setOpen(false)}>
           <div className='bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden' onClick={e=>e.stopPropagation()}>
             <div className='px-5 py-4 flex items-center justify-between'
-              style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>
               <h2 className='text-white font-bold text-sm'>Pilih Penandatangan</h2>
               <button onClick={() => setOpen(false)}
                 className='w-7 h-7 flex items-center justify-center rounded-full bg-white/20 text-white text-xs hover:bg-white/30'><Icon name='close' size={15} /></button>
@@ -474,7 +474,7 @@ function SignatoryPicker({ signatoryIds, onChange, onInsertToCanvas, signatories
             <div className='px-5 py-3 border-t border-gray-100 flex justify-end'>
               <button onClick={() => setOpen(false)}
                 className='px-5 py-2 text-sm font-bold text-white rounded-xl hover:opacity-90 transition'
-                style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>
                 Selesai
               </button>
             </div>
@@ -983,7 +983,7 @@ function CanvasEditor({ tpl, onSave, onCancel }) {
           </button>
           <button onClick={() => handleSave('Active')}
             className='px-4 py-2 text-sm font-semibold text-white rounded-lg hover:opacity-90 transition'
-            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
             Aktifkan
           </button>
         </div>
@@ -1048,7 +1048,7 @@ function CanvasEditor({ tpl, onSave, onCancel }) {
                   <div>
                     <p className='text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2'>Background</p>
                     <div className='border-2 border-dashed rounded-xl p-3 text-center cursor-pointer transition'
-                      style={{ borderColor: form.backgroundImageUrl ? '#D7252B' : '#d1d5db' }}
+                      style={{ borderColor: form.backgroundImageUrl ? '#039299' : '#d1d5db' }}
                       onClick={() => bgRef.current?.click()}>
                       <input ref={bgRef} type='file' accept='image/*' className='hidden' onChange={e => handleBgUpload(e.target.files[0])} />
                       {form.backgroundImageUrl ? (
@@ -1189,7 +1189,7 @@ function CanvasEditor({ tpl, onSave, onCancel }) {
                     <button
                       onClick={e => { e.stopPropagation(); bgRef.current?.click() }}
                       className='mt-2 px-4 py-1.5 text-xs font-bold text-white rounded-lg hover:opacity-90 transition'
-                      style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                      style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                       Upload Background
                     </button>
                   </div>
@@ -1235,7 +1235,7 @@ function CanvasEditor({ tpl, onSave, onCancel }) {
               {form.elements.map(el => {
                 const isSelected = selectedId === el.id
                 const dragCursor = dragging?.id === el.id ? 'grabbing' : 'grab'
-                const selOutline = isSelected ? '1.5px dashed #D7252B' : '1.5px dashed transparent'
+                const selOutline = isSelected ? '1.5px dashed #039299' : '1.5px dashed transparent'
 
                 if (el.type === 'signature' || el.type === 'image') {
                   return (
@@ -1246,7 +1246,7 @@ function CanvasEditor({ tpl, onSave, onCancel }) {
                         ? <img src={el.src} alt='' className='w-full h-auto' draggable={false} />
                         : <div className='w-full h-10 border border-dashed border-gray-400 flex items-center justify-center text-xs text-gray-400'>{el.type==='signature'?'Tanda Tangan':'Gambar'}</div>}
                       {isSelected && !previewMode && (
-                        <span style={{ position:'absolute', top:-16, left:'50%', transform:'translateX(-50%)', fontSize:9, color:'#D7252B', background:'white', padding:'1px 4px', borderRadius:3, border:'1px solid #fca5a5', whiteSpace:'nowrap', pointerEvents:'none' }}><Icon name='move' size={10} className='inline align-[-1px]' /> drag</span>
+                        <span style={{ position:'absolute', top:-16, left:'50%', transform:'translateX(-50%)', fontSize:9, color:'#039299', background:'white', padding:'1px 4px', borderRadius:3, border:'1px solid #fca5a5', whiteSpace:'nowrap', pointerEvents:'none' }}><Icon name='move' size={10} className='inline align-[-1px]' /> drag</span>
                       )}
                     </div>
                   )
@@ -1300,11 +1300,11 @@ function CanvasEditor({ tpl, onSave, onCancel }) {
                         onBlur={() => setEditingId(null)}
                         onKeyDown={e => { if (e.key === 'Enter' || e.key === 'Escape') setEditingId(null) }}
                         onClick={e => e.stopPropagation()}
-                        style={{ fontSize:el.fontSize, color:el.color, fontWeight:el.bold?700:400, fontStyle:el.italic?'italic':'normal', fontFamily:el.fontFamily, background:'rgba(255,255,255,0.9)', border:'1px solid #D7252B', outline:'none', borderRadius:2, padding:'1px 4px', minWidth:80 }}
+                        style={{ fontSize:el.fontSize, color:el.color, fontWeight:el.bold?700:400, fontStyle:el.italic?'italic':'normal', fontFamily:el.fontFamily, background:'rgba(255,255,255,0.9)', border:'1px solid #039299', outline:'none', borderRadius:2, padding:'1px 4px', minWidth:80 }}
                       />
                     ) : displayContent}
                     {isSelected && !previewMode && (
-                      <span style={{ position:'absolute', top:-16, left:'50%', transform:'translateX(-50%)', fontSize:9, color:'#D7252B', background:'white', padding:'1px 4px', borderRadius:3, border:'1px solid #fca5a5', whiteSpace:'nowrap', pointerEvents:'none' }}>
+                      <span style={{ position:'absolute', top:-16, left:'50%', transform:'translateX(-50%)', fontSize:9, color:'#039299', background:'white', padding:'1px 4px', borderRadius:3, border:'1px solid #fca5a5', whiteSpace:'nowrap', pointerEvents:'none' }}>
                         <Icon name='move' size={12} className='inline align-[-2px]' /> drag · dbl-click edit
                       </span>
                     )}
@@ -1360,7 +1360,7 @@ function TplCard({ tpl, signatories, onEdit, onDuplicate, onDelete }) {
   const assigned = signatories.filter(s => (tpl.signatoryIds||[]).includes(s.id))
   return (
     <div className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden hover:shadow-md transition'>
-      <div className='h-1.5' style={{ background: 'linear-gradient(90deg,#8B1A1A,#D7252B)' }} />
+      <div className='h-1.5' style={{ background: 'linear-gradient(90deg,#052B52,#039299)' }} />
       <div className='p-4 pb-3'>
         {tpl.backgroundImageUrl ? (
           <div className='rounded-lg overflow-hidden border border-gray-100' style={{ aspectRatio: tpl.orientation==='Landscape'?'1.414/1':'1/1.414' }}>
@@ -1401,7 +1401,7 @@ function TplCard({ tpl, signatories, onEdit, onDuplicate, onDelete }) {
         <div className='flex gap-1.5'>
           <button onClick={() => onEdit(tpl)} title='Edit template'
             className='flex-1 py-1.5 text-xs font-semibold text-white rounded-lg hover:opacity-90 transition'
-            style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+            style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>
             <Icon name='edit' size={13} className='inline align-[-2px]' /> Edit
           </button>
           <button onClick={() => onDuplicate(tpl)} title='Salin template'
@@ -1477,7 +1477,7 @@ export default function MasterCertificatePage() {
             <p className='text-sm text-gray-500'>{templates.length} template</p>
             <button onClick={handleNew}
               className='px-5 py-2.5 text-sm font-semibold text-white rounded-xl hover:opacity-90 flex items-center gap-2 transition'
-              style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+              style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
               + Buat Template Baru
             </button>
           </div>
@@ -1488,7 +1488,7 @@ export default function MasterCertificatePage() {
               <h3 className='font-bold text-gray-700 mb-1'>Belum ada template</h3>
               <p className='text-sm text-gray-400 mb-5'>Upload desain sertifikat dan tambahkan variabel dinamis di atasnya.</p>
               <button onClick={handleNew} className='px-6 py-2.5 text-white text-sm font-semibold rounded-xl hover:opacity-90'
-                style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                 + Buat Template Baru
               </button>
             </div>

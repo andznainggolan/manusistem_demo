@@ -239,10 +239,10 @@ export default function MyCalendarPage() {
           <div className='flex overflow-hidden rounded-lg border border-gray-200'>
             <button onClick={() => setView('calendar')}
               className={`px-2.5 py-1.5 text-sm ${view === 'calendar' ? 'text-white' : 'text-gray-500 hover:bg-gray-50'}`}
-              style={view === 'calendar' ? { background: '#8B1A1A' } : undefined}>▦</button>
+              style={view === 'calendar' ? { background: '#052B52' } : undefined}>▦</button>
             <button onClick={() => setView('list')}
               className={`border-l border-gray-200 px-2.5 py-1.5 text-sm ${view === 'list' ? 'text-white' : 'text-gray-500 hover:bg-gray-50'}`}
-              style={view === 'list' ? { background: '#8B1A1A' } : undefined}>☰</button>
+              style={view === 'list' ? { background: '#052B52' } : undefined}>☰</button>
           </div>
         </div>
       </div>
@@ -263,7 +263,7 @@ export default function MyCalendarPage() {
                   className={`min-h-[112px] border-b border-r border-gray-100 p-2 ${inMonth ? style.bg : 'bg-gray-50/40'} ${i % 7 === 6 ? 'border-r-0' : ''}`}>
                   <div className='mb-1 flex items-center justify-between'>
                     <span className={`text-sm font-semibold ${inMonth ? 'text-gray-700' : 'text-gray-300'} ${isToday ? 'flex h-5 w-5 items-center justify-center rounded-full text-white' : ''}`}
-                      style={isToday ? { background: '#8B1A1A' } : undefined}>
+                      style={isToday ? { background: '#052B52' } : undefined}>
                       {date.getDate()}
                     </span>
                   </div>

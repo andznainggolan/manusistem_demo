@@ -79,7 +79,7 @@ export default function MyCoursesPage() {
                 </div>
                 {c.status !== 'Completed' && (
                   <button className='px-4 py-1.5 text-xs font-semibold text-white rounded-lg hover:opacity-90 transition'
-                    style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>
                     {c.status==='Not Started'?t('Mulai Belajar','Start Learning'):t('Lanjutkan','Continue')}
                   </button>
                 )}

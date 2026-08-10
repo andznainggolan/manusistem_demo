@@ -133,7 +133,7 @@ export default function KeyPositionPage() {
         {/* Progress bar */}
         <div className='h-1 w-full bg-gray-100'>
           <div className='h-full rounded-r-full transition-all'
-            style={{ width: `${stats.pct}%`, background: 'linear-gradient(90deg,#8B1A1A,#D7252B)' }} />
+            style={{ width: `${stats.pct}%`, background: 'linear-gradient(90deg,#052B52,#039299)' }} />
         </div>
       </div>
 
@@ -270,7 +270,7 @@ export default function KeyPositionPage() {
             </div>
             <button onClick={()=>setConfirm(null)}
               className='mt-5 w-full rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90'
-              style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
               Selesai
             </button>
           </div>
@@ -357,7 +357,7 @@ export default function KeyPositionPage() {
             <div className='flex gap-3 px-6 pb-5'>
               <button onClick={handleSave} disabled={!allAnswered}
                 className='flex-1 rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50'
-                style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                 Simpan Penilaian
               </button>
               <button onClick={closeModal}

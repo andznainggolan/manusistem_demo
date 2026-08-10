@@ -146,7 +146,7 @@ export default function PositionPage() {
             </Select>
             <button onClick={openNew}
               className='flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white rounded-lg shadow-sm hover:opacity-90 transition whitespace-nowrap'
-              style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
               + {t('Tambah Position','Add Position')}
             </button>
           </div>
@@ -305,7 +305,7 @@ export default function PositionPage() {
             <div className='px-6 pb-5 flex gap-3'>
               <button onClick={handleSave}
                 className='flex-1 py-2.5 text-sm font-semibold text-white rounded-xl hover:opacity-90 transition'
-                style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                 {editing ? t('Simpan Perubahan','Save Changes') : t('Tambah Position','Add Position')}
               </button>
               <button onClick={closeModal}
@@ -364,7 +364,7 @@ export default function PositionPage() {
             </div>
 
             <div className='sticky bottom-0 flex gap-3 border-t border-gray-100 bg-white px-6 py-4'>
-              <button onClick={saveComp} className='flex-1 rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>{t('Simpan Profil','Save Profile')}</button>
+              <button onClick={saveComp} className='flex-1 rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>{t('Simpan Profil','Save Profile')}</button>
               <button onClick={closeComp} className='flex-1 rounded-xl bg-gray-100 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200'>{t('Batal','Cancel')}</button>
             </div>
           </div>

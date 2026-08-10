@@ -7,7 +7,7 @@ import { useT }                from '@/store/languageStore'
 import { validateResponse }    from '@/utils/formBuilderUtils'
 import { frequencyLabel }      from '@/utils/reviewCadence'
 
-const BRAND = 'linear-gradient(135deg,#8B1A1A,#D7252B)'
+const BRAND = 'linear-gradient(135deg,#052B52,#039299)'
 
 // ── Form Fill Modal ───────────────────────────────────────────────────────────
 const NILAI_OPTS   = ['A', 'B', 'C', 'D', 'E']
@@ -699,7 +699,7 @@ export default function EssOnboardingPage() {
       <p className='text-gray-500 text-sm mb-6'>{t('Formulir induksi / onboarding karyawan.','Employee induction / onboarding form.')}</p>
       <div className='flex flex-col items-center justify-center py-20 text-center'>
         <div className='w-20 h-20 rounded-full flex items-center justify-center mb-4'
-          style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+          style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
           <span className='text-gray-400'><Icon name='target' size={26} /></span>
         </div>
         <h2 className='text-xl font-bold text-gray-800 mb-2'>
@@ -1124,7 +1124,7 @@ export default function EssOnboardingPage() {
                   flash(t('Onboarding selesai! Selamat bergabung.', 'Onboarding complete! Welcome aboard.'))
                 }}
                 className='px-8 py-3 rounded-xl text-white font-semibold text-sm shadow-lg'
-                style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}
+                style={{background:'linear-gradient(135deg,#052B52,#039299)'}}
               >
                 <Icon name='checkSmall' size={14} className='inline align-[-2px]' /> {t('Selesaikan Onboarding', 'Complete Onboarding')}
               </button>

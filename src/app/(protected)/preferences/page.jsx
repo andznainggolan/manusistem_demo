@@ -54,7 +54,7 @@ function Toggle({ checked, onChange, label, hint, order, onOrderChange, chartTyp
         title={locked ? t('Pengumuman wajib tampil dan tidak dapat dinonaktifkan.', 'Announcements are required and cannot be turned off.') : undefined}
         onClick={() => !locked && onChange(!checked)}
         className={`relative flex-shrink-0 w-11 h-6 rounded-full transition-colors ${locked ? 'cursor-not-allowed opacity-60' : ''}`}
-        style={{ background: (locked || checked) ? '#8B1A1A' : '#d1d5db' }}>
+        style={{ background: (locked || checked) ? '#052B52' : '#d1d5db' }}>
         <span
           className='absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform'
           style={{ transform: (locked || checked) ? 'translateX(20px)' : 'translateX(0)' }}
@@ -214,7 +214,7 @@ export default function PreferencesPage() {
                   aria-checked={visible}
                   onClick={() => toggleShortcutDraft(s.id)}
                   className='relative flex-shrink-0 w-11 h-6 rounded-full transition-colors'
-                  style={{ background: visible ? '#8B1A1A' : '#d1d5db' }}>
+                  style={{ background: visible ? '#052B52' : '#d1d5db' }}>
                   <span
                     className='absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform'
                     style={{ transform: visible ? 'translateX(20px)' : 'translateX(0)' }}

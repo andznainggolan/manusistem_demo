@@ -54,7 +54,7 @@ export function Avatar({ emp, size = 'md' }) {
   const initials = (emp?.name || '?').trim().split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
   return (
     <div className={`${dim} rounded-full flex items-center justify-center overflow-hidden flex-shrink-0`}
-      style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+      style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
       {emp?.photo
         ? <img src={emp.photo} alt='' className='w-full h-full object-cover' />
         : <span className={`${txt} text-white`}>{initials}</span>

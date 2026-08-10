@@ -51,7 +51,7 @@ export default function MyLearningDashboard() {
                   <div className='flex items-center gap-3'>
                     <div className='flex-1 bg-gray-200 rounded-full h-2'><div className='h-2 rounded-full bg-red-500' style={{ width:`${c.progress}%` }}></div></div>
                     <span className='text-xs font-semibold text-gray-600'>{c.progress}%</span>
-                    <button className='px-3 py-1 text-xs font-semibold text-white rounded-lg' style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    <button className='px-3 py-1 text-xs font-semibold text-white rounded-lg' style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>
                       {c.status==='Not Started'?t('Mulai','Start'):t('Lanjutkan','Continue')}
                     </button>
                   </div>

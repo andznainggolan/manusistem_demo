@@ -46,7 +46,7 @@ export default function PipSignoffBlock({ pip, canSign = null, onSign }) {
                 ) : canSign === c.key ? (
                   <button onClick={() => onSign?.(c.key)}
                     className='px-4 py-1.5 text-white text-xs font-semibold rounded-lg hover:opacity-90 transition'
-                    style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                    style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                     <Icon name='edit' size={13} className='inline align-[-2px]' /> {t('Tanda Tangani', 'Sign')}
                   </button>
                 ) : (

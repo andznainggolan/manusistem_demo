@@ -136,7 +136,7 @@ export default function CompanyLogoPage() {
               <p className='text-xs text-gray-400 mb-2'>Topbar Aplikasi</p>
               <div className='rounded-xl overflow-hidden shadow-sm border border-gray-100'>
                 <div className='flex items-center px-4 py-2.5 gap-3'
-                  style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+                  style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
                     <img
                     src={topbarLogo || '/logos/manusistem.png'}
                     alt='logo'
@@ -156,7 +156,7 @@ export default function CompanyLogoPage() {
               <p className='text-xs text-gray-400 mb-2'>Login Page</p>
               <div className='rounded-xl overflow-hidden shadow-sm border border-gray-100'>
                 <div className='flex items-center justify-center py-4 px-6'
-                  style={{background:'linear-gradient(135deg,#1a1a2e,#8B1A1A)'}}>
+                  style={{background:'linear-gradient(135deg,#1a1a2e,#052B52)'}}>
                   <div className='bg-white rounded-xl px-8 py-5 w-full text-center'>
                     <img
                       src={loginLogo || '/logos/manusistem.png'}
@@ -168,7 +168,7 @@ export default function CompanyLogoPage() {
                     <div className='mt-3 space-y-2'>
                       <div className='h-6 bg-gray-100 rounded w-full' />
                       <div className='h-6 bg-gray-100 rounded w-full' />
-                      <div className='h-7 rounded w-full' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}} />
+                      <div className='h-7 rounded w-full' style={{background:'linear-gradient(135deg,#052B52,#039299)'}} />
                     </div>
                   </div>
                 </div>

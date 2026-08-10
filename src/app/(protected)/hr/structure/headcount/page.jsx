@@ -126,7 +126,7 @@ export default function HeadcountPage() {
             </Select>
             <button onClick={openNew}
               className='flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white rounded-lg shadow-sm hover:opacity-90 transition whitespace-nowrap'
-              style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+              style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
               + {t('Tambah Headcount','Add Headcount')}
             </button>
           </div>
@@ -254,7 +254,7 @@ export default function HeadcountPage() {
             <div className='px-6 pb-5 flex gap-3'>
               <button onClick={handleSave}
                 className='flex-1 py-2.5 text-sm font-semibold text-white rounded-xl hover:opacity-90 transition'
-                style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                 {editing ? t('Simpan Perubahan','Save Changes') : t('Tambah Headcount','Add Headcount')}
               </button>
               <button onClick={closeModal}

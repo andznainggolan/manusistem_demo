@@ -166,7 +166,7 @@ export default function RktkPage() {
         actions={
           <button onClick={handleSave}
             className='flex items-center gap-1.5 whitespace-nowrap rounded-lg px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-90'
-            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
             💾 {t('Simpan','Save')}
           </button>
         }

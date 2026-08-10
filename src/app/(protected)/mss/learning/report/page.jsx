@@ -36,7 +36,7 @@ export default function TeamLearningReportPage() {
             className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${period===y?'bg-red-600 text-white':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>{y}</button>
         ))}
         <button className='ml-auto px-4 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90'
-          style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>{t('Export Excel','Export Excel')}</button>
+          style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>{t('Export Excel','Export Excel')}</button>
       </div>
 
 

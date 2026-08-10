@@ -124,7 +124,7 @@ export default function IdpEmployeeForm({
     <div className='space-y-5'>
       {/* ── Header POV ─────────────────────────────────────────────────────── */}
       <div className='relative overflow-hidden rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100 sm:p-6'>
-        <span className='absolute inset-y-0 left-0 w-1.5' style={{ background: 'linear-gradient(180deg,#8B1A1A,#D7252B)' }} />
+        <span className='absolute inset-y-0 left-0 w-1.5' style={{ background: 'linear-gradient(180deg,#052B52,#039299)' }} />
         <div className='flex flex-col gap-4 pl-3 lg:flex-row lg:items-center lg:justify-between'>
           <div className='flex flex-wrap items-center gap-3'>
             <span className='rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 ring-1 ring-red-100'>
@@ -277,7 +277,7 @@ export default function IdpEmployeeForm({
           <button
             onClick={onSubmit}
             className='inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90'
-            style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}
+            style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}
           >
             Submit to Manager <span aria-hidden>→</span>
           </button>

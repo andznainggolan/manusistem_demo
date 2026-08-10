@@ -25,7 +25,7 @@ export default function TechnicalMatrix({
   const listId = useId()
   const th   = 'text-white font-semibold px-2 py-1.5 text-center whitespace-nowrap border border-white/20'
   const td   = 'border border-gray-200 px-2 py-1 align-top'
-  const grad = { background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }
+  const grad = { background: 'linear-gradient(135deg,#052B52,#039299)' }
   const inp  = 'w-full px-1.5 py-1 border border-gray-200 rounded outline-none focus:border-red-400'
   const dis  = 'w-full px-1.5 py-1 border border-gray-100 rounded bg-gray-100 text-gray-300 cursor-not-allowed'
   const execEditable = !isReadOnly && !templateMode

@@ -285,7 +285,7 @@ export default function UserlistsPage() {
                           onChange={() => toggleArr('employeeIds', e.id)}
                           className='w-4 h-4 accent-red-600 flex-shrink-0' />
                         <div className='w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0 overflow-hidden'
-                          style={{ background: 'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>
+                          style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                           {e.photo
                             ? <img src={e.photo} className='w-full h-full object-cover' />
                             : (e.name||'?').trim().split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}

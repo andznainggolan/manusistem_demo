@@ -78,7 +78,7 @@ export default function CourseCatalogPage() {
               <button
                 onClick={() => setEnrolled(prev => prev.includes(c.id) ? prev : [...prev, c.id])}
                 className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition ${enrolled.includes(c.id)?'bg-green-50 text-green-700 cursor-not-allowed':'text-white hover:opacity-90'}`}
-                style={enrolled.includes(c.id)?{}:{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}
+                style={enrolled.includes(c.id)?{}:{ background:'linear-gradient(135deg,#052B52,#039299)' }}
                 disabled={enrolled.includes(c.id)}
               >
                 {enrolled.includes(c.id)?'Enrolled':t('Daftar Sekarang','Enroll Now')}

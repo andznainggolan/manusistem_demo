@@ -9,7 +9,7 @@ import {
 } from '@/components/ui'
 
 const BLANK = { name: '', startTime: '', endTime: '', breakMinutes: 60 }
-const BRAND = 'linear-gradient(135deg,#8B1A1A,#D7252B)'
+const BRAND = 'linear-gradient(135deg,#052B52,#039299)'
 
 export default function ShiftSettingPage() {
   const t = useT()

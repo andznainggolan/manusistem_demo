@@ -91,14 +91,14 @@ export default function SubmissionPointPage() {
           {['All','Pending','Approved','Rejected'].map(s=>(
             <button key={s} onClick={()=>setFilterStatus(s)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${filterStatus===s?'text-white':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-              style={filterStatus===s?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+              style={filterStatus===s?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
               {s==='All'?t('Semua','All'):s}
             </button>
           ))}
         </div>
         <button onClick={()=>{setShowForm(!showForm);setForm(EMPTY)}}
           className='px-4 py-2 text-sm font-semibold text-white rounded-lg hover:opacity-90'
-          style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>
+          style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>
           {t('+ Ajukan Poin','+ Submit Point')}
         </button>
       </div>
@@ -146,7 +146,7 @@ export default function SubmissionPointPage() {
                 </div>
               </div>
               <div className='flex gap-3'>
-                <button onClick={handleSubmit} className='px-6 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}}>{t('Kirim Pengajuan','Submit')}</button>
+                <button onClick={handleSubmit} className='px-6 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90' style={{background:'linear-gradient(135deg,#052B52,#039299)'}}>{t('Kirim Pengajuan','Submit')}</button>
                 <button onClick={()=>{setShowForm(false);setForm(EMPTY)}} className='px-6 py-2 text-sm font-semibold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200'>{t('Batal','Cancel')}</button>
               </div>
             </>

@@ -62,7 +62,7 @@ export default function SubmissionApprovalPage() {
         {['Pending','Approved','Rejected','All'].map(s=>(
           <button key={s} onClick={()=>setFilterStatus(s)}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${filterStatus===s?'text-white':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
-            style={filterStatus===s?{background:'linear-gradient(135deg,#8B1A1A,#D7252B)'}:{}}>
+            style={filterStatus===s?{background:'linear-gradient(135deg,#052B52,#039299)'}:{}}>
             {s==='All'?t('Semua','All'):s}
           </button>
         ))}

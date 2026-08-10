@@ -201,7 +201,7 @@ export default function IdpPage() {
             <div className='sticky bottom-0 flex flex-wrap gap-2 border-t border-gray-100 bg-white px-6 py-4'>
               <button onClick={handleSave} className='rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-200'>Simpan</button>
               {canSubmit && (
-                <button onClick={handleSubmit} className='rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>Submit (Karyawan)</button>
+                <button onClick={handleSubmit} className='rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>Submit (Karyawan)</button>
               )}
               {canApprove && (
                 <>

@@ -265,7 +265,7 @@ export default function TalentReviewMeetingPage() {
                       ) : (
                         <button onClick={()=>addEmployee(e)}
                           className='shrink-0 rounded-lg px-3 py-1 text-xs font-semibold text-white transition hover:opacity-90'
-                          style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>+ Tambah</button>
+                          style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>+ Tambah</button>
                       )}
                     </div>
                   )
@@ -491,7 +491,7 @@ export default function TalentReviewMeetingPage() {
             <div className='sticky bottom-0 flex gap-3 border-t border-gray-100 bg-white px-6 py-4'>
               <button onClick={handleSave}
                 className='flex-1 rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90'
-                style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>Simpan Dokumen TRM</button>
+                style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>Simpan Dokumen TRM</button>
               <button onClick={closeEdit}
                 className='flex-1 rounded-xl bg-gray-100 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200'>Batal</button>
             </div>

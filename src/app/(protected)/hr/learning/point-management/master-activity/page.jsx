@@ -176,7 +176,7 @@ export default function MasterActivityPointPage() {
                 <option value='Inactive'>Inactive</option>
               </Select>
             </div>
-            <button onClick={openNew} className='shrink-0 whitespace-nowrap rounded-lg px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>+ Add Activity</button>
+            <button onClick={openNew} className='shrink-0 whitespace-nowrap rounded-lg px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>+ Add Activity</button>
           </div>
         }>
         {filtered.length === 0 ? (
@@ -299,7 +299,7 @@ export default function MasterActivityPointPage() {
             </div>
 
             <div className='sticky bottom-0 flex gap-3 border-t border-gray-100 bg-white px-6 py-4'>
-              <button onClick={save} className='flex-1 rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#8B1A1A,#D7252B)' }}>{editId ? 'Simpan Perubahan' : 'Tambah Activity'}</button>
+              <button onClick={save} className='flex-1 rounded-xl py-2.5 text-sm font-semibold text-white transition hover:opacity-90' style={{ background:'linear-gradient(135deg,#052B52,#039299)' }}>{editId ? 'Simpan Perubahan' : 'Tambah Activity'}</button>
               <button onClick={close} className='flex-1 rounded-xl bg-gray-100 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200'>Batal</button>
             </div>
           </div>
