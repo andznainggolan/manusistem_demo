@@ -45,7 +45,7 @@ const computeSendDate = (lwd) => {
 
 const DEPARTMENTS = [
   {
-    key: 'GA', name: 'General Affairs', email: 'ga@dexamedica.co.id', Icon: IcBuilding, tint: 'text-red-600 bg-red-50',
+    key: 'GA', name: 'General Affairs', email: 'ga@testing.com', Icon: IcBuilding, tint: 'text-red-600 bg-red-50',
     subject: (n) => `[Offboarding] Persiapan Pengembalian Aset — ${n}`,
     body: (n, lwd) => [
       `Nama karyawan resign: ${n}`,
@@ -55,7 +55,7 @@ const DEPARTMENTS = [
     ],
   },
   {
-    key: 'IT', name: 'IT', email: 'it-helpdesk@dexamedica.co.id', Icon: IcCpu, tint: 'text-sky-600 bg-sky-50',
+    key: 'IT', name: 'IT', email: 'it-helpdesk@testing.com', Icon: IcCpu, tint: 'text-sky-600 bg-sky-50',
     subject: (n) => `[Offboarding] Deactivate Access & Collect Laptop — ${n}`,
     body: (n, lwd) => [
       `Nama karyawan resign: ${n}`,
@@ -66,7 +66,7 @@ const DEPARTMENTS = [
     ],
   },
   {
-    key: 'REM', name: 'Remuneration', email: 'remuneration@dexamedica.co.id', Icon: IcMoney, tint: 'text-amber-600 bg-amber-50',
+    key: 'REM', name: 'Remuneration', email: 'remuneration@testing.com', Icon: IcMoney, tint: 'text-amber-600 bg-amber-50',
     subject: (n) => `[Offboarding] Final Payroll Calculation — ${n}`,
     body: (n, lwd) => [
       `Nama karyawan resign: ${n}`,
@@ -76,7 +76,7 @@ const DEPARTMENTS = [
     ],
   },
   {
-    key: 'FIN', name: 'Finance', email: 'finance@dexamedica.co.id', Icon: IcCard, tint: 'text-green-600 bg-green-50',
+    key: 'FIN', name: 'Finance', email: 'finance@testing.com', Icon: IcCard, tint: 'text-green-600 bg-green-50',
     subject: (n) => `[Offboarding] Finance Clearance Required — ${n}`,
     body: (n, lwd) => [
       `Nama karyawan resign: ${n}`,

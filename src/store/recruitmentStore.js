@@ -47,19 +47,19 @@ const SEED_REQUISITIONS = [
 ]
 
 const SEED_CANDIDATES = [
-  { id: 1, name: 'Putri Ayu Lestari', email: 'putri.ayu@mail.com', phone: '0812-3456-7801',
+  { id: 1, name: 'Putri Ayu Lestari', email: 'putri.ayu@testing.com', phone: '0812-3456-7801',
     requisitionId: 1, source: 'LinkedIn', appliedDate: '2026-07-10', stage: 'Interview', rating: 4, notes: 'Portfolio kuat di React.' },
-  { id: 2, name: 'Bimo Aditya', email: 'bimo.aditya@mail.com', phone: '0812-3456-7802',
+  { id: 2, name: 'Bimo Aditya', email: 'bimo.aditya@testing.com', phone: '0812-3456-7802',
     requisitionId: 1, source: 'Job Portal', appliedDate: '2026-07-12', stage: 'Screening', rating: 3, notes: '' },
-  { id: 3, name: 'Citra Wulandari', email: 'citra.w@mail.com', phone: '0812-3456-7803',
+  { id: 3, name: 'Citra Wulandari', email: 'citra.w@testing.com', phone: '0812-3456-7803',
     requisitionId: 1, source: 'Referral', appliedDate: '2026-07-15', stage: 'Applied', rating: 0, notes: 'Referensi dari Reza Firmansyah.' },
-  { id: 4, name: 'Doni Firmansyah', email: 'doni.f@mail.com', phone: '0812-3456-7804',
+  { id: 4, name: 'Doni Firmansyah', email: 'doni.f@testing.com', phone: '0812-3456-7804',
     requisitionId: 1, source: 'Job Portal', appliedDate: '2026-06-20', stage: 'Offer', rating: 5, notes: 'Kandidat terkuat, negosiasi gaji.' },
-  { id: 5, name: 'Eka Prasetyo', email: 'eka.p@mail.com', phone: '0812-3456-7805',
+  { id: 5, name: 'Eka Prasetyo', email: 'eka.p@testing.com', phone: '0812-3456-7805',
     requisitionId: 2, source: 'Walk-in', appliedDate: '2026-07-05', stage: 'Interview', rating: 3, notes: '' },
-  { id: 6, name: 'Fitri Handayani', email: 'fitri.h@mail.com', phone: '0812-3456-7806',
+  { id: 6, name: 'Fitri Handayani', email: 'fitri.h@testing.com', phone: '0812-3456-7806',
     requisitionId: 3, source: 'Job Portal', appliedDate: '2026-05-20', stage: 'Rejected', rating: 2, notes: 'Pengalaman kurang sesuai.' },
-  { id: 7, name: 'Galih Nugroho', email: 'galih.n@mail.com', phone: '0812-3456-7807',
+  { id: 7, name: 'Galih Nugroho', email: 'galih.n@testing.com', phone: '0812-3456-7807',
     requisitionId: 4, source: 'Career Site', appliedDate: '2026-03-15', stage: 'Hired', rating: 5, notes: 'Onboarding 1 Mei 2026.' },
 ]
 

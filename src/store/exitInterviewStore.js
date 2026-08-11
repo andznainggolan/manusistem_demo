@@ -117,7 +117,7 @@ const SEED = [
       afterPlans: ['Pindah ke Perusahaan lain'],
       ratings: [4,4,4,4, 4,4,3,3,3, 3,3, 3,3,3, 3,3],
       work: ['Kolaborasi tim yang solid.', 'Beban kerja kadang tidak merata.', 'Sesuai harapan.', 'Budaya kerja terbuka.', 'Proses approval yang panjang.'],
-      suggestions: ['Perjelas pembagian beban kerja.', 'Tingkatkan jenjang karir yang transparan.', 'Terima kasih atas kesempatannya.', 'maria.a@email.com · 0812-xxxx-xxxx'],
+      suggestions: ['Perjelas pembagian beban kerja.', 'Tingkatkan jenjang karir yang transparan.', 'Terima kasih atas kesempatannya.', 'maria.a@testing.com · 0812-xxxx-xxxx'],
     },
   },
   {
@@ -133,7 +133,7 @@ const SEED = [
       afterPlans: ['Mengurus anak / orang tua / keluarga'],
       ratings: [4,4,4,4, 4,4,4,4, 4,4, 4,4, 3,3,3,3],
       work: ['Lingkungan kerja suportif.', 'Tidak ada.', 'Sesuai.', 'Rekan kerja yang ramah.', '-'],
-      suggestions: ['Pertahankan budaya kerja yang positif.', 'Tambah program pengembangan.', '-', 'nadia.k@email.com · 0813-xxxx-xxxx'],
+      suggestions: ['Pertahankan budaya kerja yang positif.', 'Tambah program pengembangan.', '-', 'nadia.k@testing.com · 0813-xxxx-xxxx'],
     },
   },
   // Demo: exit interview for the urgent case (employee 93, already completed).
@@ -150,7 +150,7 @@ const SEED = [
       afterPlans: ['Melanjutkan pendidikan'],
       ratings: [4,4,3,4, 4,4,4,4, 3,3, 3,3, 4,4,4,4],
       work: ['Tim yang kolaboratif.', 'Beban kerja terkadang tinggi.', 'Sesuai ekspektasi.', 'Mentor yang suportif.', '-'],
-      suggestions: ['Pertahankan program mentoring.', 'Perjelas jenjang karier.', '-', 'ob.employee@email.com'],
+      suggestions: ['Pertahankan program mentoring.', 'Perjelas jenjang karier.', '-', 'ob.employee@testing.com'],
     },
   },
   // Demo: exit interview scheduled for employee 96 (Offboarding Employee) so

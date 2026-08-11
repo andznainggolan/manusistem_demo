@@ -12,7 +12,7 @@ export default function LearningProfilePage() {
     position: 'Senior Financial Analyst',
     dept: 'Finance',
     joinDate: '2019-03-15',
-    email: 'ahmad.fauzi@company.com',
+    email: 'ahmad.fauzi@testing.com',
     learningGoal: 'Menjadi Data Analyst berspesialisasi keuangan, menguasai Python dan Power BI dalam 1 tahun.',
     preferredStyle: 'Self-Paced',
     preferredTime: 'Pagi (07:00-09:00)',
