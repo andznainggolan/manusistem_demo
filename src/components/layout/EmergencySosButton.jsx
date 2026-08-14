@@ -33,6 +33,9 @@ export default function EmergencySosButton() {
   const [secondsLeft, setSecondsLeft] = useState(SOS_MAX_VIDEO_SECONDS)
   const [cameraError, setCameraError] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
+  // 'environment' (back camera) by default — an SOS is meant to film the
+  // actual incident (fire, accident), not the reporter's face.
+  const [facingMode, setFacingMode] = useState('environment')
   // Mirrors streamRef.current into state — the ref alone doesn't trigger a
   // re-render when it's set inside the async getUserMedia callback, which
   // left the "Mulai Rekam" button permanently disabled even once the camera
@@ -64,6 +67,7 @@ export default function EmergencySosButton() {
     setSecondsLeft(SOS_MAX_VIDEO_SECONDS)
     setCameraError(null)
     setCategory(null)
+    setFacingMode('environment')
     setStep('category')
   }
 
@@ -71,12 +75,10 @@ export default function EmergencySosButton() {
 
   useEffect(() => () => { stopStream(); clearTimer() }, []) // release camera if unmounted mid-recording
 
-  const pickCategory = async (c) => {
-    setCategory(c)
-    setStep('record')
+  const openCamera = async (facing) => {
     setCameraError(null)
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing }, audio: true })
       streamRef.current = stream
       setStreamReady(true)
       if (videoRef.current) { videoRef.current.srcObject = stream; videoRef.current.play?.() }
@@ -86,6 +88,19 @@ export default function EmergencySosButton() {
         "Can't access camera/microphone. You can still send the SOS without video.",
       ))
     }
+  }
+
+  const pickCategory = async (c) => {
+    setCategory(c)
+    setStep('record')
+    await openCamera(facingMode)
+  }
+
+  const switchCamera = async () => {
+    stopStream()
+    const next = facingMode === 'environment' ? 'user' : 'environment'
+    setFacingMode(next)
+    await openCamera(next)
   }
 
   const startRecording = () => {
@@ -198,7 +213,24 @@ export default function EmergencySosButton() {
                   </div>
                 ) : (
                   <div className='relative overflow-hidden rounded-xl bg-black'>
-                    <video ref={videoRef} muted playsInline className='aspect-video w-full object-cover' />
+                    <video ref={videoRef} muted playsInline
+                      style={facingMode === 'user' ? { transform: 'scaleX(-1)' } : undefined}
+                      className='aspect-video w-full object-cover' />
+                    {!recording && (
+                      <button onClick={switchCamera} disabled={!streamReady}
+                        title={t('Ganti Kamera', 'Switch Camera')}
+                        className='absolute left-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white transition hover:bg-black/80 disabled:opacity-40'>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/>
+                          <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/>
+                        </svg>
+                      </button>
+                    )}
+                    {!recording && (
+                      <span className='absolute left-11 top-2.5 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-semibold text-white'>
+                        {facingMode === 'environment' ? t('Belakang', 'Back') : t('Depan', 'Front')}
+                      </span>
+                    )}
                     {recording && (
                       <span className='absolute right-2 top-2 flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-xs font-bold text-white'>
                         <span className='h-2 w-2 animate-pulse rounded-full bg-red-500' /> {secondsLeft}s
