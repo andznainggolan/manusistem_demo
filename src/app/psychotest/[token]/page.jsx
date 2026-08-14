@@ -1,8 +1,10 @@
 'use client'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import { usePsychotestAttemptStore } from '@/store/psychotestAttemptStore'
 import { usePsychotestStore, LIKERT_SCALE } from '@/store/psychotestStore'
+
+const PROCTOR_INTERVAL_MS = 5 * 60 * 1000
 
 // Public, unauthenticated candidate test-taking page — lives outside
 // (protected), same pattern as /careers: no sidebar/topbar/auth redirect.
@@ -55,6 +57,14 @@ export default function PsychotestTakePage() {
   // real attempt loads in.
   const [hydrated, setHydrated] = useState(false)
   const [answers, setAnswers] = useState({})
+  const [proctorEnabled, setProctorEnabled] = useState(false)
+  const [proctorError, setProctorError] = useState(false)
+  const streamRef = useRef(null)
+  const captureVideoRef = useRef(null)
+  const canvasRef = useRef(null)
+  const captureTimerRef = useRef(null)
+  const submitRef = useRef(null)
+
   useEffect(() => {
     setMounted(true)
     const unsub = usePsychotestAttemptStore.persist.onFinishHydration(() => setHydrated(true))
@@ -71,6 +81,54 @@ export default function PsychotestTakePage() {
 
   // Restore any answers already saved (e.g. candidate refreshed mid-test).
   useEffect(() => { if (attempt?.answers) setAnswers(attempt.answers) }, [attempt?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Camera proctoring: one snapshot the instant the attempt goes In Progress,
+  // then another every 5 minutes for as long as it stays In Progress — kept
+  // on the attempt record itself so HR can review them from Hasil Psychotest.
+  useEffect(() => {
+    if (attempt?.status !== 'In Progress') return
+    const attemptId = attempt.id
+    let cancelled = false
+
+    const capturePhoto = () => {
+      const video = captureVideoRef.current
+      const canvas = canvasRef.current
+      if (!video || !canvas || video.readyState < 2) return
+      canvas.width = video.videoWidth || 320
+      canvas.height = video.videoHeight || 240
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
+      const imageDataUrl = canvas.toDataURL('image/jpeg', 0.6)
+      // Read the live store state rather than the closed-over `attempt` so a
+      // capture never clobbers one appended moments earlier by this same interval.
+      const current = usePsychotestAttemptStore.getState().attempts.find(a => a.id === attemptId)
+      updateAttempt(attemptId, { proctorCaptures: [...(current?.proctorCaptures || []), { at: new Date().toISOString(), imageDataUrl }] })
+    }
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        if (cancelled) { stream.getTracks().forEach(tr => tr.stop()); return }
+        streamRef.current = stream
+        const video = captureVideoRef.current
+        if (!video) return
+        video.srcObject = stream
+        return video.play()
+      })
+      .then(() => {
+        if (cancelled) return
+        setProctorEnabled(true)
+        capturePhoto()
+        captureTimerRef.current = setInterval(capturePhoto, PROCTOR_INTERVAL_MS)
+      })
+      .catch(() => { if (!cancelled) setProctorError(true) })
+
+    return () => {
+      cancelled = true
+      clearInterval(captureTimerRef.current)
+      streamRef.current?.getTracks().forEach(tr => tr.stop())
+      streamRef.current = null
+      setProctorEnabled(false)
+    }
+  }, [attempt?.status, attempt?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!mounted || !hydrated) return null
 
@@ -100,6 +158,11 @@ export default function PsychotestTakePage() {
     const { score, maxScore } = scoreAttempt(test, questions, answers)
     updateAttempt(attempt.id, { status: 'Completed', completedAt: new Date().toISOString(), answers, score, maxScore })
   }
+  // Countdown's expiry timer is set up once per `deadline` and would
+  // otherwise close over whatever `submit` (and its `answers`) existed at
+  // that moment — going through this ref means the timeout always calls
+  // whichever `submit` was current at the instant it actually fires.
+  submitRef.current = submit
 
   if (attempt.status === 'Completed') {
     return (
@@ -131,6 +194,9 @@ export default function PsychotestTakePage() {
           <div className='mt-5 rounded-xl bg-amber-50 p-3 text-left text-xs text-amber-800'>
             Waktu berjalan otomatis begitu Anda menekan "Mulai Tes" dan tidak bisa dijeda. Pastikan koneksi internet stabil dan Anda punya waktu cukup sebelum memulai.
           </div>
+          <div className='mt-2 rounded-xl bg-gray-50 p-3 text-left text-xs text-gray-600'>
+            📷 Tes ini diawasi kamera (proctored) — begitu tes dimulai, browser akan meminta izin kamera. Foto akan diambil di awal tes dan setiap 5 menit untuk verifikasi identitas peserta.
+          </div>
           <button onClick={start}
             className='mt-5 rounded-xl px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:shadow-md'
             style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
@@ -151,8 +217,26 @@ export default function PsychotestTakePage() {
           <p className='text-sm font-bold text-gray-800'>{test.name}</p>
           <p className='text-xs text-gray-400'>{answerCount} / {testQuestions.length} soal terjawab</p>
         </div>
-        <Countdown deadline={deadline} onExpire={submit} />
+        <Countdown deadline={deadline} onExpire={() => submitRef.current?.()} />
       </div>
+
+      {/* Proctoring camera preview — visible to the candidate on purpose:
+          it's their own webcam feed, shown so it's clear they're being
+          monitored, not hidden/secret. */}
+      <div className='fixed bottom-4 right-4 z-20 h-24 w-32 overflow-hidden rounded-xl border-2 border-white bg-black shadow-lg'>
+        <video ref={captureVideoRef} muted playsInline className='h-full w-full object-cover' style={{ transform: 'scaleX(-1)' }} />
+        {proctorEnabled && (
+          <span className='absolute left-1.5 top-1.5 flex items-center gap-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] font-bold text-white'>
+            <span className='h-1.5 w-1.5 animate-pulse rounded-full bg-red-500' /> REC
+          </span>
+        )}
+        {proctorError && (
+          <span className='absolute inset-0 flex items-center justify-center bg-gray-800 p-1 text-center text-[9px] text-gray-300'>
+            Kamera tidak aktif
+          </span>
+        )}
+      </div>
+      <canvas ref={canvasRef} className='hidden' />
 
       <div className='space-y-4'>
         {testQuestions.map((q, i) => (

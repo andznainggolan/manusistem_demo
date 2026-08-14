@@ -136,6 +136,24 @@ export default function PsychotestResultsPage() {
               </div>
             )}
 
+            {detail.proctorCaptures?.length > 0 && (
+              <div className='mt-4 border-t border-gray-100 pt-4'>
+                <p className='mb-2 text-xs font-semibold text-gray-500'>
+                  📷 {t('Foto Proctoring', 'Proctoring Photos')} ({detail.proctorCaptures.length})
+                </p>
+                <div className='flex flex-wrap gap-2'>
+                  {detail.proctorCaptures.map((c, i) => (
+                    <a key={i} href={c.imageDataUrl} target='_blank' rel='noreferrer' className='group relative'>
+                      <img src={c.imageDataUrl} alt='' className='h-16 w-20 rounded-lg object-cover ring-1 ring-gray-200 transition group-hover:ring-teal-400' />
+                      <span className='absolute inset-x-0 bottom-0 rounded-b-lg bg-black/60 px-1 py-0.5 text-center text-[9px] text-white'>
+                        {new Date(c.at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {detail.status === 'Assigned' && (
               <div className='mt-4 rounded-xl bg-gray-50 p-3'>
                 <p className='mb-1.5 text-xs font-semibold text-gray-500'>{t('Link Tes (kirim ke kandidat)', 'Test Link (send to candidate)')}</p>
