@@ -229,6 +229,8 @@ const HR_GROUPS = [
     { label: 'Candidate Pipeline',href: '/hr/recruitment/candidate-pipeline',icon: ic('repeat') },
     { label: 'Interview Schedule',href: '/hr/recruitment/interview-schedule',icon: ic('video') },
     { label: 'Candidate Database',href: '/hr/recruitment/candidate-database',icon: ic('archive') },
+    { label: 'Psychotest',        href: '/hr/recruitment/psychotest',        icon: ic('clipboard') },
+    { label: 'Hasil Psychotest',  href: '/hr/recruitment/psychotest/results',icon: ic('chart') },
   ]},
   { title: 'Payroll', icon: ic('money'), items: [
     { label: 'Payroll Run',      href: '/hr/payroll/run',      icon: ic('money') },

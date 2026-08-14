@@ -3,6 +3,9 @@ import { useState } from 'react'
 import { useRecruitmentStore, STAGES, CANDIDATE_SOURCES } from '@/store/recruitmentStore'
 import { useDocumentTypeStore } from '@/store/documentTypeStore'
 import { useCandidateDocumentStore, CANDIDATE_DOCUMENT_MAX_BYTES } from '@/store/candidateDocumentStore'
+import { usePsychotestStore } from '@/store/psychotestStore'
+import { usePsychotestAttemptStore } from '@/store/psychotestAttemptStore'
+import { useAuthStore } from '@/store/authStore'
 import { useT } from '@/store/languageStore'
 import {
   PageHeader, StatCard, DataTable, Tr, Td, SearchBar, FilterBar, FilterPill,
@@ -40,6 +43,9 @@ export default function CandidateDatabasePage() {
   const { candidates, requisitions, addCandidate, updateCandidate, deleteCandidate } = useRecruitmentStore()
   const { types: docTypes } = useDocumentTypeStore()
   const { documents: candidateDocs, addDocument: addCandidateDocument } = useCandidateDocumentStore()
+  const { tests: psychoTests } = usePsychotestStore()
+  const { attempts: psychoAttempts, assign: assignPsychotest } = usePsychotestAttemptStore()
+  const { currentUser } = useAuthStore()
   const mandatoryDocTypes = docTypes.filter(x => x.active && x.mandatory)
 
   const [q, setQ] = useState('')
@@ -47,6 +53,7 @@ export default function CandidateDatabasePage() {
   const [limit, setLimit] = useState(PAGE)
   const [modal, setModal] = useState(null)
   const [detail, setDetail] = useState(null)
+  const [assignModal, setAssignModal] = useState(null) // { candidateId, candidateName, requisitionId, testId }
   const [flash, setFlash] = useState('')
 
   const say = (msg) => { setFlash(msg); setTimeout(() => setFlash(''), 3000) }
@@ -104,6 +111,21 @@ export default function CandidateDatabasePage() {
     deleteCandidate(c.id)
     say(t('Kandidat dihapus.', 'Candidate deleted.'))
     setDetail(null)
+  }
+
+  const activeTests = psychoTests.filter(x => x.active)
+  const openAssign = (c) => setAssignModal({ candidateId: c.id, candidateName: c.name, requisitionId: c.requisitionId, testId: activeTests[0]?.id ?? '' })
+  const closeAssign = () => setAssignModal(null)
+  const confirmAssign = () => {
+    const test = psychoTests.find(x => x.id === Number(assignModal.testId))
+    if (!test) return
+    assignPsychotest({
+      candidateId: assignModal.candidateId, candidateName: assignModal.candidateName,
+      testId: test.id, testName: test.name, requisitionId: assignModal.requisitionId,
+      assignedAt: new Date().toISOString(), assignedBy: currentUser?.id, assignedByName: currentUser?.name || '',
+    })
+    say(t('Psikotes ditugaskan — salin link di halaman Hasil Psychotest.', 'Psychotest assigned — copy the link from the Psychotest Results page.'))
+    closeAssign()
   }
 
   return (
@@ -211,6 +233,30 @@ export default function CandidateDatabasePage() {
                   </div>
                 </div>
               )}
+
+              <div className='pt-2'>
+                <div className='mb-1.5 flex items-center justify-between'>
+                  <p className='text-xs font-semibold text-gray-500'>{t('Psikotes', 'Psychotest')}</p>
+                  <button onClick={() => openAssign(detail)} className='text-xs font-semibold text-teal-700 hover:underline'>
+                    + {t('Tugaskan Tes', 'Assign Test')}
+                  </button>
+                </div>
+                {psychoAttempts.filter(a => a.candidateId === detail.id).length === 0 ? (
+                  <p className='text-xs text-gray-400'>{t('Belum ada psikotes ditugaskan.', 'No psychotest assigned yet.')}</p>
+                ) : (
+                  <div className='space-y-1.5'>
+                    {psychoAttempts.filter(a => a.candidateId === detail.id).map(a => (
+                      <a key={a.id} href='/hr/recruitment/psychotest/results'
+                        className='flex items-center justify-between rounded-lg bg-gray-50 px-3 py-1.5 text-xs hover:bg-gray-100'>
+                        <span className='font-medium text-gray-700'>{a.testName}</span>
+                        <span className='text-gray-400'>
+                          {a.status === 'Completed' ? `${a.score}/${a.maxScore}` : a.status}
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <div className='mt-5 flex justify-end gap-2'>
               <a href={`/hr/recruitment/candidate-pipeline?requisitionId=${detail.requisitionId}`}
@@ -294,6 +340,36 @@ export default function CandidateDatabasePage() {
               <ActionButton onClick={save} icon='💾' disabled={!modal.form.name.trim() || !modal.form.requisitionId || missingMandatoryDocs.length > 0}>
                 {t('Simpan', 'Save')}
               </ActionButton>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {assignModal && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4' onClick={closeAssign}>
+          <div className='w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl' onClick={e => e.stopPropagation()}>
+            <div className='mb-4 flex items-start justify-between'>
+              <h3 className='text-base font-bold text-gray-800'>{t('Tugaskan Psikotes', 'Assign Psychotest')}</h3>
+              <button onClick={closeAssign} className='text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
+            </div>
+            <p className='mb-3 text-xs text-gray-400'>{assignModal.candidateName}</p>
+            {activeTests.length === 0 ? (
+              <p className='text-sm text-gray-500'>
+                {t('Belum ada paket tes aktif. Atur dulu di ', 'No active test package yet. Set one up under ')}
+                <a href='/hr/recruitment/psychotest' className='font-semibold text-teal-700 hover:underline'>
+                  HR Administration → Recruitment → Psychotest
+                </a>.
+              </p>
+            ) : (
+              <FormField label={t('Paket Tes', 'Test Package')}>
+                <Select value={assignModal.testId} onChange={e => setAssignModal(m => ({ ...m, testId: e.target.value }))}>
+                  {activeTests.map(tst => <option key={tst.id} value={tst.id}>{tst.name} · {tst.durationMinutes} {t('menit', 'min')}</option>)}
+                </Select>
+              </FormField>
+            )}
+            <div className='mt-6 flex justify-end gap-2'>
+              <ActionButton variant='secondary' onClick={closeAssign}>{t('Batal', 'Cancel')}</ActionButton>
+              <ActionButton onClick={confirmAssign} icon='🧠' disabled={activeTests.length === 0}>{t('Tugaskan', 'Assign')}</ActionButton>
             </div>
           </div>
         </div>

@@ -31,6 +31,8 @@ const PAGES = [
   { label: 'Candidate Pipeline',        href: '/hr/recruitment/candidate-pipeline',            icon: '🔀', section: 'HR · Recruitment' },
   { label: 'Interview Schedule',        href: '/hr/recruitment/interview-schedule',            icon: '🎥', section: 'HR · Recruitment' },
   { label: 'Candidate Database',        href: '/hr/recruitment/candidate-database',            icon: '🗂️', section: 'HR · Recruitment' },
+  { label: 'Psychotest',                href: '/hr/recruitment/psychotest',                    icon: '🧠', section: 'HR · Recruitment' },
+  { label: 'Hasil Psychotest',          href: '/hr/recruitment/psychotest/results',            icon: '📊', section: 'HR · Recruitment' },
   // HR - Personnel Action
   { label: 'Personnel Action',          href: '/hr/employee/personnel-action',                  icon: '🔄', section: 'HR · Personnel Action' },
   { label: 'Promote',                   href: '/hr/employee/personnel-action/promote',          icon: '⬆️', section: 'HR · Personnel Action' },
