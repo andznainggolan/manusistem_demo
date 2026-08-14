@@ -11,6 +11,7 @@ import { useDocumentTypeStore } from '@/store/documentTypeStore'
 import { useAuthStore } from '@/store/authStore'
 import { PTKP_STATUSES } from '@/lib/payrollCalc'
 import { useT } from '@/store/languageStore'
+import { RELS, GENDERS } from '@/utils/constants'
 import { FormField, Input, Select, ActionButton, StatusBadge, DocCompletionDonut } from '@/components/ui'
 
 const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History', 'Salary', 'Personal Document']
@@ -91,7 +92,7 @@ export default function EmployeeProfilePage() {
   const router  = useRouter()
   const searchParams = useSearchParams()
   const t       = useT()
-  const { employees, addHistory, updateHistory, deleteHistory, setPhoto } = useEmployeeStore()
+  const { employees, addHistory, updateHistory, deleteHistory, setPhoto, addDependent, updateDependent, deleteDependent } = useEmployeeStore()
   const photoInputRef = useRef(null)
   const [photoError, setPhotoError] = useState(null)
   const { companies, divisions, businessUnits, departments, positions, grades } = useStructureStore()
@@ -101,6 +102,7 @@ export default function EmployeeProfilePage() {
   const activeDocTypes = docTypes.filter(x => x.active)
   const docFileRef = useRef(null)
   const [docModal, setDocModal] = useState(null) // { documentTypeId, issuedDate, effectiveStartDate, effectiveEndDate, note, customFieldValue, file, error }
+  const [depModal, setDepModal] = useState(null) // { mode: 'add'|'edit', id?, name, relationship, birthDate, gender, phone, isEmergencyContact }
   // Select the category object itself (a stable reference unless its items
   // actually change) and derive the active-only list in render — filtering
   // inside the selector would return a new array every call and trip
@@ -247,6 +249,29 @@ export default function EmployeeProfilePage() {
   const removeDocument = (doc) => {
     if (!window.confirm(t(`Hapus dokumen "${doc.fileName}"?`, `Delete "${doc.fileName}"?`))) return
     deleteDocument(doc.id)
+  }
+
+  const openAddDependent = () => setDepModal({
+    mode: 'add', name: '', relationship: RELS[0], birthDate: '', gender: GENDERS[0], phone: '', isEmergencyContact: false,
+  })
+  const openEditDependent = (d) => setDepModal({
+    mode: 'edit', id: d.id, name: d.name, relationship: d.relationship, birthDate: d.birthDate || '',
+    gender: d.gender, phone: d.phone || '', isEmergencyContact: !!d.isEmergencyContact,
+  })
+  const closeDepModal = () => setDepModal(null)
+  const saveDependent = () => {
+    if (!depModal.name.trim()) return
+    const payload = {
+      name: depModal.name.trim(), relationship: depModal.relationship, birthDate: depModal.birthDate,
+      gender: depModal.gender, phone: depModal.phone.trim(), isEmergencyContact: depModal.isEmergencyContact,
+    }
+    if (depModal.mode === 'add') addDependent(emp.id, payload)
+    else updateDependent(emp.id, depModal.id, payload)
+    closeDepModal()
+  }
+  const removeDependent = (d) => {
+    if (!window.confirm(t(`Hapus tanggungan "${d.name}"?`, `Delete dependent "${d.name}"?`))) return
+    deleteDependent(emp.id, d.id)
   }
 
   const openAddRecord = () => setRecordModal({
@@ -492,6 +517,11 @@ export default function EmployeeProfilePage() {
         {/* ── Dependent ──────────────────────────────────────────────── */}
         {tab === 'Dependent' && (
           <div>
+            <div className='flex items-center justify-between mb-4'>
+              <h3 className='text-sm font-bold text-gray-800'>{t('Tanggungan', 'Dependents')}</h3>
+              <ActionButton size='sm' icon='➕' onClick={openAddDependent}>{t('Tambah Tanggungan', 'Add Dependent')}</ActionButton>
+            </div>
+
             {(!emp.dependents || emp.dependents.length === 0) ? (
               <div className='flex flex-col items-center justify-center py-16 text-gray-400 gap-2'>
                 <span className='text-4xl'><Icon e='👨‍👩‍👧' size={15} /></span>
@@ -506,6 +536,9 @@ export default function EmployeeProfilePage() {
                       <th className='px-4 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Hubungan', 'Relationship')}</th>
                       <th className='px-4 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Tanggal Lahir', 'Birth Date')}</th>
                       <th className='px-4 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Jenis Kelamin', 'Gender')}</th>
+                      <th className='px-4 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Telepon', 'Phone')}</th>
+                      <th className='px-4 py-2.5 text-center text-xs font-bold text-gray-500'>{t('Kontak Darurat', 'Emergency Contact')}</th>
+                      <th className='px-4 py-2.5 text-right text-xs font-bold text-gray-500'></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -513,14 +546,74 @@ export default function EmployeeProfilePage() {
                       <tr key={d.id ?? i} className='border-t border-gray-100 hover:bg-gray-50'>
                         <td className='px-4 py-3 font-semibold text-gray-800'>{d.name}</td>
                         <td className='px-4 py-3 text-gray-600'>{d.relationship}</td>
-                        <td className='px-4 py-3 text-gray-600'>{d.birthDate}</td>
+                        <td className='px-4 py-3 text-gray-600'>{d.birthDate || '—'}</td>
                         <td className='px-4 py-3 text-gray-600'>{d.gender}</td>
+                        <td className='px-4 py-3 text-gray-600'>{d.phone || '—'}</td>
+                        <td className='px-4 py-3 text-center'>
+                          {d.isEmergencyContact
+                            ? <StatusBadge tone='danger'>{t('Kontak Darurat', 'Emergency')}</StatusBadge>
+                            : <span className='text-gray-300'>—</span>}
+                        </td>
+                        <td className='px-4 py-3 text-right'>
+                          <div className='flex justify-end gap-3'>
+                            <button onClick={() => openEditDependent(d)} className='text-xs font-semibold text-teal-700 hover:underline'>{t('Ubah', 'Edit')}</button>
+                            <button onClick={() => removeDependent(d)} className='text-xs font-semibold text-gray-400 hover:text-red-600'>{t('Hapus', 'Delete')}</button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Dependent add/edit modal */}
+        {depModal && (
+          <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4' onClick={closeDepModal}>
+            <div className='w-full max-w-md rounded-2xl bg-white p-6 shadow-xl' onClick={e => e.stopPropagation()}>
+              <div className='mb-4 flex items-start justify-between'>
+                <h3 className='text-base font-bold text-gray-800'>
+                  {depModal.mode === 'add' ? t('Tambah Tanggungan', 'Add Dependent') : t('Ubah Tanggungan', 'Edit Dependent')}
+                </h3>
+                <button onClick={closeDepModal} className='text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
+              </div>
+              <div className='space-y-4'>
+                <FormField label={t('Nama', 'Name')} required>
+                  <Input value={depModal.name} onChange={e => setDepModal(m => ({ ...m, name: e.target.value }))} autoFocus />
+                </FormField>
+                <div className='grid grid-cols-2 gap-4'>
+                  <FormField label={t('Hubungan', 'Relationship')}>
+                    <Select value={depModal.relationship} onChange={e => setDepModal(m => ({ ...m, relationship: e.target.value }))}>
+                      {RELS.map(r => <option key={r} value={r}>{r}</option>)}
+                    </Select>
+                  </FormField>
+                  <FormField label={t('Jenis Kelamin', 'Gender')}>
+                    <Select value={depModal.gender} onChange={e => setDepModal(m => ({ ...m, gender: e.target.value }))}>
+                      {GENDERS.map(g => <option key={g} value={g}>{g}</option>)}
+                    </Select>
+                  </FormField>
+                </div>
+                <div className='grid grid-cols-2 gap-4'>
+                  <FormField label={t('Tanggal Lahir', 'Birth Date')}>
+                    <Input type='date' value={depModal.birthDate} onChange={e => setDepModal(m => ({ ...m, birthDate: e.target.value }))} />
+                  </FormField>
+                  <FormField label={t('Telepon', 'Phone')}>
+                    <Input value={depModal.phone} onChange={e => setDepModal(m => ({ ...m, phone: e.target.value }))} />
+                  </FormField>
+                </div>
+                <label className='flex cursor-pointer items-center gap-2 rounded-xl bg-gray-50 px-3 py-2.5 text-sm text-gray-700'>
+                  <input type='checkbox' checked={depModal.isEmergencyContact}
+                    onChange={e => setDepModal(m => ({ ...m, isEmergencyContact: e.target.checked }))} className='h-4 w-4 accent-red-700' />
+                  {t('Jadikan sebagai kontak darurat', 'Set as emergency contact')}
+                </label>
+              </div>
+              <div className='mt-6 flex justify-end gap-2'>
+                <ActionButton variant='secondary' onClick={closeDepModal}>{t('Batal', 'Cancel')}</ActionButton>
+                <ActionButton icon='💾' onClick={saveDependent} disabled={!depModal.name.trim()}>{t('Simpan', 'Save')}</ActionButton>
+              </div>
+            </div>
           </div>
         )}
 

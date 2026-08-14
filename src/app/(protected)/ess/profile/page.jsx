@@ -8,7 +8,8 @@ import { useT }              from '@/store/languageStore'
 import { ACTION_COLOR }      from '@/store/employeeStore'
 import { useEmployeeDocumentStore, DOCUMENT_MAX_BYTES } from '@/store/employeeDocumentStore'
 import { useDocumentTypeStore } from '@/store/documentTypeStore'
-import { FormField, Input, Select, ActionButton, DocCompletionDonut } from '@/components/ui'
+import { RELS, GENDERS } from '@/utils/constants'
+import { FormField, Input, Select, ActionButton, StatusBadge, DocCompletionDonut } from '@/components/ui'
 
 const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History', 'Personal Document']
 
@@ -50,13 +51,14 @@ function Field({ label, value }) {
 export default function MyProfilePage() {
   const t = useT()
   const { currentUser } = useAuthStore()
-  const { employees }   = useEmployeeStore()
+  const { employees, addDependent, updateDependent, deleteDependent } = useEmployeeStore()
   const { companies, divisions, businessUnits, departments, positions } = useStructureStore()
   const { documents, addDocument, deleteDocument } = useEmployeeDocumentStore()
   const { types: docTypes } = useDocumentTypeStore()
   const activeDocTypes = docTypes.filter(x => x.active)
   const docFileRef = useRef(null)
   const [docModal, setDocModal] = useState(null) // { documentTypeId, issuedDate, effectiveStartDate, effectiveEndDate, note, customFieldValue, file, error }
+  const [depModal, setDepModal] = useState(null) // { mode: 'add'|'edit', id?, name, relationship, birthDate, gender, phone, isEmergencyContact }
 
   const [tab, setTab] = useState('Employment')
 
@@ -113,6 +115,29 @@ export default function MyProfilePage() {
   const removeDocument = (doc) => {
     if (!window.confirm(t(`Hapus dokumen "${doc.fileName}"?`, `Delete "${doc.fileName}"?`))) return
     deleteDocument(doc.id)
+  }
+
+  const openAddDependent = () => setDepModal({
+    mode: 'add', name: '', relationship: RELS[0], birthDate: '', gender: GENDERS[0], phone: '', isEmergencyContact: false,
+  })
+  const openEditDependent = (d) => setDepModal({
+    mode: 'edit', id: d.id, name: d.name, relationship: d.relationship, birthDate: d.birthDate || '',
+    gender: d.gender, phone: d.phone || '', isEmergencyContact: !!d.isEmergencyContact,
+  })
+  const closeDepModal = () => setDepModal(null)
+  const saveDependent = () => {
+    if (!depModal.name.trim()) return
+    const payload = {
+      name: depModal.name.trim(), relationship: depModal.relationship, birthDate: depModal.birthDate,
+      gender: depModal.gender, phone: depModal.phone.trim(), isEmergencyContact: depModal.isEmergencyContact,
+    }
+    if (depModal.mode === 'add') addDependent(emp.id, payload)
+    else updateDependent(emp.id, depModal.id, payload)
+    closeDepModal()
+  }
+  const removeDependent = (d) => {
+    if (!window.confirm(t(`Hapus tanggungan "${d.name}"?`, `Delete dependent "${d.name}"?`))) return
+    deleteDependent(emp.id, d.id)
   }
 
   const company  = companies.find(c => c.id === emp.companyId)
@@ -228,30 +253,100 @@ export default function MyProfilePage() {
 
         {/* Dependent */}
         {tab === 'Dependent' && (
-          emp.dependents?.length === 0
-            ? <p className='text-sm text-gray-400 text-center py-10'>{t('Tidak ada data tanggungan.', 'No dependent data.')}</p>
-            : <div className='overflow-x-auto'>
-                <table className='w-full text-sm'>
-                  <thead>
-                    <tr className='border-b border-gray-100'>
-                      <th className='text-left py-2 px-3 text-xs font-bold text-gray-500'>{t('Nama', 'Name')}</th>
-                      <th className='text-left py-2 px-3 text-xs font-bold text-gray-500'>{t('Hubungan', 'Relationship')}</th>
-                      <th className='text-left py-2 px-3 text-xs font-bold text-gray-500'>{t('Tanggal Lahir', 'Birth Date')}</th>
-                      <th className='text-left py-2 px-3 text-xs font-bold text-gray-500'>{t('Jenis Kelamin', 'Gender')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {emp.dependents.map(d => (
-                      <tr key={d.id} className='border-b border-gray-50 hover:bg-gray-50'>
-                        <td className='py-2.5 px-3 font-medium text-gray-800'>{d.name}</td>
-                        <td className='py-2.5 px-3 text-gray-600'>{d.relationship}</td>
-                        <td className='py-2.5 px-3 text-gray-600'>{d.birthDate}</td>
-                        <td className='py-2.5 px-3 text-gray-600'>{d.gender}</td>
+          <div>
+            <div className='mb-4 flex items-center justify-between'>
+              <h3 className='text-sm font-bold text-gray-800'>{t('Tanggungan', 'Dependents')}</h3>
+              <ActionButton size='sm' icon='➕' onClick={openAddDependent}>{t('Tambah Tanggungan', 'Add Dependent')}</ActionButton>
+            </div>
+            {emp.dependents?.length === 0
+              ? <p className='text-sm text-gray-400 text-center py-10'>{t('Tidak ada data tanggungan.', 'No dependent data.')}</p>
+              : <div className='overflow-x-auto'>
+                  <table className='w-full text-sm'>
+                    <thead>
+                      <tr className='border-b border-gray-100'>
+                        <th className='text-left py-2 px-3 text-xs font-bold text-gray-500'>{t('Nama', 'Name')}</th>
+                        <th className='text-left py-2 px-3 text-xs font-bold text-gray-500'>{t('Hubungan', 'Relationship')}</th>
+                        <th className='text-left py-2 px-3 text-xs font-bold text-gray-500'>{t('Tanggal Lahir', 'Birth Date')}</th>
+                        <th className='text-left py-2 px-3 text-xs font-bold text-gray-500'>{t('Jenis Kelamin', 'Gender')}</th>
+                        <th className='text-left py-2 px-3 text-xs font-bold text-gray-500'>{t('Telepon', 'Phone')}</th>
+                        <th className='text-center py-2 px-3 text-xs font-bold text-gray-500'>{t('Kontak Darurat', 'Emergency Contact')}</th>
+                        <th className='text-right py-2 px-3 text-xs font-bold text-gray-500'></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {emp.dependents.map(d => (
+                        <tr key={d.id} className='border-b border-gray-50 hover:bg-gray-50'>
+                          <td className='py-2.5 px-3 font-medium text-gray-800'>{d.name}</td>
+                          <td className='py-2.5 px-3 text-gray-600'>{d.relationship}</td>
+                          <td className='py-2.5 px-3 text-gray-600'>{d.birthDate || '—'}</td>
+                          <td className='py-2.5 px-3 text-gray-600'>{d.gender}</td>
+                          <td className='py-2.5 px-3 text-gray-600'>{d.phone || '—'}</td>
+                          <td className='py-2.5 px-3 text-center'>
+                            {d.isEmergencyContact
+                              ? <StatusBadge tone='danger'>{t('Kontak Darurat', 'Emergency')}</StatusBadge>
+                              : <span className='text-gray-300'>—</span>}
+                          </td>
+                          <td className='py-2.5 px-3 text-right'>
+                            <div className='flex justify-end gap-3'>
+                              <button onClick={() => openEditDependent(d)} className='text-xs font-semibold text-teal-700 hover:underline'>{t('Ubah', 'Edit')}</button>
+                              <button onClick={() => removeDependent(d)} className='text-xs font-semibold text-gray-400 hover:text-red-600'>{t('Hapus', 'Delete')}</button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+            }
+          </div>
+        )}
+
+        {/* Dependent add/edit modal */}
+        {depModal && (
+          <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4' onClick={closeDepModal}>
+            <div className='w-full max-w-md rounded-2xl bg-white p-6 shadow-xl' onClick={e => e.stopPropagation()}>
+              <div className='mb-4 flex items-start justify-between'>
+                <h3 className='text-base font-bold text-gray-800'>
+                  {depModal.mode === 'add' ? t('Tambah Tanggungan', 'Add Dependent') : t('Ubah Tanggungan', 'Edit Dependent')}
+                </h3>
+                <button onClick={closeDepModal} className='text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
               </div>
+              <div className='space-y-4'>
+                <FormField label={t('Nama', 'Name')} required>
+                  <Input value={depModal.name} onChange={e => setDepModal(m => ({ ...m, name: e.target.value }))} autoFocus />
+                </FormField>
+                <div className='grid grid-cols-2 gap-4'>
+                  <FormField label={t('Hubungan', 'Relationship')}>
+                    <Select value={depModal.relationship} onChange={e => setDepModal(m => ({ ...m, relationship: e.target.value }))}>
+                      {RELS.map(r => <option key={r} value={r}>{r}</option>)}
+                    </Select>
+                  </FormField>
+                  <FormField label={t('Jenis Kelamin', 'Gender')}>
+                    <Select value={depModal.gender} onChange={e => setDepModal(m => ({ ...m, gender: e.target.value }))}>
+                      {GENDERS.map(g => <option key={g} value={g}>{g}</option>)}
+                    </Select>
+                  </FormField>
+                </div>
+                <div className='grid grid-cols-2 gap-4'>
+                  <FormField label={t('Tanggal Lahir', 'Birth Date')}>
+                    <Input type='date' value={depModal.birthDate} onChange={e => setDepModal(m => ({ ...m, birthDate: e.target.value }))} />
+                  </FormField>
+                  <FormField label={t('Telepon', 'Phone')}>
+                    <Input value={depModal.phone} onChange={e => setDepModal(m => ({ ...m, phone: e.target.value }))} />
+                  </FormField>
+                </div>
+                <label className='flex cursor-pointer items-center gap-2 rounded-xl bg-gray-50 px-3 py-2.5 text-sm text-gray-700'>
+                  <input type='checkbox' checked={depModal.isEmergencyContact}
+                    onChange={e => setDepModal(m => ({ ...m, isEmergencyContact: e.target.checked }))} className='h-4 w-4 accent-red-700' />
+                  {t('Jadikan sebagai kontak darurat', 'Set as emergency contact')}
+                </label>
+              </div>
+              <div className='mt-6 flex justify-end gap-2'>
+                <ActionButton variant='secondary' onClick={closeDepModal}>{t('Batal', 'Cancel')}</ActionButton>
+                <ActionButton icon='💾' onClick={saveDependent} disabled={!depModal.name.trim()}>{t('Simpan', 'Save')}</ActionButton>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Profile */}
