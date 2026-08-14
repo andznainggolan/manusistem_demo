@@ -7,7 +7,7 @@ import { HR_ROLES } from '@/constants/roles'
 import { useT } from '@/store/languageStore'
 import {
   PageHeader, StatCard, DataTable, Tr, Td, FilterBar, FilterPill,
-  ActionButton, StatusBadge, EmptyState,
+  ActionButton, StatusBadge, EmptyState, FixedDurationVideo,
 } from '@/components/ui'
 
 const STATUS_TONE = { Pending: 'warning', Valid: 'success', Flagged: 'danger' }
@@ -139,7 +139,7 @@ export default function EmergencySosLogPage() {
             )}
 
             {detail.videoDataUrl ? (
-              <video src={detail.videoDataUrl} controls className='aspect-video w-full rounded-xl bg-black' />
+              <FixedDurationVideo src={detail.videoDataUrl} controls className='aspect-video w-full rounded-xl bg-black' />
             ) : (
               <div className='flex items-center justify-center rounded-xl bg-gray-50 py-10 text-sm text-gray-400'>
                 {t('Tidak ada video (kamera tidak tersedia saat dikirim).', 'No video (camera unavailable when sent).')}

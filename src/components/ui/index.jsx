@@ -10,6 +10,7 @@
 import Link from 'next/link'
 import Icon from './Icon'
 export { default as DocCompletionDonut } from './DocCompletionDonut'
+export { default as FixedDurationVideo } from './FixedDurationVideo'
 
 /* ---------------------------------------------------------------- tokens */
 export const BRAND_GRADIENT = 'linear-gradient(135deg, #052B52, #039299)'

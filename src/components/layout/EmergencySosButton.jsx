@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import Icon from '@/components/ui/Icon'
+import FixedDurationVideo from '@/components/ui/FixedDurationVideo'
 import { useAuthStore } from '@/store/authStore'
 import { useEmergencySosStore, SOS_CATEGORIES, SOS_MAX_VIDEO_SECONDS, SOS_MAX_BYTES } from '@/store/emergencySosStore'
 import { useT } from '@/store/languageStore'
@@ -94,7 +95,13 @@ export default function EmergencySosButton() {
     const recorder = new MediaRecorder(streamRef.current, mimeType ? { mimeType } : undefined)
     recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data) }
     recorder.onstop = () => {
-      const blob = new Blob(chunksRef.current, { type: mimeType || 'video/webm' })
+      // Strip codec params (e.g. "video/webm;codecs=vp8,opus") down to the
+      // base type. That comma inside "vp8,opus" corrupts the clip once it's
+      // converted to a data: URL for storage — a data URL splits on the
+      // FIRST comma, so everything from "opus" onward gets read as literal
+      // payload text instead of being recognized as the base64 data, silently
+      // mangling the video (plays back as a black, unseekable frame).
+      const blob = new Blob(chunksRef.current, { type: (mimeType || 'video/webm').split(';')[0] })
       blobRef.current = blob
       stopStream()
       setPreviewUrl(URL.createObjectURL(blob))
@@ -225,7 +232,7 @@ export default function EmergencySosButton() {
                 <p className='mb-3 text-sm text-gray-500'>
                   {CATEGORY_ICON[category]} <b>{category}</b> — {t('Tinjau video sebelum mengirim.', 'Review the clip before sending.')}
                 </p>
-                <video src={previewUrl} controls className='aspect-video w-full rounded-xl bg-black' />
+                <FixedDurationVideo src={previewUrl} controls className='aspect-video w-full rounded-xl bg-black' />
                 <div className='mt-4 flex justify-end gap-2'>
                   <button onClick={retryRecording}
                     className='rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50'>
