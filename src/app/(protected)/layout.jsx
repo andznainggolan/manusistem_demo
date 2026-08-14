@@ -6,6 +6,7 @@ import { useAuthStore }     from '@/store/authStore'
 import Sidebar              from '@/components/layout/Sidebar'
 import GlobalSearch         from '@/components/layout/GlobalSearch'
 import NotificationBell     from '@/components/layout/NotificationBell'
+import EmergencySosButton   from '@/components/layout/EmergencySosButton'
 import LoginAsModal         from '@/components/layout/LoginAsModal'
 import Toast                from '@/components/layout/Toast'
 import { useBrandingStore } from '@/store/brandingStore'
@@ -265,14 +266,17 @@ export default function ProtectedLayout({ children }) {
             {/* Language */}
             <div className='flex items-center gap-0.5 rounded-lg p-0.5'>
               <button onClick={() => setLang('id')}
-                className={`text-xs font-semibold px-2.5 py-1 rounded-md transition ${lang === 'id' ? 'bg-red-50 text-red-800' : 'text-gray-500 hover:text-gray-700'}`}>
+                className={`text-xs font-semibold px-2.5 py-1 rounded-md transition ${lang === 'id' ? 'bg-teal-50 text-teal-900' : 'text-gray-500 hover:text-gray-700'}`}>
                 ID
               </button>
               <button onClick={() => setLang('en')}
-                className={`text-xs font-semibold px-2.5 py-1 rounded-md transition ${lang === 'en' ? 'bg-red-50 text-red-800' : 'text-gray-500 hover:text-gray-700'}`}>
+                className={`text-xs font-semibold px-2.5 py-1 rounded-md transition ${lang === 'en' ? 'bg-teal-50 text-teal-900' : 'text-gray-500 hover:text-gray-700'}`}>
                 EN
               </button>
             </div>
+
+            {/* Emergency SOS */}
+            <EmergencySosButton />
 
             {/* Notification bell */}
             <NotificationBell />

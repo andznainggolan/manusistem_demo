@@ -22,6 +22,7 @@ const PAGES = [
   { label: 'Onboarding Tim Saya',       href: '/mss/approve-onboarding',                       icon: '📋', section: 'Manager Self-Service' },
   { label: 'Team Attendance',           href: '/mss/team-attendance',                          icon: '📋', section: 'Manager Self-Service' },
   // HR - Employee
+  { label: 'Emergency SOS Log',         href: '/hr/emergency-sos',                             icon: '🆘', section: 'HR Administration' },
   { label: 'Employee Data',             href: '/hr/employee',                                  icon: '📋', section: 'HR Administration' },
   { label: 'Apply Leave (HR)',          href: '/hr/apply-leave',                               icon: '📝', section: 'HR Administration' },
   { label: 'Org Chart',                 href: '/hr/org-chart',                                 icon: '🌳', section: 'HR Administration' },

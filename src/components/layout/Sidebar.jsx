@@ -141,6 +141,9 @@ const ESS_GROUPS = [
 ]
 
 const MSS_GROUPS = [
+  { title: 'Emergency SOS', icon: ic('activity'), items: [
+    { label: 'Emergency SOS Log', href: '/hr/emergency-sos', icon: ic('activity') },
+  ]},
   { title: 'Attendance & Leave', icon: ic('clock'), items: [
     { label: 'Team Attendance',            href: '/mss/team-attendance',    icon: ic('clock') },
     { label: 'Apply Leave (My Team)',      href: '/mss/apply-leave-team',   icon: ic('calendar') },
@@ -207,6 +210,9 @@ const LMS_GROUPS = [
 ]
 
 const HR_GROUPS = [
+  { title: 'Emergency SOS', icon: ic('activity'), items: [
+    { label: 'Emergency SOS Log', href: '/hr/emergency-sos', icon: ic('activity') },
+  ]},
   { title: 'Structure', icon: ic('building'), items: [
     { label: 'Company',          href: '/hr/structure/company',           icon: ic('building') },
     { label: 'Department',       href: '/hr/structure/department',        icon: ic('users') },

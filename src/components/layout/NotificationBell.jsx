@@ -12,6 +12,8 @@ import { usePersonnelActionStore }     from '@/store/personnelActionStore'
 import { useOffboardingChecklistStore } from '@/store/offboardingChecklistStore'
 import { useOffboardingNotifyStore }    from '@/store/offboardingNotifyStore'
 import { offboardingActionItems }       from '@/lib/offboarding'
+import { useEmergencySosStore } from '@/store/emergencySosStore'
+import { HR_ROLES } from '@/constants/roles'
 import { useT } from '@/store/languageStore'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -325,6 +327,7 @@ export default function NotificationBell() {
   const { pas }                    = usePersonnelActionStore()
   const { items: offChecklist }    = useOffboardingChecklistStore()
   const { sends: offNotifySends }  = useOffboardingNotifyStore()
+  const { alerts: sosAlerts }      = useEmergencySosStore()
 
   const [open,       setOpen      ] = useState(false)
   const [readIds,    setReadIds   ] = useState([])
@@ -625,6 +628,24 @@ export default function NotificationBell() {
         at: it.at, type: 'offboarding', recordId: it.employeeId, href: it.href,
       })
     })
+
+    // ── Emergency SOS ────────────────────────────────────────────────────
+    // HR/Superadmin see every pending alert (they review & flag); a direct
+    // manager sees only their own team's alerts, read-only.
+    const isHrForSos = HR_ROLES.includes(role)
+    sosAlerts
+      .filter(a => a.status === 'Pending')
+      .filter(a => isHrForSos || getDirectManagerId(a.employeeId, employees) === uid)
+      .forEach(a => {
+        notifications.push({
+          id: `sos-${a.id}`,
+          icon: '🆘',
+          text: isHrForSos
+            ? t(`SOS Emergency dari ${a.employeeName} (${a.category}) — perlu ditinjau.`, `Emergency SOS from ${a.employeeName} (${a.category}) — needs review.`)
+            : t(`SOS Emergency dari anggota tim Anda, ${a.employeeName} (${a.category}).`, `Emergency SOS from your team member ${a.employeeName} (${a.category}).`),
+          at: a.createdAt, type: 'sos', recordId: a.id, href: '/hr/emergency-sos',
+        })
+      })
   }
 
   notifications.sort((a, b) => new Date(b.at || 0) - new Date(a.at || 0))
