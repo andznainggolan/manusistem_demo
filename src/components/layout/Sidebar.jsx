@@ -296,6 +296,7 @@ const SA_GROUPS = [
     { label: 'Role & Permission', href: '/sysadmin/learning/role-permission',   icon: ic('shield') },
     { label: 'Master Lookup',     href: '/sysadmin/settings/master-lookup',     icon: ic('list') },
     { label: 'Master Document Types', href: '/sysadmin/settings/master-document-types', icon: ic('fileText') },
+    { label: 'Batas SOS Serentak',    href: '/sysadmin/settings/emergency-sos-limit',   icon: ic('activity') },
   ]},
   { title: 'Workflow', icon: ic('workflow'), items: [
     { label: 'Workflow Settings',   href: '/sysadmin/workflow/settings',            icon: ic('settings') },

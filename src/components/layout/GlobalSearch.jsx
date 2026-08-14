@@ -74,6 +74,7 @@ const PAGES = [
   { label: 'User Management',           href: '/sysadmin/users',                               icon: '👥', section: 'System Administration' },
   { label: 'Master Lookup',             href: '/sysadmin/settings/master-lookup',              icon: '🗂️', section: 'System Administration' },
   { label: 'Master Document Types',     href: '/sysadmin/settings/master-document-types',      icon: '🗂️', section: 'System Administration' },
+  { label: 'Batas SOS Serentak',        href: '/sysadmin/settings/emergency-sos-limit',        icon: '🆘', section: 'System Administration' },
   { label: 'Leave Workflow',            href: '/sysadmin/leave-workflow',                      icon: '🔀', section: 'System Administration' },
   { label: 'Workflow Settings',         href: '/sysadmin/workflow/settings',                   icon: '⚙️', section: 'System Administration' },
   { label: 'Userlists',                 href: '/sysadmin/workflow/userlists',                  icon: '👥', section: 'System Administration' },

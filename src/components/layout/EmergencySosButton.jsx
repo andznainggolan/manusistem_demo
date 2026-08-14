@@ -4,6 +4,7 @@ import Icon from '@/components/ui/Icon'
 import FixedDurationVideo from '@/components/ui/FixedDurationVideo'
 import { useAuthStore } from '@/store/authStore'
 import { useEmergencySosStore, SOS_CATEGORIES, SOS_MAX_VIDEO_SECONDS, SOS_MAX_BYTES } from '@/store/emergencySosStore'
+import { useEmergencySosLimitStore } from '@/store/emergencySosLimitStore'
 import { useT } from '@/store/languageStore'
 
 const CATEGORY_ICON = { 'Kebakaran': '🔥', 'Kecelakaan Kerja': '⚠️', 'Medis': '🚑', 'Keamanan': '🛡️', 'Lainnya': '🆘' }
@@ -23,10 +24,17 @@ const pickMimeType = () => {
 export default function EmergencySosButton() {
   const t = useT()
   const { currentUser } = useAuthStore()
-  const { addAlert } = useEmergencySosStore()
+  const { alerts, addAlert } = useEmergencySosStore()
+  const { enabled: limitEnabled, maxPerWindow, windowMinutes } = useEmergencySosLimitStore()
+
+  const isLimitReached = () => {
+    if (!limitEnabled) return false
+    const cutoff = Date.now() - windowMinutes * 60 * 1000
+    return alerts.filter(a => new Date(a.createdAt).getTime() >= cutoff).length >= maxPerWindow
+  }
 
   const [open, setOpen] = useState(false)
-  // step: 'category' | 'record' | 'preview' | 'sending' | 'sent'
+  // step: 'category' | 'record' | 'preview' | 'sending' | 'sent' | 'limited'
   const [step, setStep] = useState('category')
   const [category, setCategory] = useState(null)
   const [recording, setRecording] = useState(false)
@@ -150,6 +158,9 @@ export default function EmergencySosButton() {
   }
 
   const submit = async (withVideo) => {
+    // Re-check right before writing — someone else may have filled the last
+    // slot while this user was picking a category / recording.
+    if (isLimitReached()) { stopStream(); setStep('limited'); return }
     setStep('sending')
     let videoDataUrl = null, videoType = null, videoSize = null
     if (withVideo && blobRef.current && blobRef.current.size <= SOS_MAX_BYTES) {
@@ -168,7 +179,7 @@ export default function EmergencySosButton() {
 
   return (
     <>
-      <button onClick={() => setOpen(true)}
+      <button onClick={() => { setOpen(true); if (isLimitReached()) setStep('limited') }}
         title={t('Emergency SOS', 'Emergency SOS')}
         className='flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-2 py-1.5 text-xs font-bold text-red-700 transition hover:bg-red-100 hover:border-red-300 animate-pulse sm:px-3'>
         <span className='text-sm'>🆘</span>
@@ -176,7 +187,7 @@ export default function EmergencySosButton() {
       </button>
 
       {open && (
-        <div className='fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4' onClick={step === 'sent' ? close : undefined}>
+        <div className='fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4' onClick={(step === 'sent' || step === 'limited') ? close : undefined}>
           <div className='w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl' onClick={e => e.stopPropagation()}>
 
             <div className='mb-4 flex items-start justify-between'>
@@ -280,6 +291,24 @@ export default function EmergencySosButton() {
 
             {step === 'sending' && (
               <div className='py-10 text-center text-sm text-gray-500'>{t('Mengirim SOS…', 'Sending SOS…')}</div>
+            )}
+
+            {step === 'limited' && (
+              <div className='py-6 text-center'>
+                <p className='text-4xl'>🙏</p>
+                <h4 className='mt-3 text-lg font-bold text-gray-800'>{t('SOS Sudah Terwakilkan', 'Enough SOS Already Reported')}</h4>
+                <p className='mt-1 text-sm text-gray-500'>
+                  {t(
+                    `Sudah ada ${maxPerWindow} laporan SOS dalam ${windowMinutes} menit terakhir, jadi laporan Anda tidak perlu dikirim lagi. Kalau situasi Anda berbeda atau butuh bantuan langsung, hubungi HR/Keamanan.`,
+                    `There have already been ${maxPerWindow} SOS reports in the last ${windowMinutes} minutes, so yours doesn't need to be sent again. If your situation is different or you need direct help, contact HR/Security.`,
+                  )}
+                </p>
+                <button onClick={close}
+                  className='mt-5 rounded-xl px-5 py-2.5 text-sm font-semibold text-white'
+                  style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
+                  {t('Tutup', 'Close')}
+                </button>
+              </div>
             )}
 
             {step === 'sent' && (
