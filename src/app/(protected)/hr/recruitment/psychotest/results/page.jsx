@@ -22,6 +22,7 @@ export default function PsychotestResultsPage() {
   const [status, setStatus] = useState('all')
   const [detail, setDetail] = useState(null)
   const [copied, setCopied] = useState(false)
+  const [lightbox, setLightbox] = useState(null) // { imageDataUrl, at }
 
   const rows = attempts
     .filter(a => status === 'all' || a.status === status)
@@ -143,12 +144,12 @@ export default function PsychotestResultsPage() {
                 </p>
                 <div className='flex flex-wrap gap-2'>
                   {detail.proctorCaptures.map((c, i) => (
-                    <a key={i} href={c.imageDataUrl} target='_blank' rel='noreferrer' className='group relative'>
+                    <button key={i} onClick={() => setLightbox(c)} className='group relative'>
                       <img src={c.imageDataUrl} alt='' className='h-16 w-20 rounded-lg object-cover ring-1 ring-gray-200 transition group-hover:ring-teal-400' />
                       <span className='absolute inset-x-0 bottom-0 rounded-b-lg bg-black/60 px-1 py-0.5 text-center text-[9px] text-white'>
                         {new Date(c.at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                       </span>
-                    </a>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -170,6 +171,25 @@ export default function PsychotestResultsPage() {
             <div className='mt-5 flex justify-end gap-2'>
               <ActionButton variant='secondary' onClick={() => del(detail)} className='!text-red-600'>{t('Hapus', 'Delete')}</ActionButton>
             </div>
+          </div>
+        </div>
+      )}
+
+      {lightbox && (
+        <div className='fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4' onClick={() => setLightbox(null)}>
+          <div className='max-h-[90vh] max-w-lg' onClick={e => e.stopPropagation()}>
+            <div className='mb-2 flex items-center justify-between text-white'>
+              <span className='text-sm font-semibold'>
+                {new Date(lightbox.at).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+              </span>
+              <div className='flex items-center gap-3'>
+                <a href={lightbox.imageDataUrl} download={`proctor-${lightbox.at}.jpg`} className='text-xs font-semibold hover:underline'>
+                  {t('Unduh', 'Download')}
+                </a>
+                <button onClick={() => setLightbox(null)} className='text-2xl font-bold leading-none hover:text-gray-300'>×</button>
+              </div>
+            </div>
+            <img src={lightbox.imageDataUrl} alt='' className='max-h-[80vh] w-full rounded-xl object-contain' />
           </div>
         </div>
       )}
