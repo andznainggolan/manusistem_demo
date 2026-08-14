@@ -32,6 +32,11 @@ export default function EmergencySosButton() {
   const [secondsLeft, setSecondsLeft] = useState(SOS_MAX_VIDEO_SECONDS)
   const [cameraError, setCameraError] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
+  // Mirrors streamRef.current into state — the ref alone doesn't trigger a
+  // re-render when it's set inside the async getUserMedia callback, which
+  // left the "Mulai Rekam" button permanently disabled even once the camera
+  // was live (its `disabled` check read a ref value React never re-rendered for).
+  const [streamReady, setStreamReady] = useState(false)
 
   const videoRef = useRef(null)
   const streamRef = useRef(null)
@@ -43,6 +48,7 @@ export default function EmergencySosButton() {
   const stopStream = () => {
     streamRef.current?.getTracks().forEach(tr => tr.stop())
     streamRef.current = null
+    setStreamReady(false)
   }
   const clearTimer = () => { clearInterval(timerRef.current); timerRef.current = null }
 
@@ -71,6 +77,7 @@ export default function EmergencySosButton() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       streamRef.current = stream
+      setStreamReady(true)
       if (videoRef.current) { videoRef.current.srcObject = stream; videoRef.current.play?.() }
     } catch {
       setCameraError(t(
@@ -199,7 +206,7 @@ export default function EmergencySosButton() {
                       {t('Kirim SOS Tanpa Video', 'Send SOS without video')}
                     </button>
                   ) : !recording ? (
-                    <button onClick={startRecording} disabled={!streamRef.current}
+                    <button onClick={startRecording} disabled={!streamReady}
                       className='rounded-xl px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40' style={{ background: 'linear-gradient(135deg,#b91c1c,#ef4444)' }}>
                       ⏺ {t('Mulai Rekam', 'Start Recording')}
                     </button>
