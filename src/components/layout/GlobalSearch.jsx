@@ -95,6 +95,10 @@ export default function GlobalSearch() {
   const [query,  setQuery ] = useState('')
   const [open,   setOpen  ] = useState(false)
   const [cursor, setCursor] = useState(-1)
+  // Below `sm`, the inline w-72 bar doesn't fit alongside the logo + topbar
+  // controls (SOS/bell/avatar) — it collapses to an icon that expands into
+  // a full-width overlay instead of pushing everything else off-screen.
+  const [mobileOpen, setMobileOpen] = useState(false)
   const inputRef = useRef()
   const boxRef   = useRef()
 
@@ -124,7 +128,7 @@ export default function GlobalSearch() {
         inputRef.current?.focus()
         setOpen(true)
       }
-      if (e.key === 'Escape') { setOpen(false); setQuery('') }
+      if (e.key === 'Escape') { setOpen(false); setQuery(''); setMobileOpen(false) }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
@@ -160,7 +164,21 @@ export default function GlobalSearch() {
   }
 
   return (
-    <div ref={boxRef} className='relative w-72'>
+    <>
+      {/* Mobile: collapsed to a single icon so it doesn't push SOS/bell/avatar
+          off-screen — tapping it opens the same search as a full-width overlay. */}
+      {!mobileOpen && (
+        <button onClick={() => { setMobileOpen(true); setTimeout(() => inputRef.current?.focus(), 0) }}
+          className='flex h-9 w-9 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 sm:hidden'
+          aria-label={t('Cari', 'Search')}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      )}
+
+      <div ref={boxRef}
+        className={`relative sm:static sm:z-auto sm:block sm:w-72 sm:bg-transparent sm:p-0 sm:shadow-none ${
+          mobileOpen ? 'fixed inset-x-0 top-0 z-[200] bg-white p-3 shadow-md' : 'hidden'
+        }`}>
       <div className='flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-gray-300 hover:bg-gray-50 transition focus-within:border-teal-400 focus-within:bg-white'>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input
@@ -177,12 +195,16 @@ export default function GlobalSearch() {
             className='text-gray-400 hover:text-gray-600 text-xs'><Icon e='✕' size={15} /></button>
         )}
         {!query && (
-          <kbd className='text-gray-400 text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded font-mono'>⌘K</kbd>
+          <kbd className='hidden text-gray-400 text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded font-mono sm:inline'>⌘K</kbd>
+        )}
+        {mobileOpen && (
+          <button onClick={() => { setMobileOpen(false); setOpen(false); setQuery(''); setCursor(-1) }}
+            className='text-gray-400 hover:text-gray-600 text-xs sm:hidden'><Icon e='✕' size={15} /></button>
         )}
       </div>
 
       {open && q.length > 0 && (
-        <div className='absolute top-full mt-2 left-0 w-96 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-[999]'>
+        <div className='absolute top-full mt-2 left-0 w-[calc(100vw-1.5rem)] max-w-96 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-[999]'>
 
           {totalResults === 0 && (
             <div className='px-5 py-6 text-center text-gray-400 text-sm'>
@@ -263,7 +285,8 @@ export default function GlobalSearch() {
           )}
         </div>
       )}
-    </div>
+      </div>
+    </>
   )
 }
 

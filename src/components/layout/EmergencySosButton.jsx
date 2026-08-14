@@ -155,7 +155,7 @@ export default function EmergencySosButton() {
     <>
       <button onClick={() => setOpen(true)}
         title={t('Emergency SOS', 'Emergency SOS')}
-        className='flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700 transition hover:bg-red-100 hover:border-red-300 animate-pulse'>
+        className='flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-2 py-1.5 text-xs font-bold text-red-700 transition hover:bg-red-100 hover:border-red-300 animate-pulse sm:px-3'>
         <span className='text-sm'>🆘</span>
         <span className='hidden md:inline'>SOS</span>
       </button>

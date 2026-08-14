@@ -245,26 +245,26 @@ export default function ProtectedLayout({ children }) {
         <div className='h-[3px]' style={{ background: 'linear-gradient(90deg,#052B52 0%,#039299 40%,#4FD1D9 80%,#B2F5EA 100%)' }} />
 
         {/* Main bar */}
-        <div className='h-[80px] flex items-center justify-between pl-1 pr-5 gap-3'>
+        <div className='h-[80px] flex items-center justify-between pl-1 pr-2 gap-1.5 sm:pr-5 sm:gap-3'>
 
           {/* Left: logo — default sama dengan logo halaman login */}
           <div className='flex items-center gap-2 flex-shrink-0 pl-2'>
             <img
               src={topbarLogo || '/logos/manusistem.png'}
               alt='Manusistem'
-              className='h-16 w-auto object-contain'
+              className='h-10 w-auto object-contain sm:h-16'
             />
           </div>
 
           {/* Search */}
-          <div className='flex-1 flex justify-center px-4'>
+          <div className='flex flex-1 min-w-0 justify-center px-1 sm:px-4'>
             {!locked && <GlobalSearch />}
           </div>
 
           {/* Right controls */}
-          <div className='flex items-center gap-3 flex-shrink-0'>
+          <div className='flex items-center gap-1.5 flex-shrink-0 sm:gap-3'>
             {/* Language */}
-            <div className='flex items-center gap-0.5 rounded-lg p-0.5'>
+            <div className='hidden items-center gap-0.5 rounded-lg p-0.5 sm:flex'>
               <button onClick={() => setLang('id')}
                 className={`text-xs font-semibold px-2.5 py-1 rounded-md transition ${lang === 'id' ? 'bg-teal-50 text-teal-900' : 'text-gray-500 hover:text-gray-700'}`}>
                 ID
@@ -285,7 +285,7 @@ export default function ProtectedLayout({ children }) {
             {canProxy && (
               <button onClick={() => setLoginAsOpen(true)}
                 title='Login As'
-                className='flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50 transition'>
+                className='flex items-center gap-1.5 text-xs font-semibold px-2 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50 transition sm:px-3'>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
                   <circle cx="9" cy="7" r="4"/>
