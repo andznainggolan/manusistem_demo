@@ -77,7 +77,7 @@ function ApplyModal({ req, deptName, companyName, onClose }) {
             <p className='text-4xl'>✅</p>
             <h3 className='mt-3 text-lg font-bold text-gray-800'>Lamaran Terkirim!</h3>
             <p className='mt-1 text-sm text-gray-500'>
-              Terima kasih sudah melamar untuk posisi <b>{req.positionTitle}</b>. Tim kami akan menghubungi Anda jika profil Anda sesuai.
+              Terima kasih sudah melamar untuk posisi <b>{req.publicTitle || req.positionTitle}</b>. Tim kami akan menghubungi Anda jika profil Anda sesuai.
             </p>
             <button onClick={onClose}
               className='mt-5 rounded-xl px-5 py-2.5 text-sm font-semibold text-white'
@@ -90,7 +90,7 @@ function ApplyModal({ req, deptName, companyName, onClose }) {
             <div className='mb-4 flex items-start justify-between'>
               <div>
                 <h3 className='text-base font-bold text-gray-800'>Lamar Posisi</h3>
-                <p className='text-sm text-gray-500'>{req.positionTitle} · {deptName} · {companyName}</p>
+                <p className='text-sm text-gray-500'>{req.publicTitle || req.positionTitle} · {deptName} · {companyName}</p>
               </div>
               <button onClick={onClose} className='text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
             </div>
@@ -157,7 +157,7 @@ function JobCard({ req, deptName, companyName, highlighted, onApply }) {
       className={`rounded-2xl bg-white p-5 shadow-sm ring-1 transition ${highlighted ? 'ring-2 ring-red-300' : 'ring-gray-100'}`}>
       <div className='flex flex-wrap items-start justify-between gap-3'>
         <div>
-          <h3 className='text-base font-bold text-gray-800'>{req.positionTitle}</h3>
+          <h3 className='text-base font-bold text-gray-800'>{req.publicTitle || req.positionTitle}</h3>
           <p className='mt-1 text-sm text-gray-500'>{deptName} · {companyName}</p>
           <div className='mt-2 flex flex-wrap gap-2'>
             <span className='rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600'>{req.employmentType}</span>

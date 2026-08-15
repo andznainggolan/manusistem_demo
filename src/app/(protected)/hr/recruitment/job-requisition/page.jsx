@@ -13,7 +13,7 @@ const STATUS_TONE = { Open: 'success', 'Posted External': 'info', 'On Hold': 'wa
 const PRIORITY_TONE = { High: 'danger', Medium: 'warning', Low: 'neutral' }
 
 const EMPTY_FORM = {
-  positionTitle: '', departmentId: '', companyId: '', employmentType: 'Permanent',
+  positionId: '', publicTitle: '', departmentId: '', companyId: '', employmentType: 'Permanent',
   headcount: 1, priority: 'Medium', status: 'Open', targetDate: '',
   publishStartDate: '', publishEndDate: '', notes: '',
 }
@@ -24,7 +24,7 @@ export default function JobRequisitionPage() {
   const {
     requisitions, candidates, addRequisition, updateRequisition, deleteRequisition,
   } = useRecruitmentStore()
-  const { departments, companies } = useStructureStore()
+  const { departments, companies, positions } = useStructureStore()
 
   const [q, setQ] = useState('')
   const [status, setStatus] = useState('all')
@@ -53,7 +53,12 @@ export default function JobRequisitionPage() {
   const openAdd = () => setModal({ mode: 'add', form: { ...EMPTY_FORM } })
   const openEdit = (r) => setModal({
     mode: 'edit', id: r.id,
-    form: { positionTitle: r.positionTitle, departmentId: String(r.departmentId), companyId: String(r.companyId),
+    form: { // Legacy requisitions only ever had a free-text positionTitle (no FK) —
+            // fall back to matching it by exact name against master data so editing
+            // an old record doesn't land on a blank LOV.
+            positionId: String(r.positionId ?? positions.find(p => p.name === r.positionTitle)?.id ?? ''),
+            publicTitle: r.publicTitle || '',
+            departmentId: String(r.departmentId), companyId: String(r.companyId),
             employmentType: r.employmentType, headcount: r.headcount, priority: r.priority, status: r.status,
             targetDate: r.targetDate, publishStartDate: r.publishStartDate || '', publishEndDate: r.publishEndDate || '',
             notes: r.notes },
@@ -64,11 +69,19 @@ export default function JobRequisitionPage() {
   const dateRangeInvalid = modal?.form.publishStartDate && modal?.form.publishEndDate
     && modal.form.publishEndDate < modal.form.publishStartDate
 
+  // Position LOV is scoped to the selected Department — matches how the
+  // requisition is actually being requested (a seat within that department).
+  const departmentPositions = modal?.form.departmentId
+    ? positions.filter(p => String(p.departmentId) === modal.form.departmentId)
+    : []
+
   const save = () => {
     const f = modal.form
-    if (!f.positionTitle.trim() || !f.departmentId || !f.companyId || dateRangeInvalid) return
+    if (!f.positionId || !f.departmentId || !f.companyId || dateRangeInvalid) return
+    const position = positions.find(p => p.id === Number(f.positionId))
     const payload = {
-      positionTitle: f.positionTitle.trim(),
+      positionId: Number(f.positionId), positionTitle: position?.name || '',
+      publicTitle: f.publicTitle.trim(),
       departmentId: Number(f.departmentId), companyId: Number(f.companyId),
       employmentType: f.employmentType, headcount: Math.max(1, Number(f.headcount) || 1),
       priority: f.priority, status: f.status, targetDate: f.targetDate,
@@ -153,6 +166,9 @@ export default function JobRequisitionPage() {
               <Td>
                 <p className='font-semibold text-gray-800'>{r.positionTitle}</p>
                 <p className='text-xs text-gray-400'>{r.employmentType} · {t('diajukan oleh', 'requested by')} {r.requestedByName}</p>
+                {r.publicTitle && r.publicTitle !== r.positionTitle && (
+                  <p className='mt-0.5 text-xs text-blue-500'>🌐 {t('Publik', 'Public')}: {r.publicTitle}</p>
+                )}
               </Td>
               <Td className='text-sm text-gray-600'>{deptName(r.departmentId)}</Td>
               <Td className='text-sm text-gray-600'>{companyName(r.companyId)}</Td>
@@ -202,12 +218,9 @@ export default function JobRequisitionPage() {
               <button onClick={close} className='text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
             </div>
             <div className='space-y-4'>
-              <FormField label={t('Judul Posisi', 'Position Title')} required>
-                <Input value={modal.form.positionTitle} onChange={e => setField({ positionTitle: e.target.value })} autoFocus />
-              </FormField>
               <div className='grid grid-cols-2 gap-4'>
                 <FormField label={t('Departemen', 'Department')} required>
-                  <Select value={modal.form.departmentId} onChange={e => setField({ departmentId: e.target.value })}>
+                  <Select value={modal.form.departmentId} onChange={e => setField({ departmentId: e.target.value, positionId: '' })}>
                     <option value=''>—</option>
                     {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
                   </Select>
@@ -219,6 +232,20 @@ export default function JobRequisitionPage() {
                   </Select>
                 </FormField>
               </div>
+              <FormField label={t('Judul Posisi', 'Position Title')} required
+                hint={!modal.form.departmentId ? t('Pilih departemen dahulu.', 'Pick a department first.') : ''}>
+                <Select value={modal.form.positionId} disabled={!modal.form.departmentId}
+                  onChange={e => setField({ positionId: e.target.value })}>
+                  <option value=''>—</option>
+                  {departmentPositions.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </Select>
+              </FormField>
+              <FormField label={t('Judul Posisi (Publik / Career Site)', 'Position Title (Public / Career Site)')}
+                hint={t('Kosongkan jika sama dengan Judul Posisi di atas — berguna kalau nama jabatan internal beda dengan yang ingin ditampilkan ke pelamar.',
+                        'Leave blank to match the Position Title above — useful when the internal job title differs from what you want candidates to see.')}>
+                <Input value={modal.form.publicTitle} onChange={e => setField({ publicTitle: e.target.value })}
+                  placeholder={departmentPositions.find(p => p.id === Number(modal.form.positionId))?.name || ''} />
+              </FormField>
               <div className='grid grid-cols-2 gap-4'>
                 <FormField label={t('Tipe Kepegawaian', 'Employment Type')}>
                   <Select value={modal.form.employmentType} onChange={e => setField({ employmentType: e.target.value })}>
@@ -265,7 +292,7 @@ export default function JobRequisitionPage() {
             <div className='mt-6 flex justify-end gap-2'>
               <ActionButton variant='secondary' onClick={close}>{t('Batal', 'Cancel')}</ActionButton>
               <ActionButton onClick={save} icon='💾'
-                disabled={!modal.form.positionTitle.trim() || !modal.form.departmentId || !modal.form.companyId || dateRangeInvalid}>
+                disabled={!modal.form.positionId || !modal.form.departmentId || !modal.form.companyId || dateRangeInvalid}>
                 {t('Simpan', 'Save')}
               </ActionButton>
             </div>
