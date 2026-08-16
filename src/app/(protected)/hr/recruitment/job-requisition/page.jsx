@@ -240,16 +240,21 @@ export default function JobRequisitionPage() {
               <FormField label={t('Judul Posisi', 'Position Title')} required
                 hint={!modal.form.departmentId ? t('Pilih departemen dahulu.', 'Pick a department first.') : ''}>
                 <Select value={modal.form.positionId} disabled={!modal.form.departmentId}
-                  onChange={e => setField({ positionId: e.target.value })}>
+                  onChange={e => {
+                    const val = e.target.value
+                    const pos = departmentPositions.find(p => p.id === Number(val))
+                    // Default the public title to match — still just a starting
+                    // point HR can override, not a locked mirror of the field above.
+                    setModal(m => ({ ...m, form: { ...m.form, positionId: val, publicTitle: pos?.name || '' } }))
+                  }}>
                   <option value=''>—</option>
                   {departmentPositions.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                 </Select>
               </FormField>
               <FormField label={t('Judul Posisi (Publik / Career Site)', 'Position Title (Public / Career Site)')}
-                hint={t('Kosongkan jika sama dengan Judul Posisi di atas — berguna kalau nama jabatan internal beda dengan yang ingin ditampilkan ke pelamar.',
-                        'Leave blank to match the Position Title above — useful when the internal job title differs from what you want candidates to see.')}>
-                <Input value={modal.form.publicTitle} onChange={e => setField({ publicTitle: e.target.value })}
-                  placeholder={departmentPositions.find(p => p.id === Number(modal.form.positionId))?.name || ''} />
+                hint={t('Otomatis sama dengan Judul Posisi di atas — ubah kalau nama jabatan internal beda dengan yang ingin ditampilkan ke pelamar.',
+                        'Automatically matches the Position Title above — change it if the internal job title should differ from what candidates see.')}>
+                <Input value={modal.form.publicTitle} onChange={e => setField({ publicTitle: e.target.value })} />
               </FormField>
               <div className='grid grid-cols-2 gap-4'>
                 <FormField label={t('Tipe Kepegawaian', 'Employment Type')}>
