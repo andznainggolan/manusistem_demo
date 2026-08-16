@@ -13,7 +13,7 @@ const STATUS_TONE = { Open: 'success', 'Posted External': 'info', 'On Hold': 'wa
 const PRIORITY_TONE = { High: 'danger', Medium: 'warning', Low: 'neutral' }
 
 const EMPTY_FORM = {
-  positionId: '', publicTitle: '', departmentId: '', companyId: '', employmentType: 'Permanent',
+  positionId: '', publicTitle: '', jobDescription: '', departmentId: '', companyId: '', employmentType: 'Permanent',
   headcount: 1, priority: 'Medium', status: 'Open', targetDate: '',
   publishStartDate: '', publishEndDate: '', notes: '',
 }
@@ -57,7 +57,7 @@ export default function JobRequisitionPage() {
             // fall back to matching it by exact name against master data so editing
             // an old record doesn't land on a blank LOV.
             positionId: String(r.positionId ?? positions.find(p => p.name === r.positionTitle)?.id ?? ''),
-            publicTitle: r.publicTitle || '',
+            publicTitle: r.publicTitle || '', jobDescription: r.jobDescription || '',
             departmentId: String(r.departmentId), companyId: String(r.companyId),
             employmentType: r.employmentType, headcount: r.headcount, priority: r.priority, status: r.status,
             targetDate: r.targetDate, publishStartDate: r.publishStartDate || '', publishEndDate: r.publishEndDate || '',
@@ -85,7 +85,7 @@ export default function JobRequisitionPage() {
     const position = positions.find(p => p.id === Number(f.positionId))
     const payload = {
       positionId: Number(f.positionId), positionTitle: position?.name || '',
-      publicTitle: f.publicTitle.trim(),
+      publicTitle: f.publicTitle.trim(), jobDescription: f.jobDescription.trim(),
       departmentId: Number(f.departmentId), companyId: Number(f.companyId),
       employmentType: f.employmentType, headcount: Math.max(1, Number(f.headcount) || 1),
       priority: f.priority, status: f.status, targetDate: f.targetDate,
@@ -255,6 +255,13 @@ export default function JobRequisitionPage() {
                 hint={t('Otomatis sama dengan Judul Posisi di atas — ubah kalau nama jabatan internal beda dengan yang ingin ditampilkan ke pelamar.',
                         'Automatically matches the Position Title above — change it if the internal job title should differ from what candidates see.')}>
                 <Input value={modal.form.publicTitle} onChange={e => setField({ publicTitle: e.target.value })} />
+              </FormField>
+              <FormField label={t('Deskripsi Pekerjaan (Publik / Career Site)', 'Job Description (Public / Career Site)')}
+                hint={t('Ditampilkan di halaman Career Site — tanggung jawab, kualifikasi, dsb. Baris baru akan tetap terlihat.',
+                        'Shown on the Career Site — responsibilities, qualifications, etc. Line breaks are preserved.')}>
+                <textarea rows={6} className={inputClass} value={modal.form.jobDescription}
+                  onChange={e => setField({ jobDescription: e.target.value })}
+                  placeholder={t('Contoh:\nTanggung Jawab:\n- ...\n\nKualifikasi:\n- ...', 'e.g.:\nResponsibilities:\n- ...\n\nQualifications:\n- ...')} />
               </FormField>
               <div className='grid grid-cols-2 gap-4'>
                 <FormField label={t('Tipe Kepegawaian', 'Employment Type')}>

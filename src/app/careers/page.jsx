@@ -163,7 +163,9 @@ function JobCard({ req, deptName, companyName, highlighted, onApply }) {
             <span className='rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600'>{req.employmentType}</span>
             <span className='rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600'>{deptName}</span>
           </div>
-          {req.notes && <p className='mt-3 max-w-xl text-sm text-gray-500'>{req.notes}</p>}
+          {req.jobDescription && (
+            <p className='mt-3 max-w-xl whitespace-pre-wrap text-sm text-gray-500'>{req.jobDescription}</p>
+          )}
         </div>
         <button onClick={() => onApply(req)}
           className='shrink-0 rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:shadow-md'
