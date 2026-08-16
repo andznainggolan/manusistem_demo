@@ -71,6 +71,13 @@ export default function HeadcountPage() {
 
   const headcount = (id) => headcounts.find(h=>h.id===id)
 
+  const suggestedName = (posId) => {
+    const pos = position(+posId)
+    if (!pos) return ''
+    const count = headcounts.filter(h => h.positionId === +posId && h.id !== editing?.id).length
+    return `${pos.name} ${String.fromCharCode(65 + count)}`
+  }
+
   const selectedPos = position(+form.positionId)
   const selectedSup = headcount(+form.supervisorHeadcountId)
   const supIncumbent = selectedSup?.employeeId ? employee(selectedSup.employeeId) : null
@@ -205,7 +212,10 @@ export default function HeadcountPage() {
             </div>
             <div className='px-6 py-5 space-y-4'>
               <FormField label='Position' required>
-                <Select value={form.positionId} onChange={e=>setForm(f=>({...f,positionId:e.target.value}))}>
+                <Select value={form.positionId} onChange={e=>{
+                  const val = e.target.value
+                  setForm(f=>({...f, positionId: val, name: suggestedName(val)}))
+                }}>
                   <option value=''>-- {t('Pilih Position','Select Position')} --</option>
                   {positions.filter(p=>p.status==='Active').map(p=>(
                     <option key={p.id} value={p.id}>{p.code} · {p.name}</option>
