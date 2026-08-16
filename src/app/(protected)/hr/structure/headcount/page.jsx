@@ -1,5 +1,6 @@
 'use client'
 import Icon from '@/components/ui/Icon'
+import SearchableSelect from '@/components/ui/SearchableSelect'
 import { useState } from 'react'
 import { useStructureStore } from '@/store/structureStore'
 import { useEmployeeStore } from '@/store/employeeStore'
@@ -212,15 +213,12 @@ export default function HeadcountPage() {
             </div>
             <div className='px-6 py-5 space-y-4'>
               <FormField label='Position' required>
-                <Select value={form.positionId} onChange={e=>{
-                  const val = e.target.value
-                  setForm(f=>({...f, positionId: val, name: suggestedName(val)}))
-                }}>
-                  <option value=''>-- {t('Pilih Position','Select Position')} --</option>
-                  {positions.filter(p=>p.status==='Active').map(p=>(
-                    <option key={p.id} value={p.id}>{p.code} · {p.name}</option>
-                  ))}
-                </Select>
+                <SearchableSelect
+                  value={form.positionId}
+                  placeholder={`-- ${t('Pilih Position','Select Position')} --`}
+                  onChange={val => setForm(f=>({...f, positionId: val, name: suggestedName(val)}))}
+                  options={positions.filter(p=>p.status==='Active').map(p=>({ value: String(p.id), label: `${p.code} · ${p.name}` }))}
+                />
                 {selectedPos && (
                   <div className='mt-2 rounded-lg bg-red-50 px-3 py-2.5 text-xs ring-1 ring-red-100'>
                     <div className='font-bold text-red-700'>Company: {companyName(selectedPos.departmentId)}</div>
