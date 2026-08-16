@@ -54,58 +54,60 @@ function TimeCardWidget({ t, userId, userName, sched, record, onClockIn, onClock
   const workedMin = startMin != null && endMin != null ? Math.max(0, endMin - startMin) : null
   const workingStr = workedMin != null ? `${Math.floor(workedMin / 60)}h ${workedMin % 60}m` : '--'
 
+  const nowStr = now ? now.toLocaleTimeString('id-ID', { hour12: false }) : '--:--:--'
+
   return (
-    <div className='bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 overflow-hidden'>
-      <div className='flex items-center justify-between px-4 py-3 border-b border-gray-100'>
-        <div className='flex items-center gap-2 text-gray-700 font-semibold text-sm'>
-          <svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-            <circle cx='12' cy='12' r='10'/><polyline points='12 6 12 12 16 14'/>
-          </svg>
-          {t('My Time Card', 'My Time Card')}
+    <div className='rounded-2xl shadow-sm overflow-hidden' style={{ background: 'linear-gradient(135deg,#052B52 0%,#039299 100%)' }}>
+      {/* Live clock header — the ticking time is the focal point, not a static label */}
+      <div className='px-5 pt-4 pb-3 flex items-start justify-between'>
+        <div>
+          <p className='text-[11px] font-semibold uppercase tracking-wider text-teal-100/80'>
+            {t('Jam Sekarang', 'Right Now')}
+          </p>
+          <p className='text-2xl font-bold font-mono tabular-nums text-white leading-tight'>{nowStr}</p>
+          {sched && (
+            <p className='mt-0.5 text-[11px] text-teal-100/70'>
+              {sched.shift.name} · {sched.shift.startTime}–{sched.shift.endTime}
+            </p>
+          )}
         </div>
         <button onClick={() => router.push('/ess/calendar')}
-          className='text-xs text-gray-400 hover:text-gray-600 font-medium transition'>
-          {t('Show More', 'Show More')}
+          className='text-[11px] font-semibold text-white/70 hover:text-white transition whitespace-nowrap'>
+          {t('Detail', 'Details')} →
         </button>
       </div>
 
-      {sched && (
-        <p className='px-4 pt-2 text-[11px] text-gray-400'>
-          {sched.shift.name} · {sched.shift.startTime}–{sched.shift.endTime}
-        </p>
-      )}
-
-      <div className='px-4 py-3 grid grid-cols-2 divide-x divide-gray-100'>
-        <div className='pr-4 text-center'>
-          <p className={`text-lg font-bold font-mono ${inTime ? TONE_CLASS[gin.tone] : 'text-gray-300'}`}>
+      {/* In/Out chips on a light panel, not a divided two-column table */}
+      <div className='mx-2 mb-2 rounded-xl bg-white/95 backdrop-blur px-3 py-3 flex gap-2'>
+        <div className='flex-1 rounded-lg bg-emerald-50 px-3 py-2.5 text-center'>
+          <p className='text-[10px] font-bold uppercase tracking-wide text-emerald-600'>{t('Masuk', 'Clock In')}</p>
+          <p className={`text-base font-bold font-mono mt-0.5 ${inTime ? TONE_CLASS[gin.tone] : 'text-gray-300'}`}>
             {inTime || '--:--'}
           </p>
-          <p className='text-xs text-gray-400 mt-0.5'>In</p>
           {!inTime && (
             <button onClick={onClockIn} disabled={!userId}
-              className='mt-2 text-xs text-white font-semibold px-3 py-1 rounded-full transition disabled:opacity-50'
-              style={{ background: 'linear-gradient(135deg,#059669,#34d399)' }}>
-              Clock In
+              className='mt-1.5 text-[11px] text-white font-semibold px-3 py-1 rounded-full transition disabled:opacity-50 bg-emerald-600 hover:bg-emerald-700'>
+              {t('Clock In', 'Clock In')}
             </button>
           )}
         </div>
-        <div className='pl-4 text-center'>
-          <p className={`text-lg font-bold font-mono ${outTime ? TONE_CLASS[gout.tone] : 'text-gray-300'}`}>
+        <div className='flex-1 rounded-lg bg-rose-50 px-3 py-2.5 text-center'>
+          <p className='text-[10px] font-bold uppercase tracking-wide text-rose-600'>{t('Pulang', 'Clock Out')}</p>
+          <p className={`text-base font-bold font-mono mt-0.5 ${outTime ? TONE_CLASS[gout.tone] : 'text-gray-300'}`}>
             {outTime || '--:--'}
           </p>
-          <p className='text-xs text-gray-400 mt-0.5'>Out</p>
           {inTime && !outTime && (
             <button onClick={onClockOut}
-              className='mt-2 text-xs text-white font-semibold px-3 py-1 rounded-full transition'
-              style={{ background: 'linear-gradient(135deg,#dc2626,#f87171)' }}>
-              Clock Out
+              className='mt-1.5 text-[11px] text-white font-semibold px-3 py-1 rounded-full transition bg-rose-600 hover:bg-rose-700'>
+              {t('Clock Out', 'Clock Out')}
             </button>
           )}
         </div>
       </div>
-      <div className='px-4 py-2.5 bg-gray-50 border-t border-gray-100'>
-        <span className='text-xs text-gray-500'>
-          {t('Working time', 'Working time')}: <span className='font-semibold text-gray-700'>{workingStr}</span>
+
+      <div className='px-5 py-2 bg-black/10'>
+        <span className='text-[11px] text-teal-50/90'>
+          {t('Total jam kerja', 'Hours worked')}: <span className='font-bold text-white'>{workingStr}</span>
         </span>
       </div>
     </div>
