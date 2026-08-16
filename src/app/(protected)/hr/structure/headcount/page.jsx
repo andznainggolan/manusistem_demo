@@ -14,7 +14,7 @@ const BLANK = { positionId:'', code:'', name:'', employeeId:'', supervisorHeadco
 export default function HeadcountPage() {
   const t = useT()
   const {
-    departments, positions, headcounts,
+    departments, positions, headcounts, companies, businessUnits,
     addHeadcount, updateHeadcount, deleteHeadcount,
   } = useStructureStore()
   const { employees } = useEmployeeStore()
@@ -62,6 +62,11 @@ export default function HeadcountPage() {
 
   const position  = (id) => positions.find(p=>p.id===id)
   const deptName  = (id) => departments.find(d=>d.id===id)?.name || '-'
+  const companyName = (departmentId) => {
+    const dept = departments.find(d=>d.id===departmentId)
+    const bu = businessUnits.find(b=>b.id===dept?.businessUnitId)
+    return companies.find(c=>c.id===bu?.companyId)?.name || '-'
+  }
   const employee  = (id) => employees.find(e=>e.id===id)
 
   const headcount = (id) => headcounts.find(h=>h.id===id)
@@ -208,7 +213,8 @@ export default function HeadcountPage() {
                 </Select>
                 {selectedPos && (
                   <div className='mt-2 rounded-lg bg-red-50 px-3 py-2.5 text-xs ring-1 ring-red-100'>
-                    <div className='font-bold text-red-700'>{selectedPos.code} · {selectedPos.name}</div>
+                    <div className='font-bold text-red-700'>Company: {companyName(selectedPos.departmentId)}</div>
+                    <div className='mt-1 text-gray-700 font-semibold'>{selectedPos.code} · {selectedPos.name}</div>
                     <div className='mt-1 text-gray-500'>Department: {deptName(selectedPos.departmentId)}</div>
                   </div>
                 )}
