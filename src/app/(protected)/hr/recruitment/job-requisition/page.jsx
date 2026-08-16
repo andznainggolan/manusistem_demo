@@ -13,7 +13,7 @@ const STATUS_TONE = { Open: 'success', 'Posted External': 'info', 'On Hold': 'wa
 const PRIORITY_TONE = { High: 'danger', Medium: 'warning', Low: 'neutral' }
 
 const EMPTY_FORM = {
-  positionId: '', publicTitle: '', jobDescription: '', departmentId: '', companyId: '', employmentType: 'Permanent',
+  positionId: '', headcountId: '', publicTitle: '', jobDescription: '', departmentId: '', companyId: '', employmentType: 'Permanent',
   headcount: 1, priority: 'Medium', status: 'Open', targetDate: '',
   publishStartDate: '', publishEndDate: '', notes: '',
 }
@@ -24,7 +24,7 @@ export default function JobRequisitionPage() {
   const {
     requisitions, candidates, addRequisition, updateRequisition, deleteRequisition,
   } = useRecruitmentStore()
-  const { departments, companies, positions, businessUnits } = useStructureStore()
+  const { departments, companies, positions, businessUnits, headcounts } = useStructureStore()
 
   const [q, setQ] = useState('')
   const [status, setStatus] = useState('all')
@@ -57,6 +57,7 @@ export default function JobRequisitionPage() {
             // fall back to matching it by exact name against master data so editing
             // an old record doesn't land on a blank LOV.
             positionId: String(r.positionId ?? positions.find(p => p.name === r.positionTitle)?.id ?? ''),
+            headcountId: r.headcountId ? String(r.headcountId) : '',
             publicTitle: r.publicTitle || '', jobDescription: r.jobDescription || '',
             departmentId: String(r.departmentId), companyId: String(r.companyId),
             employmentType: r.employmentType, headcount: r.headcount, priority: r.priority, status: r.status,
@@ -78,6 +79,13 @@ export default function JobRequisitionPage() {
   const departmentPositions = modal?.form.departmentId
     ? positions.filter(p => String(p.departmentId) === modal.form.departmentId)
     : []
+  // Vacant seats for the selected Position — excludes any already filled
+  // (employeeId set) and any already claimed by another still-open
+  // requisition, so a seat can never be double-booked.
+  const availableHeadcounts = modal?.form.positionId
+    ? headcounts.filter(h => h.positionId === Number(modal.form.positionId) && h.status === 'Active' && !h.employeeId
+        && !requisitions.some(r => r.id !== modal.id && r.headcountId === h.id && r.status !== 'Closed'))
+    : []
 
   const save = () => {
     const f = modal.form
@@ -85,6 +93,7 @@ export default function JobRequisitionPage() {
     const position = positions.find(p => p.id === Number(f.positionId))
     const payload = {
       positionId: Number(f.positionId), positionTitle: position?.name || '',
+      headcountId: f.headcountId ? Number(f.headcountId) : null,
       publicTitle: f.publicTitle.trim(), jobDescription: f.jobDescription.trim(),
       departmentId: Number(f.departmentId), companyId: Number(f.companyId),
       employmentType: f.employmentType, headcount: Math.max(1, Number(f.headcount) || 1),
@@ -168,7 +177,14 @@ export default function JobRequisitionPage() {
             return (
             <Tr key={r.id}>
               <Td>
-                <p className='font-semibold text-gray-800'>{r.positionTitle}</p>
+                <p className='font-semibold text-gray-800'>
+                  {r.positionTitle}
+                  {r.headcountId && (
+                    <span className='ml-1.5 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-500'>
+                      {headcounts.find(h => h.id === r.headcountId)?.code || '—'}
+                    </span>
+                  )}
+                </p>
                 <p className='text-xs text-gray-400'>{r.employmentType} · {t('diajukan oleh', 'requested by')} {r.requestedByName}</p>
                 {r.publicTitle && r.publicTitle !== r.positionTitle && (
                   <p className='mt-0.5 text-xs text-blue-500'>🌐 {t('Publik', 'Public')}: {r.publicTitle}</p>
@@ -245,10 +261,22 @@ export default function JobRequisitionPage() {
                     const pos = departmentPositions.find(p => p.id === Number(val))
                     // Default the public title to match — still just a starting
                     // point HR can override, not a locked mirror of the field above.
-                    setModal(m => ({ ...m, form: { ...m.form, positionId: val, publicTitle: pos?.name || '' } }))
+                    setModal(m => ({ ...m, form: { ...m.form, positionId: val, headcountId: '', publicTitle: pos?.name || '' } }))
                   }}>
                   <option value=''>—</option>
                   {departmentPositions.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </Select>
+              </FormField>
+              <FormField label={t('Headcount', 'Headcount')}
+                hint={!modal.form.positionId
+                  ? t('Pilih posisi dahulu.', 'Pick a position first.')
+                  : availableHeadcounts.length === 0
+                    ? t('Tidak ada kursi headcount kosong untuk posisi ini — atur di Structure > Headcount.', 'No vacant headcount seat for this position — set one up under Structure > Headcount.')
+                    : t('Kursi headcount yang akan ditempati kandidat terpilih — tiap kursi hanya bisa dipakai satu requisition aktif.', 'The headcount seat the selected candidate will fill — each seat can only be claimed by one open requisition at a time.')}>
+                <Select value={modal.form.headcountId} disabled={!modal.form.positionId || availableHeadcounts.length === 0}
+                  onChange={e => setField({ headcountId: e.target.value })}>
+                  <option value=''>—</option>
+                  {availableHeadcounts.map(h => <option key={h.id} value={h.id}>{h.code} — {h.name}</option>)}
                 </Select>
               </FormField>
               <FormField label={t('Judul Posisi (Publik / Career Site)', 'Position Title (Public / Career Site)')}
