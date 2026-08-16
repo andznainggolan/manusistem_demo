@@ -203,6 +203,7 @@ export default function MyProfilePage() {
         {/* Employment */}
         {tab === 'Employment' && (
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+            <Field label={t('Nomor Karyawan', 'Employee Number')} value={emp.nik} />
             <Field label={t('Perusahaan', 'Company')}       value={company?.name} />
             <Field label={t('Divisi', 'Division')}          value={division?.name} />
             <Field label={t('Business Unit', 'Business Unit')} value={bunit?.name} />
