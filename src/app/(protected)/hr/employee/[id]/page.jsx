@@ -11,7 +11,7 @@ import { useDocumentTypeStore } from '@/store/documentTypeStore'
 import { useAuthStore } from '@/store/authStore'
 import { PTKP_STATUSES } from '@/lib/payrollCalc'
 import { useT } from '@/store/languageStore'
-import { RELS, GENDERS } from '@/utils/constants'
+import { RELS, GENDERS, RELIGIONS, MARITAL, COUNTRIES, CITIES } from '@/utils/constants'
 import { FormField, Input, Select, ActionButton, StatusBadge, DocCompletionDonut } from '@/components/ui'
 
 const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History', 'Salary', 'Personal Document']
@@ -87,12 +87,22 @@ const EMPTY_RECORD = {
   bpjsKesehatan: true, bpjsTk: true,
 }
 
+const BIO_EMPTY_RECORD = {
+  effectiveDate: todayStr(), effectiveEndDate: NO_END_DATE, effectiveSeq: 1, reason: 'Personal Data Update', note: '',
+  gender: '', birthDate: '', birthPlace: '', nationality: '', religion: '', maritalStatus: '',
+  phone: '', email: '', personalEmail: '', address: '', city: '', country: '',
+  ktp: '', npwp: '', bpjs: '',
+}
+
 export default function EmployeeProfilePage() {
   const { id } = useParams()
   const router  = useRouter()
   const searchParams = useSearchParams()
   const t       = useT()
-  const { employees, addHistory, updateHistory, deleteHistory, setPhoto, addDependent, updateDependent, deleteDependent } = useEmployeeStore()
+  const {
+    employees, addHistory, updateHistory, deleteHistory, setPhoto, addDependent, updateDependent, deleteDependent,
+    addBioHistory, updateBioHistory, deleteBioHistory,
+  } = useEmployeeStore()
   const photoInputRef = useRef(null)
   const [photoError, setPhotoError] = useState(null)
   const { companies, divisions, businessUnits, departments, positions, grades } = useStructureStore()
@@ -112,6 +122,7 @@ export default function EmployeeProfilePage() {
 
   const [tab, setTab] = useState(() => TABS.includes(searchParams.get('tab')) ? searchParams.get('tab') : 'Employment')
   const [recordModal, setRecordModal] = useState(null) // { mode: 'add'|'edit', form: {...} }
+  const [bioModal, setBioModal] = useState(null) // { intent: 'correct'|'update', form: {...} }
 
   const emp = employees.find(e => String(e.id) === String(id))
 
@@ -152,6 +163,21 @@ export default function EmployeeProfilePage() {
   const salaryRecords = historyRecords.filter(h => h.basic != null)
   const activeRecordId = salaryRecords.find(r =>
     r.effectiveDate <= today && (!r.effectiveEndDate || r.effectiveEndDate >= today))?.id
+
+  // Personal data (Bio) follows the same effective-dated Correct/Update
+  // pattern as Employment/Salary above, but in its own array — falls back
+  // to the employee's static fields until the first bio record is saved.
+  const bioHistoryRecords = [...(emp.bioHistory || [])]
+    .sort((a, b) => b.effectiveDate.localeCompare(a.effectiveDate) || b.effectiveSeq - a.effectiveSeq)
+  const activeBio = bioHistoryRecords.find(r =>
+    r.effectiveDate <= today && (!r.effectiveEndDate || r.effectiveEndDate >= today))
+  const displayBio = activeBio || {
+    gender: emp.gender, birthDate: emp.birthDate, birthPlace: emp.birthPlace, nationality: emp.nationality,
+    religion: emp.religion, maritalStatus: emp.maritalStatus,
+    phone: emp.phone, email: emp.email, personalEmail: emp.personalEmail,
+    address: emp.address, city: emp.city, country: emp.country,
+    ktp: emp.ktp, npwp: emp.npwp, bpjs: emp.bpjs,
+  }
 
   // No dated record yet? Show a synthetic "Hire" baseline (from the
   // employee's join date + current static fields) instead of a blank
@@ -334,6 +360,51 @@ export default function EmployeeProfilePage() {
   const canSave = recordModal && recordModal.form.effectiveDate && recordModal.form.reason && Number(recordModal.form.basic) > 0
   const reasonOptions = recordModal ? (HISTORY_REASONS[recordModal.form.action] || []) : []
 
+  // "Correct" edits the currently-effective bio record in place (no new
+  // history row) — or, the first time, seeds one from the employee's join
+  // date. "Update" always adds a new dated row, preserving the old value.
+  const openCorrectBio = () => setBioModal({
+    intent: 'correct',
+    form: activeBio
+      ? { ...activeBio, effectiveEndDate: activeBio.effectiveEndDate || NO_END_DATE }
+      : { ...BIO_EMPTY_RECORD, ...displayBio, effectiveDate: emp.joinDate || today },
+  })
+  const openUpdateBio = () => setBioModal({
+    intent: 'update',
+    form: { ...BIO_EMPTY_RECORD, ...displayBio, id: undefined, effectiveDate: today },
+  })
+  const openEditBioRecord = (record) => setBioModal({
+    intent: 'correct',
+    form: { ...record, effectiveEndDate: record.effectiveEndDate || NO_END_DATE },
+  })
+  const closeBioModal = () => setBioModal(null)
+
+  const deleteBioRecord = (record) => {
+    if (window.confirm(t(`Hapus riwayat data pribadi efektif ${record.effectiveDate}?`, `Delete personal data record effective ${record.effectiveDate}?`))) {
+      deleteBioHistory(emp.id, record.id)
+    }
+  }
+
+  const saveBio = () => {
+    const f = bioModal.form
+    const payload = {
+      effectiveDate: f.effectiveDate,
+      effectiveEndDate: f.effectiveEndDate || NO_END_DATE,
+      effectiveSeq: Number(f.effectiveSeq) || 1,
+      reason: f.reason, note: (f.note || '').trim(),
+      gender: f.gender, birthDate: f.birthDate, birthPlace: f.birthPlace, nationality: f.nationality,
+      religion: f.religion, maritalStatus: f.maritalStatus,
+      phone: f.phone, email: f.email, personalEmail: f.personalEmail,
+      address: f.address, city: f.city, country: f.country,
+      ktp: f.ktp, npwp: f.npwp, bpjs: f.bpjs,
+    }
+    if (f.id) updateBioHistory(emp.id, f.id, payload)
+    else addBioHistory(emp.id, payload)
+    closeBioModal()
+  }
+
+  const bioDateLocked = bioModal?.intent === 'correct' && !!bioModal.form.id
+
   return (
     <div className='max-w-4xl mx-auto pb-10'>
 
@@ -350,7 +421,7 @@ export default function EmployeeProfilePage() {
             <div className='w-20 h-20 rounded-2xl bg-white/20 flex items-center justify-center overflow-hidden border-2 border-white/30'>
               {emp.photo
                 ? <img src={emp.photo} alt='' className='w-full h-full object-cover' />
-                : <span className='text-4xl'>{emp.gender === 'Female' ? '👩' : '👨'}</span>}
+                : <span className='text-4xl'>{displayBio.gender === 'Female' ? '👩' : '👨'}</span>}
             </div>
             <input ref={photoInputRef} type='file' accept='image/*' className='hidden'
               onChange={e => { handlePhotoFile(e.target.files?.[0]); e.target.value = '' }} />
@@ -481,36 +552,87 @@ export default function EmployeeProfilePage() {
         {/* ── Bio ────────────────────────────────────────────────────── */}
         {tab === 'Bio' && (
           <div className='space-y-6'>
+            <div className='flex items-center justify-between'>
+              <p className='text-xs text-gray-400'>
+                {activeBio
+                  ? t(`Berlaku efektif ${activeBio.effectiveDate}${activeBio.reason ? ` · ${activeBio.reason}` : ''}.`, `In effect since ${activeBio.effectiveDate}${activeBio.reason ? ` · ${activeBio.reason}` : ''}.`)
+                  : t('Belum ada riwayat data pribadi — data di bawah masih dari data dasar karyawan.', 'No dated personal data record yet — the data below still comes from the employee\'s base fields.')}
+              </p>
+              <div className='flex gap-2 flex-shrink-0'>
+                <ActionButton size='sm' variant='secondary' icon='✏️' onClick={openCorrectBio}>{t('Correct','Correct')}</ActionButton>
+                <ActionButton size='sm' icon='📅' onClick={openUpdateBio}>{t('Update (Tgl Efektif Baru)','Update (New Effective Date)')}</ActionButton>
+              </div>
+            </div>
+
             <div>
               <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Informasi Pribadi', 'Personal Information')}</h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4'>
-                <KVRow label={t('Jenis Kelamin', 'Gender')}        value={emp.gender} />
-                <KVRow label={t('Tanggal Lahir', 'Birth Date')}    value={emp.birthDate} />
-                <KVRow label={t('Tempat Lahir', 'Birth Place')}    value={emp.birthPlace} />
-                <KVRow label={t('Kewarganegaraan', 'Nationality')} value={emp.nationality} />
-                <KVRow label={t('Agama', 'Religion')}              value={emp.religion} />
-                <KVRow label={t('Status Pernikahan', 'Marital Status')} value={emp.maritalStatus} />
+                <KVRow label={t('Jenis Kelamin', 'Gender')}        value={displayBio.gender} />
+                <KVRow label={t('Tanggal Lahir', 'Birth Date')}    value={displayBio.birthDate} />
+                <KVRow label={t('Tempat Lahir', 'Birth Place')}    value={displayBio.birthPlace} />
+                <KVRow label={t('Kewarganegaraan', 'Nationality')} value={displayBio.nationality} />
+                <KVRow label={t('Agama', 'Religion')}              value={displayBio.religion} />
+                <KVRow label={t('Status Pernikahan', 'Marital Status')} value={displayBio.maritalStatus} />
               </div>
             </div>
             <div className='border-t border-gray-100 pt-5'>
               <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Kontak', 'Contact')}</h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4'>
-                <KVRow label={t('Telepon', 'Phone')}               value={emp.phone} />
-                <KVRow label={t('Email Kerja', 'Work Email')}      value={emp.email} />
-                <KVRow label={t('Email Pribadi', 'Personal Email')} value={emp.personalEmail} />
-                <KVRow label={t('Alamat', 'Address')}              value={emp.address} />
-                <KVRow label={t('Kota', 'City')}                   value={emp.city} />
-                <KVRow label={t('Negara', 'Country')}              value={emp.country} />
+                <KVRow label={t('Telepon', 'Phone')}               value={displayBio.phone} />
+                <KVRow label={t('Email Kerja', 'Work Email')}      value={displayBio.email} />
+                <KVRow label={t('Email Pribadi', 'Personal Email')} value={displayBio.personalEmail} />
+                <KVRow label={t('Alamat', 'Address')}              value={displayBio.address} />
+                <KVRow label={t('Kota', 'City')}                   value={displayBio.city} />
+                <KVRow label={t('Negara', 'Country')}              value={displayBio.country} />
               </div>
             </div>
             <div className='border-t border-gray-100 pt-5'>
               <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Nomor Identitas', 'ID Numbers')}</h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4'>
-                <KVRow label='KTP'  value={emp.ktp} />
-                <KVRow label='NPWP' value={emp.npwp} />
-                <KVRow label='BPJS' value={emp.bpjs} />
+                <KVRow label='KTP'  value={displayBio.ktp} />
+                <KVRow label='NPWP' value={displayBio.npwp} />
+                <KVRow label='BPJS' value={displayBio.bpjs} />
               </div>
             </div>
+
+            {bioHistoryRecords.length > 0 && (
+              <div className='border-t border-gray-100 pt-5'>
+                <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Riwayat Data Pribadi', 'Personal Data History')}</h3>
+                <div className='overflow-x-auto'>
+                  <table className='w-full text-sm'>
+                    <thead>
+                      <tr className='bg-gray-50'>
+                        <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Efektif Mulai','Effective Start')}</th>
+                        <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Efektif Sampai','Effective End')}</th>
+                        <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Alasan','Reason')}</th>
+                        <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'>{t('Catatan','Notes')}</th>
+                        <th className='px-3 py-2.5 text-left text-xs font-bold text-gray-500'></th>
+                        <th className='px-3 py-2.5 w-20'></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bioHistoryRecords.map(r => (
+                        <tr key={r.id} className='border-t border-gray-100 hover:bg-gray-50'>
+                          <td className='px-3 py-2.5 font-mono text-xs text-gray-700'>{r.effectiveDate}</td>
+                          <td className='px-3 py-2.5 font-mono text-xs text-gray-500'>{formatEndDate(r.effectiveEndDate)}</td>
+                          <td className='px-3 py-2.5 text-gray-600 text-xs'>{r.reason || '—'}</td>
+                          <td className='px-3 py-2.5 text-gray-500 text-xs'>{r.note || '—'}</td>
+                          <td className='px-3 py-2.5'>
+                            {r.id === activeBio?.id && <StatusBadge tone='success'>{t('Aktif','Active')}</StatusBadge>}
+                          </td>
+                          <td className='px-3 py-2.5 text-right whitespace-nowrap'>
+                            <button onClick={()=>openEditBioRecord(r)} className='text-xs font-semibold text-red-700 hover:underline mr-3'>{t('Edit','Edit')}</button>
+                            <button onClick={()=>deleteBioRecord(r)} className='text-gray-400 hover:text-red-600' aria-label={t('Hapus','Delete')}>
+                              <Icon e='🗑️' size={13} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -1122,6 +1244,139 @@ export default function EmployeeProfilePage() {
                 {t('Batal','Cancel')}
               </button>
               <ActionButton onClick={saveRecord} disabled={!canSave} className='flex-1'>{t('Simpan','Save')}</ActionButton>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bio (personal data) Correct/Update modal */}
+      {bioModal && (
+        <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4' onClick={closeBioModal}>
+          <div className='bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto' onClick={e=>e.stopPropagation()}>
+            <div className='flex justify-between items-start mb-4'>
+              <div>
+                <h3 className='text-base font-bold text-gray-800'>
+                  {bioModal.intent === 'update' ? t('Update Data Pribadi','Update Personal Data') : t('Correct Data Pribadi','Correct Personal Data')}
+                </h3>
+                <p className='text-xs text-gray-400 mt-0.5'>
+                  {bioModal.intent === 'update'
+                    ? t('Membuat riwayat baru dengan tanggal efektif — data lama tetap tersimpan.', 'Creates a new dated record — the old value stays in history.')
+                    : t('Memperbaiki data pada baris yang sama, tanpa membuat riwayat baru.', 'Fixes the data on the same row, without creating a new history entry.')}
+                </p>
+              </div>
+              <button onClick={closeBioModal} className='text-gray-400 hover:text-gray-600 text-xl font-bold leading-none'>×</button>
+            </div>
+
+            <div className='grid grid-cols-3 gap-3 mb-3'>
+              <FormField label={t('Efektif Mulai','Effective Start')} required>
+                <Input type='date' disabled={bioDateLocked} value={bioModal.form.effectiveDate}
+                  onChange={e=>setBioModal(m=>({...m, form:{...m.form, effectiveDate:e.target.value}}))} />
+              </FormField>
+              <FormField label={t('Efektif Sampai','Effective End')} hint={t('Default 9999-01-01 = masih berlaku','Defaults to 9999-01-01 = still current')}>
+                <Input type='date' disabled={bioDateLocked} value={bioModal.form.effectiveEndDate}
+                  onChange={e=>setBioModal(m=>({...m, form:{...m.form, effectiveEndDate:e.target.value}}))} />
+              </FormField>
+              <FormField label={t('Sequence','Sequence')}>
+                <Input type='number' disabled={bioDateLocked} value={bioModal.form.effectiveSeq}
+                  onChange={e=>setBioModal(m=>({...m, form:{...m.form, effectiveSeq:e.target.value}}))} />
+              </FormField>
+            </div>
+
+            <div className='grid grid-cols-2 gap-3 mb-3'>
+              <FormField label={t('Alasan','Reason')} required>
+                <Select value={bioModal.form.reason} onChange={e=>setBioModal(m=>({...m, form:{...m.form, reason:e.target.value}}))}>
+                  <option value=''>{t('— Pilih —','— Select —')}</option>
+                  {(HISTORY_REASONS['Data Change'] || []).map(r => <option key={r} value={r}>{r}</option>)}
+                </Select>
+              </FormField>
+              <FormField label={t('Catatan','Note')}>
+                <Input value={bioModal.form.note} onChange={e=>setBioModal(m=>({...m, form:{...m.form, note:e.target.value}}))} />
+              </FormField>
+            </div>
+
+            <div className='border-t border-gray-100 pt-4 mb-3'>
+              <h4 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-2'>{t('Informasi Pribadi', 'Personal Information')}</h4>
+              <div className='grid grid-cols-2 gap-3'>
+                <FormField label={t('Jenis Kelamin', 'Gender')}>
+                  <Select value={bioModal.form.gender} onChange={e=>setBioModal(m=>({...m, form:{...m.form, gender:e.target.value}}))}>
+                    {GENDERS.map(g => <option key={g} value={g}>{g}</option>)}
+                  </Select>
+                </FormField>
+                <FormField label={t('Tanggal Lahir', 'Birth Date')}>
+                  <Input type='date' value={bioModal.form.birthDate} onChange={e=>setBioModal(m=>({...m, form:{...m.form, birthDate:e.target.value}}))} />
+                </FormField>
+                <FormField label={t('Tempat Lahir', 'Birth Place')}>
+                  <Input value={bioModal.form.birthPlace} onChange={e=>setBioModal(m=>({...m, form:{...m.form, birthPlace:e.target.value}}))} />
+                </FormField>
+                <FormField label={t('Kewarganegaraan', 'Nationality')}>
+                  <Input value={bioModal.form.nationality} onChange={e=>setBioModal(m=>({...m, form:{...m.form, nationality:e.target.value}}))} />
+                </FormField>
+                <FormField label={t('Agama', 'Religion')}>
+                  <Select value={bioModal.form.religion} onChange={e=>setBioModal(m=>({...m, form:{...m.form, religion:e.target.value}}))}>
+                    <option value=''>{t('— Pilih —','— Select —')}</option>
+                    {RELIGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+                  </Select>
+                </FormField>
+                <FormField label={t('Status Pernikahan', 'Marital Status')}>
+                  <Select value={bioModal.form.maritalStatus} onChange={e=>setBioModal(m=>({...m, form:{...m.form, maritalStatus:e.target.value}}))}>
+                    <option value=''>{t('— Pilih —','— Select —')}</option>
+                    {MARITAL.map(s => <option key={s} value={s}>{s}</option>)}
+                  </Select>
+                </FormField>
+              </div>
+            </div>
+
+            <div className='border-t border-gray-100 pt-4 mb-3'>
+              <h4 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-2'>{t('Kontak', 'Contact')}</h4>
+              <div className='grid grid-cols-2 gap-3'>
+                <FormField label={t('Telepon', 'Phone')}>
+                  <Input value={bioModal.form.phone} onChange={e=>setBioModal(m=>({...m, form:{...m.form, phone:e.target.value}}))} />
+                </FormField>
+                <FormField label={t('Email Kerja', 'Work Email')}>
+                  <Input type='email' value={bioModal.form.email} onChange={e=>setBioModal(m=>({...m, form:{...m.form, email:e.target.value}}))} />
+                </FormField>
+                <FormField label={t('Email Pribadi', 'Personal Email')}>
+                  <Input type='email' value={bioModal.form.personalEmail} onChange={e=>setBioModal(m=>({...m, form:{...m.form, personalEmail:e.target.value}}))} />
+                </FormField>
+                <FormField label={t('Kota', 'City')}>
+                  <Select value={bioModal.form.city} onChange={e=>setBioModal(m=>({...m, form:{...m.form, city:e.target.value}}))}>
+                    <option value=''>{t('— Pilih —','— Select —')}</option>
+                    {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </Select>
+                </FormField>
+                <FormField label={t('Negara', 'Country')}>
+                  <Select value={bioModal.form.country} onChange={e=>setBioModal(m=>({...m, form:{...m.form, country:e.target.value}}))}>
+                    <option value=''>{t('— Pilih —','— Select —')}</option>
+                    {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </Select>
+                </FormField>
+                <FormField label={t('Alamat', 'Address')} className='col-span-2'>
+                  <textarea value={bioModal.form.address} onChange={e=>setBioModal(m=>({...m, form:{...m.form, address:e.target.value}}))} rows={2}
+                    className='w-full px-3 py-2 border border-gray-200 rounded-xl text-sm outline-none focus:border-red-300 focus:ring-2 focus:ring-red-100 resize-none' />
+                </FormField>
+              </div>
+            </div>
+
+            <div className='border-t border-gray-100 pt-4 mb-4'>
+              <h4 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-2'>{t('Nomor Identitas', 'ID Numbers')}</h4>
+              <div className='grid grid-cols-3 gap-3'>
+                <FormField label='KTP'>
+                  <Input value={bioModal.form.ktp} onChange={e=>setBioModal(m=>({...m, form:{...m.form, ktp:e.target.value}}))} />
+                </FormField>
+                <FormField label='NPWP'>
+                  <Input value={bioModal.form.npwp} onChange={e=>setBioModal(m=>({...m, form:{...m.form, npwp:e.target.value}}))} />
+                </FormField>
+                <FormField label='BPJS'>
+                  <Input value={bioModal.form.bpjs} onChange={e=>setBioModal(m=>({...m, form:{...m.form, bpjs:e.target.value}}))} />
+                </FormField>
+              </div>
+            </div>
+
+            <div className='flex gap-2'>
+              <button onClick={closeBioModal} className='flex-1 py-2.5 text-sm font-semibold bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition'>
+                {t('Batal','Cancel')}
+              </button>
+              <ActionButton onClick={saveBio} disabled={!bioModal.form.effectiveDate || !bioModal.form.reason} className='flex-1'>{t('Simpan','Save')}</ActionButton>
             </div>
           </div>
         </div>

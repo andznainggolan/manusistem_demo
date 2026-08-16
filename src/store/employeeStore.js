@@ -159,6 +159,7 @@ let _eduId     = 10
 let _certId    = 10
 let _skillId   = 10
 let _histId    = 20
+let _bioHistId = 20
 
 export const useEmployeeStore = create(
   zustandPersist(
@@ -297,6 +298,26 @@ export const useEmployeeStore = create(
   deleteHistory: (empId, histId) => set(s => ({
     employees: s.employees.map(e => e.id === empId
       ? { ...e, history: e.history.filter(h => h.id !== histId) }
+      : e)
+  })),
+
+  // ── Bio (personal data) History — same effective-dated Correct/Update
+  // pattern as the job/salary History above, kept as a separate array
+  // since it carries a wholly different set of fields.
+  addBioHistory: (empId, d) => set(s => ({
+    employees: s.employees.map(e => e.id === empId
+      ? { ...e, bioHistory: [...(e.bioHistory||[]), { id: _bioHistId++, ...d }]
+            .sort((a,b) => a.effectiveDate.localeCompare(b.effectiveDate) || a.effectiveSeq - b.effectiveSeq) }
+      : e)
+  })),
+  updateBioHistory: (empId, histId, d) => set(s => ({
+    employees: s.employees.map(e => e.id === empId
+      ? { ...e, bioHistory: e.bioHistory.map(h => h.id === histId ? {...h,...d} : h) }
+      : e)
+  })),
+  deleteBioHistory: (empId, histId) => set(s => ({
+    employees: s.employees.map(e => e.id === empId
+      ? { ...e, bioHistory: e.bioHistory.filter(h => h.id !== histId) }
       : e)
   })),
   }),
