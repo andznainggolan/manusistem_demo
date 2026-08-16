@@ -1,5 +1,6 @@
 'use client'
 import Icon from '@/components/ui/Icon'
+import SearchableSelect from '@/components/ui/SearchableSelect'
 import { useState, useMemo }  from 'react'
 import { useStructureStore, PC_CATEGORY_COLOR } from '@/store/structureStore'
 import { useCompetencyStore, COMPETENCY_CATEGORIES, LEVEL_LABELS, resolvePositionCompetencies } from '@/store/competencyStore'
@@ -11,14 +12,14 @@ import {
 
 const CAT_TONE = { Leadership:'danger', Core:'info', Technical:'success', Behavioral:'warning' }
 
-const BLANK = { departmentId:'', jobFamilyId:'', gradeId:'', code:'', name:'', status:'Active' }
+const BLANK = { companyId:'', departmentId:'', jobFamilyId:'', gradeId:'', code:'', name:'', status:'Active' }
 
 const fmt = (n) => n ? `Rp ${new Intl.NumberFormat('id-ID').format(n)}` : '-'
 
 export default function PositionPage() {
   const t = useT()
   const {
-    departments, jobFamilies, grades, positions,
+    departments, jobFamilies, grades, positions, companies, businessUnits,
     addPosition, updatePosition, deletePosition,
   } = useStructureStore()
 
@@ -51,10 +52,12 @@ export default function PositionPage() {
     if (!form.departmentId || !form.gradeId || !form.code || !form.name)
       return flash(t('Department, grade, kode, dan nama wajib diisi.','Department, grade, code, and name are required.'),'error')
     const data = {
-      ...form,
       departmentId: +form.departmentId,
       jobFamilyId:  form.jobFamilyId ? +form.jobFamilyId : null,
       gradeId:      +form.gradeId,
+      code:         form.code,
+      name:         form.name,
+      status:       form.status,
     }
     if (editing) { updatePosition(editing, data); flash(t('Position diperbarui.','Position updated.')) }
     else         { addPosition(data); flash(t('Position ditambahkan.','Position added.')) }
@@ -65,7 +68,10 @@ export default function PositionPage() {
 
   const handleEdit = (x) => {
     setEditing(x.id)
+    const dept = departments.find(d=>d.id===x.departmentId)
+    const bu = businessUnits.find(b=>b.id===dept?.businessUnitId)
     setForm({
+      companyId:    bu?.companyId ? String(bu.companyId) : '',
       departmentId: x.departmentId,
       jobFamilyId:  x.jobFamilyId || '',
       gradeId:      x.gradeId,
@@ -83,6 +89,10 @@ export default function PositionPage() {
   const gradeCode = (id) => grades.find(g=>g.id===id)?.code       || '-'
 
   const selectedGrade = grades.find(g=>g.id===+form.gradeId)
+
+  const companyDepartments = form.companyId
+    ? departments.filter(d => businessUnits.find(bu => bu.id === d.businessUnitId)?.companyId === Number(form.companyId))
+    : []
 
   const gradeGroups = useMemo(() => {
     const map = {}
@@ -246,11 +256,21 @@ export default function PositionPage() {
               <button onClick={closeModal} className='text-gray-400 hover:text-gray-600 text-xl font-bold leading-none'>×</button>
             </div>
             <div className='px-6 py-5 space-y-4'>
-              <FormField label='Department' required>
-                <Select value={form.departmentId} onChange={e=>setForm(f=>({...f,departmentId:e.target.value}))}>
-                  <option value=''>-- {t('Pilih Department','Select Department')} --</option>
-                  {departments.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}
+              <FormField label='Company' required>
+                <Select value={form.companyId} onChange={e=>setForm(f=>({...f,companyId:e.target.value,departmentId:''}))}>
+                  <option value=''>-- {t('Pilih Company','Select Company')} --</option>
+                  {companies.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
                 </Select>
+              </FormField>
+
+              <FormField label='Department' required>
+                <SearchableSelect
+                  value={form.departmentId}
+                  disabled={!form.companyId}
+                  placeholder={`-- ${t('Pilih Department','Select Department')} --`}
+                  onChange={val => setForm(f=>({...f,departmentId:val}))}
+                  options={companyDepartments.map(d=>({ value: String(d.id), label: d.name }))}
+                />
               </FormField>
 
               {[[t('Kode','Code'),'code'],[t('Nama Position','Position Name'),'name']].map(([lbl,key])=>(
