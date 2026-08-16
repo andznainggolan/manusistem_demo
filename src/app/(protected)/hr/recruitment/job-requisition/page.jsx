@@ -24,7 +24,7 @@ export default function JobRequisitionPage() {
   const {
     requisitions, candidates, addRequisition, updateRequisition, deleteRequisition,
   } = useRecruitmentStore()
-  const { departments, companies, positions } = useStructureStore()
+  const { departments, companies, positions, businessUnits } = useStructureStore()
 
   const [q, setQ] = useState('')
   const [status, setStatus] = useState('all')
@@ -69,8 +69,12 @@ export default function JobRequisitionPage() {
   const dateRangeInvalid = modal?.form.publishStartDate && modal?.form.publishEndDate
     && modal.form.publishEndDate < modal.form.publishStartDate
 
-  // Position LOV is scoped to the selected Department — matches how the
-  // requisition is actually being requested (a seat within that department).
+  // Cascading LOV: Company → Department → Position. Position has no direct
+  // companyId (only departmentId), and Department only links to Company
+  // transitively via businessUnitId, hence the join below.
+  const companyDepartments = modal?.form.companyId
+    ? departments.filter(d => businessUnits.find(bu => bu.id === d.businessUnitId)?.companyId === Number(modal.form.companyId))
+    : []
   const departmentPositions = modal?.form.departmentId
     ? positions.filter(p => String(p.departmentId) === modal.form.departmentId)
     : []
@@ -218,20 +222,21 @@ export default function JobRequisitionPage() {
               <button onClick={close} className='text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
             </div>
             <div className='space-y-4'>
-              <div className='grid grid-cols-2 gap-4'>
-                <FormField label={t('Departemen', 'Department')} required>
-                  <Select value={modal.form.departmentId} onChange={e => setField({ departmentId: e.target.value, positionId: '' })}>
-                    <option value=''>—</option>
-                    {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                  </Select>
-                </FormField>
-                <FormField label={t('Perusahaan', 'Company')} required>
-                  <Select value={modal.form.companyId} onChange={e => setField({ companyId: e.target.value })}>
-                    <option value=''>—</option>
-                    {companies.map(c => <option key={c.id} value={c.id}>{c.companyCode} — {c.name}</option>)}
-                  </Select>
-                </FormField>
-              </div>
+              <FormField label={t('Perusahaan', 'Company')} required>
+                <Select value={modal.form.companyId}
+                  onChange={e => setField({ companyId: e.target.value, departmentId: '', positionId: '' })}>
+                  <option value=''>—</option>
+                  {companies.map(c => <option key={c.id} value={c.id}>{c.companyCode} — {c.name}</option>)}
+                </Select>
+              </FormField>
+              <FormField label={t('Departemen', 'Department')} required
+                hint={!modal.form.companyId ? t('Pilih perusahaan dahulu.', 'Pick a company first.') : ''}>
+                <Select value={modal.form.departmentId} disabled={!modal.form.companyId}
+                  onChange={e => setField({ departmentId: e.target.value, positionId: '' })}>
+                  <option value=''>—</option>
+                  {companyDepartments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                </Select>
+              </FormField>
               <FormField label={t('Judul Posisi', 'Position Title')} required
                 hint={!modal.form.departmentId ? t('Pilih departemen dahulu.', 'Pick a department first.') : ''}>
                 <Select value={modal.form.positionId} disabled={!modal.form.departmentId}
