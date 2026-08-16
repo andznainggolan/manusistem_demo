@@ -847,9 +847,6 @@ export default function DashboardPage() {
   }
 
   const WIDGET_NODE = {
-    timeCard:       <TimeCardWidget key='timeCard' t={t} userId={uid} userName={name}
-                      sched={mySched} record={myAttendance} router={router}
-                      onClockIn={handleClockIn} onClockOut={handleClockOut} />,
     leaveBalance:   <LeaveBalanceWidget key='leaveBalance' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />,
     leaveChart:     <EmployeeChartWidget key='leaveChart' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} type={chartType('leaveChart')} />,
     teamLeaveChart: <ManagerChartWidget key='teamLeaveChart' leaves={leaves} team={myTeam} t={t} type={chartType('teamLeaveChart')} />,
@@ -897,15 +894,27 @@ export default function DashboardPage() {
   return (
     <div className='space-y-5'>
 
-      {/* Greeting */}
-      <div>
-        <h1 className='text-2xl font-bold text-red-800'>
-          {getGreeting(t)},
-        </h1>
-        <p className='text-xl font-semibold text-gray-800 mt-0.5'>{name}</p>
-        <p className='text-sm text-gray-400 mt-0.5'>
-          {new Date().toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}
-        </p>
+      {/* Greeting + My Time Card — the time card is pinned here (not part of
+          the reorderable/hideable ESS Dashboard widgets below) so clock
+          in/out is always the first thing visible on login, for both
+          starting and ending the day. */}
+      <div className='flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between'>
+        <div>
+          <h1 className='text-2xl font-bold text-red-800'>
+            {getGreeting(t)},
+          </h1>
+          <p className='text-xl font-semibold text-gray-800 mt-0.5'>{name}</p>
+          <p className='text-sm text-gray-400 mt-0.5'>
+            {new Date().toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}
+          </p>
+        </div>
+        {uid && (
+          <div className='w-full sm:w-80 flex-shrink-0'>
+            <TimeCardWidget t={t} userId={uid} userName={name}
+              sched={mySched} record={myAttendance} router={router}
+              onClockIn={handleClockIn} onClockOut={handleClockOut} />
+          </div>
+        )}
       </div>
 
       {mainSections.map(s => s.node)}
