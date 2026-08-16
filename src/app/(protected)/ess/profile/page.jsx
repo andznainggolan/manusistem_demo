@@ -23,6 +23,8 @@ const DOC_ICON = (fileType) => {
 
 const formatBytes = (n) => n < 1024 * 1024 ? `${Math.round(n / 1024)} KB` : `${(n / (1024 * 1024)).toFixed(1)} MB`
 
+const todayStr = () => new Date().toISOString().slice(0, 10)
+
 const LEVEL_COLOR = {
   Expert:       'bg-purple-100 text-purple-700',
   Advanced:     'bg-blue-100 text-blue-700',
@@ -69,6 +71,22 @@ export default function MyProfilePage() {
       {t('Data profil tidak ditemukan.', 'Profile data not found.')}
     </div>
   )
+
+  // Same effective-dated Bio (Correct/Update) resolution as the HR
+  // Administration employee page — falls back to the employee's static
+  // fields until the first bio record is saved, so both pages always agree.
+  const today = todayStr()
+  const bioHistoryRecords = [...(emp.bioHistory || [])]
+    .sort((a, b) => b.effectiveDate.localeCompare(a.effectiveDate) || b.effectiveSeq - a.effectiveSeq)
+  const activeBio = bioHistoryRecords.find(r =>
+    r.effectiveDate <= today && (!r.effectiveEndDate || r.effectiveEndDate >= today))
+  const displayBio = activeBio || {
+    gender: emp.gender, birthDate: emp.birthDate, birthPlace: emp.birthPlace, nationality: emp.nationality,
+    religion: emp.religion, maritalStatus: emp.maritalStatus,
+    phone: emp.phone, email: emp.email, personalEmail: emp.personalEmail,
+    address: emp.address, city: emp.city, country: emp.country,
+    ktp: emp.ktp, npwp: emp.npwp, bpjs: emp.bpjs,
+  }
 
   const myDocuments = documents
     .filter(d => d.employeeId === emp.id)
@@ -222,30 +240,30 @@ export default function MyProfilePage() {
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-8'>
             <Section title={t('Data Pribadi', 'Personal Data')}>
               <div className='grid grid-cols-1 gap-4'>
-                <Field label={t('Jenis Kelamin', 'Gender')}       value={t(emp.gender === 'Male' ? 'Laki-laki' : 'Perempuan', emp.gender)} />
-                <Field label={t('Tempat Lahir', 'Birth Place')}   value={emp.birthPlace} />
-                <Field label={t('Tanggal Lahir', 'Birth Date')}   value={emp.birthDate} />
-                <Field label={t('Kewarganegaraan', 'Nationality')} value={emp.nationality} />
-                <Field label={t('Agama', 'Religion')}             value={emp.religion} />
-                <Field label={t('Status Pernikahan', 'Marital Status')} value={emp.maritalStatus} />
+                <Field label={t('Jenis Kelamin', 'Gender')}       value={displayBio.gender && t(displayBio.gender === 'Male' ? 'Laki-laki' : 'Perempuan', displayBio.gender)} />
+                <Field label={t('Tempat Lahir', 'Birth Place')}   value={displayBio.birthPlace} />
+                <Field label={t('Tanggal Lahir', 'Birth Date')}   value={displayBio.birthDate} />
+                <Field label={t('Kewarganegaraan', 'Nationality')} value={displayBio.nationality} />
+                <Field label={t('Agama', 'Religion')}             value={displayBio.religion} />
+                <Field label={t('Status Pernikahan', 'Marital Status')} value={displayBio.maritalStatus} />
               </div>
             </Section>
             <div>
               <Section title={t('Kontak', 'Contact')}>
                 <div className='grid grid-cols-1 gap-4'>
-                  <Field label={t('Telepon', 'Phone')}           value={emp.phone} />
-                  <Field label={t('Email Kerja', 'Work Email')}  value={emp.email} />
-                  <Field label={t('Email Pribadi', 'Personal Email')} value={emp.personalEmail} />
-                  <Field label={t('Alamat', 'Address')}          value={emp.address} />
-                  <Field label={t('Kota', 'City')}               value={emp.city} />
-                  <Field label={t('Negara', 'Country')}          value={emp.country} />
+                  <Field label={t('Telepon', 'Phone')}           value={displayBio.phone} />
+                  <Field label={t('Email Kerja', 'Work Email')}  value={displayBio.email} />
+                  <Field label={t('Email Pribadi', 'Personal Email')} value={displayBio.personalEmail} />
+                  <Field label={t('Alamat', 'Address')}          value={displayBio.address} />
+                  <Field label={t('Kota', 'City')}               value={displayBio.city} />
+                  <Field label={t('Negara', 'Country')}          value={displayBio.country} />
                 </div>
               </Section>
               <Section title={t('Nomor Identitas', 'ID Numbers')}>
                 <div className='grid grid-cols-1 gap-4'>
-                  <Field label='KTP'  value={emp.ktp} />
-                  <Field label='NPWP' value={emp.npwp} />
-                  <Field label='BPJS' value={emp.bpjs} />
+                  <Field label='KTP'  value={displayBio.ktp} />
+                  <Field label='NPWP' value={displayBio.npwp} />
+                  <Field label='BPJS' value={displayBio.bpjs} />
                 </div>
               </Section>
             </div>
