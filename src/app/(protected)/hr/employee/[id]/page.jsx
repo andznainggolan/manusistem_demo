@@ -11,7 +11,7 @@ import { useDocumentTypeStore } from '@/store/documentTypeStore'
 import { useAuthStore } from '@/store/authStore'
 import { PTKP_STATUSES } from '@/lib/payrollCalc'
 import { useT } from '@/store/languageStore'
-import { RELS, GENDERS, RELIGIONS, MARITAL, COUNTRIES, CITIES } from '@/utils/constants'
+import { RELS, GENDERS, RELIGIONS, MARITAL, COUNTRIES, CITIES, EDU_LEVELS, SKILL_LVLS } from '@/utils/constants'
 import { FormField, Input, Select, ActionButton, StatusBadge, DocCompletionDonut } from '@/components/ui'
 
 const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History', 'Salary', 'Personal Document']
@@ -102,6 +102,9 @@ export default function EmployeeProfilePage() {
   const {
     employees, addHistory, updateHistory, deleteHistory, setPhoto, addDependent, updateDependent, deleteDependent,
     addBioHistory, updateBioHistory, deleteBioHistory,
+    addEducation, updateEducation, deleteEducation,
+    addCertification, updateCertification, deleteCertification,
+    addSkill, updateSkill, deleteSkill,
   } = useEmployeeStore()
   const photoInputRef = useRef(null)
   const [photoError, setPhotoError] = useState(null)
@@ -113,6 +116,9 @@ export default function EmployeeProfilePage() {
   const docFileRef = useRef(null)
   const [docModal, setDocModal] = useState(null) // { documentTypeId, issuedDate, effectiveStartDate, effectiveEndDate, note, customFieldValue, file, error }
   const [depModal, setDepModal] = useState(null) // { mode: 'add'|'edit', id?, name, relationship, birthDate, gender, phone, isEmergencyContact }
+  const [eduModal, setEduModal] = useState(null) // { mode: 'add'|'edit', id?, level, institution, major, graduationYear }
+  const [certModal, setCertModal] = useState(null) // { mode: 'add'|'edit', id?, name, issuer, issueYear, expiryYear }
+  const [skillModal, setSkillModal] = useState(null) // { mode: 'add'|'edit', id?, name, level }
   // Select the category object itself (a stable reference unless its items
   // actually change) and derive the active-only list in render — filtering
   // inside the selector would return a new array every call and trip
@@ -298,6 +304,51 @@ export default function EmployeeProfilePage() {
   const removeDependent = (d) => {
     if (!window.confirm(t(`Hapus tanggungan "${d.name}"?`, `Delete dependent "${d.name}"?`))) return
     deleteDependent(emp.id, d.id)
+  }
+
+  const openAddEducation = () => setEduModal({ mode: 'add', level: EDU_LEVELS[0], institution: '', major: '', graduationYear: '' })
+  const openEditEducation = (ed) => setEduModal({ mode: 'edit', id: ed.id, level: ed.level, institution: ed.institution, major: ed.major || '', graduationYear: ed.graduationYear || '' })
+  const closeEduModal = () => setEduModal(null)
+  const saveEducation = () => {
+    if (!eduModal.institution.trim()) return
+    const payload = { level: eduModal.level, institution: eduModal.institution.trim(), major: eduModal.major.trim(), graduationYear: eduModal.graduationYear }
+    if (eduModal.mode === 'add') addEducation(emp.id, payload)
+    else updateEducation(emp.id, eduModal.id, payload)
+    closeEduModal()
+  }
+  const removeEducation = (ed) => {
+    if (!window.confirm(t(`Hapus riwayat pendidikan "${ed.institution}"?`, `Delete education record "${ed.institution}"?`))) return
+    deleteEducation(emp.id, ed.id)
+  }
+
+  const openAddCertification = () => setCertModal({ mode: 'add', name: '', issuer: '', issueYear: '', expiryYear: '' })
+  const openEditCertification = (cert) => setCertModal({ mode: 'edit', id: cert.id, name: cert.name, issuer: cert.issuer || '', issueYear: cert.issueYear || '', expiryYear: cert.expiryYear || '' })
+  const closeCertModal = () => setCertModal(null)
+  const saveCertification = () => {
+    if (!certModal.name.trim()) return
+    const payload = { name: certModal.name.trim(), issuer: certModal.issuer.trim(), issueYear: certModal.issueYear, expiryYear: certModal.expiryYear }
+    if (certModal.mode === 'add') addCertification(emp.id, payload)
+    else updateCertification(emp.id, certModal.id, payload)
+    closeCertModal()
+  }
+  const removeCertification = (cert) => {
+    if (!window.confirm(t(`Hapus sertifikasi "${cert.name}"?`, `Delete certification "${cert.name}"?`))) return
+    deleteCertification(emp.id, cert.id)
+  }
+
+  const openAddSkill = () => setSkillModal({ mode: 'add', name: '', level: SKILL_LVLS[0] })
+  const openEditSkill = (sk) => setSkillModal({ mode: 'edit', id: sk.id, name: sk.name, level: sk.level })
+  const closeSkillModal = () => setSkillModal(null)
+  const saveSkill = () => {
+    if (!skillModal.name.trim()) return
+    const payload = { name: skillModal.name.trim(), level: skillModal.level }
+    if (skillModal.mode === 'add') addSkill(emp.id, payload)
+    else updateSkill(emp.id, skillModal.id, payload)
+    closeSkillModal()
+  }
+  const removeSkill = (sk) => {
+    if (!window.confirm(t(`Hapus keahlian "${sk.name}"?`, `Delete skill "${sk.name}"?`))) return
+    deleteSkill(emp.id, sk.id)
   }
 
   const openAddRecord = () => setRecordModal({
@@ -739,25 +790,130 @@ export default function EmployeeProfilePage() {
           </div>
         )}
 
+        {/* Education add/edit modal */}
+        {eduModal && (
+          <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4' onClick={closeEduModal}>
+            <div className='w-full max-w-md rounded-2xl bg-white p-6 shadow-xl' onClick={e => e.stopPropagation()}>
+              <div className='mb-4 flex items-start justify-between'>
+                <h3 className='text-base font-bold text-gray-800'>
+                  {eduModal.mode === 'add' ? t('Tambah Pendidikan', 'Add Education') : t('Ubah Pendidikan', 'Edit Education')}
+                </h3>
+                <button onClick={closeEduModal} className='text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
+              </div>
+              <div className='space-y-4'>
+                <div className='grid grid-cols-2 gap-4'>
+                  <FormField label={t('Jenjang', 'Level')}>
+                    <Select value={eduModal.level} onChange={e => setEduModal(m => ({ ...m, level: e.target.value }))}>
+                      {EDU_LEVELS.map(lv => <option key={lv} value={lv}>{lv}</option>)}
+                    </Select>
+                  </FormField>
+                  <FormField label={t('Tahun Lulus', 'Graduation Year')}>
+                    <Input type='number' value={eduModal.graduationYear} onChange={e => setEduModal(m => ({ ...m, graduationYear: e.target.value }))} />
+                  </FormField>
+                </div>
+                <FormField label={t('Institusi', 'Institution')} required>
+                  <Input value={eduModal.institution} onChange={e => setEduModal(m => ({ ...m, institution: e.target.value }))} autoFocus />
+                </FormField>
+                <FormField label={t('Jurusan', 'Major')}>
+                  <Input value={eduModal.major} onChange={e => setEduModal(m => ({ ...m, major: e.target.value }))} />
+                </FormField>
+              </div>
+              <div className='mt-6 flex justify-end gap-2'>
+                <ActionButton variant='secondary' onClick={closeEduModal}>{t('Batal', 'Cancel')}</ActionButton>
+                <ActionButton icon='💾' onClick={saveEducation} disabled={!eduModal.institution.trim()}>{t('Simpan', 'Save')}</ActionButton>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Certification add/edit modal */}
+        {certModal && (
+          <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4' onClick={closeCertModal}>
+            <div className='w-full max-w-md rounded-2xl bg-white p-6 shadow-xl' onClick={e => e.stopPropagation()}>
+              <div className='mb-4 flex items-start justify-between'>
+                <h3 className='text-base font-bold text-gray-800'>
+                  {certModal.mode === 'add' ? t('Tambah Sertifikasi', 'Add Certification') : t('Ubah Sertifikasi', 'Edit Certification')}
+                </h3>
+                <button onClick={closeCertModal} className='text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
+              </div>
+              <div className='space-y-4'>
+                <FormField label={t('Nama Sertifikasi', 'Certification Name')} required>
+                  <Input value={certModal.name} onChange={e => setCertModal(m => ({ ...m, name: e.target.value }))} autoFocus />
+                </FormField>
+                <FormField label={t('Penerbit', 'Issuer')}>
+                  <Input value={certModal.issuer} onChange={e => setCertModal(m => ({ ...m, issuer: e.target.value }))} />
+                </FormField>
+                <div className='grid grid-cols-2 gap-4'>
+                  <FormField label={t('Tahun Terbit', 'Issue Year')}>
+                    <Input type='number' value={certModal.issueYear} onChange={e => setCertModal(m => ({ ...m, issueYear: e.target.value }))} />
+                  </FormField>
+                  <FormField label={t('Tahun Kedaluwarsa', 'Expiry Year')} hint={t('Opsional','Optional')}>
+                    <Input type='number' value={certModal.expiryYear} onChange={e => setCertModal(m => ({ ...m, expiryYear: e.target.value }))} />
+                  </FormField>
+                </div>
+              </div>
+              <div className='mt-6 flex justify-end gap-2'>
+                <ActionButton variant='secondary' onClick={closeCertModal}>{t('Batal', 'Cancel')}</ActionButton>
+                <ActionButton icon='💾' onClick={saveCertification} disabled={!certModal.name.trim()}>{t('Simpan', 'Save')}</ActionButton>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Skill add/edit modal */}
+        {skillModal && (
+          <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4' onClick={closeSkillModal}>
+            <div className='w-full max-w-md rounded-2xl bg-white p-6 shadow-xl' onClick={e => e.stopPropagation()}>
+              <div className='mb-4 flex items-start justify-between'>
+                <h3 className='text-base font-bold text-gray-800'>
+                  {skillModal.mode === 'add' ? t('Tambah Keahlian', 'Add Skill') : t('Ubah Keahlian', 'Edit Skill')}
+                </h3>
+                <button onClick={closeSkillModal} className='text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
+              </div>
+              <div className='space-y-4'>
+                <FormField label={t('Nama Keahlian', 'Skill Name')} required>
+                  <Input value={skillModal.name} onChange={e => setSkillModal(m => ({ ...m, name: e.target.value }))} autoFocus />
+                </FormField>
+                <FormField label={t('Level', 'Level')}>
+                  <Select value={skillModal.level} onChange={e => setSkillModal(m => ({ ...m, level: e.target.value }))}>
+                    {SKILL_LVLS.map(lv => <option key={lv} value={lv}>{lv}</option>)}
+                  </Select>
+                </FormField>
+              </div>
+              <div className='mt-6 flex justify-end gap-2'>
+                <ActionButton variant='secondary' onClick={closeSkillModal}>{t('Batal', 'Cancel')}</ActionButton>
+                <ActionButton icon='💾' onClick={saveSkill} disabled={!skillModal.name.trim()}>{t('Simpan', 'Save')}</ActionButton>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── Profile (Education / Certs / Skills) ───────────────────── */}
         {tab === 'Profile' && (
           <div className='space-y-7'>
 
             {/* Education */}
             <div>
-              <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Pendidikan', 'Education')}</h3>
+              <div className='flex items-center justify-between mb-3'>
+                <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide'>{t('Pendidikan', 'Education')}</h3>
+                <ActionButton size='sm' icon='➕' onClick={openAddEducation}>{t('Tambah','Add')}</ActionButton>
+              </div>
               {(!emp.education || emp.education.length === 0) ? (
                 <p className='text-sm text-gray-400'>{t('Tidak ada data.', 'No data.')}</p>
               ) : (
                 <div className='space-y-3'>
                   {emp.education.map((ed, i) => (
-                    <div key={ed.id ?? i} className='flex items-start gap-3 p-3 border border-gray-100 rounded-xl'>
+                    <div key={ed.id ?? i} className='group flex items-start gap-3 p-3 border border-gray-100 rounded-xl'>
                       <div className='w-9 h-9 rounded-lg flex items-center justify-center text-lg flex-shrink-0' style={{ background: 'linear-gradient(135deg,#052B52,#039299)' }}>
                         <span className='text-white text-xs font-bold'>{ed.level}</span>
                       </div>
-                      <div>
+                      <div className='flex-1 min-w-0'>
                         <p className='text-sm font-semibold text-gray-800'>{ed.institution}</p>
                         <p className='text-xs text-gray-500'>{ed.major} · {ed.graduationYear}</p>
+                      </div>
+                      <div className='flex gap-3 flex-shrink-0 opacity-0 group-hover:opacity-100 transition'>
+                        <button onClick={() => openEditEducation(ed)} className='text-xs font-semibold text-teal-700 hover:underline'>{t('Ubah', 'Edit')}</button>
+                        <button onClick={() => removeEducation(ed)} className='text-xs font-semibold text-gray-400 hover:text-red-600'>{t('Hapus', 'Delete')}</button>
                       </div>
                     </div>
                   ))}
@@ -767,19 +923,26 @@ export default function EmployeeProfilePage() {
 
             {/* Certifications */}
             <div className='border-t border-gray-100 pt-5'>
-              <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Sertifikasi', 'Certifications')}</h3>
+              <div className='flex items-center justify-between mb-3'>
+                <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide'>{t('Sertifikasi', 'Certifications')}</h3>
+                <ActionButton size='sm' icon='➕' onClick={openAddCertification}>{t('Tambah','Add')}</ActionButton>
+              </div>
               {(!emp.certifications || emp.certifications.length === 0) ? (
                 <p className='text-sm text-gray-400'>{t('Tidak ada data.', 'No data.')}</p>
               ) : (
                 <div className='space-y-3'>
                   {emp.certifications.map((cert, i) => (
-                    <div key={cert.id ?? i} className='flex items-start gap-3 p-3 border border-gray-100 rounded-xl'>
+                    <div key={cert.id ?? i} className='group flex items-start gap-3 p-3 border border-gray-100 rounded-xl'>
                       <div className='w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-lg flex-shrink-0'>
                         🏅
                       </div>
-                      <div>
+                      <div className='flex-1 min-w-0'>
                         <p className='text-sm font-semibold text-gray-800'>{cert.name}</p>
                         <p className='text-xs text-gray-500'>{cert.issuer} · {cert.issueYear}{cert.expiryYear ? ` – ${cert.expiryYear}` : ''}</p>
+                      </div>
+                      <div className='flex gap-3 flex-shrink-0 opacity-0 group-hover:opacity-100 transition'>
+                        <button onClick={() => openEditCertification(cert)} className='text-xs font-semibold text-teal-700 hover:underline'>{t('Ubah', 'Edit')}</button>
+                        <button onClick={() => removeCertification(cert)} className='text-xs font-semibold text-gray-400 hover:text-red-600'>{t('Hapus', 'Delete')}</button>
                       </div>
                     </div>
                   ))}
@@ -789,15 +952,26 @@ export default function EmployeeProfilePage() {
 
             {/* Skills */}
             <div className='border-t border-gray-100 pt-5'>
-              <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-3'>{t('Keahlian', 'Skills')}</h3>
+              <div className='flex items-center justify-between mb-3'>
+                <h3 className='text-xs font-bold text-gray-400 uppercase tracking-wide'>{t('Keahlian', 'Skills')}</h3>
+                <ActionButton size='sm' icon='➕' onClick={openAddSkill}>{t('Tambah','Add')}</ActionButton>
+              </div>
               {(!emp.skills || emp.skills.length === 0) ? (
                 <p className='text-sm text-gray-400'>{t('Tidak ada data.', 'No data.')}</p>
               ) : (
                 <div className='flex flex-wrap gap-2'>
                   {emp.skills.map((sk, i) => (
-                    <div key={sk.id ?? i} className='flex items-center gap-1.5 border border-gray-200 rounded-full px-3 py-1.5'>
+                    <div key={sk.id ?? i} className='group flex items-center gap-1.5 border border-gray-200 rounded-full pl-3 pr-1.5 py-1.5'>
                       <span className='text-sm text-gray-700 font-semibold'>{sk.name}</span>
                       <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${skillLevelColor(sk.level)}`}>{sk.level}</span>
+                      <button onClick={() => openEditSkill(sk)} title={t('Ubah','Edit')}
+                        className='w-5 h-5 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-teal-700 opacity-0 group-hover:opacity-100 transition'>
+                        <Icon e='✏️' size={10} />
+                      </button>
+                      <button onClick={() => removeSkill(sk)} title={t('Hapus','Delete')}
+                        className='w-5 h-5 rounded-full flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 opacity-0 group-hover:opacity-100 transition'>
+                        <Icon e='✕' size={10} />
+                      </button>
                     </div>
                   ))}
                 </div>
