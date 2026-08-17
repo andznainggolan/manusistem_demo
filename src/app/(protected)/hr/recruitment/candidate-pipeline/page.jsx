@@ -25,13 +25,23 @@ const Stars = ({ n }) => (
 function CandidateCard({ c, onMove, onReject, t }) {
   const idx = ACTIVE_STAGES.indexOf(c.stage)
   const next = c.stage === 'Rejected' ? null : ACTIVE_STAGES[idx + 1]
+  // Rejected has no recorded prior stage (any active stage can reject), so
+  // "back" reopens it at Applied; from an active stage it just steps back
+  // one column.
+  const prev = c.stage === 'Rejected' ? 'Applied' : (idx > 0 ? ACTIVE_STAGES[idx - 1] : null)
   return (
     <div className='rounded-xl border border-gray-100 bg-white p-3 shadow-sm'>
       <p className='text-sm font-semibold text-gray-800'>{c.name}</p>
       <p className='mt-0.5 text-[11px] text-gray-400'>{c.source} · {c.appliedDate}</p>
       {c.rating > 0 && <div className='mt-1'><Stars n={c.rating} /></div>}
       {c.notes && <p className='mt-1.5 line-clamp-2 text-[11px] text-gray-500'>{c.notes}</p>}
-      <div className='mt-2.5 flex items-center gap-2'>
+      <div className='mt-2.5 flex items-center gap-1.5'>
+        {prev && (
+          <button onClick={() => onMove(c, prev)} title={`${t('Kembali ke', 'Back to')} ${prev}`}
+            className='shrink-0 rounded-lg px-2 py-1.5 text-[11px] font-semibold text-gray-400 hover:bg-gray-100 hover:text-gray-600'>
+            ←
+          </button>
+        )}
         {next && (
           <button onClick={() => onMove(c, next)}
             className='flex-1 rounded-lg bg-gray-100 px-2 py-1.5 text-[11px] font-semibold text-gray-700 hover:bg-gray-200'>
@@ -40,7 +50,7 @@ function CandidateCard({ c, onMove, onReject, t }) {
         )}
         {c.stage !== 'Rejected' && c.stage !== 'Hired' && (
           <button onClick={() => onReject(c)}
-            className='rounded-lg px-2 py-1.5 text-[11px] font-semibold text-red-500 hover:bg-red-50'>
+            className='shrink-0 rounded-lg px-2 py-1.5 text-[11px] font-semibold text-red-500 hover:bg-red-50'>
             {t('Tolak', 'Reject')}
           </button>
         )}
