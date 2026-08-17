@@ -211,6 +211,8 @@ export default function JobRequisitionPage() {
           {rows.map(r => {
             const pubStatus = publishStatus(r)
             const statusBadge = <StatusBadge tone={STATUS_TONE[r.status]}>{r.status}</StatusBadge>
+            const filled = filledOf(r.id)
+            const isFulfilled = r.headcount > 0 && filled >= r.headcount
             return (
             <Tr key={r.id}>
               <Td>
@@ -229,7 +231,14 @@ export default function JobRequisitionPage() {
               </Td>
               <Td className='text-sm text-gray-600'>{deptName(r.departmentId)}</Td>
               <Td className='text-sm text-gray-600'>{companyName(r.companyId)}</Td>
-              <Td align='center' className='font-mono text-sm'>{filledOf(r.id)}/{r.headcount}</Td>
+              <Td align='center' className='font-mono text-sm'>
+                {filled}/{r.headcount}
+                {isFulfilled && (
+                  <span className='ml-1.5 inline-flex items-center gap-0.5 rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 align-middle'>
+                    ✓ {t('Terpenuhi', 'Fulfilled')}
+                  </span>
+                )}
+              </Td>
               <Td align='center'><StatusBadge tone={PRIORITY_TONE[r.priority]}>{r.priority}</StatusBadge></Td>
               <Td align='center' className='text-xs tabular-nums text-gray-500'>{r.targetDate || '—'}</Td>
               <Td align='center'>
@@ -245,6 +254,14 @@ export default function JobRequisitionPage() {
                     {pubStatus !== 'Live' && <span className='text-[10px] text-gray-400'>({pubStatus})</span>}
                   </a>
                 ) : statusBadge}
+                {isFulfilled && r.status !== 'Closed' && (
+                  <div className='mt-1 flex items-center justify-center gap-1 text-[10px] text-amber-600'>
+                    <span>⚠️ {t('Sudah terpenuhi', 'Already filled')}</span>
+                    <button onClick={() => setReqStatus(r, 'Closed')} className='font-bold underline hover:text-amber-800'>
+                      {t('Tutup?', 'Close?')}
+                    </button>
+                  </div>
+                )}
               </Td>
               <Td align='right'>
                 <div className='flex justify-end gap-2'>
