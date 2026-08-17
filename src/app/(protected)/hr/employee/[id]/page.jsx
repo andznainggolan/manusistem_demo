@@ -169,6 +169,11 @@ export default function EmployeeProfilePage() {
   const salaryRecords = historyRecords.filter(h => h.basic != null)
   const activeRecordId = salaryRecords.find(r =>
     r.effectiveDate <= today && (!r.effectiveEndDate || r.effectiveEndDate >= today))?.id
+  // The earliest Hire entry — "Cancel Employment" pins itself to this exact
+  // date (next sequence) so it reads as "voided the same day it started",
+  // never as a real separate employment event.
+  const hireRecord = [...(emp.history || [])].filter(h => h.action === 'Hire')
+    .sort((a, b) => a.effectiveDate.localeCompare(b.effectiveDate) || a.effectiveSeq - b.effectiveSeq)[0]
 
   // Personal data (Bio) follows the same effective-dated Correct/Update
   // pattern as Employment/Salary above, but in its own array — falls back
@@ -408,7 +413,8 @@ export default function EmployeeProfilePage() {
     closeModal()
   }
 
-  const canSave = recordModal && recordModal.form.effectiveDate && recordModal.form.reason && Number(recordModal.form.basic) > 0
+  const canSave = recordModal && recordModal.form.effectiveDate && recordModal.form.reason
+    && (recordModal.form.action === 'Cancel Employment' || Number(recordModal.form.basic) > 0)
   const reasonOptions = recordModal ? (HISTORY_REASONS[recordModal.form.action] || []) : []
 
   // "Correct" edits the currently-effective bio record in place (no new
@@ -1257,7 +1263,7 @@ export default function EmployeeProfilePage() {
 
             <div className='grid grid-cols-3 gap-3 mb-3'>
               <FormField label={t('Efektif Mulai','Effective Start')} required>
-                <Input type='date' value={recordModal.form.effectiveDate}
+                <Input type='date' value={recordModal.form.effectiveDate} disabled={recordModal.form.action === 'Cancel Employment'}
                   onChange={e=>setRecordModal(m=>({...m, form:{...m.form, effectiveDate:e.target.value}}))} />
               </FormField>
               <FormField label={t('Efektif Sampai','Effective End')} hint={t('Default 9999-01-01 = masih berlaku','Defaults to 9999-01-01 = still current')}>
@@ -1265,14 +1271,27 @@ export default function EmployeeProfilePage() {
                   onChange={e=>setRecordModal(m=>({...m, form:{...m.form, effectiveEndDate:e.target.value}}))} />
               </FormField>
               <FormField label={t('Sequence','Sequence')}>
-                <Input type='number' value={recordModal.form.effectiveSeq}
+                <Input type='number' value={recordModal.form.effectiveSeq} disabled={recordModal.form.action === 'Cancel Employment'}
                   onChange={e=>setRecordModal(m=>({...m, form:{...m.form, effectiveSeq:e.target.value}}))} />
               </FormField>
             </div>
 
             <div className='grid grid-cols-2 gap-3 mb-3'>
               <FormField label={t('Aksi','Action')} required>
-                <Select value={recordModal.form.action} onChange={e=>setRecordModal(m=>({...m, form:{...m.form, action:e.target.value, reason:''}}))}>
+                <Select value={recordModal.form.action} onChange={e=>{
+                  const action = e.target.value
+                  setRecordModal(m => {
+                    const patch = { action, reason: '' }
+                    // Pin to the exact Hire date/next sequence so this always
+                    // reads as "voided the same day it started" — never a real
+                    // separate employment event with its own date.
+                    if (action === 'Cancel Employment' && hireRecord) {
+                      patch.effectiveDate = hireRecord.effectiveDate
+                      patch.effectiveSeq = hireRecord.effectiveSeq + 1
+                    }
+                    return { ...m, form: { ...m.form, ...patch } }
+                  })
+                }}>
                   {HISTORY_ACTIONS.map(a => <option key={a} value={a}>{a}</option>)}
                 </Select>
               </FormField>
@@ -1283,6 +1302,19 @@ export default function EmployeeProfilePage() {
                 </Select>
               </FormField>
             </div>
+
+            {recordModal.form.action === 'Cancel Employment' && (
+              <div className='mb-3 flex items-start gap-2 rounded-lg bg-gray-100 px-3 py-2.5'>
+                <span className='text-sm'>⚠️</span>
+                <p className='text-xs text-gray-600'>
+                  {hireRecord
+                    ? t('Membatalkan hire yang salah input — dianggap karyawan ini belum pernah bekerja. Tanggal dikunci sama dengan tanggal Hire, sequence berikutnya.',
+                        'Voids a mistakenly-entered hire — treats this employee as if they never worked here. Date is locked to the Hire date, next sequence.')
+                    : t('Tidak ditemukan record Hire untuk karyawan ini — tanggal & sequence tidak bisa dikunci otomatis.',
+                        'No Hire record found for this employee — date & sequence can\'t be auto-locked.')}
+                </p>
+              </div>
+            )}
 
             <div className='border-t border-gray-100 pt-4 mb-3'>
               <h4 className='text-xs font-bold text-gray-400 uppercase tracking-wide mb-2'>{t('Penempatan','Job Assignment')}</h4>

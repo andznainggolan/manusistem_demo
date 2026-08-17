@@ -14,6 +14,7 @@ export const HISTORY_ACTIONS = [
   'Return from Leave',
   'Data Change',
   'Termination',
+  'Cancel Employment',
 ]
 
 export const HISTORY_REASONS = {
@@ -26,6 +27,7 @@ export const HISTORY_REASONS = {
   'Return from Leave': ['Return from Maternity/Paternity', 'Return from Medical Leave', 'Return from Personal Leave', 'Return from Study Leave'],
   'Data Change':       ['Name Change', 'Address Change', 'Personal Data Update', 'Legal Data Change', 'Contract Renewal'],
   'Termination':       ['Resignation', 'End of Contract', 'Retirement', 'Layoff / Redundancy', 'Dismissal', 'Mutual Agreement', 'Death'],
+  'Cancel Employment': ['Data Entry Error', 'Wrong Candidate', 'Duplicate Record', 'Offer Rescinded'],
 }
 
 export const ACTION_COLOR = {
@@ -38,6 +40,7 @@ export const ACTION_COLOR = {
   'Return from Leave': 'bg-teal-100 text-teal-700',
   'Data Change':       'bg-gray-100 text-gray-600',
   'Termination':       'bg-red-100 text-red-700',
+  'Cancel Employment': 'bg-gray-200 text-gray-700',
 }
 
 // ─── Structure IDs (aligned with structureStore seed data) ───────────────────
@@ -360,8 +363,21 @@ if (typeof window !== 'undefined' && !window.__kpbEmployeesLoaded) {
       // (up to ~96) or the imported employees' ids (100000+) — left alone,
       // addEmployee() would mint an id that's already taken, silently
       // shadowing an existing employee behind a duplicate id.
-      const maxId = useEmployeeStore.getState().employees.reduce((m, e) => Math.max(m, e.id), 0)
+      const allEmployees = useEmployeeStore.getState().employees
+      const maxId = allEmployees.reduce((m, e) => Math.max(m, e.id), 0)
       if (maxId >= _empId) _empId = maxId + 1
+      // Same class of bug for the per-employee history/bioHistory id counters:
+      // they're plain module-level counters with no persistence, so they
+      // restart at their literal initial value on every page load — e.g.
+      // _histId always restarting at 20 could collide with a Hire record
+      // that was minted id 20 in an earlier session, silently overwriting it
+      // instead of adding a new row.
+      const maxHistId = allEmployees.reduce((m, e) =>
+        Math.max(m, (e.history || []).reduce((hm, h) => Math.max(hm, h.id), 0)), 0)
+      if (maxHistId >= _histId) _histId = maxHistId + 1
+      const maxBioHistId = allEmployees.reduce((m, e) =>
+        Math.max(m, (e.bioHistory || []).reduce((hm, h) => Math.max(hm, h.id), 0)), 0)
+      if (maxBioHistId >= _bioHistId) _bioHistId = maxBioHistId + 1
     })
     .catch(() => { window.__kpbEmployeesLoaded = false })
 }
