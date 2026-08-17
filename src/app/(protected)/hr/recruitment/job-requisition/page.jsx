@@ -90,11 +90,12 @@ export default function JobRequisitionPage() {
   const positionHasVacancy = (posId) =>
     headcounts.some(h => h.positionId === posId && h.status === 'Active' && !h.employeeId
       && !requisitions.some(r => r.id !== modal?.id && r.headcountId === h.id && r.status !== 'Closed'))
-  // "Hanya kursi kosong" filters the Position list itself to positions that
-  // actually have a seat to offer — but never hides the position already
-  // selected (e.g. editing a requisition whose seat got filled since).
+  // "Hanya kursi kosong" filters the Position list to positions that actually
+  // have a seat to offer. The checkbox's own onChange clears any selected
+  // position that fails this filter the moment it's switched on, so the list
+  // and the selected value can never disagree.
   const positionOptions = onlyVacant
-    ? departmentPositions.filter(p => positionHasVacancy(p.id) || String(p.id) === modal?.form.positionId)
+    ? departmentPositions.filter(p => positionHasVacancy(p.id))
     : departmentPositions
 
   const save = () => {
@@ -269,7 +270,17 @@ export default function JobRequisitionPage() {
                     {t('Judul Posisi', 'Position Title')} <span className='text-red-500'>*</span>
                   </span>
                   <label className={`flex items-center gap-1.5 text-[11px] font-medium select-none ${modal.form.departmentId ? 'cursor-pointer text-gray-500' : 'cursor-not-allowed text-gray-300'}`}>
-                    <input type='checkbox' checked={onlyVacant} onChange={e => setOnlyVacant(e.target.checked)}
+                    <input type='checkbox' checked={onlyVacant} onChange={e => {
+                      const checked = e.target.checked
+                      setOnlyVacant(checked)
+                      // Turning the filter on while a now-invalid position is
+                      // selected would otherwise show a position outside the
+                      // filtered list — clear it instead so the field always
+                      // matches what "Hanya kursi kosong" claims to show.
+                      if (checked && modal.form.positionId && !positionHasVacancy(Number(modal.form.positionId))) {
+                        setField({ positionId: '', headcountId: '', publicTitle: '' })
+                      }
+                    }}
                       disabled={!modal.form.departmentId} className='h-3 w-3 accent-teal-600' />
                     {t('Hanya kursi kosong', 'Vacant only')}
                   </label>
