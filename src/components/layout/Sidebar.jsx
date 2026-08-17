@@ -299,6 +299,7 @@ const SA_GROUPS = [
     { label: 'Master Lookup',     href: '/sysadmin/settings/master-lookup',     icon: ic('list') },
     { label: 'Master Document Types', href: '/sysadmin/settings/master-document-types', icon: ic('fileText') },
     { label: 'Batas SOS Serentak',    href: '/sysadmin/settings/emergency-sos-limit',   icon: ic('activity') },
+    { label: 'Gen AI',                href: '/sysadmin/settings/gen-ai',                icon: ic('zap') },
   ]},
   { title: 'Workflow', icon: ic('workflow'), items: [
     { label: 'Workflow Settings',   href: '/sysadmin/workflow/settings',            icon: ic('settings') },
