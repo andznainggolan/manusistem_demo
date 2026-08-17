@@ -24,6 +24,13 @@ const Stars = ({ n }) => (
   <span className='text-[11px] text-amber-400'>{'★'.repeat(n)}<span className='text-gray-200'>{'★'.repeat(5 - n)}</span></span>
 )
 
+// A rejection caused by voiding a mistaken hire carries a
+// "[Employment dibatalkan: <reason>]" / "[Employment cancelled: <reason>]"
+// marker appended to notes (see hr/employee/[id] saveRecord cascade) — pull
+// it out so the card can call it out distinctly instead of burying it in a
+// line-clamped notes blob.
+const CANCEL_NOTE_RE = /\s*\[(?:Employment dibatalkan|Employment cancelled): ([^\]]+)\]/
+
 function CandidateCard({ c, onMove, onReject, employee, headcount, companyName, t }) {
   const idx = ACTIVE_STAGES.indexOf(c.stage)
   const next = c.stage === 'Rejected' ? null : ACTIVE_STAGES[idx + 1]
@@ -31,12 +38,21 @@ function CandidateCard({ c, onMove, onReject, employee, headcount, companyName, 
   // "back" reopens it at Applied; from an active stage it just steps back
   // one column.
   const prev = c.stage === 'Rejected' ? 'Applied' : (idx > 0 ? ACTIVE_STAGES[idx - 1] : null)
+  const cancelMatch = c.notes && c.notes.match(CANCEL_NOTE_RE)
+  const notesWithoutCancel = c.notes ? c.notes.replace(CANCEL_NOTE_RE, '').trim() : ''
   return (
     <div className='rounded-xl border border-gray-100 bg-white p-3 shadow-sm'>
       <p className='text-sm font-semibold text-gray-800'>{c.name}</p>
       <p className='mt-0.5 text-[11px] text-gray-400'>{c.source} · {c.appliedDate}</p>
       {c.rating > 0 && <div className='mt-1'><Stars n={c.rating} /></div>}
-      {c.notes && <p className='mt-1.5 line-clamp-2 text-[11px] text-gray-500'>{c.notes}</p>}
+      {notesWithoutCancel && <p className='mt-1.5 line-clamp-2 text-[11px] text-gray-500'>{notesWithoutCancel}</p>}
+      {cancelMatch && (
+        <div className='mt-1.5 rounded-lg bg-gray-100 px-2.5 py-1.5 text-[11px] text-gray-600'>
+          <p className='font-bold text-gray-700'>⚠️ {t('Cancel Employment', 'Cancel Employment')}</p>
+          <p>{t('Sempat diterima, lalu dibatalkan.', 'Was hired, then the employment was cancelled.')}</p>
+          <p>{t('Alasan', 'Reason')}: {cancelMatch[1]}</p>
+        </div>
+      )}
       {employee && (
         <div className='mt-2 space-y-0.5 rounded-lg bg-emerald-50 px-2.5 py-2 text-[11px] text-emerald-800'>
           <p className='font-bold'>✅ {t('Sudah Jadi Karyawan', 'Converted to Employee')}</p>
