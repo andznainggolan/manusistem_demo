@@ -87,9 +87,12 @@ export default function JobRequisitionPage() {
     ? headcounts.filter(h => h.positionId === Number(modal.form.positionId) && h.status === 'Active' && !h.employeeId
         && !requisitions.some(r => r.id !== modal.id && r.headcountId === h.id && r.status !== 'Closed'))
     : []
-  const positionHasVacancy = (posId) =>
-    headcounts.some(h => h.positionId === posId && h.status === 'Active' && !h.employeeId
-      && !requisitions.some(r => r.id !== modal?.id && r.headcountId === h.id && r.status !== 'Closed'))
+  const vacantCountForPosition = (posId) =>
+    headcounts.filter(h => h.positionId === posId && h.status === 'Active' && !h.employeeId
+      && !requisitions.some(r => r.id !== modal?.id && r.headcountId === h.id && r.status !== 'Closed')).length
+  const vacantCountForDepartment = (deptId) =>
+    positions.filter(p => p.departmentId === deptId).reduce((sum, p) => sum + vacantCountForPosition(p.id), 0)
+  const positionHasVacancy = (posId) => vacantCountForPosition(posId) > 0
   // "Hanya kursi kosong" filters the Position list to positions that actually
   // have a seat to offer. The checkbox's own onChange clears any selected
   // position that fails this filter the moment it's switched on, so the list
@@ -261,7 +264,9 @@ export default function JobRequisitionPage() {
                 <Select value={modal.form.departmentId} disabled={!modal.form.companyId}
                   onChange={e => setField({ departmentId: e.target.value, positionId: '' })}>
                   <option value=''>—</option>
-                  {companyDepartments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                  {companyDepartments.map(d => (
+                    <option key={d.id} value={d.id}>{d.name} ({vacantCountForDepartment(d.id)} kosong)</option>
+                  ))}
                 </Select>
               </FormField>
               <div>
@@ -294,7 +299,9 @@ export default function JobRequisitionPage() {
                     setModal(m => ({ ...m, form: { ...m.form, positionId: val, headcountId: '', publicTitle: pos?.name || '' } }))
                   }}>
                   <option value=''>—</option>
-                  {positionOptions.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  {positionOptions.map(p => (
+                    <option key={p.id} value={p.id}>{p.name} ({vacantCountForPosition(p.id)} kosong)</option>
+                  ))}
                 </Select>
                 <span className='mt-1 block text-xs text-gray-400'>
                   {!modal.form.departmentId
