@@ -13,7 +13,7 @@ const todayStr = () => new Date().toISOString().slice(0, 10)
 export default function PendingEmployeePage() {
   const t = useT()
   const { requisitions, candidates, updateCandidate } = useRecruitmentStore()
-  const { positions, departments, companies, updateHeadcount } = useStructureStore()
+  const { positions, departments, companies, headcounts, updateHeadcount } = useStructureStore()
   const { employees, addEmployee } = useEmployeeStore()
 
   const [modal, setModal] = useState(null) // { candidate, requisition, form }
@@ -32,6 +32,7 @@ export default function PendingEmployeePage() {
   const posName = (id) => positions.find(p => p.id === id)?.name || '—'
   const deptName = (id) => departments.find(d => d.id === id)?.name || '—'
   const companyName = (id) => companies.find(c => c.id === id)?.companyCode || companies.find(c => c.id === id)?.name || '—'
+  const headcountFor = (req) => req?.headcountId ? headcounts.find(h => h.id === req.headcountId) : null
 
   const openConvert = (c) => {
     const req = c.requisition
@@ -99,15 +100,25 @@ export default function PendingEmployeePage() {
             const req = c.requisition
             const positionId = req?.positionId ?? positions.find(p => p.name === req?.positionTitle)?.id
             const employee = c.employeeId ? employees.find(e => e.id === c.employeeId) : null
+            const hc = headcountFor(req)
             return (
               <Tr key={c.id}>
                 <Td>
                   <p className='font-semibold text-gray-800'>{c.name}</p>
-                  <p className='text-xs text-gray-400'>{c.email} · {c.phone}</p>
+                  {employee ? (
+                    <p className='text-xs text-gray-400'>
+                      {t('No. Karyawan', 'Employee No.')}: <span className='font-mono font-semibold text-gray-600'>{employee.nik || '—'}</span>
+                    </p>
+                  ) : (
+                    <p className='text-xs text-gray-400'>{c.email} · {c.phone}</p>
+                  )}
                 </Td>
-                <Td className='text-sm text-gray-600'>{req?.publicTitle || req?.positionTitle || posName(positionId)}</Td>
+                <Td className='text-sm text-gray-600'>
+                  {req?.publicTitle || req?.positionTitle || posName(positionId)}
+                  {employee && hc && <span className='mt-0.5 block text-xs text-gray-400'>{hc.code} — {hc.name}</span>}
+                </Td>
                 <Td className='text-sm text-gray-600'>{req ? deptName(req.departmentId) : '—'}</Td>
-                <Td className='text-sm text-gray-600'>{req ? companyName(req.companyId) : '—'}</Td>
+                <Td className='text-sm text-gray-600'>{employee ? companyName(employee.companyId) : (req ? companyName(req.companyId) : '—')}</Td>
                 <Td>
                   {c.employeeId
                     ? <StatusBadge tone='success'>{t('Sudah Jadi Karyawan', 'Converted')}</StatusBadge>
