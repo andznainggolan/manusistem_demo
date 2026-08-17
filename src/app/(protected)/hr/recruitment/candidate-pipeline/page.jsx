@@ -2,6 +2,8 @@
 import { useState, useMemo, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useRecruitmentStore, ACTIVE_STAGES, STAGES } from '@/store/recruitmentStore'
+import { useStructureStore } from '@/store/structureStore'
+import { useEmployeeStore } from '@/store/employeeStore'
 import { useT } from '@/store/languageStore'
 import { PageHeader, Select, SearchBar, StatusBadge, EmptyState } from '@/components/ui'
 
@@ -22,7 +24,7 @@ const Stars = ({ n }) => (
   <span className='text-[11px] text-amber-400'>{'★'.repeat(n)}<span className='text-gray-200'>{'★'.repeat(5 - n)}</span></span>
 )
 
-function CandidateCard({ c, onMove, onReject, t }) {
+function CandidateCard({ c, onMove, onReject, employee, headcount, companyName, t }) {
   const idx = ACTIVE_STAGES.indexOf(c.stage)
   const next = c.stage === 'Rejected' ? null : ACTIVE_STAGES[idx + 1]
   // Rejected has no recorded prior stage (any active stage can reject), so
@@ -35,6 +37,14 @@ function CandidateCard({ c, onMove, onReject, t }) {
       <p className='mt-0.5 text-[11px] text-gray-400'>{c.source} · {c.appliedDate}</p>
       {c.rating > 0 && <div className='mt-1'><Stars n={c.rating} /></div>}
       {c.notes && <p className='mt-1.5 line-clamp-2 text-[11px] text-gray-500'>{c.notes}</p>}
+      {employee && (
+        <div className='mt-2 space-y-0.5 rounded-lg bg-emerald-50 px-2.5 py-2 text-[11px] text-emerald-800'>
+          <p className='font-bold'>✅ {t('Sudah Jadi Karyawan', 'Converted to Employee')}</p>
+          <p>{t('No. Karyawan', 'Employee No.')}: <span className='font-mono font-semibold'>{employee.nik || '—'}</span></p>
+          <p>{t('Perusahaan', 'Company')}: {companyName}</p>
+          {headcount && <p>{t('Headcount', 'Headcount')}: {headcount.code} — {headcount.name}</p>}
+        </div>
+      )}
       <div className='mt-2.5 flex items-center gap-1.5'>
         {prev && (
           <button onClick={() => onMove(c, prev)} title={`${t('Kembali ke', 'Back to')} ${prev}`}
@@ -63,6 +73,8 @@ function PipelineBody() {
   const t = useT()
   const params = useSearchParams()
   const { requisitions, candidates, updateCandidate } = useRecruitmentStore()
+  const { headcounts, companies } = useStructureStore()
+  const { employees } = useEmployeeStore()
 
   const [reqId, setReqId] = useState(params.get('requisitionId') || 'all')
   const [q, setQ] = useState('')
@@ -71,6 +83,8 @@ function PipelineBody() {
   const needle = q.trim().toLowerCase()
   const filtered = needle ? byReq.filter(c => c.name.toLowerCase().includes(needle)) : byReq
   const byStage = (stage) => filtered.filter(c => c.stage === stage)
+
+  const companyName = (id) => companies.find(co => co.id === id)?.companyCode || companies.find(co => co.id === id)?.name || '—'
 
   const move = (c, stage) => updateCandidate(c.id, { stage })
   const reject = (c) => updateCandidate(c.id, { stage: 'Rejected' })
@@ -122,9 +136,16 @@ function PipelineBody() {
                   <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${c.bg} ${c.text}`}>{col.length}</span>
                 </div>
                 <div className={`space-y-2.5 overflow-y-auto pr-1 ${COLUMN_MAX_H}`}>
-                  {col.map(cand => (
-                    <CandidateCard key={cand.id} c={cand} onMove={move} onReject={reject} t={t} />
-                  ))}
+                  {col.map(cand => {
+                    const employee = cand.employeeId ? employees.find(e => e.id === cand.employeeId) : null
+                    const req = employee ? requisitions.find(r => r.id === cand.requisitionId) : null
+                    const headcount = req?.headcountId ? headcounts.find(h => h.id === req.headcountId) : null
+                    return (
+                      <CandidateCard key={cand.id} c={cand} onMove={move} onReject={reject} t={t}
+                        employee={employee} headcount={headcount}
+                        companyName={employee ? companyName(employee.companyId) : null} />
+                    )
+                  })}
                   {col.length === 0 && <p className='py-6 text-center text-[11px] text-gray-300'>—</p>}
                 </div>
               </div>
