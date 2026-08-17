@@ -307,14 +307,54 @@ if (typeof window !== 'undefined' && !window.__kpbStructureLoaded) {
     return (await fetch('/data/importedStructure.json')).json()
   }
   load()
-    .then(d => useStructureStore.setState(s => ({
-      enterprises:   [...s.enterprises,   ...(d.enterprises   || [])],
-      divisions:     [...s.divisions,     ...(d.divisions     || [])],
-      companies:     [...s.companies,     ...(d.companies     || [])],
-      businessUnits: [...s.businessUnits, ...(d.businessUnits || [])],
-      departments:   [...s.departments,   ...(d.departments   || [])],
-      jobFamilies:   [...s.jobFamilies,   ...(d.jobFamilies   || [])],
-      positions:     [...s.positions,     ...(d.positions     || [])],
-    })))
+    .then(d => {
+      useStructureStore.setState(s => ({
+        enterprises:   [...s.enterprises,   ...(d.enterprises   || [])],
+        divisions:     [...s.divisions,     ...(d.divisions     || [])],
+        companies:     [...s.companies,     ...(d.companies     || [])],
+        businessUnits: [...s.businessUnits, ...(d.businessUnits || [])],
+        departments:   [...s.departments,   ...(d.departments   || [])],
+        jobFamilies:   [...s.jobFamilies,   ...(d.jobFamilies   || [])],
+        positions:     [...s.positions,     ...(d.positions     || [])],
+      }))
+      // The import above only ever carries org structure, never headcounts —
+      // every imported position starts with zero seats. Seed a few open (no
+      // employeeId) seats per company so Job Requisition has something to
+      // pick from across the whole company list, not just the demo seed's
+      // original NTK/Frontend positions.
+      backfillVacantHeadcounts()
+    })
     .catch(() => { window.__kpbStructureLoaded = false })
+}
+
+function backfillVacantHeadcounts() {
+  const s = useStructureStore.getState()
+  const { companies, businessUnits, departments, positions, headcounts } = s
+  const companyIdOf = (pos) => {
+    const dept = departments.find(d => d.id === pos.departmentId)
+    const bu = businessUnits.find(b => b.id === dept?.businessUnitId)
+    return bu?.companyId
+  }
+  let nextId = headcounts.reduce((max, h) => Math.max(max, h.id), 0) + 1
+  const newRecords = []
+  companies.forEach(c => {
+    // Up to 3 seats per company, spread across distinct departments so both
+    // the company-level and department-level counts show variety.
+    const seenDepts = new Set()
+    for (const p of positions) {
+      if (newRecords.filter(r => r.companyId === c.id).length >= 3) break
+      if (p.status !== 'Active' || companyIdOf(p) !== c.id || seenDepts.has(p.departmentId)) continue
+      seenDepts.add(p.departmentId)
+      newRecords.push({
+        companyId: c.id, positionId: p.id, code: `HC${String(nextId).padStart(4, '0')}`,
+        name: `${p.name} A`, employeeId: null, supervisorHeadcountId: null, status: 'Active',
+        id: nextId++,
+      })
+    }
+  })
+  if (newRecords.length) {
+    useStructureStore.setState(st => ({
+      headcounts: [...st.headcounts, ...newRecords.map(({ companyId, ...r }) => r)],
+    }))
+  }
 }
