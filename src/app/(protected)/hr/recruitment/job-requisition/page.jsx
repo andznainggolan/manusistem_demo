@@ -8,6 +8,7 @@ import {
   PageHeader, StatCard, DataTable, Tr, Td, SearchBar, FilterBar, FilterPill,
   ActionButton, StatusBadge, EmptyState, FormField, Input, Select, inputClass,
 } from '@/components/ui'
+import SearchableSelect from '@/components/ui/SearchableSelect'
 
 const STATUS_TONE = { Open: 'success', 'Posted External': 'info', 'On Hold': 'warning', Closed: 'neutral' }
 const PRIORITY_TONE = { High: 'danger', Medium: 'warning', Low: 'neutral' }
@@ -261,13 +262,17 @@ export default function JobRequisitionPage() {
               </FormField>
               <FormField label={t('Departemen', 'Department')} required
                 hint={!modal.form.companyId ? t('Pilih perusahaan dahulu.', 'Pick a company first.') : ''}>
-                <Select value={modal.form.departmentId} disabled={!modal.form.companyId}
-                  onChange={e => setField({ departmentId: e.target.value, positionId: '' })}>
-                  <option value=''>—</option>
-                  {companyDepartments.map(d => (
-                    <option key={d.id} value={d.id}>{d.name} ({vacantCountForDepartment(d.id)} kosong)</option>
-                  ))}
-                </Select>
+                <SearchableSelect
+                  value={modal.form.departmentId} disabled={!modal.form.companyId}
+                  onChange={val => setField({ departmentId: val, positionId: '' })}
+                  options={companyDepartments.map(d => {
+                    const count = vacantCountForDepartment(d.id)
+                    return {
+                      value: String(d.id), name: d.name, label: `${d.name} (${count} kosong)`,
+                      badgeText: `${count} kosong`, badgeTone: count > 0 ? 'good' : 'neutral',
+                    }
+                  })}
+                />
               </FormField>
               <div>
                 <div className='mb-1.5 flex items-center justify-between gap-2'>
@@ -290,19 +295,22 @@ export default function JobRequisitionPage() {
                     {t('Hanya kursi kosong', 'Vacant only')}
                   </label>
                 </div>
-                <Select value={modal.form.positionId} disabled={!modal.form.departmentId}
-                  onChange={e => {
-                    const val = e.target.value
+                <SearchableSelect
+                  value={modal.form.positionId} disabled={!modal.form.departmentId}
+                  onChange={val => {
                     const pos = departmentPositions.find(p => p.id === Number(val))
                     // Default the public title to match — still just a starting
                     // point HR can override, not a locked mirror of the field above.
                     setModal(m => ({ ...m, form: { ...m.form, positionId: val, headcountId: '', publicTitle: pos?.name || '' } }))
-                  }}>
-                  <option value=''>—</option>
-                  {positionOptions.map(p => (
-                    <option key={p.id} value={p.id}>{p.name} ({vacantCountForPosition(p.id)} kosong)</option>
-                  ))}
-                </Select>
+                  }}
+                  options={positionOptions.map(p => {
+                    const count = vacantCountForPosition(p.id)
+                    return {
+                      value: String(p.id), name: p.name, label: `${p.name} (${count} kosong)`,
+                      badgeText: `${count} kosong`, badgeTone: count > 0 ? 'good' : 'neutral',
+                    }
+                  })}
+                />
                 <span className='mt-1 block text-xs text-gray-400'>
                   {!modal.form.departmentId
                     ? t('Pilih departemen dahulu.', 'Pick a department first.')

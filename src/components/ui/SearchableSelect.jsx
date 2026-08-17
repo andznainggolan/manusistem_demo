@@ -64,7 +64,12 @@ export default function SearchableSelect({ value, onChange, options, placeholder
               className={`block w-full px-3 py-2 text-left text-sm transition ${
                 String(o.value) === String(value) ? 'bg-teal-50 font-semibold text-teal-700' : 'text-gray-700 hover:bg-gray-50'}`}
             >
-              {o.label}
+              {o.name || o.label}
+              {o.badgeText && (
+                <span className={`ml-1.5 text-xs font-semibold ${o.badgeTone === 'good' ? 'text-emerald-600' : 'text-gray-400'}`}>
+                  {o.badgeText}
+                </span>
+              )}
               {o.sublabel && <span className='block text-xs text-gray-400'>{o.sublabel}</span>}
             </button>
           ))}
