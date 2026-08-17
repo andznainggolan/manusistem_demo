@@ -93,14 +93,36 @@ export default function JobRequisitionPage() {
       && !requisitions.some(r => r.id !== modal?.id && r.headcountId === h.id && r.status !== 'Closed')).length
   const vacantCountForDepartment = (deptId) =>
     positions.filter(p => p.departmentId === deptId).reduce((sum, p) => sum + vacantCountForPosition(p.id), 0)
+  const vacantCountForCompany = (companyId) =>
+    departments.filter(d => businessUnits.find(bu => bu.id === d.businessUnitId)?.companyId === companyId)
+      .reduce((sum, d) => sum + vacantCountForDepartment(d.id), 0)
   const positionHasVacancy = (posId) => vacantCountForPosition(posId) > 0
-  // "Hanya kursi kosong" filters the Position list to positions that actually
-  // have a seat to offer. The checkbox's own onChange clears any selected
-  // position that fails this filter the moment it's switched on, so the list
-  // and the selected value can never disagree.
+  // "Hanya kursi kosong" filters every LOV in the cascade (Company →
+  // Department → Position) down to entries that actually have a seat
+  // somewhere underneath them. The checkbox's own onChange clears any
+  // selected value that fails its filter the moment it's switched on, so
+  // the lists and the selected values can never disagree.
+  const companyOptionsList = onlyVacant ? companies.filter(c => vacantCountForCompany(c.id) > 0) : companies
+  const departmentOptions = onlyVacant
+    ? companyDepartments.filter(d => vacantCountForDepartment(d.id) > 0)
+    : companyDepartments
   const positionOptions = onlyVacant
     ? departmentPositions.filter(p => positionHasVacancy(p.id))
     : departmentPositions
+
+  const handleOnlyVacantChange = (checked) => {
+    setOnlyVacant(checked)
+    if (!checked || !modal) return
+    let { companyId, departmentId, positionId } = modal.form
+    if (companyId && vacantCountForCompany(Number(companyId)) === 0) { companyId = ''; departmentId = ''; positionId = '' }
+    if (departmentId && vacantCountForDepartment(Number(departmentId)) === 0) { departmentId = ''; positionId = '' }
+    if (positionId && !positionHasVacancy(Number(positionId))) { positionId = '' }
+    if (companyId !== modal.form.companyId || departmentId !== modal.form.departmentId || positionId !== modal.form.positionId) {
+      const patch = { companyId, departmentId, positionId }
+      if (positionId !== modal.form.positionId) { patch.headcountId = ''; patch.publicTitle = '' }
+      setField(patch)
+    }
+  }
 
   const save = () => {
     const f = modal.form
@@ -253,19 +275,36 @@ export default function JobRequisitionPage() {
               <button onClick={close} className='text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
             </div>
             <div className='space-y-4'>
+              <label className='flex cursor-pointer items-center gap-1.5 text-xs font-medium text-gray-500 select-none'>
+                <input type='checkbox' checked={onlyVacant} onChange={e => handleOnlyVacantChange(e.target.checked)}
+                  className='h-3.5 w-3.5 accent-teal-600' />
+                {t('Hanya tampilkan Perusahaan / Departemen / Posisi yang punya kursi kosong',
+                   'Only show Company / Department / Position with a vacant seat')}
+              </label>
               <FormField label={t('Perusahaan', 'Company')} required>
-                <Select value={modal.form.companyId}
-                  onChange={e => setField({ companyId: e.target.value, departmentId: '', positionId: '' })}>
-                  <option value=''>—</option>
-                  {companies.map(c => <option key={c.id} value={c.id}>{c.companyCode} — {c.name}</option>)}
-                </Select>
+                <SearchableSelect
+                  value={modal.form.companyId}
+                  onChange={val => setField({ companyId: val, departmentId: '', positionId: '' })}
+                  options={companyOptionsList.map(c => {
+                    const count = vacantCountForCompany(c.id)
+                    return {
+                      value: String(c.id), name: `${c.companyCode} — ${c.name}`, label: `${c.companyCode} — ${c.name} (${count} kosong)`,
+                      badgeText: `${count} kosong`, badgeTone: count > 0 ? 'good' : 'neutral',
+                    }
+                  })}
+                />
               </FormField>
               <FormField label={t('Departemen', 'Department')} required
-                hint={!modal.form.companyId ? t('Pilih perusahaan dahulu.', 'Pick a company first.') : ''}>
+                hint={!modal.form.companyId
+                  ? t('Pilih perusahaan dahulu.', 'Pick a company first.')
+                  : onlyVacant && departmentOptions.length < companyDepartments.length
+                    ? t(`Menampilkan ${departmentOptions.length} dari ${companyDepartments.length} departemen yang punya kursi kosong.`,
+                        `Showing ${departmentOptions.length} of ${companyDepartments.length} departments with a vacant seat.`)
+                    : ''}>
                 <SearchableSelect
                   value={modal.form.departmentId} disabled={!modal.form.companyId}
                   onChange={val => setField({ departmentId: val, positionId: '' })}
-                  options={companyDepartments.map(d => {
+                  options={departmentOptions.map(d => {
                     const count = vacantCountForDepartment(d.id)
                     return {
                       value: String(d.id), name: d.name, label: `${d.name} (${count} kosong)`,
@@ -275,26 +314,9 @@ export default function JobRequisitionPage() {
                 />
               </FormField>
               <div>
-                <div className='mb-1.5 flex items-center justify-between gap-2'>
-                  <span className='text-xs font-semibold text-gray-600'>
-                    {t('Judul Posisi', 'Position Title')} <span className='text-red-500'>*</span>
-                  </span>
-                  <label className={`flex items-center gap-1.5 text-[11px] font-medium select-none ${modal.form.departmentId ? 'cursor-pointer text-gray-500' : 'cursor-not-allowed text-gray-300'}`}>
-                    <input type='checkbox' checked={onlyVacant} onChange={e => {
-                      const checked = e.target.checked
-                      setOnlyVacant(checked)
-                      // Turning the filter on while a now-invalid position is
-                      // selected would otherwise show a position outside the
-                      // filtered list — clear it instead so the field always
-                      // matches what "Hanya kursi kosong" claims to show.
-                      if (checked && modal.form.positionId && !positionHasVacancy(Number(modal.form.positionId))) {
-                        setField({ positionId: '', headcountId: '', publicTitle: '' })
-                      }
-                    }}
-                      disabled={!modal.form.departmentId} className='h-3 w-3 accent-teal-600' />
-                    {t('Hanya kursi kosong', 'Vacant only')}
-                  </label>
-                </div>
+                <span className='mb-1.5 block text-xs font-semibold text-gray-600'>
+                  {t('Judul Posisi', 'Position Title')} <span className='text-red-500'>*</span>
+                </span>
                 <SearchableSelect
                   value={modal.form.positionId} disabled={!modal.form.departmentId}
                   onChange={val => {
