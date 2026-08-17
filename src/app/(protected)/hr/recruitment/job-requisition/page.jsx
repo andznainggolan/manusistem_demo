@@ -30,6 +30,7 @@ export default function JobRequisitionPage() {
   const [status, setStatus] = useState('all')
   const [modal, setModal] = useState(null)   // { mode: 'add'|'edit', id?, form }
   const [flash, setFlash] = useState('')
+  const [onlyVacant, setOnlyVacant] = useState(true)
 
   const say = (msg) => { setFlash(msg); setTimeout(() => setFlash(''), 3000) }
 
@@ -86,6 +87,15 @@ export default function JobRequisitionPage() {
     ? headcounts.filter(h => h.positionId === Number(modal.form.positionId) && h.status === 'Active' && !h.employeeId
         && !requisitions.some(r => r.id !== modal.id && r.headcountId === h.id && r.status !== 'Closed'))
     : []
+  const positionHasVacancy = (posId) =>
+    headcounts.some(h => h.positionId === posId && h.status === 'Active' && !h.employeeId
+      && !requisitions.some(r => r.id !== modal?.id && r.headcountId === h.id && r.status !== 'Closed'))
+  // "Hanya kursi kosong" filters the Position list itself to positions that
+  // actually have a seat to offer — but never hides the position already
+  // selected (e.g. editing a requisition whose seat got filled since).
+  const positionOptions = onlyVacant
+    ? departmentPositions.filter(p => positionHasVacancy(p.id) || String(p.id) === modal?.form.positionId)
+    : departmentPositions
 
   const save = () => {
     const f = modal.form
@@ -253,8 +263,19 @@ export default function JobRequisitionPage() {
                   {companyDepartments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
                 </Select>
               </FormField>
-              <FormField label={t('Judul Posisi', 'Position Title')} required
-                hint={!modal.form.departmentId ? t('Pilih departemen dahulu.', 'Pick a department first.') : ''}>
+              <div>
+                <div className='mb-1.5 flex items-center justify-between gap-2'>
+                  <span className='text-xs font-semibold text-gray-600'>
+                    {t('Judul Posisi', 'Position Title')} <span className='text-red-500'>*</span>
+                  </span>
+                  <span className='flex items-center gap-1.5 text-[11px] font-medium text-gray-500 select-none'>
+                    <input type='checkbox' checked={onlyVacant} onChange={e => setOnlyVacant(e.target.checked)}
+                      disabled={!modal.form.departmentId} className='h-3 w-3 accent-teal-600' />
+                    <label className='cursor-pointer' onClick={() => !modal.form.departmentId || setOnlyVacant(v => !v)}>
+                      {t('Hanya kursi kosong', 'Vacant only')}
+                    </label>
+                  </span>
+                </div>
                 <Select value={modal.form.positionId} disabled={!modal.form.departmentId}
                   onChange={e => {
                     const val = e.target.value
@@ -264,9 +285,17 @@ export default function JobRequisitionPage() {
                     setModal(m => ({ ...m, form: { ...m.form, positionId: val, headcountId: '', publicTitle: pos?.name || '' } }))
                   }}>
                   <option value=''>—</option>
-                  {departmentPositions.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  {positionOptions.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                 </Select>
-              </FormField>
+                <span className='mt-1 block text-xs text-gray-400'>
+                  {!modal.form.departmentId
+                    ? t('Pilih departemen dahulu.', 'Pick a department first.')
+                    : onlyVacant && positionOptions.length < departmentPositions.length
+                      ? t(`Menampilkan ${positionOptions.length} dari ${departmentPositions.length} posisi yang punya kursi kosong.`,
+                          `Showing ${positionOptions.length} of ${departmentPositions.length} positions with a vacant seat.`)
+                      : ''}
+                </span>
+              </div>
               <FormField label={t('Headcount', 'Headcount')}
                 hint={!modal.form.positionId
                   ? t('Pilih posisi dahulu.', 'Pick a position first.')
