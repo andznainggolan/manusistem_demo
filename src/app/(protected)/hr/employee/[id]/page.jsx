@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useEmployeeStore, ACTION_COLOR, HISTORY_ACTIONS, HISTORY_REASONS } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
+import { useRecruitmentStore } from '@/store/recruitmentStore'
 import { formatRp, sumVariableAllowances } from '@/store/payrollStore'
 import { useMasterLookupStore } from '@/store/masterLookupStore'
 import { useEmployeeDocumentStore, DOCUMENT_MAX_BYTES } from '@/store/employeeDocumentStore'
@@ -108,7 +109,8 @@ export default function EmployeeProfilePage() {
   } = useEmployeeStore()
   const photoInputRef = useRef(null)
   const [photoError, setPhotoError] = useState(null)
-  const { companies, divisions, businessUnits, departments, positions, grades } = useStructureStore()
+  const { companies, divisions, businessUnits, departments, positions, grades, headcounts, updateHeadcount } = useStructureStore()
+  const { candidates, updateCandidate } = useRecruitmentStore()
   const { currentUser } = useAuthStore()
   const { documents, addDocument, deleteDocument } = useEmployeeDocumentStore()
   const { types: docTypes } = useDocumentTypeStore()
@@ -410,6 +412,25 @@ export default function EmployeeProfilePage() {
     }
     if (recordModal.mode === 'add') addHistory(emp.id, payload)
     else updateHistory(emp.id, f.id, payload)
+
+    // "Cancel Employment" means this hire is voided — free the Headcount
+    // seat it was claiming, and un-claim the recruitment candidate it came
+    // from (back to Rejected) so Job Requisition's Kebutuhan/Terpenuhi count
+    // and the seat's availability both reflect it immediately, without
+    // requiring a second manual cleanup step.
+    if (payload.action === 'Cancel Employment') {
+      const seat = headcounts.find(h => h.employeeId === emp.id)
+      if (seat) updateHeadcount(seat.id, { employeeId: null })
+      const candidate = candidates.find(c => c.employeeId === emp.id)
+      if (candidate) {
+        const cancelNote = `[${t('Employment dibatalkan', 'Employment cancelled')}: ${payload.reason}]`
+        updateCandidate(candidate.id, {
+          employeeId: null, stage: 'Rejected',
+          notes: candidate.notes ? `${candidate.notes} ${cancelNote}` : cancelNote,
+        })
+      }
+    }
+
     closeModal()
   }
 
