@@ -268,13 +268,11 @@ export default function JobRequisitionPage() {
                   <span className='text-xs font-semibold text-gray-600'>
                     {t('Judul Posisi', 'Position Title')} <span className='text-red-500'>*</span>
                   </span>
-                  <span className='flex items-center gap-1.5 text-[11px] font-medium text-gray-500 select-none'>
+                  <label className={`flex items-center gap-1.5 text-[11px] font-medium select-none ${modal.form.departmentId ? 'cursor-pointer text-gray-500' : 'cursor-not-allowed text-gray-300'}`}>
                     <input type='checkbox' checked={onlyVacant} onChange={e => setOnlyVacant(e.target.checked)}
                       disabled={!modal.form.departmentId} className='h-3 w-3 accent-teal-600' />
-                    <label className='cursor-pointer' onClick={() => !modal.form.departmentId || setOnlyVacant(v => !v)}>
-                      {t('Hanya kursi kosong', 'Vacant only')}
-                    </label>
-                  </span>
+                    {t('Hanya kursi kosong', 'Vacant only')}
+                  </label>
                 </div>
                 <Select value={modal.form.positionId} disabled={!modal.form.departmentId}
                   onChange={e => {
