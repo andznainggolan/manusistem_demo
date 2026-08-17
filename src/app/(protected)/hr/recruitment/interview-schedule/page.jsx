@@ -70,7 +70,7 @@ export default function InterviewSchedulePage() {
     say(t('Jadwal dihapus.', 'Interview deleted.'))
   }
 
-  const candidateOptions = candidates.filter(c => c.stage !== 'Rejected' && c.stage !== 'Hired')
+  const candidateOptions = candidates.filter(c => c.stage !== 'Rejected' && c.stage !== 'Pending Employee')
 
   return (
     <div>

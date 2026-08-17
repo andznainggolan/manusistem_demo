@@ -350,10 +350,18 @@ if (typeof window !== 'undefined' && !window.__kpbEmployeesLoaded) {
     return (await fetch('/data/importedEmployees.json')).json()
   }
   load()
-    .then(list => useEmployeeStore.setState(s => {
-      const seen = new Set(s.employees.map(e => e.id))
-      const add  = list.map(norm).filter(e => !seen.has(e.id))
-      return { employees: [...s.employees, ...add] }
-    }))
+    .then(list => {
+      useEmployeeStore.setState(s => {
+        const seen = new Set(s.employees.map(e => e.id))
+        const add  = list.map(norm).filter(e => !seen.has(e.id))
+        return { employees: [...s.employees, ...add] }
+      })
+      // _empId started at 1 with no awareness of the seed's own high ids
+      // (up to ~96) or the imported employees' ids (100000+) — left alone,
+      // addEmployee() would mint an id that's already taken, silently
+      // shadowing an existing employee behind a duplicate id.
+      const maxId = useEmployeeStore.getState().employees.reduce((m, e) => Math.max(m, e.id), 0)
+      if (maxId >= _empId) _empId = maxId + 1
+    })
     .catch(() => { window.__kpbEmployeesLoaded = false })
 }

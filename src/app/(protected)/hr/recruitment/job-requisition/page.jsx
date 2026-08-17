@@ -35,7 +35,7 @@ export default function JobRequisitionPage() {
 
   const say = (msg) => { setFlash(msg); setTimeout(() => setFlash(''), 3000) }
 
-  const filledOf = (reqId) => candidates.filter(c => c.requisitionId === reqId && c.stage === 'Hired').length
+  const filledOf = (reqId) => candidates.filter(c => c.requisitionId === reqId && c.stage === 'Pending Employee').length
 
   const needle = q.trim().toLowerCase()
   const rows = requisitions
@@ -185,7 +185,7 @@ export default function JobRequisitionPage() {
         <StatCard icon='🟢' tone='green' label='Open' value={String(counts.Open)} />
         <StatCard icon='🌐' tone='blue' label={t('Live di Career Site', 'Live on Career Site')} value={String(totalLive)} />
         <StatCard icon='🎯' tone='purple' label={t('Kebutuhan Terbuka', 'Open Headcount')} value={String(totalHeadcount)} />
-        <StatCard icon='✅' tone='orange' label={t('Sudah Terisi (Hired)', 'Filled (Hired)')} value={String(totalFilled)} />
+        <StatCard icon='✅' tone='orange' label={t('Pending Employee', 'Pending Employee')} value={String(totalFilled)} />
       </div>
 
       <div className='mb-4 flex flex-col gap-3 sm:flex-row sm:items-center'>

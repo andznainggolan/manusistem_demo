@@ -227,6 +227,7 @@ const HR_GROUPS = [
   { title: 'Recruitment', icon: ic('briefcase'), items: [
     { label: 'Job Requisition',   href: '/hr/recruitment/job-requisition',   icon: ic('briefcase') },
     { label: 'Candidate Pipeline',href: '/hr/recruitment/candidate-pipeline',icon: ic('repeat') },
+    { label: 'Pending Employee',  href: '/hr/recruitment/pending-employee',  icon: ic('userCheck') },
     { label: 'Interview Schedule',href: '/hr/recruitment/interview-schedule',icon: ic('video') },
     { label: 'Candidate Database',href: '/hr/recruitment/candidate-database',icon: ic('archive') },
     { label: 'Psychotest',        href: '/hr/recruitment/psychotest',        icon: ic('clipboard') },

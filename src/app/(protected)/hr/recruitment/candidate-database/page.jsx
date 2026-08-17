@@ -13,7 +13,7 @@ import {
 } from '@/components/ui'
 
 const STAGE_TONE = {
-  Applied: 'neutral', Screening: 'info', Interview: 'purple', Offer: 'warning', Hired: 'success', Rejected: 'danger',
+  Applied: 'neutral', Screening: 'info', Interview: 'purple', Offer: 'warning', 'Pending Employee': 'success', Rejected: 'danger',
 }
 
 const Stars = ({ n }) => (
@@ -145,8 +145,8 @@ export default function CandidateDatabasePage() {
       <div className='mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6'>
         <StatCard icon='🗂️' tone='brand' label={t('Total', 'Total')} value={String(counts.all)} />
         {STAGES.map(s => (
-          <StatCard key={s} icon={s === 'Hired' ? '✅' : s === 'Rejected' ? '✕' : '●'}
-            tone={s === 'Hired' ? 'green' : s === 'Rejected' ? 'red' : 'gray'} label={s} value={String(counts[s])} />
+          <StatCard key={s} icon={s === 'Pending Employee' ? '✅' : s === 'Rejected' ? '✕' : '●'}
+            tone={s === 'Pending Employee' ? 'green' : s === 'Rejected' ? 'red' : 'gray'} label={s} value={String(counts[s])} />
         ))}
       </div>
 

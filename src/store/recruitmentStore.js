@@ -14,7 +14,7 @@ export const REQ_PRIORITIES = ['Low', 'Medium', 'High']
 export const EMPLOYMENT_TYPES = ['Permanent', 'Contract', 'Internship']
 
 // Ordered — pipeline columns and "next stage" both walk this array in order.
-export const STAGES = ['Applied', 'Screening', 'Interview', 'Offer', 'Hired', 'Rejected']
+export const STAGES = ['Applied', 'Screening', 'Interview', 'Offer', 'Pending Employee', 'Rejected']
 // Rejected is reachable from anywhere but never a "next" stage to walk into.
 export const ACTIVE_STAGES = STAGES.filter(s => s !== 'Rejected')
 
@@ -60,7 +60,7 @@ const SEED_CANDIDATES = [
   { id: 6, name: 'Fitri Handayani', email: 'fitri.h@testing.com', phone: '0812-3456-7806',
     requisitionId: 3, source: 'Job Portal', appliedDate: '2026-05-20', stage: 'Rejected', rating: 2, notes: 'Pengalaman kurang sesuai.' },
   { id: 7, name: 'Galih Nugroho', email: 'galih.n@testing.com', phone: '0812-3456-7807',
-    requisitionId: 4, source: 'Career Site', appliedDate: '2026-03-15', stage: 'Hired', rating: 5, notes: 'Onboarding 1 Mei 2026.' },
+    requisitionId: 4, source: 'Career Site', appliedDate: '2026-03-15', stage: 'Pending Employee', rating: 5, notes: 'Onboarding 1 Mei 2026.' },
 ]
 
 const SEED_INTERVIEWS = [
@@ -131,3 +131,21 @@ export const useRecruitmentStore = create(persist(
   }),
   { name: 'hcm-recruitment-v1', storage: createJSONStorage(() => dbStorage) },
 ))
+
+// ─── One-time migration: 'Hired' → 'Pending Employee' ─────────────────────
+// The stage was renamed after candidates.json was already persisted to the
+// DB for existing installs — hydration would otherwise keep serving the old
+// string forever, silently dropping those candidates from every pipeline
+// column (STAGES no longer contains 'Hired').
+if (typeof window !== 'undefined') {
+  const migrateHiredStage = () => {
+    const s = useRecruitmentStore.getState()
+    if (s.candidates.some(c => c.stage === 'Hired')) {
+      useRecruitmentStore.setState({
+        candidates: s.candidates.map(c => (c.stage === 'Hired' ? { ...c, stage: 'Pending Employee' } : c)),
+      })
+    }
+  }
+  if (useRecruitmentStore.persist.hasHydrated()) migrateHiredStage()
+  else useRecruitmentStore.persist.onFinishHydration(migrateHiredStage)
+}

@@ -14,7 +14,7 @@ const STAGE_COLOR = {
   Screening: { bar: '#3b82f6', bg: 'bg-blue-50',    text: 'text-blue-600' },
   Interview: { bar: '#8b5cf6', bg: 'bg-violet-50',  text: 'text-violet-600' },
   Offer:     { bar: '#f59e0b', bg: 'bg-amber-50',   text: 'text-amber-600' },
-  Hired:     { bar: '#10b981', bg: 'bg-emerald-50', text: 'text-emerald-600' },
+  'Pending Employee': { bar: '#10b981', bg: 'bg-emerald-50', text: 'text-emerald-600' },
   Rejected:  { bar: '#ef4444', bg: 'bg-red-50',     text: 'text-red-600' },
 }
 
@@ -48,7 +48,7 @@ function CandidateCard({ c, onMove, onReject, t }) {
             {next} →
           </button>
         )}
-        {c.stage !== 'Rejected' && c.stage !== 'Hired' && (
+        {c.stage !== 'Rejected' && c.stage !== 'Pending Employee' && (
           <button onClick={() => onReject(c)}
             className='shrink-0 rounded-lg px-2 py-1.5 text-[11px] font-semibold text-red-500 hover:bg-red-50'>
             {t('Tolak', 'Reject')}
