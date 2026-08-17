@@ -3,6 +3,9 @@ import { useState } from 'react'
 import { useRecruitmentStore } from '@/store/recruitmentStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useEmployeeStore } from '@/store/employeeStore'
+import { useCandidateDocumentStore } from '@/store/candidateDocumentStore'
+import { useEmployeeDocumentStore } from '@/store/employeeDocumentStore'
+import { useAuthStore } from '@/store/authStore'
 import { useT } from '@/store/languageStore'
 import {
   PageHeader, StatCard, DataTable, Tr, Td, ActionButton, StatusBadge, EmptyState, FormField, Input,
@@ -12,9 +15,12 @@ const todayStr = () => new Date().toISOString().slice(0, 10)
 
 export default function PendingEmployeePage() {
   const t = useT()
+  const { currentUser } = useAuthStore()
   const { requisitions, candidates, updateCandidate } = useRecruitmentStore()
   const { positions, departments, companies, headcounts, updateHeadcount } = useStructureStore()
   const { employees, addEmployee } = useEmployeeStore()
+  const { documentsFor: candidateDocsFor } = useCandidateDocumentStore()
+  const { addDocument: addEmployeeDocument } = useEmployeeDocumentStore()
 
   const [modal, setModal] = useState(null) // { candidate, requisition, form }
   const [flash, setFlash] = useState('')
@@ -66,7 +72,25 @@ export default function PendingEmployeePage() {
     })
     if (requisition.headcountId) updateHeadcount(requisition.headcountId, { employeeId: empId })
     updateCandidate(candidate.id, { employeeId: empId })
-    say(t(`${candidate.name} berhasil dikonversi menjadi karyawan.`, `${candidate.name} was converted to an employee.`))
+
+    // Carry over whatever the candidate uploaded on the Career Site (KTP, CV,
+    // ijazah, ...) so HR doesn't have to ask for the same files twice.
+    const carriedDocs = candidateDocsFor(candidate.id)
+    carriedDocs.forEach(doc => {
+      addEmployeeDocument({
+        employeeId: empId, category: doc.category,
+        fileName: doc.fileName, fileType: doc.fileType, fileSize: doc.fileSize, dataUrl: doc.dataUrl,
+        issuedDate: '', effectiveStartDate: '', effectiveEndDate: '',
+        note: t('Diupload saat melamar di Career Site.', 'Uploaded when applying on the Career Site.'),
+        customFieldLabel: '', customFieldValue: '',
+        uploadedAt: doc.uploadedAt, uploadedBy: currentUser?.id, uploadedByName: currentUser?.name || '',
+      })
+    })
+
+    say(carriedDocs.length
+      ? t(`${candidate.name} berhasil dikonversi menjadi karyawan (${carriedDocs.length} dokumen ikut dipindahkan).`,
+          `${candidate.name} was converted to an employee (${carriedDocs.length} document(s) carried over).`)
+      : t(`${candidate.name} berhasil dikonversi menjadi karyawan.`, `${candidate.name} was converted to an employee.`))
     closeModal()
   }
 
