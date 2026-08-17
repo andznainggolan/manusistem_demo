@@ -13,6 +13,17 @@ import {
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
 
+// "Joko Suwarso Susilo" + "nusantara-teknologi.com" -> "joko.susilo@nusantara-teknologi.com"
+// First + last word of the name (middle names dropped), lowercased.
+const toWorkEmail = (fullName, domain) => {
+  if (!domain) return ''
+  const parts = (fullName || '').trim().toLowerCase().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return ''
+  const local = (parts.length === 1 ? parts[0] : `${parts[0]}.${parts[parts.length - 1]}`)
+    .replace(/[^a-z0-9.]/g, '')
+  return local ? `${local}@${domain}` : ''
+}
+
 export default function PendingEmployeePage() {
   const t = useT()
   const { currentUser } = useAuthStore()
@@ -56,10 +67,15 @@ export default function PendingEmployeePage() {
     const { candidate, requisition, form } = modal
     if (!form.nik.trim() || !requisition) return
     const position = positions.find(p => p.id === Number(form.positionId))
+    const company = companies.find(c => c.id === requisition.companyId)
+    // New hire gets a proper work email off the company's domain (firstname.
+    // lastname@domain) — their original applied address moves to personalEmail
+    // instead of also doubling as their work address.
+    const workEmail = toWorkEmail(candidate.name, company?.emailDomain) || candidate.email
     const empId = addEmployee({
       name: candidate.name,
       nik: form.nik.trim(),
-      email: candidate.email,
+      email: workEmail,
       personalEmail: candidate.email,
       phone: candidate.phone,
       status: 'Active',
@@ -180,6 +196,20 @@ export default function PendingEmployeePage() {
               <p className='mt-1.5 text-gray-500'>
                 {modal.requisition?.publicTitle || modal.requisition?.positionTitle} · {deptName(modal.requisition?.departmentId)} · {companyName(modal.requisition?.companyId)}
               </p>
+              {(() => {
+                const company = companies.find(c => c.id === modal.requisition?.companyId)
+                const workEmail = toWorkEmail(modal.candidate.name, company?.emailDomain)
+                return workEmail ? (
+                  <p className='mt-1.5 border-t border-gray-200 pt-1.5'>
+                    {t('Email Kerja Baru', 'New Work Email')}: <span className='font-mono font-semibold text-teal-700'>{workEmail}</span>
+                  </p>
+                ) : (
+                  <p className='mt-1.5 border-t border-gray-200 pt-1.5 text-amber-600'>
+                    ⚠️ {t('Domain email company belum diatur — email lamaran akan dipakai sebagai email kerja.',
+                          "Company has no email domain set — the applied email will be used as the work email.")}
+                  </p>
+                )
+              })()}
             </div>
 
             <div className='space-y-4'>

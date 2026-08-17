@@ -15,9 +15,9 @@ const SEED_DIVISIONS = [
 ]
 
 const SEED_COMPANIES = [
-  { id:1, divisionId:1, code:'CO001', companyCode:'NTK', name:'PT Nusantara Teknologi', legalEntity:'PT',  country:'Indonesia',  status:'Active' },
-  { id:2, divisionId:3, code:'CO002', companyCode:'NFC', name:'PT Nusantara Finance',   legalEntity:'PT',  country:'Indonesia',  status:'Active' },
-  { id:3, divisionId:1, code:'CO003', companyCode:'PHL', name:'Philippines, Inc.',       legalEntity:'PMA', country:'Philippines', status:'Active' },
+  { id:1, divisionId:1, code:'CO001', companyCode:'NTK', name:'PT Nusantara Teknologi', legalEntity:'PT',  country:'Indonesia',  status:'Active', emailDomain:'nusantara-teknologi.com' },
+  { id:2, divisionId:3, code:'CO002', companyCode:'NFC', name:'PT Nusantara Finance',   legalEntity:'PT',  country:'Indonesia',  status:'Active', emailDomain:'nusantara-finance.com' },
+  { id:3, divisionId:1, code:'CO003', companyCode:'PHL', name:'Philippines, Inc.',       legalEntity:'PMA', country:'Philippines', status:'Active', emailDomain:'philippinesinc.com' },
 ]
 
 const SEED_BUSINESS_UNITS = [
@@ -297,15 +297,25 @@ export const useStructureStore = create(persist((set) => ({
   updateHeadcount: (id,d) => set(s=>({ headcounts:  s.headcounts.map(x=>x.id===id?{...x,...d}:x) })),
   deleteHeadcount: (id)   => set(s=>({ headcounts:  s.headcounts.filter(x=>x.id!==id) })),
 }), {
-  // Only headcounts are database-backed — org structure (companies, departments,
-  // positions, …) is re-derived every load from the seed + /api/structure import
-  // below, so persisting it too would duplicate on every append. Headcounts are
-  // the one piece users actually create/edit (Structure > Headcount, and the
-  // vacant-seat backfill), so without this they silently reset on every reload.
+  // Headcounts and companies are database-backed — the rest of org structure
+  // (departments, positions, …) is re-derived every load from the seed +
+  // /api/structure import below. Companies are included because admins edit
+  // them directly (e.g. setting an email domain for new-hire auto-generated
+  // emails) — the import step below dedupes by id, so re-appending the same
+  // imported companies on top of the persisted+edited list is a no-op, not
+  // a duplicate.
   name: 'hcm-structure-headcounts-v1',
   storage: createJSONStorage(() => dbStorage),
-  partialize: (state) => ({ headcounts: state.headcounts }),
+  partialize: (state) => ({ headcounts: state.headcounts, companies: state.companies }),
 }))
+
+// Append `incoming` items whose id isn't already present in `existing` —
+// keeps a hydrated (persisted + edited) list intact across an import re-run,
+// instead of blindly re-appending and duplicating everything every load.
+const dedupeAppend = (existing, incoming) => {
+  const seen = new Set(existing.map(x => x.id))
+  return [...existing, ...(incoming || []).filter(x => !seen.has(x.id))]
+}
 
 // ─── Hydrate imported org structure (from Excel upload) ───────────────────────
 // Source priority: DB via /api/structure (when a database is configured & seeded),
@@ -331,13 +341,13 @@ if (typeof window !== 'undefined' && !window.__kpbStructureLoaded) {
   Promise.all([load(), waitForHydration()])
     .then(([d]) => {
       useStructureStore.setState(s => ({
-        enterprises:   [...s.enterprises,   ...(d.enterprises   || [])],
-        divisions:     [...s.divisions,     ...(d.divisions     || [])],
-        companies:     [...s.companies,     ...(d.companies     || [])],
-        businessUnits: [...s.businessUnits, ...(d.businessUnits || [])],
-        departments:   [...s.departments,   ...(d.departments   || [])],
-        jobFamilies:   [...s.jobFamilies,   ...(d.jobFamilies   || [])],
-        positions:     [...s.positions,     ...(d.positions     || [])],
+        enterprises:   dedupeAppend(s.enterprises,   d.enterprises),
+        divisions:     dedupeAppend(s.divisions,     d.divisions),
+        companies:     dedupeAppend(s.companies,     d.companies),
+        businessUnits: dedupeAppend(s.businessUnits, d.businessUnits),
+        departments:   dedupeAppend(s.departments,   d.departments),
+        jobFamilies:   dedupeAppend(s.jobFamilies,   d.jobFamilies),
+        positions:     dedupeAppend(s.positions,     d.positions),
       }))
       // The import above only ever carries org structure, never headcounts —
       // every imported position starts with zero seats. Seed a few open (no

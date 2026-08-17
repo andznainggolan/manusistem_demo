@@ -8,7 +8,7 @@ import {
   StatusBadge, ActionButton, EmptyState,
 } from '@/components/ui'
 
-const BLANK = { divisionId:'', code:'', companyCode:'', name:'', legalEntity:'PT', country:'Indonesia', status:'Active' }
+const BLANK = { divisionId:'', code:'', companyCode:'', name:'', legalEntity:'PT', country:'Indonesia', status:'Active', emailDomain:'' }
 const BRAND = 'linear-gradient(135deg,#052B52,#039299)'
 
 const COUNTRIES = [
@@ -50,7 +50,7 @@ export default function CompanyPage() {
 
   const handleEdit = (x) => {
     setEditing(x.id)
-    setForm({ divisionId:x.divisionId, code:x.code, companyCode:x.companyCode||'', name:x.name, legalEntity:x.legalEntity, country:x.country, status:x.status })
+    setForm({ divisionId:x.divisionId, code:x.code, companyCode:x.companyCode||'', name:x.name, legalEntity:x.legalEntity, country:x.country, status:x.status, emailDomain:x.emailDomain||'' })
     setShowModal(true)
   }
 
@@ -102,7 +102,7 @@ export default function CompanyPage() {
         {companies.length ? (
           <DataTable
             className='rounded-none shadow-none ring-0'
-            columns={[t('Kode','Code'),'Co. Code',t('Nama Company','Company Name'),'Division','Legal',t('Negara','Country'),'Status',{label:t('Aksi','Action'),align:'right'}]}
+            columns={[t('Kode','Code'),'Co. Code',t('Nama Company','Company Name'),'Division',t('Domain Email','Email Domain'),'Legal',t('Negara','Country'),'Status',{label:t('Aksi','Action'),align:'right'}]}
           >
             {companies.map(x=>(
               <Tr key={x.id}>
@@ -114,6 +114,7 @@ export default function CompanyPage() {
                 </Td>
                 <Td className='font-medium text-gray-800'>{x.name}</Td>
                 <Td className='text-xs text-gray-500'>{divName(x.divisionId)}</Td>
+                <Td className='font-mono text-xs text-gray-500'>{x.emailDomain ? `@${x.emailDomain}` : <span className='text-gray-300'>—</span>}</Td>
                 <Td>{x.legalEntity}</Td>
                 <Td>{x.country}</Td>
                 <Td><StatusBadge status={x.status} /></Td>
@@ -169,6 +170,19 @@ export default function CompanyPage() {
                   <span className={`absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold ${form.companyCode.length===3?'text-red-500':'text-gray-300'}`}>
                     {form.companyCode.length}/3
                   </span>
+                </div>
+              </FormField>
+              <FormField label={t('Domain Email','Email Domain')}
+                hint={t('Tanpa "@" — dipakai untuk generate email kerja karyawan baru otomatis, mis. joko.susilo@nusantara-teknologi.com',
+                        'Without "@" — used to auto-generate new hires\' work email, e.g. joko.susilo@nusantara-teknologi.com')}>
+                <div className='relative'>
+                  <span className='absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400'>@</span>
+                  <Input
+                    value={form.emailDomain}
+                    onChange={e=>setForm(f=>({...f,emailDomain:e.target.value.trim().toLowerCase().replace(/^@+/,'')}))}
+                    placeholder='nusantara-teknologi.com'
+                    className='pl-7'
+                  />
                 </div>
               </FormField>
               <FormField label='Legal Entity'>
