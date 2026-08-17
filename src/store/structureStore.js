@@ -1,4 +1,6 @@
 ﻿import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
+import { dbStorage } from '@/lib/dbStorage'
 
 // Hierarchy: Enterprise → Division (sub-group) → Company → Business Unit → Department
 
@@ -248,7 +250,7 @@ const SEED_HEADCOUNTS = [
 
 let _eId=2, _dId=4, _coId=4, _bId=9, _dpId=11, _jfId=5, _posId=56, _gId=73, _hcId=8
 
-export const useStructureStore = create((set) => ({
+export const useStructureStore = create(persist((set) => ({
   enterprises:   SEED_ENTERPRISES.map(x=>({...x})),
   divisions:     SEED_DIVISIONS.map(x=>({...x})),
   companies:     SEED_COMPANIES.map(x=>({...x})),
@@ -294,6 +296,15 @@ export const useStructureStore = create((set) => ({
   addHeadcount:    (d)    => set(s=>({ headcounts:  [...s.headcounts,   { id:_hcId++, ...d }] })),
   updateHeadcount: (id,d) => set(s=>({ headcounts:  s.headcounts.map(x=>x.id===id?{...x,...d}:x) })),
   deleteHeadcount: (id)   => set(s=>({ headcounts:  s.headcounts.filter(x=>x.id!==id) })),
+}), {
+  // Only headcounts are database-backed — org structure (companies, departments,
+  // positions, …) is re-derived every load from the seed + /api/structure import
+  // below, so persisting it too would duplicate on every append. Headcounts are
+  // the one piece users actually create/edit (Structure > Headcount, and the
+  // vacant-seat backfill), so without this they silently reset on every reload.
+  name: 'hcm-structure-headcounts-v1',
+  storage: createJSONStorage(() => dbStorage),
+  partialize: (state) => ({ headcounts: state.headcounts }),
 }))
 
 // ─── Hydrate imported org structure (from Excel upload) ───────────────────────
@@ -306,8 +317,19 @@ if (typeof window !== 'undefined' && !window.__kpbStructureLoaded) {
     try { const r = await fetch('/api/structure'); if (r.ok) { const d = await r.json(); if (d && Array.isArray(d.positions) && d.positions.length) return d } } catch {}
     return (await fetch('/data/importedStructure.json')).json()
   }
-  load()
-    .then(d => {
+  // Headcounts are database-backed (see persist() above). Its hydration is a
+  // separate async round-trip from the /api/structure fetch below — if this
+  // block called setState() before hydration lands, persist would queue a
+  // debounced write holding a stale (pre-hydration) headcounts snapshot that
+  // later overwrites the real hydrated data once its timer fires. Waiting for
+  // hydration FIRST means every setState from here on always carries the
+  // correct headcounts, so no write can ever clobber it.
+  const waitForHydration = () => new Promise(resolve => {
+    if (useStructureStore.persist.hasHydrated()) resolve()
+    else useStructureStore.persist.onFinishHydration(resolve)
+  })
+  Promise.all([load(), waitForHydration()])
+    .then(([d]) => {
       useStructureStore.setState(s => ({
         enterprises:   [...s.enterprises,   ...(d.enterprises   || [])],
         divisions:     [...s.divisions,     ...(d.divisions     || [])],
@@ -322,6 +344,9 @@ if (typeof window !== 'undefined' && !window.__kpbStructureLoaded) {
       // employeeId) seats per company so Job Requisition has something to
       // pick from across the whole company list, not just the demo seed's
       // original NTK/Frontend positions.
+      const persisted = useStructureStore.getState().headcounts
+      const maxId = persisted.reduce((max, h) => Math.max(max, h.id), 0)
+      if (maxId >= _hcId) _hcId = maxId + 1
       backfillVacantHeadcounts()
     })
     .catch(() => { window.__kpbStructureLoaded = false })
@@ -335,9 +360,17 @@ function backfillVacantHeadcounts() {
     const bu = businessUnits.find(b => b.id === dept?.businessUnitId)
     return bu?.companyId
   }
+  const companyHasVacancy = (companyId) => headcounts.some(h => {
+    if (h.status !== 'Active' || h.employeeId) return false
+    const pos = positions.find(p => p.id === h.positionId)
+    return pos && companyIdOf(pos) === companyId
+  })
   let nextId = headcounts.reduce((max, h) => Math.max(max, h.id), 0) + 1
   const newRecords = []
   companies.forEach(c => {
+    // Already has at least one open seat (persisted from a prior run, or a
+    // real one a user created) — leave it alone.
+    if (companyHasVacancy(c.id)) return
     // Up to 3 seats per company, spread across distinct departments so both
     // the company-level and department-level counts show variety.
     const seenDepts = new Set()
