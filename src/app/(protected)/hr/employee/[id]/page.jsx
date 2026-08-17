@@ -101,7 +101,7 @@ export default function EmployeeProfilePage() {
   const searchParams = useSearchParams()
   const t       = useT()
   const {
-    employees, addHistory, updateHistory, deleteHistory, setPhoto, addDependent, updateDependent, deleteDependent,
+    employees, updateEmployee, addHistory, updateHistory, deleteHistory, setPhoto, addDependent, updateDependent, deleteDependent,
     addBioHistory, updateBioHistory, deleteBioHistory,
     addEducation, updateEducation, deleteEducation,
     addCertification, updateCertification, deleteCertification,
@@ -419,6 +419,7 @@ export default function EmployeeProfilePage() {
     // and the seat's availability both reflect it immediately, without
     // requiring a second manual cleanup step.
     if (payload.action === 'Cancel Employment') {
+      updateEmployee(emp.id, { status: 'Inactive' })
       const seat = headcounts.find(h => h.employeeId === emp.id)
       if (seat) updateHeadcount(seat.id, { employeeId: null })
       const candidate = candidates.find(c => c.employeeId === emp.id)
