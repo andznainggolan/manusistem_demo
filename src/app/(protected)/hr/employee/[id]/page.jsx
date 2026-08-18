@@ -209,6 +209,9 @@ export default function EmployeeProfilePage() {
   const positionIdEff   = eff.positionId ?? emp.positionId
   const position       = positions.find(p => p.id === positionIdEff)
   const gradeIdEff      = eff.gradeId ?? emp.gradeId
+  // Individual Class isn't part of the dated History record (only set via
+  // the Employment tab's Grade section) — always read straight off emp.
+  const individualClassIdEff = emp.individualClassId
   const employmentTypeEff = eff.employmentType || emp.employmentType
 
   // Headcount Title: a unique seat label for this position — "Software
@@ -587,6 +590,7 @@ export default function EmployeeProfilePage() {
               <KVRow label={t('Departemen', 'Department')}   value={department?.name} />
               <KVRow label={t('Posisi', 'Position')}         value={position?.name} />
               <KVRow label={t('Grade', 'Grade')}             value={gradeIdEff ? `PC ${gradeIdEff}` : null} />
+              <KVRow label='IC'                              value={individualClassIdEff ? `IC ${individualClassIdEff}` : null} />
               <KVRow label={t('Tipe Kepegawaian', 'Employment Type')} value={employmentTypeEff} />
               <KVRow label={t('Tanggal Bergabung', 'Join Date')} value={emp.joinDate} />
               {emp.endDate && <KVRow label={t('Tanggal Akhir', 'End Date')} value={emp.endDate} />}
