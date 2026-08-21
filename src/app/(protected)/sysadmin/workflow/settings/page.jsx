@@ -150,6 +150,11 @@ const PAGE_LOV = [
   { name: 'Shift Pattern',                      icon: '🔄', section: 'HR · Time & Labor' },
   { name: 'Work Schedule',                      icon: '📆', section: 'HR · Time & Labor' },
   { name: 'Schedule Assignment',                icon: '🔗', section: 'HR · Time & Labor' },
+  { name: 'Overtime Plan by Employee',           icon: '⏱️', section: 'HR · Time & Labor' },
+  { name: 'Overtime Realization by Employee',    icon: '✅', section: 'HR · Time & Labor' },
+  { name: 'Overtime Plan by Manager',            icon: '📋', section: 'HR · Time & Labor' },
+  { name: 'Overtime Realization by Manager',     icon: '📊', section: 'HR · Time & Labor' },
+  { name: 'Compensatory Leave',                  icon: '🔄', section: 'HR · Time & Labor' },
 
   // ── HR · Absence ─────────────────────────────────────────────────────────
   { name: 'Holiday Calendar',                   icon: '📅', section: 'HR · Absence' },

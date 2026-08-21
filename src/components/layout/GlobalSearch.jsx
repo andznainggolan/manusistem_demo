@@ -65,6 +65,11 @@ const PAGES = [
   { label: 'Shift Pattern',             href: '/hr/time-labour/shift-pattern',                 icon: '🔄', section: 'HR · Time & Labor' },
   { label: 'Work Schedule',             href: '/hr/time-labour/work-schedule',                 icon: '📆', section: 'HR · Time & Labor' },
   { label: 'Schedule Assignment',       href: '/hr/time-labour/schedule-assignment',           icon: '🔗', section: 'HR · Time & Labor' },
+  { label: 'Overtime Plan by Employee',        href: '/hr/time-labour/overtime-plan-employee',        icon: '⏱️', section: 'HR · Time & Labor' },
+  { label: 'Overtime Realization by Employee', href: '/hr/time-labour/overtime-realization-employee', icon: '✅', section: 'HR · Time & Labor' },
+  { label: 'Overtime Plan by Manager',         href: '/hr/time-labour/overtime-plan-manager',          icon: '📋', section: 'HR · Time & Labor' },
+  { label: 'Overtime Realization by Manager',  href: '/hr/time-labour/overtime-realization-manager',   icon: '📊', section: 'HR · Time & Labor' },
+  { label: 'Compensatory Leave',               href: '/hr/time-labour/compensatory-leave',             icon: '🔄', section: 'HR · Time & Labor' },
   // HR - Absence
   { label: 'Holiday Calendar',          href: '/hr/absence/holiday-calendar',                  icon: '📅', section: 'HR · Absence' },
   // HR - Payroll
