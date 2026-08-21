@@ -61,10 +61,10 @@ const PAGES = [
   { label: 'Master Onboarding',         href: '/hr/onboarding/master',                         icon: '📄', section: 'HR · Onboarding' },
   { label: 'Laporan Onboarding',        href: '/hr/onboarding/laporan',                        icon: '📊', section: 'HR · Onboarding' },
   // HR - Time & Labour
-  { label: 'Shift Setting',             href: '/hr/time-labour/shift-setting',                 icon: '🕐', section: 'HR · Time & Labour' },
-  { label: 'Shift Pattern',             href: '/hr/time-labour/shift-pattern',                 icon: '🔄', section: 'HR · Time & Labour' },
-  { label: 'Work Schedule',             href: '/hr/time-labour/work-schedule',                 icon: '📆', section: 'HR · Time & Labour' },
-  { label: 'Schedule Assignment',       href: '/hr/time-labour/schedule-assignment',           icon: '🔗', section: 'HR · Time & Labour' },
+  { label: 'Shift Setting',             href: '/hr/time-labour/shift-setting',                 icon: '🕐', section: 'HR · Time & Labor' },
+  { label: 'Shift Pattern',             href: '/hr/time-labour/shift-pattern',                 icon: '🔄', section: 'HR · Time & Labor' },
+  { label: 'Work Schedule',             href: '/hr/time-labour/work-schedule',                 icon: '📆', section: 'HR · Time & Labor' },
+  { label: 'Schedule Assignment',       href: '/hr/time-labour/schedule-assignment',           icon: '🔗', section: 'HR · Time & Labor' },
   // HR - Absence
   { label: 'Holiday Calendar',          href: '/hr/absence/holiday-calendar',                  icon: '📅', section: 'HR · Absence' },
   // HR - Payroll

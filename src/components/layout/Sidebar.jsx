@@ -282,7 +282,7 @@ const HR_GROUPS = [
   ]},
   // Ordered the way a schedule is actually built up: shift → weekly pattern →
   // schedule → who works it.
-  { title: 'Time & Labour', icon: ic('clock'), items: [
+  { title: 'Time & Labor', icon: ic('clock'), items: [
     { label: 'Shift Setting',       href: '/hr/time-labour/shift-setting',       icon: ic('clock') },
     { label: 'Shift Pattern',       href: '/hr/time-labour/shift-pattern',       icon: ic('grid') },
     { label: 'Work Schedule',       href: '/hr/time-labour/work-schedule',       icon: ic('calendar') },

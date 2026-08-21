@@ -146,10 +146,10 @@ const PAGE_LOV = [
   { name: 'PA — Extend Contract',               icon: '📅', section: 'HR · Personnel Action' },
 
   // ── HR · Time & Labour ───────────────────────────────────────────────────
-  { name: 'Shift Setting',                      icon: '🕐', section: 'HR · Time & Labour' },
-  { name: 'Shift Pattern',                      icon: '🔄', section: 'HR · Time & Labour' },
-  { name: 'Work Schedule',                      icon: '📆', section: 'HR · Time & Labour' },
-  { name: 'Schedule Assignment',                icon: '🔗', section: 'HR · Time & Labour' },
+  { name: 'Shift Setting',                      icon: '🕐', section: 'HR · Time & Labor' },
+  { name: 'Shift Pattern',                      icon: '🔄', section: 'HR · Time & Labor' },
+  { name: 'Work Schedule',                      icon: '📆', section: 'HR · Time & Labor' },
+  { name: 'Schedule Assignment',                icon: '🔗', section: 'HR · Time & Labor' },
 
   // ── HR · Absence ─────────────────────────────────────────────────────────
   { name: 'Holiday Calendar',                   icon: '📅', section: 'HR · Absence' },
