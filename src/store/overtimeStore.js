@@ -26,6 +26,7 @@ const SEED_MATRICES = [
       { id: 2, hourFrom: 2, hourTo: null, rate: 75000 },
     ],
     restMinutes: 30,
+    roundingToleranceMinutes: 45,
     notes: 'Jam ke-1 dibayar 50.000/jam, jam ke-2 dan seterusnya 75.000/jam. Istirahat 30 menit dikurangi dari durasi lembur.',
   },
 ]

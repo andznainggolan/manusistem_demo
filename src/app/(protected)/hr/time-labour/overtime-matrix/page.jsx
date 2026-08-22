@@ -10,7 +10,26 @@ import {
 
 const BRAND = 'linear-gradient(135deg,#052B52,#039299)'
 const blankTier = () => ({ hourFrom: '', hourTo: '', rate: '' })
-const BLANK = { name: '', active: true, tiers: [blankTier()], restMinutes: 0, notes: '' }
+const BLANK = { name: '', active: true, tiers: [blankTier()], restMinutes: 0, roundingToleranceMinutes: 45, notes: '' }
+
+// Round an actual duration to whole overtime hours: minutes into the current
+// hour count as the next full hour once they reach the tolerance, otherwise
+// they're dropped. E.g. tolerance 45 → 50m rounds up to 1h, 1h44m stays at
+// 1h, 1h46m rounds up to 2h.
+const roundHours = (totalMinutes, toleranceMinutes) => {
+  const hours = Math.floor(totalMinutes / 60)
+  const remainder = totalMinutes % 60
+  return remainder >= toleranceMinutes ? hours + 1 : hours
+}
+const fmtDuration = (totalMinutes, t) => {
+  const h = Math.floor(totalMinutes / 60)
+  const m = totalMinutes % 60
+  const parts = []
+  if (h) parts.push(`${h} ${t('jam', 'hr')}`)
+  if (m || !h) parts.push(`${m} ${t('menit', 'min')}`)
+  return parts.join(' ')
+}
+const PREVIEW_MINUTES = [50, 104, 106]
 
 export default function OvertimeMatrixPage() {
   const t = useT()
@@ -35,7 +54,7 @@ export default function OvertimeMatrixPage() {
     setForm({
       name: m.name, active: m.active,
       tiers: m.tiers.map(x => ({ id: x.id, hourFrom: String(x.hourFrom), hourTo: x.hourTo ? String(x.hourTo) : '', rate: String(x.rate) })),
-      restMinutes: m.restMinutes, notes: m.notes || '',
+      restMinutes: m.restMinutes, roundingToleranceMinutes: m.roundingToleranceMinutes ?? 45, notes: m.notes || '',
     })
     setShowModal(true)
   }
@@ -52,7 +71,12 @@ export default function OvertimeMatrixPage() {
       id: tr.id ?? nextTierId(),
       hourFrom: Number(tr.hourFrom), hourTo: tr.hourTo === '' ? null : Number(tr.hourTo), rate: Number(tr.rate),
     }))
-    const payload = { name: form.name.trim(), active: form.active, tiers, restMinutes: Number(form.restMinutes) || 0, notes: form.notes.trim() }
+    const payload = {
+      name: form.name.trim(), active: form.active, tiers,
+      restMinutes: Number(form.restMinutes) || 0,
+      roundingToleranceMinutes: Number(form.roundingToleranceMinutes) || 0,
+      notes: form.notes.trim(),
+    }
     if (editing) { updateMatrix(editing, payload); flash(t('Matrix diperbarui.', 'Matrix updated.')) }
     else         { addMatrix(payload);             flash(t('Matrix ditambahkan.', 'Matrix added.')) }
     closeModal()
@@ -100,7 +124,10 @@ export default function OvertimeMatrixPage() {
         <div className='flex flex-col gap-4'>
           {overtimeMatrices.map(m => (
             <SectionCard key={m.id} title={m.name} icon='📐'
-              subtitle={t(`Istirahat dikurangi: ${m.restMinutes} menit`, `Rest deducted: ${m.restMinutes} minutes`)}
+              subtitle={t(
+                `Istirahat dikurangi: ${m.restMinutes} menit · Toleransi pembulatan: ${m.roundingToleranceMinutes ?? 45} menit`,
+                `Rest deducted: ${m.restMinutes} minutes · Rounding tolerance: ${m.roundingToleranceMinutes ?? 45} minutes`,
+              )}
               actions={
                 <div className='flex items-center gap-2'>
                   <StatusBadge tone={m.active ? 'success' : 'neutral'}>{m.active ? t('Aktif', 'Active') : t('Nonaktif', 'Inactive')}</StatusBadge>
@@ -173,6 +200,29 @@ export default function OvertimeMatrixPage() {
                 hint={t('Dikurangi dari total durasi saat menghitung jam lembur.', 'Deducted from the total span when calculating overtime hours.')}>
                 <Input type='number' min='0' value={form.restMinutes} onChange={e => setForm(f => ({ ...f, restMinutes: e.target.value }))} />
               </FormField>
+
+              <FormField label={t('Toleransi Pembulatan (menit)', 'Rounding Tolerance (minutes)')}
+                hint={t('Menit ke jam berjalan yang sudah dianggap genap 1 jam berikutnya; di bawah itu dibulatkan ke bawah.',
+                        'Minutes into the current hour that already count as the next full hour; below that, it rounds down.')}>
+                <Input type='number' min='0' max='59' value={form.roundingToleranceMinutes}
+                  onChange={e => setForm(f => ({ ...f, roundingToleranceMinutes: e.target.value }))} />
+              </FormField>
+
+              {form.roundingToleranceMinutes !== '' && (
+                <div className='rounded-xl bg-gray-50 p-3'>
+                  <p className='mb-2 text-xs font-semibold text-gray-600'>{t('Contoh Pembulatan', 'Rounding Example')}</p>
+                  <div className='grid grid-cols-3 gap-2 text-center'>
+                    {PREVIEW_MINUTES.map(mins => (
+                      <div key={mins} className='rounded-lg bg-white px-2 py-2 ring-1 ring-gray-100'>
+                        <p className='text-xs text-gray-500'>{fmtDuration(mins, t)}</p>
+                        <p className='text-sm font-bold text-teal-700'>
+                          → {roundHours(mins, Number(form.roundingToleranceMinutes) || 0)} {t('jam', 'hr')}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <FormField label='Status'>
                 <div className='flex items-center gap-3'>
