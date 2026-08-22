@@ -7,7 +7,7 @@ import { dbStorage } from '@/lib/dbStorage'
 // mean "all". `eligible: false` lets HR carve out an explicit exclusion
 // instead of only ever defining inclusions.
 const blankRule = (over) => ({
-  name: '', companyId: null, departmentId: null, gradeFromId: null, gradeToId: null,
+  name: '', companyIds: [], departmentIds: [], gradeFromId: null, gradeToId: null,
   location: '', employmentType: '', eligible: true, active: true, notes: '', ...over,
 })
 
@@ -61,5 +61,5 @@ export const useOvertimeStore = create(persist(
     updateCompLeaveRule: (id,d) => set(s => ({ eligibilityCompLeave: s.eligibilityCompLeave.map(x => x.id === id ? { ...x, ...d } : x) })),
     deleteCompLeaveRule: (id)   => set(s => ({ eligibilityCompLeave: s.eligibilityCompLeave.filter(x => x.id !== id) })),
   }),
-  { name: 'hcm-overtime-eligibility-v1', storage: createJSONStorage(() => dbStorage) }
+  { name: 'hcm-overtime-eligibility-v2', storage: createJSONStorage(() => dbStorage) }
 ))

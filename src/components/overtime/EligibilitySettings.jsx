@@ -6,11 +6,20 @@ import {
   PageHeader, StatCard, SectionCard, DataTable, Tr, Td,
   FormField, Input, Select, ActionButton, StatusBadge, EmptyState,
 } from '@/components/ui'
+import CriteriaMultiSelect from '@/components/ui/CriteriaMultiSelect'
 import { EMP_TYPES } from '@/utils/constants'
 
 const BLANK = {
-  name: '', companyId: '', departmentId: '', gradeFromId: '', gradeToId: '',
+  name: '', companyIds: [], departmentIds: [], gradeFromId: '', gradeToId: '',
   location: '', employmentType: '', eligible: 'true', active: 'true', notes: '',
+}
+
+// Compact "2 names then +N" summary, same convention used by the
+// onboarding/offboarding auto-assign criteria pages.
+const namesSummary = (ids, items, allLabel) => {
+  if (!ids?.length) return allLabel
+  const names = ids.map(id => items.find(i => i.id === id)?.name).filter(Boolean)
+  return names.length <= 2 ? names.join(', ') : `${names.slice(0, 2).join(', ')} +${names.length - 2}`
 }
 
 // One reusable eligibility-rule settings page — who a given overtime /
@@ -22,6 +31,8 @@ export default function EligibilitySettings({ icon, title, subtitle, rules, addR
   const t = useT()
   const { companies, departments, grades } = useStructureStore()
   const sortedGrades = useMemo(() => [...grades].sort((a, b) => a.id - b.id), [grades])
+  const companyItems = useMemo(() => companies.map(c => ({ id: c.id, name: c.name || c.companyCode })), [companies])
+  const departmentItems = useMemo(() => departments.map(d => ({ id: d.id, name: d.name })), [departments])
 
   const [form, setForm] = useState(BLANK)
   const [editing, setEditing] = useState(null)
@@ -30,13 +41,17 @@ export default function EligibilitySettings({ icon, title, subtitle, rules, addR
 
   const flash = (text, type = 'success') => { setMsg({ text, type }); setTimeout(() => setMsg(null), 3000) }
 
-  const companyName  = (id) => id ? (companies.find(c => c.id === id)?.name || '—') : t('Semua Company', 'All Companies')
-  const deptName      = (id) => id ? (departments.find(d => d.id === id)?.name || '—') : t('Semua Departemen', 'All Departments')
-  const gradeCode     = (id) => grades.find(g => g.id === id)?.code || '—'
-  const gradeRange    = (r) => (r.gradeFromId && r.gradeToId) ? `${gradeCode(r.gradeFromId)}–${gradeCode(r.gradeToId)}` : t('Semua Grade', 'All Grades')
+  const gradeCode  = (id) => grades.find(g => g.id === id)?.code || '—'
+  const gradeRange = (r) => (r.gradeFromId && r.gradeToId) ? `${gradeCode(r.gradeFromId)}–${gradeCode(r.gradeToId)}` : t('Semua Grade', 'All Grades')
 
   const activeCount   = rules.filter(r => r.active).length
   const eligibleCount = rules.filter(r => r.eligible && r.active).length
+
+  const toggleIn = (key, val) => setForm(f => {
+    const cur = f[key] ?? []
+    return { ...f, [key]: cur.includes(val) ? cur.filter(x => x !== val) : [...cur, val] }
+  })
+  const selectAllIn = (key, items, allSel) => setForm(f => ({ ...f, [key]: allSel ? [] : items.map(i => i.id) }))
 
   const openNew = () => { setEditing(null); setForm(BLANK); setShowModal(true) }
   const closeModal = () => { setShowModal(false); setEditing(null); setForm(BLANK) }
@@ -44,7 +59,7 @@ export default function EligibilitySettings({ icon, title, subtitle, rules, addR
   const openEdit = (r) => {
     setEditing(r.id)
     setForm({
-      name: r.name, companyId: r.companyId ? String(r.companyId) : '', departmentId: r.departmentId ? String(r.departmentId) : '',
+      name: r.name, companyIds: r.companyIds || [], departmentIds: r.departmentIds || [],
       gradeFromId: r.gradeFromId ? String(r.gradeFromId) : '', gradeToId: r.gradeToId ? String(r.gradeToId) : '',
       location: r.location || '', employmentType: r.employmentType || '',
       eligible: String(r.eligible), active: String(r.active), notes: r.notes || '',
@@ -60,8 +75,7 @@ export default function EligibilitySettings({ icon, title, subtitle, rules, addR
         'Fill in both Grade From and Grade To, or leave both blank for "All Grades".'), 'error')
     const payload = {
       name: form.name.trim(),
-      companyId: form.companyId ? +form.companyId : null,
-      departmentId: form.departmentId ? +form.departmentId : null,
+      companyIds: form.companyIds, departmentIds: form.departmentIds,
       gradeFromId: form.gradeFromId ? +form.gradeFromId : null,
       gradeToId: form.gradeToId ? +form.gradeToId : null,
       location: form.location.trim(),
@@ -117,9 +131,9 @@ export default function EligibilitySettings({ icon, title, subtitle, rules, addR
             {rules.map(r => (
               <Tr key={r.id}>
                 <Td className='font-semibold text-gray-800'>{r.name}</Td>
-                <Td className='text-xs text-gray-600'>{companyName(r.companyId)}</Td>
+                <Td className='text-xs text-gray-600'>{namesSummary(r.companyIds, companyItems, t('Semua Company', 'All Companies'))}</Td>
                 <Td className='text-xs text-gray-600'>{gradeRange(r)}</Td>
-                <Td className='text-xs text-gray-600'>{deptName(r.departmentId)}</Td>
+                <Td className='text-xs text-gray-600'>{namesSummary(r.departmentIds, departmentItems, t('Semua Departemen', 'All Departments'))}</Td>
                 <Td className='text-xs text-gray-600'>{r.location || t('Semua Lokasi', 'All Locations')}</Td>
                 <Td className='text-xs text-gray-600'>{r.employmentType || t('Semua Tipe', 'All Types')}</Td>
                 <Td>
@@ -162,12 +176,9 @@ export default function EligibilitySettings({ icon, title, subtitle, rules, addR
                   placeholder={t('mis. Staff Jakarta — semua PT', 'e.g. Jakarta Staff — all PTs')} />
               </FormField>
 
-              <FormField label='PT (Company)' hint={t('Kosongkan untuk semua company.', 'Leave blank for all companies.')}>
-                <Select value={form.companyId} onChange={e => setForm(f => ({ ...f, companyId: e.target.value }))}>
-                  <option value=''>— {t('Semua Company', 'All Companies')} —</option>
-                  {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </Select>
-              </FormField>
+              <CriteriaMultiSelect label='PT (Company)' items={companyItems} t={t}
+                selected={form.companyIds} onToggle={(id) => toggleIn('companyIds', id)}
+                onSelectAll={(allSel) => selectAllIn('companyIds', companyItems, allSel)} />
 
               <div className='grid grid-cols-2 gap-4'>
                 <FormField label={t('Grade Dari (PC)', 'Grade From (PC)')} hint={t('Kosongkan untuk semua grade.', 'Leave blank for all grades.')}>
@@ -184,12 +195,9 @@ export default function EligibilitySettings({ icon, title, subtitle, rules, addR
                 </FormField>
               </div>
 
-              <FormField label={t('Departemen', 'Department')} hint={t('Kosongkan untuk semua departemen.', 'Leave blank for all departments.')}>
-                <Select value={form.departmentId} onChange={e => setForm(f => ({ ...f, departmentId: e.target.value }))}>
-                  <option value=''>— {t('Semua Departemen', 'All Departments')} —</option>
-                  {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                </Select>
-              </FormField>
+              <CriteriaMultiSelect label={t('Departemen', 'Department')} items={departmentItems} t={t}
+                selected={form.departmentIds} onToggle={(id) => toggleIn('departmentIds', id)}
+                onSelectAll={(allSel) => selectAllIn('departmentIds', departmentItems, allSel)} />
 
               <FormField label={t('Lokasi', 'Location')} hint={t('Bebas isi, kosongkan untuk semua lokasi.', 'Free text, leave blank for all locations.')}>
                 <Input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
