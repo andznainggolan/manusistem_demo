@@ -287,11 +287,8 @@ const HR_GROUPS = [
     { label: 'Shift Pattern',       href: '/hr/time-labour/shift-pattern',       icon: ic('grid') },
     { label: 'Work Schedule',       href: '/hr/time-labour/work-schedule',       icon: ic('calendar') },
     { label: 'Schedule Assignment', href: '/hr/time-labour/schedule-assignment', icon: ic('userCheck') },
-    { label: 'Overtime Plan by Employee',        href: '/hr/time-labour/overtime-plan-employee',        icon: ic('clock') },
-    { label: 'Overtime Realization by Employee', href: '/hr/time-labour/overtime-realization-employee', icon: ic('checkCircle') },
-    { label: 'Overtime Plan by Manager',         href: '/hr/time-labour/overtime-plan-manager',          icon: ic('users') },
-    { label: 'Overtime Realization by Manager',  href: '/hr/time-labour/overtime-realization-manager',   icon: ic('userCheck') },
-    { label: 'Compensatory Leave',               href: '/hr/time-labour/compensatory-leave',             icon: ic('repeat') },
+    { label: 'Eligibility Group', href: '/hr/time-labour/eligibility-group', icon: ic('checkCircle') },
+    { label: 'Overtime Matrix',   href: '/hr/time-labour/overtime-matrix',   icon: ic('grid') },
   ]},
   { title: 'Settings', icon: ic('settings'), items: [
     { label: 'Announcement', href: '/hr/settings/announcement', icon: ic('bell') },
