@@ -287,6 +287,7 @@ const HR_GROUPS = [
     { label: 'Shift Pattern',       href: '/hr/time-labour/shift-pattern',       icon: ic('grid') },
     { label: 'Work Schedule',       href: '/hr/time-labour/work-schedule',       icon: ic('calendar') },
     { label: 'Schedule Assignment', href: '/hr/time-labour/schedule-assignment', icon: ic('userCheck') },
+    { label: 'Time Entries',        href: '/hr/time-labour/time-entries',        icon: ic('upload') },
     { label: 'Eligibility Group', href: '/hr/time-labour/eligibility-group', icon: ic('checkCircle') },
     { label: 'Overtime Matrix',   href: '/hr/time-labour/overtime-matrix',   icon: ic('grid') },
   ]},

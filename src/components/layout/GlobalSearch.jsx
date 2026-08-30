@@ -65,6 +65,7 @@ const PAGES = [
   { label: 'Shift Pattern',             href: '/hr/time-labour/shift-pattern',                 icon: '🔄', section: 'HR · Time & Labor' },
   { label: 'Work Schedule',             href: '/hr/time-labour/work-schedule',                 icon: '📆', section: 'HR · Time & Labor' },
   { label: 'Schedule Assignment',       href: '/hr/time-labour/schedule-assignment',           icon: '🔗', section: 'HR · Time & Labor' },
+  { label: 'Time Entries',      href: '/hr/time-labour/time-entries',      icon: '📥', section: 'HR · Time & Labor' },
   { label: 'Eligibility Group', href: '/hr/time-labour/eligibility-group', icon: '🧩', section: 'HR · Time & Labor' },
   { label: 'Overtime Matrix',   href: '/hr/time-labour/overtime-matrix',   icon: '📐', section: 'HR · Time & Labor' },
   // HR - Absence
