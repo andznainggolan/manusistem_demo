@@ -148,4 +148,23 @@ if (typeof window !== 'undefined') {
   }
   if (useRecruitmentStore.persist.hasHydrated()) migrateHiredStage()
   else useRecruitmentStore.persist.onFinishHydration(migrateHiredStage)
+
+  // _reqId/_candId/_ivId are plain module-level counters with no awareness
+  // of already-persisted data — left alone they restart at the seed's own
+  // length on every fresh page load, so two independent sessions can both
+  // mint id 5 for a brand-new requisition. Both then coexist in the shared
+  // DB array under the same id, which breaks React's list key uniqueness
+  // (duplicate/omitted rows) and silently drops requisitions off the public
+  // Career Site. Bootstrap each counter past the real max once hydrated.
+  const bumpIdCounters = () => {
+    const s = useRecruitmentStore.getState()
+    const maxReqId = s.requisitions.reduce((m, r) => Math.max(m, r.id), 0)
+    if (maxReqId >= _reqId) _reqId = maxReqId + 1
+    const maxCandId = s.candidates.reduce((m, c) => Math.max(m, c.id), 0)
+    if (maxCandId >= _candId) _candId = maxCandId + 1
+    const maxIvId = s.interviews.reduce((m, i) => Math.max(m, i.id), 0)
+    if (maxIvId >= _ivId) _ivId = maxIvId + 1
+  }
+  if (useRecruitmentStore.persist.hasHydrated()) bumpIdCounters()
+  else useRecruitmentStore.persist.onFinishHydration(bumpIdCounters)
 }

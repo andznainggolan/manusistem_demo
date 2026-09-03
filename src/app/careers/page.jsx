@@ -177,13 +177,19 @@ function JobCard({ req, deptName, companyName, highlighted, onApply }) {
   )
 }
 
+const BRAND = 'linear-gradient(135deg,#052B52,#039299)'
+const isExternalLink = (url) => /^https?:\/\//i.test(url)
+
 function CareersBody() {
   const params = useSearchParams()
   const highlightId = params.get('req') ? Number(params.get('req')) : null
 
   const { requisitions } = useRecruitmentStore()
   const { departments, companies } = useStructureStore()
-  const { loginLogo } = useBrandingStore()
+  const {
+    loginLogo, careerHeroImage, careerHeroTitle, careerHeroSubtitle,
+    careerFooterImage, careerFooterText, careerNavLinks,
+  } = useBrandingStore()
 
   const [mounted, setMounted] = useState(false)
   const [applyReq, setApplyReq] = useState(null)
@@ -199,21 +205,58 @@ function CareersBody() {
   const deptName = (id) => departments.find(d => d.id === id)?.name || '—'
   const companyName = (id) => companies.find(c => c.id === id)?.name || '—'
 
+  // Guard against SSR/CSR hydration mismatch — these all come from a
+  // persisted store, so the server always renders the store's initial
+  // defaults while the client may rehydrate customized values.
+  const navLinks = mounted ? careerNavLinks : []
+  const heroImage = mounted ? careerHeroImage : null
+  const heroTitle = mounted ? careerHeroTitle : 'Karir di Manusistem'
+  const heroSubtitle = mounted ? careerHeroSubtitle : 'Temukan peluang karir yang sesuai untukmu.'
+  const footerImage = mounted ? careerFooterImage : null
+  const footerText = mounted ? careerFooterText : 'Manusistem — Human Capital Management System'
+
+  const NavLink = ({ link, className }) => (
+    isExternalLink(link.url)
+      ? <a href={link.url} target='_blank' rel='noopener noreferrer' className={className}>{link.label}</a>
+      : <a href={link.url} className={className}>{link.label}</a>
+  )
+
   return (
     <div className='min-h-screen bg-gray-50'>
-      <header className='border-b border-gray-100 bg-white'>
-        <div className='mx-auto flex max-w-3xl items-center gap-3 px-6 py-5'>
-          <img src={mounted && loginLogo ? loginLogo : '/logos/manusistem.png'} alt='' className='h-9 w-9 rounded-lg object-contain' />
-          <div>
-            <p className='text-lg font-bold text-gray-800'>Karir di Manusistem</p>
-            <p className='text-xs text-gray-400'>Temukan peluang karir yang sesuai untukmu.</p>
+      {/* Sticky top nav */}
+      <nav className='sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur'>
+        <div className='mx-auto flex max-w-4xl items-center justify-between gap-4 px-6 py-3.5'>
+          <div className='flex items-center gap-2.5'>
+            <img src={mounted && loginLogo ? loginLogo : '/logos/manusistem.png'} alt='' className='h-8 w-8 rounded-lg object-contain' />
+            <span className='text-sm font-bold text-gray-800'>Manusistem</span>
           </div>
+          <div className='flex items-center gap-5'>
+            {navLinks.map(link => (
+              <NavLink key={link.id} link={link} className='hidden text-sm font-medium text-gray-600 hover:text-teal-700 sm:inline' />
+            ))}
+            <a href='#lowongan'
+              className='shrink-0 rounded-lg px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-90'
+              style={{ background: BRAND }}>
+              Lihat Lowongan
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero banner */}
+      <header className='relative overflow-hidden'
+        style={heroImage
+          ? { backgroundImage: `linear-gradient(135deg, rgba(5,43,82,.88), rgba(3,146,153,.82)), url(${heroImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+          : { background: BRAND }}>
+        <div className='mx-auto max-w-3xl px-6 py-16 text-center sm:py-20'>
+          <h1 className='text-3xl font-bold text-white sm:text-4xl'>{heroTitle}</h1>
+          <p className='mx-auto mt-3 max-w-xl text-sm text-white/85 sm:text-base'>{heroSubtitle}</p>
         </div>
       </header>
 
-      <main className='mx-auto max-w-3xl px-6 py-8'>
-        <p className='mb-5 text-sm text-gray-500'>
-          {live.length} {live.length === 1 ? 'lowongan tersedia' : 'lowongan tersedia'} saat ini.
+      <main id='lowongan' className='mx-auto max-w-3xl px-6 py-10'>
+        <p className='mb-5 text-sm font-medium text-gray-500'>
+          {live.length} lowongan tersedia saat ini.
         </p>
 
         {live.length === 0 ? (
@@ -232,7 +275,23 @@ function CareersBody() {
         )}
       </main>
 
-      <footer className='py-8 text-center text-xs text-gray-400'>© {new Date().getFullYear()} Manusistem</footer>
+      {/* Footer banner */}
+      <footer className='relative mt-8 overflow-hidden'
+        style={footerImage
+          ? { backgroundImage: `linear-gradient(135deg, rgba(5,43,82,.9), rgba(3,146,153,.85)), url(${footerImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+          : { background: '#052B52' }}>
+        <div className='mx-auto max-w-3xl px-6 py-10 text-center'>
+          <p className='text-sm font-semibold text-white'>{footerText}</p>
+          {navLinks.length > 0 && (
+            <div className='mt-3 flex flex-wrap justify-center gap-4'>
+              {navLinks.map(link => (
+                <NavLink key={link.id} link={link} className='text-xs font-medium text-white/75 hover:text-white' />
+              ))}
+            </div>
+          )}
+          <p className='mt-4 text-[11px] text-white/50'>© {new Date().getFullYear()} Manusistem</p>
+        </div>
+      </footer>
 
       {applyReq && (
         <ApplyModal req={applyReq} deptName={deptName(applyReq.departmentId)} companyName={companyName(applyReq.companyId)}

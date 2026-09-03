@@ -314,6 +314,7 @@ const SA_GROUPS = [
   { title: 'Branding', icon: ic('paint'), items: [
     { label: 'Company Logo', href: '/sysadmin/branding/company-logo', icon: ic('building') },
     { label: 'Login Theme',  href: '/sysadmin/branding/login-theme',  icon: ic('paint') },
+    { label: 'Career Site',  href: '/sysadmin/branding/career-site',  icon: ic('globe') },
   ]},
 ]
 

@@ -86,6 +86,7 @@ const PAGES = [
   { label: 'Transaction Manager',       href: '/sysadmin/workflow/transaction-manager',        icon: '🗂️', section: 'System Administration' },
   { label: 'Company Logo',              href: '/sysadmin/branding/company-logo',               icon: '🖼️', section: 'System Administration' },
   { label: 'Login Theme',               href: '/sysadmin/branding/login-theme',                icon: '🎭', section: 'System Administration' },
+  { label: 'Career Site',               href: '/sysadmin/branding/career-site',                icon: '🌐', section: 'System Administration' },
 ]
 
 export default function GlobalSearch() {

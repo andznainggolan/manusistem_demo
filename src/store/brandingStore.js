@@ -33,6 +33,7 @@ export const PRESET_THEMES = [
 ]
 
 let _themeId = 1
+let _navLinkId = 1
 
 export const useBrandingStore = create(
   persist(
@@ -50,6 +51,40 @@ export const useBrandingStore = create(
 
       removeTopbarLogo: () => set({ topbarLogo: null }),
       removeLoginLogo:  () => set({ loginLogo:  null }),
+
+      // ── Career Site ──────────────────────────────────────────────
+      careerHeroImage: null,     // wide banner background (base64) or null → falls back to brand gradient
+      careerHeroTitle: 'Karir di Manusistem',
+      careerHeroSubtitle: 'Temukan peluang karir yang sesuai untukmu dan jadilah bagian dari perjalanan kami.',
+      careerFooterImage: null,   // footer banner background (base64) or null → falls back to navy
+      careerFooterText: 'Manusistem — Human Capital Management System',
+      careerNavLinks: [],        // [{ id, label, url }] — shown in the career site top nav & footer
+
+      setCareerHeroImage:    (dataUrl) => set({ careerHeroImage: dataUrl }),
+      removeCareerHeroImage: () => set({ careerHeroImage: null }),
+      setCareerHeroTitle:    (v) => set({ careerHeroTitle: v }),
+      setCareerHeroSubtitle: (v) => set({ careerHeroSubtitle: v }),
+      setCareerFooterImage:    (dataUrl) => set({ careerFooterImage: dataUrl }),
+      removeCareerFooterImage: () => set({ careerFooterImage: null }),
+      setCareerFooterText:     (v) => set({ careerFooterText: v }),
+
+      addCareerNavLink: (link) => set(s => ({
+        careerNavLinks: [...s.careerNavLinks, { id: _navLinkId++, ...link }]
+      })),
+      updateCareerNavLink: (id, patch) => set(s => ({
+        careerNavLinks: s.careerNavLinks.map(l => l.id === id ? { ...l, ...patch } : l)
+      })),
+      deleteCareerNavLink: (id) => set(s => ({
+        careerNavLinks: s.careerNavLinks.filter(l => l.id !== id)
+      })),
+      moveCareerNavLink: (id, dir) => set(s => {
+        const links = [...s.careerNavLinks]
+        const i = links.findIndex(l => l.id === id)
+        const j = i + dir
+        if (i < 0 || j < 0 || j >= links.length) return {}
+        ;[links[i], links[j]] = [links[j], links[i]]
+        return { careerNavLinks: links }
+      }),
 
       addTheme: (t) => set(s => ({
         loginThemes: [...s.loginThemes, { id: _themeId++, active: true, ...t }]
