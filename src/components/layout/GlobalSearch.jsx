@@ -27,6 +27,7 @@ const PAGES = [
   { label: 'Apply Leave (HR)',          href: '/hr/apply-leave',                               icon: '📝', section: 'HR Administration' },
   { label: 'Org Chart',                 href: '/hr/org-chart',                                 icon: '🌳', section: 'HR Administration' },
   // HR - Recruitment
+  { label: 'Career Site Setup',         href: '/hr/recruitment/career-site-setup',             icon: '🌐', section: 'HR · Recruitment' },
   { label: 'Job Requisition',           href: '/hr/recruitment/job-requisition',               icon: '💼', section: 'HR · Recruitment' },
   { label: 'Candidate Pipeline',        href: '/hr/recruitment/candidate-pipeline',            icon: '🔀', section: 'HR · Recruitment' },
   { label: 'Interview Schedule',        href: '/hr/recruitment/interview-schedule',            icon: '🎥', section: 'HR · Recruitment' },

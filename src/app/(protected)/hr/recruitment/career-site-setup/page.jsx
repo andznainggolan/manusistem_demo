@@ -1,6 +1,6 @@
 'use client'
 import CareerSiteSettings from '@/components/careersite/CareerSiteSettings'
 
-export default function CareerSitePage() {
+export default function CareerSiteSetupPage() {
   return <CareerSiteSettings />
 }

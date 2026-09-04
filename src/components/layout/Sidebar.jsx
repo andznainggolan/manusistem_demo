@@ -226,6 +226,7 @@ const HR_GROUPS = [
     { label: 'Apply Leave (HR)', href: '/hr/apply-leave',    icon: ic('calendar') },
   ]},
   { title: 'Recruitment', icon: ic('briefcase'), items: [
+    { label: 'Career Site Setup', href: '/hr/recruitment/career-site-setup', icon: ic('globe') },
     { label: 'Job Requisition',   href: '/hr/recruitment/job-requisition',   icon: ic('briefcase') },
     { label: 'Candidate Pipeline',href: '/hr/recruitment/candidate-pipeline',icon: ic('repeat') },
     { label: 'Pending Employee',  href: '/hr/recruitment/pending-employee',  icon: ic('userCheck') },
