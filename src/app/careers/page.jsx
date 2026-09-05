@@ -69,7 +69,7 @@ function CareersBody() {
 
   const needle = q.trim().toLowerCase()
   const shown = needle
-    ? live.filter(r => `${r.publicTitle || r.positionTitle} ${deptName(r.departmentId)} ${companyName(r.companyId)}`.toLowerCase().includes(needle))
+    ? live.filter(r => `${r.id} ${r.publicTitle || r.positionTitle} ${deptName(r.departmentId)} ${companyName(r.companyId)}`.toLowerCase().includes(needle))
     : live
 
   // Guard against SSR/CSR hydration mismatch — these all come from a
