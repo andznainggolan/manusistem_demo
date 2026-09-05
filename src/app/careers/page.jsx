@@ -54,6 +54,7 @@ function CareersBody() {
   } = useBrandingStore()
 
   const [mounted, setMounted] = useState(false)
+  const [q, setQ] = useState('')
   useEffect(() => {
     setMounted(true)
     if (highlightId) {
@@ -65,6 +66,11 @@ function CareersBody() {
   const live = requisitions.filter(r => isPublished(r))
   const deptName = (id) => departments.find(d => d.id === id)?.name || '—'
   const companyName = (id) => companies.find(c => c.id === id)?.name || '—'
+
+  const needle = q.trim().toLowerCase()
+  const shown = needle
+    ? live.filter(r => `${r.publicTitle || r.positionTitle} ${deptName(r.departmentId)} ${companyName(r.companyId)}`.toLowerCase().includes(needle))
+    : live
 
   // Guard against SSR/CSR hydration mismatch — these all come from a
   // persisted store, so the server always renders the store's initial
@@ -116,8 +122,20 @@ function CareersBody() {
       </header>
 
       <main id='lowongan' className='mx-auto max-w-3xl px-6 py-10'>
+        {live.length > 0 && (
+          <div className='relative mb-5'>
+            <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'
+              className='pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400'>
+              <circle cx='11' cy='11' r='8' /><line x1='21' y1='21' x2='16.65' y2='16.65' />
+            </svg>
+            <input value={q} onChange={e => setQ(e.target.value)}
+              placeholder='Cari posisi, departemen, atau perusahaan…'
+              className='w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-700 shadow-sm outline-none focus:border-teal-300 focus:ring-2 focus:ring-teal-100' />
+          </div>
+        )}
+
         <p className='mb-5 text-sm font-medium text-gray-500'>
-          {live.length} lowongan tersedia saat ini.
+          {needle ? `${shown.length} dari ${live.length} lowongan cocok dengan pencarian.` : `${live.length} lowongan tersedia saat ini.`}
         </p>
 
         {live.length === 0 ? (
@@ -126,9 +144,15 @@ function CareersBody() {
             <p className='mt-3 font-semibold text-gray-700'>Belum ada lowongan terbuka saat ini.</p>
             <p className='mt-1 text-sm text-gray-400'>Silakan kembali lagi di lain waktu.</p>
           </div>
+        ) : shown.length === 0 ? (
+          <div className='rounded-2xl bg-white p-12 text-center shadow-sm ring-1 ring-gray-100'>
+            <p className='text-4xl'>🔍</p>
+            <p className='mt-3 font-semibold text-gray-700'>Tidak ada lowongan yang cocok.</p>
+            <p className='mt-1 text-sm text-gray-400'>Coba kata kunci lain.</p>
+          </div>
         ) : (
           <div className='space-y-4'>
-            {live.map(req => (
+            {shown.map(req => (
               <JobCard key={req.id} req={req} deptName={deptName(req.departmentId)} companyName={companyName(req.companyId)}
                 highlighted={req.id === highlightId} />
             ))}
