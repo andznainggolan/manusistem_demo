@@ -88,11 +88,24 @@ export default function ApplyPage() {
         positionTitle: req.publicTitle || req.positionTitle, departmentName: deptName,
         companyName, appliedDate,
       }
+      const to = form.email.trim()
+      const subject = resolveTemplate(candidateApply.subject, values)
+      const body = resolveTemplate(candidateApply.body, values)
+
+      let emailStatus = 'sent', emailError = ''
+      try {
+        const res = await fetch('/api/send-notification', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ to, subject, body }),
+        })
+        if (!res.ok) { emailStatus = 'failed'; emailError = (await res.json().catch(() => ({})))?.error || `HTTP ${res.status}` }
+      } catch (err) {
+        emailStatus = 'failed'; emailError = err?.message || 'Network error'
+      }
+
       addLog({
-        to: form.email.trim(), candidateName: form.name.trim(),
-        subject: resolveTemplate(candidateApply.subject, values),
-        body: resolveTemplate(candidateApply.body, values),
-        candidateId: newId, requisitionId: req.id,
+        to, subject, body, emailStatus, emailError,
+        candidateName: form.name.trim(), candidateId: newId, requisitionId: req.id,
       })
     }
 

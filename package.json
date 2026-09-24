@@ -28,6 +28,7 @@
     "react-dom": "^19.0.0",
     "react-organizational-chart": "^2.2.1",
     "recharts": "^2.15.4",
+    "resend": "^6.28.1",
     "xlsx": "^0.18.5",
     "zustand": "^5.0.14"
   },

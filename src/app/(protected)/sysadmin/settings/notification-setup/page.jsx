@@ -126,13 +126,20 @@ export default function NotificationSetupPage() {
           </div>
         ) : (
           <DataTable className='rounded-none shadow-none ring-0' columns={[
-            t('Kepada', 'To'), t('Kandidat', 'Candidate'), 'Subject', t('Waktu Kirim', 'Sent At'), { label: t('Aksi', 'Action'), align: 'right' },
+            t('Kepada', 'To'), t('Kandidat', 'Candidate'), 'Subject', 'Status', t('Waktu Kirim', 'Sent At'), { label: t('Aksi', 'Action'), align: 'right' },
           ]}>
             {logs.map(log => (
               <Tr key={log.id}>
                 <Td className='text-xs text-gray-600'>{log.to}</Td>
                 <Td className='text-sm font-semibold text-gray-800'>{log.candidateName}</Td>
                 <Td className='max-w-xs truncate text-xs text-gray-500'>{log.subject}</Td>
+                <Td>
+                  {log.emailStatus === 'failed'
+                    ? <StatusBadge tone='danger'>{t('Gagal', 'Failed')}</StatusBadge>
+                    : log.emailStatus === 'sent'
+                      ? <StatusBadge tone='success'>{t('Terkirim', 'Sent')}</StatusBadge>
+                      : <span className='text-xs text-gray-300'>—</span>}
+                </Td>
                 <Td className='text-xs tabular-nums text-gray-400'>{new Date(log.sentAt).toLocaleString('id-ID')}</Td>
                 <Td align='right'>
                   <button onClick={() => setViewLog(log)} className='text-xs font-semibold text-teal-700 hover:underline'>
@@ -153,6 +160,19 @@ export default function NotificationSetupPage() {
               <button onClick={() => setViewLog(null)} className='text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
             </div>
             <div className='space-y-3 text-sm'>
+              {viewLog.emailStatus && (
+                <div>
+                  <span className='text-xs font-semibold text-gray-400'>Status</span>
+                  <p className='mt-0.5'>
+                    {viewLog.emailStatus === 'failed'
+                      ? <StatusBadge tone='danger'>{t('Gagal', 'Failed')}</StatusBadge>
+                      : <StatusBadge tone='success'>{t('Terkirim', 'Sent')}</StatusBadge>}
+                  </p>
+                </div>
+              )}
+              {viewLog.emailStatus === 'failed' && viewLog.emailError && (
+                <div><span className='text-xs font-semibold text-gray-400'>{t('Pesan Error', 'Error Message')}</span><p className='text-red-600'>{viewLog.emailError}</p></div>
+              )}
               <div><span className='text-xs font-semibold text-gray-400'>{t('Kepada', 'To')}</span><p className='text-gray-800'>{viewLog.to}</p></div>
               <div><span className='text-xs font-semibold text-gray-400'>Subject</span><p className='font-semibold text-gray-800'>{viewLog.subject}</p></div>
               <div><span className='text-xs font-semibold text-gray-400'>{t('Isi Email', 'Body')}</span><p className='whitespace-pre-wrap text-gray-700'>{viewLog.body}</p></div>
