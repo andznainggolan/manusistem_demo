@@ -25,7 +25,7 @@ const SEED_TYPES = [
   { id: 5, name: 'CV / Resume', title: 'CV / Resume', mandatory: true, active: true,
     fields: { issuedDate: false, effectiveStartDate: false, effectiveEndDate: false, note: true, customField: false },
     customFieldLabel: '' },
-  { id: 6, name: 'Kontrak Kerja', title: 'Kontrak Kerja (PKWT/PKWTT)', mandatory: true, active: true,
+  { id: 6, name: 'Kontrak Kerja', title: 'Kontrak Kerja (PKWT/PKWTT)', mandatory: false, active: true,
     fields: { issuedDate: false, effectiveStartDate: true, effectiveEndDate: true, note: true, customField: false },
     customFieldLabel: '' },
   { id: 7, name: 'Kartu BPJS Kesehatan', title: 'Kartu BPJS Kesehatan', mandatory: false, active: true,
