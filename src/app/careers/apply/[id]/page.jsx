@@ -6,6 +6,7 @@ import { useRecruitmentStore, isPublished } from '@/store/recruitmentStore'
 import { useDocumentTypeStore } from '@/store/documentTypeStore'
 import { useCandidateDocumentStore, CANDIDATE_DOCUMENT_MAX_BYTES } from '@/store/candidateDocumentStore'
 import { useStructureStore } from '@/store/structureStore'
+import { useNotificationSettingsStore, resolveTemplate } from '@/store/notificationSettingsStore'
 
 // Dedicated apply page instead of a modal — with 6+ mandatory documents the
 // form is genuinely long, and a modal just clips it. Lives outside
@@ -31,6 +32,7 @@ export default function ApplyPage() {
   const { departments, companies } = useStructureStore()
   const { types: docTypes } = useDocumentTypeStore()
   const { addDocument: addCandidateDocument } = useCandidateDocumentStore()
+  const { candidateApply, addLog } = useNotificationSettingsStore()
 
   const req = requisitions.find(r => r.id === reqId)
   const deptName = departments.find(d => d.id === req?.departmentId)?.name || '—'
@@ -60,10 +62,11 @@ export default function ApplyPage() {
   const submit = async () => {
     if (!valid || submitting) return
     setSubmitting(true)
+    const appliedDate = new Date().toISOString().slice(0, 10)
     const newId = addCandidate({
       name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(),
       requisitionId: req.id, source: 'Career Site',
-      appliedDate: new Date().toISOString().slice(0, 10),
+      appliedDate,
       notes: form.notes.trim(),
     })
     for (const dt of mandatoryDocTypes) {
@@ -76,6 +79,23 @@ export default function ApplyPage() {
         uploadedAt: new Date().toISOString(),
       })
     }
+
+    // Notification Setup (System Admin) drives this — subject/body/variables
+    // are all configured there, resolved here with the real submission.
+    if (candidateApply.active) {
+      const values = {
+        candidateName: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(),
+        positionTitle: req.publicTitle || req.positionTitle, departmentName: deptName,
+        companyName, appliedDate,
+      }
+      addLog({
+        to: form.email.trim(), candidateName: form.name.trim(),
+        subject: resolveTemplate(candidateApply.subject, values),
+        body: resolveTemplate(candidateApply.body, values),
+        candidateId: newId, requisitionId: req.id,
+      })
+    }
+
     setSubmitting(false)
     setSent(true)
   }
@@ -112,6 +132,11 @@ export default function ApplyPage() {
             <p className='mx-auto mt-2 max-w-md text-sm text-gray-500'>
               Terima kasih sudah melamar untuk posisi <b>{req.publicTitle || req.positionTitle}</b>. Tim kami akan menghubungi Anda jika profil Anda sesuai.
             </p>
+            {candidateApply.active && (
+              <p className='mx-auto mt-3 max-w-md text-xs text-teal-700'>
+                📧 Email konfirmasi telah dikirim ke <b>{form.email}</b>.
+              </p>
+            )}
             <Link href='/careers' className='mt-6 inline-block rounded-xl px-6 py-2.5 text-sm font-semibold text-white'
               style={{ background: BRAND }}>
               Lihat Lowongan Lain
