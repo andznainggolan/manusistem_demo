@@ -28,7 +28,13 @@ const DEMO_GROUPS = [
   ]},
 ]
 
+const DEMO_MASTER_PASSWORD = 'manusistem12345'
+const DEMO_UNLOCK_KEY = 'hcm-demo-unlocked'
+
 export default function LoginPage() {
+  const [demoUnlocked, setDemoUnlocked] = useState(false)
+  const [masterInput, setMasterInput]   = useState('')
+  const [masterError, setMasterError]   = useState('')
   const [username, setUsername]   = useState('')
   const [password, setPassword]   = useState('')
   const [showPass, setShowPass]   = useState(false)
@@ -41,7 +47,19 @@ export default function LoginPage() {
   const { loginLogo }             = useBrandingStore()
   const router = useRouter()
 
-  useEffect(() => { setMounted(true) }, [])
+  useEffect(() => {
+    setMounted(true)
+    try { if (sessionStorage.getItem(DEMO_UNLOCK_KEY) === '1') setDemoUnlocked(true) } catch {}
+  }, [])
+
+  const unlockDemo = () => {
+    if (masterInput === DEMO_MASTER_PASSWORD) {
+      setDemoUnlocked(true); setMasterError(''); setMasterInput('')
+      try { sessionStorage.setItem(DEMO_UNLOCK_KEY, '1') } catch {}
+    } else {
+      setMasterError('Master password salah.')
+    }
+  }
 
   const fillDemo = (u, p) => {
     setUsername(u); setPassword(p)
@@ -168,7 +186,26 @@ export default function LoginPage() {
               className={`transition-transform ${showDemo ? 'rotate-180' : ''}`}><polyline points='6 9 12 15 18 9'/></svg>
           </button>
 
-          {showDemo && (
+          {showDemo && !demoUnlocked && (
+            <div className='mt-2 bg-white rounded-2xl shadow-xl p-4'>
+              <p className='text-xs text-gray-500 mb-2'>Masukkan master password untuk melihat daftar akun demo.</p>
+              <div className='flex gap-2'>
+                <input type='password' value={masterInput} autoFocus
+                  onChange={e => { setMasterInput(e.target.value); setMasterError('') }}
+                  onKeyDown={e => e.key === 'Enter' && unlockDemo()}
+                  placeholder='Master password'
+                  className={`flex-1 px-3 py-2 rounded-lg text-sm outline-none border ${masterError ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 focus:border-teal-500 focus:bg-white'}`} />
+                <button type='button' onClick={unlockDemo}
+                  className='px-4 py-2 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition'
+                  style={{ background: '#052B52' }}>
+                  Buka
+                </button>
+              </div>
+              {masterError && <p className='text-xs text-red-500 mt-1.5'>{masterError}</p>}
+            </div>
+          )}
+
+          {showDemo && demoUnlocked && (
             <div className='mt-2 bg-white rounded-2xl shadow-xl p-4 space-y-3 max-h-[320px] overflow-y-auto'>
               <p className='text-[11px] text-gray-400 -mt-1'>Klik salah satu akun untuk mengisi form login otomatis.</p>
               {DEMO_GROUPS.map(g => (
