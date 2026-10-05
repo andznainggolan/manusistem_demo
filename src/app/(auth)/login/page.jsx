@@ -188,7 +188,7 @@ export default function LoginPage() {
 
           {showDemo && !demoUnlocked && (
             <div className='mt-2 bg-white rounded-2xl shadow-xl p-4'>
-              <p className='text-xs text-gray-500 mb-2'>Masukkan master password untuk melihat daftar akun demo.</p>
+              <p className='text-xs text-gray-500 mb-2'>Masukkan master password untuk melihat akun demo. Bila belum tau master password, hubungi WA +62-818-0816-8107</p>
               <div className='flex gap-2'>
                 <input type='password' value={masterInput} autoFocus
                   onChange={e => { setMasterInput(e.target.value); setMasterError('') }}
