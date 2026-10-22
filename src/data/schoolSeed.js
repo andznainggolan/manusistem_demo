@@ -438,3 +438,66 @@ export const SCHOOL_VIP_SESSIONS = [
     ],
   },
 ]
+
+// ─── Job Load Analysis (JLA) ─────────────────────────────────────────────────
+// Guru = pendidik dengan jam mengajar tetap; target minimal 40 jam/minggu, sisa
+// jam diisi task oleh kepala sekolah. Employee = tenaga kependidikan/umum.
+const GURU_IDS = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27]
+export const SCHOOL_WORKER_CATEGORIES = Object.fromEntries(
+  SCHOOL_EMPLOYEES.map(e => [e.id, GURU_IDS.includes(e.id) ? 'Guru' : 'Employee'])
+)
+
+export const SCHOOL_JLA_TASK_TYPES = [
+  { id: 1, name: 'Piket Sekolah', active: true },
+  { id: 2, name: 'Remedial dan Pengayaan', active: true },
+  { id: 3, name: 'Pembinaan Ekstrakurikuler', active: true },
+  { id: 4, name: 'Administrasi Kelas', active: true },
+  { id: 5, name: 'Koreksi dan Penilaian', active: true },
+  { id: 6, name: 'Rapat dan Koordinasi', active: true },
+  { id: 7, name: 'Pengembangan Perangkat Ajar', active: true },
+  { id: 8, name: 'Pembinaan Siswa (Wali Kelas)', active: true },
+]
+
+const WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+// [employeeId, days, [[start, end, label], ...]]
+const TEACHING = [
+  [11, WEEK, [['07:00', '10:00', 'Kelompok A']]],
+  [12, WEEK, [['07:00', '10:00', 'Kelompok B']]],
+  [13, WEEK, [['07:00', '10:00', 'Kelas 3A'], ['10:30', '13:00', 'Kelas 3A']]],
+  [14, WEEK, [['07:00', '10:00', 'Kelas 5B'], ['10:30', '13:30', 'Kelas 5B']]],
+  [15, WEEK, [['07:00', '08:00', 'Matematika 7A'], ['09:00', '12:00', 'Matematika 8A-8C'], ['13:00', '16:00', 'Matematika 9A-9C']]],
+  [16, WEEK, [['07:00', '09:00', 'Matematika 7B-7C'], ['10:00', '12:00', 'Matematika 8D'], ['13:00', '15:00', 'Matematika 9D']]],
+  [17, WEEK, [['08:00', '11:00', 'Bahasa Inggris 7-8'], ['12:00', '15:00', 'Bahasa Inggris 9']]],
+  [18, WEEK, [['07:00', '10:00', 'IPA 7-8'], ['11:00', '14:00', 'IPA 9']]],
+  [19, ['Monday', 'Wednesday', 'Friday'], [['07:00', '11:00', 'Seni Budaya 7-9']]],
+  [20, ['Tuesday', 'Thursday'], [['08:00', '13:00', 'Prakarya 7-9']]],
+  [21, WEEK, [['07:00', '09:00', 'Matematika 10'], ['10:00', '12:00', 'Matematika 11'], ['13:00', '15:00', 'Matematika 12']]],
+  [22, WEEK, [['08:00', '12:00', 'Fisika 10-12'], ['13:00', '15:00', 'Praktikum Fisika']]],
+  [23, ['Tuesday', 'Thursday'], [['07:00', '12:00', 'Informatika 10-11']]],
+  [25, WEEK, [['07:30', '10:30', 'Pendidikan Agama Katolik'], ['11:00', '13:00', 'Pendidikan Agama Katolik']]],
+  [26, WEEK, [['08:00', '11:00', 'Pendidikan Agama Katolik'], ['12:00', '14:00', 'Pendidikan Agama Katolik']]],
+  [27, WEEK, [['08:00', '12:00', 'Bimbingan Konseling']]],
+]
+export const SCHOOL_TEACHING_BLOCKS = (() => {
+  const out = []
+  TEACHING.forEach(([employeeId, days, blocks]) => days.forEach(day => blocks.forEach(([start, end, label]) => {
+    out.push({ id: out.length + 1, employeeId, day, start, end, label })
+  })))
+  return out
+})()
+
+// [employeeId, days, start, end, taskTypeId, note]
+const TASKS = [
+  [17, WEEK, '15:00', '17:00', 2, 'Remedial IPS dan pengayaan Bahasa Inggris'],
+  [22, WEEK, '15:00', '17:00', 3, 'Klub Sains'],
+  [14, WEEK, '13:30', '15:30', 4, 'Administrasi wali kelas 5B'],
+  [16, ['Monday', 'Tuesday', 'Wednesday'], '15:00', '17:00', 5, 'Koreksi ulangan harian'],
+  [11, WEEK, '10:00', '12:00', 4, 'Administrasi kelompok dan laporan perkembangan anak'],
+]
+export const SCHOOL_JLA_TASKS = (() => {
+  const out = []
+  TASKS.forEach(([employeeId, days, start, end, taskTypeId, note]) => days.forEach(day => {
+    out.push({ id: out.length + 1, employeeId, day, start, end, taskTypeId, note, createdBy: 7, createdByName: 'Elisabeth Kartika', createdAt: '2026-10-05T08:00:00+07:00' })
+  }))
+  return out
+})()

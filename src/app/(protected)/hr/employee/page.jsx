@@ -9,6 +9,7 @@ import { tenure } from '@/utils/dateUtils'
 import { exportCsv } from '@/utils/exportCsv'
 import { EMPTY_EMP, EMP_TYPES } from '@/utils/constants'
 import NewEmployeeForm from '@/components/employee/NewEmployeeForm'
+import WorkerCategoryBadge from '@/components/jla/WorkerCategoryBadge'
 
 // ─── Status → pill styling ────────────────────────────────────────────────────
 const STATUS_STYLE = {
@@ -265,6 +266,7 @@ export default function EmployeeDataPage() {
                       {e.employmentType
                         ? <span className={`inline-block text-[11px] font-semibold px-2 py-0.5 rounded-md border ${TYPE_STYLE[e.employmentType] || 'text-gray-600 bg-gray-50 border-gray-200'}`}>{e.employmentType}</span>
                         : <span className='text-gray-300'>—</span>}
+                      <WorkerCategoryBadge employeeId={e.id} />
                     </td>
                     <td className='px-4 py-2.5'>
                       <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-0.5 rounded-full border ${st.cls}`}>

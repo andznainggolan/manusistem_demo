@@ -5,6 +5,7 @@ import { usePathname, useRouter }       from 'next/navigation'
 import { useAuthStore }                 from '@/store/authStore'
 import { useEmployeeStore }             from '@/store/employeeStore'
 import { HR_ROLES, TALENT_ONLY_ROLES }  from '@/constants/roles'
+import { IS_SCHOOL }                    from '@/lib/demoProfile'
 
 // ─── Strip icons (icon strip left) ────────────────────────────────────────────
 const IcHome   = () => <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -127,6 +128,7 @@ const ESS_GROUPS = [
     { label: 'My Calendar',          href: '/ess/calendar',       icon: ic('calendar') },
     { label: 'My Attendance',        href: '/ess/attendance',     icon: ic('list') },
     { label: 'Apply Leave',          href: '/ess/apply-leave',    icon: ic('calendar') },
+    ...(IS_SCHOOL ? [{ label: 'Jadwal & Beban Kerja', href: '/ess/job-load', icon: ic('layers') }] : []),
   ]},
   { title: 'Talent Management', icon: ic('star'), items: [
     { label: 'My Talent Profile',    href: '/ess/talent/profile',        icon: ic('star') },
@@ -150,6 +152,7 @@ const MSS_GROUPS = [
     { label: 'Team Attendance',            href: '/mss/team-attendance',    icon: ic('clock') },
     { label: 'Apply Leave (My Team)',      href: '/mss/apply-leave-team',   icon: ic('calendar') },
     { label: 'Approve Leave',              href: '/mss/approve-leave',      icon: ic('checkCircle') },
+    ...(IS_SCHOOL ? [{ label: 'Job Load Analysis (JLA)', href: '/mss/jla', icon: ic('layers') }] : []),
   ]},
   { title: 'Performance', icon: ic('gauge'), items: [
     { label: 'Team Performance Check-In', href: '/mss/check-in',           icon: ic('gauge') },
@@ -292,6 +295,7 @@ const HR_GROUPS = [
     { label: 'Time Entries',        href: '/hr/time-labour/time-entries',        icon: ic('upload') },
     { label: 'Eligibility Group', href: '/hr/time-labour/eligibility-group', icon: ic('checkCircle') },
     { label: 'Overtime Matrix',   href: '/hr/time-labour/overtime-matrix',   icon: ic('grid') },
+    ...(IS_SCHOOL ? [{ label: 'Job Load Analysis (JLA)', href: '/hr/time-labour/jla', icon: ic('layers') }] : []),
   ]},
   { title: 'Settings', icon: ic('settings'), items: [
     { label: 'Announcement', href: '/hr/settings/announcement', icon: ic('bell') },

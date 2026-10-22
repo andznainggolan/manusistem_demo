@@ -3,6 +3,9 @@ import Icon from '@/components/ui/Icon'
 import { useState }                    from 'react'
 import { usePayrollStore, formatRp }   from '@/store/payrollStore'
 import { useT } from '@/store/languageStore'
+import { IS_SCHOOL } from '@/lib/demoProfile'
+import { useJlaStore } from '@/store/jlaStore'
+import { weekSummary, fmtHours } from '@/lib/jla'
 import {
   PageHeader, StatCard, SectionCard, DataTable, Tr, Td,
   StatusBadge, ActionButton, FormField, Select, EmptyState,
@@ -10,7 +13,10 @@ import {
 
 export default function PayrollRunPage() {
   const t = useT()
-  const { payslips, generatePeriod, publishPeriod, removePayslip } = usePayrollStore()
+  const { payslips, generatePeriod, publishPeriod, removePayslip, recalcDraftFromJla } = usePayrollStore()
+  const jla = useJlaStore()
+  const modeLabel = jla.settings.payrollMode === 'prorate' ? 'Potongan proporsional' : 'Gaji tetap (JLA pemantau)'
+  const hoursOf = (empId) => jla.categories[empId] === 'Guru' ? weekSummary(empId, jla.teachingBlocks, jla.tasks, jla.settings.targetHours) : null
   const [period, setPeriod] = useState(() => {
     const d = new Date()
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`
@@ -29,6 +35,11 @@ export default function PayrollRunPage() {
     const before = rows.length
     generatePeriod(period)
     flash(t(`Payroll digenerate untuk periode ${period}.`,`Payroll generated for ${period}.`))
+  }
+
+  const handleRecalc = () => {
+    recalcDraftFromJla(period)
+    flash(`Payroll Draft ${period} dihitung ulang dari JLA (${modeLabel}).`)
   }
 
   const handlePublish = () => {
@@ -63,6 +74,9 @@ export default function PayrollRunPage() {
             </div>
           )}
           <div className='ml-auto mb-0.5 flex gap-2'>
+            {IS_SCHOOL && isDraft && (
+              <ActionButton onClick={handleRecalc} icon='🔄' variant='secondary'>Hitung Ulang dari JLA</ActionButton>
+            )}
             <ActionButton onClick={handleGenerate} icon='⚙️' variant='secondary'>
               {t('Generate Payroll','Generate Payroll')}
             </ActionButton>
@@ -90,6 +104,7 @@ export default function PayrollRunPage() {
         {rows.length ? (
           <DataTable columns={[
             { label: t('Nama','Name') },
+            ...(IS_SCHOOL ? [{ label: 'Jam/Mgg', align:'right' }] : []),
             { label: t('Gaji Pokok','Basic Salary'), align:'right' },
             { label: t('Tunjangan','Allowance'), align:'right' },
             { label: 'BPJS', align:'right' },
@@ -103,6 +118,11 @@ export default function PayrollRunPage() {
               return (
               <Tr key={p.id}>
                 <Td className='font-medium text-gray-800'>{p.name}</Td>
+                {IS_SCHOOL && (() => { const h = hoursOf(p.empId); return (
+                  <Td align='right' className={h ? (h.achieved ? 'text-emerald-600' : 'text-amber-600') : 'text-gray-300'}>
+                    {h ? `${fmtHours(h.total)}/${h.target}` : '-'}
+                  </Td>
+                )})()}
                 <Td align='right' className='text-gray-600'>{formatRp(p.basic)}</Td>
                 <Td align='right' className='text-gray-600'>{formatRp(p.allowance)}</Td>
                 <Td align='right' className='text-red-500'>-{formatRp(bpjsEmp)}</Td>
@@ -131,7 +151,7 @@ export default function PayrollRunPage() {
             <div className='flex justify-between items-start mb-4'>
               <div>
                 <h3 className='text-base font-bold text-gray-800'>{detail.name}</h3>
-                <p className='text-xs text-gray-400'>{detail.period} · PTKP {detail.ptkpStatus} · NPWP {detail.npwp ? t('Ada','Yes') : t('Tidak ada','No')}</p>
+                <p className='text-xs text-gray-400'>{detail.period} · PTKP {detail.ptkpStatus} · NPWP {detail.npwp ? t('Ada','Yes') : t('Tidak ada','No')}{IS_SCHOOL && hoursOf(detail.empId) ? ` · Jam kerja ${fmtHours(hoursOf(detail.empId).total)}/${hoursOf(detail.empId).target} jam per minggu` : ''}</p>
               </div>
               <button onClick={()=>setDetailId(null)} className='text-gray-400 hover:text-gray-600 text-xl font-bold leading-none'>×</button>
             </div>
@@ -148,7 +168,7 @@ export default function PayrollRunPage() {
               <Row label='BPJS JHT (karyawan)' value={-detail.jhtEmployee} />
               <Row label='BPJS JP (karyawan)' value={-detail.jpEmployee} />
               <Row label='PPh 21' value={-detail.pph21} />
-              {detail.otherDeduction ? <Row label={t('Potongan Lain','Other Deduction')} value={-detail.otherDeduction} /> : null}
+              {detail.otherDeduction ? <Row label={IS_SCHOOL ? 'Potongan kekurangan jam kerja (JLA)' : t('Potongan Lain','Other Deduction')} value={-detail.otherDeduction} /> : null}
               <Row label={t('Total Potongan','Total Deductions')} value={-detail.totalDeduction} bold />
             </div>
 

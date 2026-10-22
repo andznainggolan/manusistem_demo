@@ -6,6 +6,8 @@ import { useStructureStore } from './structureStore'
 import { calcPayslip, DEFAULT_PAYROLL_SETTINGS } from '@/lib/payrollCalc'
 import { IS_SCHOOL } from '@/lib/demoProfile'
 import { SCHOOL_EMPLOYEES, SCHOOL_POSITIONS, SCHOOL_GRADES } from '@/data/schoolSeed'
+import { useJlaStore } from './jlaStore'
+import { weekSummary } from '@/lib/jla'
 
 const SEED_PAYSLIP_INPUTS = IS_SCHOOL ? [] : [
   { id:1, empId:1, name:'Budi Santoso',  period:'2025-05', basic:12000000, allowance:2000000, ptkpStatus:'K/1',  npwp:true  },
@@ -63,6 +65,17 @@ function defaultBasicFor(emp) {
     return Math.round((grade.minSalary + grade.maxSalary) / 2 / 10000) * 10000
   }
   return 6_000_000
+}
+
+// School profile: Guru payroll follows Job Load Analysis (JLA). In 'prorate'
+// mode a weekly shortfall against the target deducts the same share of basic.
+function jlaAdjustment(empId, basic) {
+  if (!IS_SCHOOL) return null
+  const { settings, categories, teachingBlocks, tasks } = useJlaStore.getState()
+  if (categories[empId] !== 'Guru') return null
+  const sum = weekSummary(empId, teachingBlocks, tasks, settings.targetHours)
+  const deduction = settings.payrollMode === 'prorate' && !sum.achieved ? Math.round(basic * sum.gap / sum.target) : 0
+  return { hours: sum.total, target: sum.target, deduction }
 }
 
 const EMPTY_PROFILE = {
@@ -133,8 +146,9 @@ export const usePayrollStore = create(persist(
         const basic = profile.basic ?? defaultBasicFor(emp)
         const allowance = profile.allowance || 0
         const variableAllowance = sumVariableAllowances(profile.variableAllowances)
+        const jla = jlaAdjustment(emp.id, basic)
         const calc = calcPayslip({
-          basic, allowance, variableAllowance, overtime: 0, otherDeduction: 0,
+          basic, allowance, variableAllowance, overtime: 0, otherDeduction: jla?.deduction || 0,
           ptkpStatus: profile.ptkpStatus, hasNpwp: profile.npwp,
           bpjsKesehatan: profile.bpjsKesehatan, bpjsTk: profile.bpjsTk,
           settings: s.settings,
@@ -148,6 +162,21 @@ export const usePayrollStore = create(persist(
       })
       return { payslips: [...s.payslips, ...rows] }
     }),
+
+    // Re-applies the JLA rule (current target and payroll mode) to Draft payslips of Guru.
+    recalcDraftFromJla: (period) => set((s) => ({
+      payslips: s.payslips.map((p) => {
+        if (p.period !== period || p.status !== 'Draft') return p
+        const adj = jlaAdjustment(p.empId, p.basic)
+        if (!adj) return p
+        const calc = calcPayslip({
+          basic: p.basic, allowance: p.allowance || 0, variableAllowance: p.variableAllowance || 0,
+          overtime: p.overtime || 0, otherDeduction: adj.deduction,
+          ptkpStatus: p.ptkpStatus, hasNpwp: p.npwp, bpjsKesehatan: true, bpjsTk: true, settings: s.settings,
+        })
+        return { ...p, ...calc }
+      }),
+    })),
 
     removePayslip: (id) => set((s) => ({ payslips: s.payslips.filter(p => p.id !== id) })),
 

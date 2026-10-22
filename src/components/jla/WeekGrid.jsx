@@ -1,0 +1,87 @@
+'use client'
+import { DAYS, toMin, toHHMM, fmtHours, durationHours } from '@/lib/jla'
+
+const PX_PER_HOUR = 44
+
+// Weekly timetable: teaching blocks (blue), tasks (teal), free time is empty
+// and clickable when `editable`. Clicking a free spot calls onFreeClick(day, 'HH:MM').
+export default function WeekGrid({ blocks, tasks, taskTypes, windowStart, windowEnd, editable, onFreeClick, onTaskClick }) {
+  const ws = toMin(windowStart), we = toMin(windowEnd)
+  const hours = []
+  for (let m = ws; m < we; m += 60) hours.push(m)
+  const height = ((we - ws) / 60) * PX_PER_HOUR
+  const typeName = (id) => taskTypes.find(t => t.id === id)?.name || 'Task'
+  const topOf = (hhmm) => ((Math.max(ws, toMin(hhmm)) - ws) / 60) * PX_PER_HOUR
+  const heightOf = (s, e) => ((Math.min(we, toMin(e)) - Math.max(ws, toMin(s))) / 60) * PX_PER_HOUR
+
+  const handleFree = (e, day) => {
+    if (!editable || !onFreeClick) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const y = e.clientY - rect.top
+    const minutes = ws + Math.floor((y / PX_PER_HOUR) * 2) * 30
+    onFreeClick(day, toHHMM(Math.min(minutes, we - 30)))
+  }
+
+  return (
+    <div className='overflow-x-auto'>
+      <div className='min-w-[640px]'>
+        <div className='grid' style={{ gridTemplateColumns: '48px repeat(5, minmax(0, 1fr))' }}>
+          <div />
+          {DAYS.map(d => (
+            <div key={d.key} className='pb-2 text-center text-xs font-bold uppercase tracking-wide text-gray-500'>{d.label}</div>
+          ))}
+        </div>
+        <div className='grid' style={{ gridTemplateColumns: '48px repeat(5, minmax(0, 1fr))' }}>
+          <div className='relative' style={{ height }}>
+            {hours.map(m => (
+              <div key={m} className='absolute right-2 -translate-y-2 text-[10px] font-medium text-gray-400' style={{ top: ((m - ws) / 60) * PX_PER_HOUR }}>
+                {toHHMM(m)}
+              </div>
+            ))}
+          </div>
+          {DAYS.map(d => (
+            <div
+              key={d.key}
+              className={`relative border-l border-gray-100 ${editable ? 'cursor-copy hover:bg-teal-50/40' : ''}`}
+              style={{ height }}
+              onClick={(e) => handleFree(e, d.key)}
+              title={editable ? 'Klik area kosong untuk menambah task' : undefined}
+            >
+              {hours.map(m => (
+                <div key={m} className='absolute inset-x-0 border-t border-gray-100' style={{ top: ((m - ws) / 60) * PX_PER_HOUR }} />
+              ))}
+              {blocks.filter(b => b.day === d.key).map(b => (
+                <div
+                  key={`b${b.id}`}
+                  className='absolute inset-x-0.5 overflow-hidden rounded-md bg-sky-100 px-1.5 py-0.5 text-[11px] leading-tight text-sky-900 ring-1 ring-sky-200'
+                  style={{ top: topOf(b.start), height: heightOf(b.start, b.end) - 2 }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className='font-semibold'>{b.start}-{b.end}</div>
+                  <div className='truncate'>{b.label}</div>
+                </div>
+              ))}
+              {tasks.filter(t => t.day === d.key).map(t => (
+                <div
+                  key={`t${t.id}`}
+                  className={`absolute inset-x-0.5 overflow-hidden rounded-md bg-teal-600 px-1.5 py-0.5 text-[11px] leading-tight text-white ring-1 ring-teal-700 ${editable ? 'cursor-pointer hover:bg-teal-700' : ''}`}
+                  style={{ top: topOf(t.start), height: heightOf(t.start, t.end) - 2 }}
+                  onClick={(e) => { e.stopPropagation(); onTaskClick && onTaskClick(t) }}
+                  title={`${typeName(t.taskTypeId)} (${fmtHours(durationHours(t.start, t.end))} jam)`}
+                >
+                  <div className='font-semibold'>{t.start}-{t.end}</div>
+                  <div className='truncate'>{typeName(t.taskTypeId)}</div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className='mt-3 flex flex-wrap items-center gap-4 text-[11px] text-gray-500'>
+          <span className='flex items-center gap-1.5'><span className='h-3 w-3 rounded bg-sky-100 ring-1 ring-sky-200' /> Jam mengajar (tetap)</span>
+          <span className='flex items-center gap-1.5'><span className='h-3 w-3 rounded bg-teal-600' /> Task tambahan</span>
+          <span className='flex items-center gap-1.5'><span className='h-3 w-3 rounded border border-gray-200 bg-white' /> Waktu kosong{editable ? ' (klik untuk isi)' : ''}</span>
+        </div>
+      </div>
+    </div>
+  )
+}

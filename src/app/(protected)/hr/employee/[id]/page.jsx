@@ -14,6 +14,7 @@ import { PTKP_STATUSES } from '@/lib/payrollCalc'
 import { useT } from '@/store/languageStore'
 import { RELS, GENDERS, RELIGIONS, MARITAL, COUNTRIES, CITIES, EDU_LEVELS, SKILL_LVLS } from '@/utils/constants'
 import { FormField, Input, Select, ActionButton, StatusBadge, DocCompletionDonut } from '@/components/ui'
+import WorkerCategoryBadge from '@/components/jla/WorkerCategoryBadge'
 
 const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History', 'Salary', 'Personal Document']
 
@@ -528,6 +529,7 @@ export default function EmployeeProfilePage() {
                   {employmentTypeEff}
                 </span>
               )}
+              <WorkerCategoryBadge employeeId={emp.id} onDark />
               {company?.companyCode && (
                 <span className='font-mono font-bold text-xs bg-white/20 text-white px-2 py-0.5 rounded tracking-widest'>
                   {company.companyCode}
