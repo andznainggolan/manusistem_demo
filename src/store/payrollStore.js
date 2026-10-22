@@ -193,5 +193,6 @@ export const usePayrollStore = create(persist(
     updatePayslip: (id, d) =>
       set((s) => ({ payslips: s.payslips.map((p) => (p.id === id ? { ...p, ...d } : p)) })),
   }),
-  { name: 'hcm-payroll-v2', storage: createJSONStorage(() => dbStorage) }
+  // School profile gets its own key so cached/older seeded payslips (pre-grade-change) are not reused.
+  { name: IS_SCHOOL ? 'hcm-payroll-school-v2' : 'hcm-payroll-v2', storage: createJSONStorage(() => dbStorage) }
 ))
