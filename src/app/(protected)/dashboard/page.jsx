@@ -20,6 +20,8 @@ import { useAnnouncementStore, CATEGORY_TONE, isLive } from '@/store/announcemen
 import { useShiftStore } from '@/store/shiftStore'
 import { useAttendanceStore, todayStr } from '@/store/attendanceStore'
 import { shiftFor, gradeTime, toMinutes, TONE_CLASS } from '@/lib/workSchedule'
+import { checkClockLocation } from '@/lib/geofence'
+import { useToastStore } from '@/store/toastStore'
 import { useT } from '@/store/languageStore'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LabelList, ResponsiveContainer, PieChart, Pie, Legend } from 'recharts'
 
@@ -837,16 +839,23 @@ export default function DashboardPage() {
   const mySched = uid ? shiftFor(uid, attDate, { assignments, schedules, patterns, shifts }) : null
   const myAttendance = attendance.find(r => r.userId === uid && r.date === attDate) || null
 
-  const handleClockIn = () => {
+  const hhmm = () => {
     const d = new Date()
-    const time = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+  }
+  // Geofencing (when on) is checked before anything is recorded.
+  const guarded = async (action) => {
+    const chk = await checkClockLocation()
+    if (!chk.ok) { useToastStore.getState().show(chk.message, 'error', 6000); return }
+    if (chk.message) useToastStore.getState().show(chk.message, 'warning', 6000)
+    action(chk.geo)
+  }
+  const handleClockIn = () => guarded((geo) => {
+    const time = hhmm()
     const late = mySched ? gradeTime(time, mySched.shift.startTime, 'in').tone !== 'ok' : false
-    clockIn(uid, name, time, { date: attDate, status: late ? 'Late' : 'Present' })
-  }
-  const handleClockOut = () => {
-    const d = new Date()
-    clockOut(uid, `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`, { date: attDate })
-  }
+    clockIn(uid, name, time, { date: attDate, status: late ? 'Late' : 'Present', geo })
+  })
+  const handleClockOut = () => guarded((geo) => clockOut(uid, hhmm(), { date: attDate, geo }))
 
   const WIDGET_NODE = {
     leaveBalance:   <LeaveBalanceWidget key='leaveBalance' leaves={leaves} leaveTypes={leaveTypes} userId={uid} t={t} />,

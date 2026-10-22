@@ -82,21 +82,22 @@ export const useAttendanceStore = create(persist(
     recordFor: (userId, date = todayStr()) =>
       get().records.find(r => r.userId === userId && r.date === date) || null,
 
-    clockIn: (userId, name, time, { date = todayStr(), status = 'Present' } = {}) =>
+    // geo = result of the geofence check ({ lat, lng, inside, distance, ... }), kept per record.
+    clockIn: (userId, name, time, { date = todayStr(), status = 'Present', geo = null } = {}) =>
       set((s) => {
         const existing = s.records.find(r => r.userId === userId && r.date === date)
         if (existing) {
           // Never overwrite an earlier clock-in; the first one of the day stands.
           if (existing.checkIn && existing.checkIn !== '-') return s
-          return { records: s.records.map(r => r === existing ? { ...r, checkIn: time, status } : r) }
+          return { records: s.records.map(r => r === existing ? { ...r, checkIn: time, status, ...(geo ? { inGeo: geo } : {}) } : r) }
         }
-        return { records: [...s.records, { id: _id++, userId, name, date, checkIn: time, checkOut: '-', status }] }
+        return { records: [...s.records, { id: _id++, userId, name, date, checkIn: time, checkOut: '-', status, ...(geo ? { inGeo: geo } : {}) }] }
       }),
 
-    clockOut: (userId, time, { date = todayStr() } = {}) =>
+    clockOut: (userId, time, { date = todayStr(), geo = null } = {}) =>
       set((s) => ({
         records: s.records.map(r =>
-          r.userId === userId && r.date === date ? { ...r, checkOut: time } : r,
+          r.userId === userId && r.date === date ? { ...r, checkOut: time, ...(geo ? { outGeo: geo } : {}) } : r,
         ),
       })),
   }),

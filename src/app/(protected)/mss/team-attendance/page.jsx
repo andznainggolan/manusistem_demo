@@ -8,6 +8,7 @@ import { useShiftStore } from '@/store/shiftStore'
 import { useTimeSettingsStore } from '@/store/timeSettingsStore'
 import { shiftFor } from '@/lib/workSchedule'
 import { evaluateRecord } from '@/lib/attendanceRules'
+import GeoTag from '@/components/attendance/GeoTag'
 
 const STATUS_STYLE = {
   Present: 'bg-green-100 text-green-700',
@@ -98,8 +99,8 @@ export default function TeamAttendancePage() {
             return (
               <Tr key={emp.id}>
                 <Td className='font-medium text-gray-800'>{emp.name}</Td>
-                <Td className='text-gray-600'>{rec?.checkIn  || '—'}</Td>
-                <Td className='text-gray-600'>{rec?.checkOut || '—'}</Td>
+                <Td className='text-gray-600'>{rec?.checkIn  || '—'}<GeoTag geo={rec?.inGeo} /></Td>
+                <Td className='text-gray-600'>{rec?.checkOut || '—'}<GeoTag geo={rec?.outGeo} /></Td>
                 <Td>
                   {rec ? (
                     <StatusBadge tone={STATUS_TONE[statusOf(rec)]}>{statusOf(rec) === 'Pending' ? 'Menunggu approval' : (statusOf(rec) === 'Absent' && rules.requireApproval ? 'Alpa' : statusOf(rec))}</StatusBadge>

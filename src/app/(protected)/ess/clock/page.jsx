@@ -10,6 +10,9 @@ import {
 import { shiftFor, gradeTime, TONE_CLASS, toneLabel, GRACE_MINUTES } from '@/lib/workSchedule'
 import { useTimeSettingsStore } from '@/store/timeSettingsStore'
 import { evaluateRecord, KIND_LABEL, STATE_LABEL, STATUS_LABEL_ID, STATUS_TONE_ID } from '@/lib/attendanceRules'
+import { useGeofenceStore } from '@/store/geofenceStore'
+import { checkClockLocation } from '@/lib/geofence'
+import GeoTag from '@/components/attendance/GeoTag'
 
 const nowHHMM = () => {
   const d = new Date()
@@ -39,6 +42,10 @@ export default function ClockInOutPage() {
   const { records, clockIn, clockOut } = useAttendanceStore()
   const { settings: rules, approvals, saveReason } = useTimeSettingsStore()
   const [reasonFor, setReasonFor] = useState(null) // { date, kind, text }
+  const geofence = useGeofenceStore(s => s.settings)
+  const geoLocations = useGeofenceStore(s => s.locations)
+  const [busy, setBusy] = useState(false)
+  const [geoMsg, setGeoMsg] = useState(null) // { type: 'error' | 'warn', text }
 
   const [now, setNow] = useState(null)   // null until mounted — the server has
   useEffect(() => {                      // no clock, so rendering one would
@@ -55,11 +62,24 @@ export default function ClockInOutPage() {
   const hasIn = today?.checkIn && today.checkIn !== '-'
   const hasOut = today?.checkOut && today.checkOut !== '-'
 
-  const doClockIn = () => {
+  // The location is checked first (when geofencing is on); the time is taken
+  // after it resolves so a slow GPS fix doesn't skew the recorded minute.
+  const withLocation = async (action) => {
+    setBusy(true); setGeoMsg(null)
+    try {
+      const chk = await checkClockLocation()
+      if (!chk.ok) { setGeoMsg({ type: 'error', text: chk.message }); return }
+      if (chk.message) setGeoMsg({ type: 'warn', text: chk.message })
+      action(chk.geo)
+    } finally { setBusy(false) }
+  }
+
+  const doClockIn = () => withLocation((geo) => {
     const time = nowHHMM()
     const late = sched ? gradeTime(time, sched.shift.startTime, 'in').tone !== 'ok' : false
-    clockIn(uid, currentUser?.name || '', time, { date, status: late ? 'Late' : 'Present' })
-  }
+    clockIn(uid, currentUser?.name || '', time, { date, status: late ? 'Late' : 'Present', geo })
+  })
+  const doClockOut = () => withLocation((geo) => clockOut(uid, nowHHMM(), { date, geo }))
 
   const mine = records
     .filter(r => r.userId === uid)
@@ -107,8 +127,8 @@ export default function ClockInOutPage() {
               {t('Jam Masuk', 'Clock In')}
             </span>
             <ClockValue time={today?.checkIn} scheduled={sched?.shift.startTime} kind='in' t={t} />
-            <ActionButton onClick={doClockIn} disabled={!!hasIn || !uid} icon='🟢'>
-              {hasIn ? t('Sudah Clock In', 'Clocked In') : 'Clock In'}
+            <ActionButton onClick={doClockIn} disabled={!!hasIn || !uid || busy} icon='🟢'>
+              {hasIn ? t('Sudah Clock In', 'Clocked In') : busy ? t('Memeriksa lokasi...', 'Checking location...') : 'Clock In'}
             </ActionButton>
           </div>
           <div className='flex flex-col items-center gap-3 px-4'>
@@ -118,13 +138,27 @@ export default function ClockInOutPage() {
             <ClockValue time={today?.checkOut} scheduled={sched?.shift.endTime} kind='out' t={t} />
             <ActionButton
               variant='secondary'
-              onClick={() => clockOut(uid, nowHHMM(), { date })}
-              disabled={!hasIn || !!hasOut}
+              onClick={doClockOut}
+              disabled={!hasIn || !!hasOut || busy}
               icon='🔴'>
-              {hasOut ? t('Sudah Clock Out', 'Clocked Out') : 'Clock Out'}
+              {hasOut ? t('Sudah Clock Out', 'Clocked Out') : busy ? t('Memeriksa lokasi...', 'Checking location...') : 'Clock Out'}
             </ActionButton>
           </div>
         </div>
+
+        {geofence.enabled && (
+          <p className='mt-4 rounded-lg bg-sky-50 px-3 py-2 text-center text-xs text-sky-800'>
+            📍 {geofence.mode === 'block'
+              ? t('Geofencing aktif: clock in/out hanya bisa di dalam radius lokasi kerja.', 'Geofencing on: you can only clock in/out inside a work location radius.')
+              : t('Geofencing aktif: lokasi kamu dicatat saat clock in/out.', 'Geofencing on: your location is recorded when you clock in/out.')}
+            {geoLocations.length > 0 && <span className='text-sky-600'> ({geoLocations.map(l => `${l.name} ${l.radius} m`).join(', ')})</span>}
+          </p>
+        )}
+        {geoMsg && (
+          <p className={`mt-3 rounded-lg px-3 py-2 text-center text-xs font-medium ${geoMsg.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-800'}`}>
+            {geoMsg.text}
+          </p>
+        )}
 
         <p className='mt-5 border-t border-gray-100 pt-3 text-center text-xs text-gray-400'>
           <span className='font-semibold text-emerald-600'>{t('Hijau', 'Green')}</span> {t('tepat waktu', 'on time')}
@@ -179,9 +213,11 @@ export default function ClockInOutPage() {
                   </Td>
                   <Td align='center' className={`font-mono font-semibold tabular-nums ${TONE_CLASS[gin.tone]}`}>
                     {r.checkIn || '-'}
+                    <GeoTag geo={r.inGeo} />
                   </Td>
                   <Td align='center' className={`font-mono font-semibold tabular-nums ${TONE_CLASS[gout.tone]}`}>
                     {r.checkOut || '-'}
+                    <GeoTag geo={r.outGeo} />
                   </Td>
                   <Td align='center'>
                     <StatusBadge tone={rules.requireApproval ? STATUS_TONE_ID[ev.status] || 'neutral' : (r.status === 'Present' ? 'success' : r.status === 'Late' ? 'warning' : 'danger')}>
