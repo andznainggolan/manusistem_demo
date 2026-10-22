@@ -203,6 +203,7 @@ export const SCHOOL_EMPLOYEES = EMP_ROWS.map(([id, name, gender, positionId, man
 
 export const SCHOOL_USERS = SCHOOL_EMPLOYEES.map(e => ({
   id: e.id,
+  employeeId: e.id,
   username: USERNAME_BY_ID[e.id] || e.nik.toLowerCase(),
   password: 'pass123',
   name: e.name,
