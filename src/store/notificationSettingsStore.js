@@ -1,12 +1,13 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 // Variables available in the "Candidate Applied" template — resolved with
 // real candidate/requisition data at send time. Keep this list in sync with
 // resolveTemplate() below and with what the Career Site apply flow actually
 // has on hand.
-export const CANDIDATE_APPLY_VARIABLES = [
+const CORPORATE_VARIABLES = [
   { key: 'candidateName', label: 'Nama Kandidat', sample: 'Budi Santoso' },
   { key: 'email',         label: 'Email Kandidat', sample: 'budi.santoso@email.com' },
   { key: 'phone',         label: 'Nomor Telepon', sample: '0812-3456-7890' },
@@ -15,6 +16,18 @@ export const CANDIDATE_APPLY_VARIABLES = [
   { key: 'companyName',   label: 'Perusahaan', sample: 'PT Nusantara Teknologi' },
   { key: 'appliedDate',   label: 'Tanggal Melamar', sample: '2026-09-24' },
 ]
+
+const SCHOOL_VARIABLES = [
+  { key: 'candidateName', label: 'Nama Kandidat', sample: 'Maria Gabriella' },
+  { key: 'email',         label: 'Email Kandidat', sample: 'maria.gabriella@email.com' },
+  { key: 'phone',         label: 'Nomor Telepon', sample: '0812-3456-7890' },
+  { key: 'positionTitle', label: 'Posisi yang Dilamar', sample: 'Guru Matematika SMP' },
+  { key: 'departmentName',label: 'Departemen', sample: 'Akademik SMP' },
+  { key: 'companyName',   label: 'Perusahaan', sample: 'Lia Stephanie Catholic School' },
+  { key: 'appliedDate',   label: 'Tanggal Melamar', sample: '2026-10-22' },
+]
+
+export const CANDIDATE_APPLY_VARIABLES = IS_SCHOOL ? SCHOOL_VARIABLES : CORPORATE_VARIABLES
 
 const DEFAULT_SUBJECT = 'Lamaran Anda Diterima — {{positionTitle}}'
 const DEFAULT_BODY = `Halo {{candidateName}},
