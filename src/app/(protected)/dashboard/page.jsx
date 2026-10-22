@@ -840,7 +840,7 @@ export default function DashboardPage() {
   const handleClockIn = () => {
     const d = new Date()
     const time = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
-    const late = mySched ? gradeTime(time, mySched.shift.startTime, 'in').deviation > 0 : false
+    const late = mySched ? gradeTime(time, mySched.shift.startTime, 'in').tone !== 'ok' : false
     clockIn(uid, name, time, { date: attDate, status: late ? 'Late' : 'Present' })
   }
   const handleClockOut = () => {

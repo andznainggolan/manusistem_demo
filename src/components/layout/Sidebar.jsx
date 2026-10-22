@@ -152,6 +152,7 @@ const MSS_GROUPS = [
     { label: 'Team Attendance',            href: '/mss/team-attendance',    icon: ic('clock') },
     { label: 'Apply Leave (My Team)',      href: '/mss/apply-leave-team',   icon: ic('calendar') },
     { label: 'Approve Leave',              href: '/mss/approve-leave',      icon: ic('checkCircle') },
+    { label: 'Approve Attendance',         href: '/mss/approve-attendance', icon: ic('checkCircle') },
     ...(IS_SCHOOL ? [{ label: 'Job Load Analysis (JLA)', href: '/mss/jla', icon: ic('layers') }] : []),
   ]},
   { title: 'Performance', icon: ic('gauge'), items: [
@@ -294,6 +295,7 @@ const HR_GROUPS = [
     { label: 'Work Schedule',       href: '/hr/time-labour/work-schedule',       icon: ic('calendar') },
     { label: 'Schedule Assignment', href: '/hr/time-labour/schedule-assignment', icon: ic('userCheck') },
     { label: 'Time Entries',        href: '/hr/time-labour/time-entries',        icon: ic('upload') },
+    { label: 'Time Entry Settings', href: '/hr/time-labour/time-settings',       icon: ic('settings') },
     { label: 'Eligibility Group', href: '/hr/time-labour/eligibility-group', icon: ic('checkCircle') },
     { label: 'Overtime Matrix',   href: '/hr/time-labour/overtime-matrix',   icon: ic('grid') },
     ...(IS_SCHOOL ? [{ label: 'Job Load Analysis (JLA)', href: '/hr/time-labour/jla', icon: ic('layers') }] : []),

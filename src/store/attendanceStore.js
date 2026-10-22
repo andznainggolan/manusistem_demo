@@ -10,6 +10,13 @@ const today = new Date()
 // of every day.
 const fmt = localDateStr
 
+const SCHOOL_HOURS = { 15: ['07:00', '15:00'], 9: ['07:00', '15:00'], 7: ['07:00', '15:00'], 29: ['07:30', '16:00'] }
+const shiftTime = (hhmm, deltaMin) => {
+  const [h, m] = hhmm.split(':').map(Number)
+  const total = h * 60 + m + deltaMin
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
+}
+
 // Generate seed attendance for last 14 days
 const genRecords = () => {
   const employees = IS_SCHOOL
@@ -28,6 +35,18 @@ const genRecords = () => {
     if (dow === 0 || dow === 6) continue
     const ds = fmt(d)
     employees.forEach(emp => {
+      if (IS_SCHOOL) {
+        // Times follow each employee's real school shift; every sixth day is a late arrival
+        // so the approval flow has something to show. Deterministic, not random.
+        const [start, end] = SCHOOL_HOURS[emp.id] || ['07:00', '15:00']
+        const late = (emp.id + i) % 6 === 0
+        records.push({
+          id: _id++, userId: emp.id, name: emp.name, date: ds,
+          checkIn: shiftTime(start, late ? 25 : -5), checkOut: shiftTime(end, 5),
+          status: late ? 'Late' : 'Present',
+        })
+        return
+      }
       const rand = Math.random()
       const status = rand < 0.8 ? 'Present' : rand < 0.9 ? 'Late' : 'Absent'
       records.push({
@@ -81,5 +100,5 @@ export const useAttendanceStore = create(persist(
         ),
       })),
   }),
-  { name: 'hcm-attendance-v1', storage: createJSONStorage(() => dbStorage) }
+  { name: IS_SCHOOL ? 'hcm-attendance-school-v1' : 'hcm-attendance-v1', storage: createJSONStorage(() => dbStorage) }
 ))

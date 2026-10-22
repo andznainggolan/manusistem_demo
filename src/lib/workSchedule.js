@@ -4,6 +4,8 @@
 // The schedule chain already exists in shiftStore:
 //   assignment (userId) → schedule → pattern → entry for that weekday → shift
 
+import { useTimeSettingsStore } from '@/store/timeSettingsStore'
+
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 // Grace before a late-in / early-out counts as a serious deviation.
@@ -62,9 +64,15 @@ export function shiftFor(userId, date, { assignments = [], schedules = [], patte
  * Grade a clock time against its scheduled time.
  *   kind 'in'  → positive deviation means late
  *   kind 'out' → positive deviation means leaving early
+ * A deviation within the configured tolerance still counts as 'ok' (green).
  * Returns { deviation, tone } where tone is 'ok' | 'warn' | 'bad'.
  */
-export function gradeTime(actual, scheduled, kind) {
+export const toleranceFor = (kind) => {
+  const st = useTimeSettingsStore.getState().settings
+  return Math.max(0, Number(kind === 'in' ? st.lateToleranceMinutes : st.earlyOutToleranceMinutes) || 0)
+}
+
+export function gradeTime(actual, scheduled, kind, tolerance) {
   const a = toMinutes(actual)
   let s = toMinutes(scheduled)
   if (a == null || s == null) return { deviation: 0, tone: 'none' }
@@ -75,6 +83,7 @@ export function gradeTime(actual, scheduled, kind) {
 
   const deviation = kind === 'in' ? a - s : s - a
   if (deviation <= 0) return { deviation: 0, tone: 'ok' }
+  if (deviation <= (tolerance ?? toleranceFor(kind))) return { deviation, tone: 'ok', withinTolerance: true }
   return { deviation, tone: deviation < GRACE_MINUTES ? 'warn' : 'bad' }
 }
 
@@ -87,7 +96,9 @@ export const TONE_CLASS = {
 }
 
 export const toneLabel = (tone, kind, deviation, t) => {
-  if (tone === 'ok') return t('Tepat waktu', 'On time')
+  if (tone === 'ok') {
+    return deviation > 0 ? t(`Dalam toleransi (${deviation} menit)`, `Within tolerance (${deviation} min)`) : t('Tepat waktu', 'On time')
+  }
   const mins = t(`${deviation} menit`, `${deviation} min`)
   return kind === 'in'
     ? t(`Terlambat ${mins}`, `${mins} late`)

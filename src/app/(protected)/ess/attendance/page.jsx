@@ -3,8 +3,13 @@ import { useAuthStore }       from '@/store/authStore'
 import { useAttendanceStore } from '@/store/attendanceStore'
 import { useT } from '@/store/languageStore'
 import { PageHeader, StatCard, DataTable, Tr, Td, StatusBadge, EmptyState } from '@/components/ui'
+import { useShiftStore } from '@/store/shiftStore'
+import { useTimeSettingsStore } from '@/store/timeSettingsStore'
+import { shiftFor } from '@/lib/workSchedule'
+import { evaluateRecord } from '@/lib/attendanceRules'
 
 const STATUS_TONE = {
+  Pending: 'warning',
   Present: 'success',
   Late:    'warning',
   Absent:  'danger',
@@ -12,6 +17,7 @@ const STATUS_TONE = {
 }
 
 const STAT_TONE = {
+  Pending: 'purple',
   Present: 'green',
   Late:    'orange',
   Absent:  'red',
@@ -19,6 +25,7 @@ const STAT_TONE = {
 }
 
 const STAT_ICON = {
+  Pending: '⏳',
   Present: '✅',
   Late:    '⏰',
   Absent:  '🚫',
@@ -29,22 +36,29 @@ export default function AttendancePage() {
   const t = useT()
   const { currentUser } = useAuthStore()
   const { records }     = useAttendanceStore()
+  const { assignments, schedules, patterns, shifts } = useShiftStore()
+  const { settings: rules, approvals } = useTimeSettingsStore()
+  const statusOf = (r) => rules.requireApproval
+    ? evaluateRecord(r, shiftFor(r.userId, r.date, { assignments, schedules, patterns, shifts }), rules, approvals).status
+    : r.status
 
   const mine = records
     .filter(r => r.userId === currentUser?.id)
     .sort((a, b) => b.date.localeCompare(a.date))
 
   const summary = {
-    Present: mine.filter(r => r.status === 'Present').length,
-    Late:    mine.filter(r => r.status === 'Late').length,
-    Absent:  mine.filter(r => r.status === 'Absent').length,
-    Leave:   mine.filter(r => r.status === 'Leave').length,
+    Present: mine.filter(r => statusOf(r) === 'Present').length,
+    Late:    mine.filter(r => statusOf(r) === 'Late').length,
+    ...(rules.requireApproval ? { Pending: mine.filter(r => statusOf(r) === 'Pending').length } : {}),
+    Absent:  mine.filter(r => statusOf(r) === 'Absent').length,
+    Leave:   mine.filter(r => statusOf(r) === 'Leave').length,
   }
 
   const statusLabel = {
+    Pending: 'Menunggu approval',
     Present: t('Hadir', 'Present'),
     Late:    t('Terlambat', 'Late'),
-    Absent:  t('Absen', 'Absent'),
+    Absent:  rules.requireApproval ? 'Alpa' : t('Absen', 'Absent'),
     Leave:   t('Cuti', 'Leave'),
   }
 
@@ -85,8 +99,8 @@ export default function AttendancePage() {
               <Td>{r.checkIn || '—'}</Td>
               <Td>{r.checkOut || '—'}</Td>
               <Td>
-                <StatusBadge tone={STATUS_TONE[r.status]}>
-                  {statusLabel[r.status] ?? r.status}
+                <StatusBadge tone={STATUS_TONE[statusOf(r)]}>
+                  {statusLabel[statusOf(r)] ?? statusOf(r)}
                 </StatusBadge>
               </Td>
             </Tr>

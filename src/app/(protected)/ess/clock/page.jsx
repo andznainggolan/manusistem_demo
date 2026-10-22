@@ -8,6 +8,8 @@ import {
   PageHeader, SectionCard, DataTable, Tr, Td, ActionButton, StatusBadge, EmptyState,
 } from '@/components/ui'
 import { shiftFor, gradeTime, TONE_CLASS, toneLabel, GRACE_MINUTES } from '@/lib/workSchedule'
+import { useTimeSettingsStore } from '@/store/timeSettingsStore'
+import { evaluateRecord, KIND_LABEL, STATE_LABEL, STATUS_LABEL_ID, STATUS_TONE_ID } from '@/lib/attendanceRules'
 
 const nowHHMM = () => {
   const d = new Date()
@@ -35,6 +37,8 @@ export default function ClockInOutPage() {
   const { currentUser } = useAuthStore()
   const { assignments, schedules, patterns, shifts } = useShiftStore()
   const { records, clockIn, clockOut } = useAttendanceStore()
+  const { settings: rules, approvals, saveReason } = useTimeSettingsStore()
+  const [reasonFor, setReasonFor] = useState(null) // { date, kind, text }
 
   const [now, setNow] = useState(null)   // null until mounted — the server has
   useEffect(() => {                      // no clock, so rendering one would
@@ -53,7 +57,7 @@ export default function ClockInOutPage() {
 
   const doClockIn = () => {
     const time = nowHHMM()
-    const late = sched ? gradeTime(time, sched.shift.startTime, 'in').deviation > 0 : false
+    const late = sched ? gradeTime(time, sched.shift.startTime, 'in').tone !== 'ok' : false
     clockIn(uid, currentUser?.name || '', time, { date, status: late ? 'Late' : 'Present' })
   }
 
@@ -130,7 +134,19 @@ export default function ClockInOutPage() {
           {' · '}
           <span className='font-semibold text-red-600'>{t('Merah', 'Red')}</span>{' '}
           {t(`≥ ${GRACE_MINUTES} menit`, `≥ ${GRACE_MINUTES} min`)}
+          {(rules.lateToleranceMinutes > 0 || rules.earlyOutToleranceMinutes > 0) && (
+            <>
+              {' · '}
+              {t(`Toleransi masuk ${rules.lateToleranceMinutes} menit, pulang ${rules.earlyOutToleranceMinutes} menit tetap hijau`,
+                 `Tolerance ${rules.lateToleranceMinutes} min in, ${rules.earlyOutToleranceMinutes} min out stays green`)}
+            </>
+          )}
         </p>
+        {rules.requireApproval && (
+          <p className='mt-2 rounded-lg bg-amber-50 px-3 py-2 text-center text-xs text-amber-800'>
+            Terlambat atau pulang cepat perlu approval atasan. Bila ditolak atau tidak disetujui dalam {rules.approvalDeadlineDays} hari, dihitung Alpa.
+          </p>
+        )}
       </SectionCard>
 
       <SectionCard
@@ -154,6 +170,7 @@ export default function ClockInOutPage() {
               const s = shiftFor(uid, r.date, { assignments, schedules, patterns, shifts })
               const gin = gradeTime(r.checkIn, s?.shift.startTime, 'in')
               const gout = gradeTime(r.checkOut, s?.shift.endTime, 'out')
+              const ev = evaluateRecord(r, s, rules, approvals)
               return (
                 <Tr key={r.id}>
                   <Td className='tabular-nums'>{r.date}</Td>
@@ -167,9 +184,19 @@ export default function ClockInOutPage() {
                     {r.checkOut || '-'}
                   </Td>
                   <Td align='center'>
-                    <StatusBadge tone={r.status === 'Present' ? 'success' : r.status === 'Late' ? 'warning' : 'danger'}>
-                      {r.status}
+                    <StatusBadge tone={rules.requireApproval ? STATUS_TONE_ID[ev.status] || 'neutral' : (r.status === 'Present' ? 'success' : r.status === 'Late' ? 'warning' : 'danger')}>
+                      {rules.requireApproval ? (STATUS_LABEL_ID[ev.status] || ev.status) : r.status}
                     </StatusBadge>
+                    {rules.requireApproval && ev.items.map(it => (
+                      <div key={it.kind} className='mt-1 text-[11px] text-gray-500'>
+                        {KIND_LABEL[it.kind]}: <span className='font-semibold'>{STATE_LABEL[it.state]}</span>
+                        {it.state === 'Pending' && (
+                          <button onClick={() => setReasonFor({ date: r.date, kind: it.kind, text: it.approval?.reason || '' })}
+                            className='ml-2 font-semibold text-teal-700 hover:underline'>{it.approval?.reason ? 'Ubah alasan' : 'Tulis alasan'}</button>
+                        )}
+                        {it.approval?.note ? <span className='ml-1 text-gray-400'>({it.approval.note})</span> : null}
+                      </div>
+                    ))}
                   </Td>
                 </Tr>
               )
@@ -177,6 +204,21 @@ export default function ClockInOutPage() {
           </DataTable>
         )}
       </SectionCard>
+
+      {reasonFor && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4' onClick={() => setReasonFor(null)}>
+          <div className='w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl' onClick={e => e.stopPropagation()}>
+            <h3 className='text-base font-bold text-gray-800'>Alasan {KIND_LABEL[reasonFor.kind].toLowerCase()}</h3>
+            <p className='mb-3 text-xs text-gray-400'>{reasonFor.date}. Alasan dilihat atasan saat memutuskan approval.</p>
+            <textarea rows={3} value={reasonFor.text} onChange={e => setReasonFor({ ...reasonFor, text: e.target.value })}
+              className='w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm outline-none focus:border-teal-300 focus:ring-2 focus:ring-teal-100' />
+            <div className='mt-4 flex gap-2'>
+              <ActionButton variant='secondary' className='flex-1' onClick={() => setReasonFor(null)}>Batal</ActionButton>
+              <ActionButton className='flex-1' onClick={() => { saveReason(uid, reasonFor.date, reasonFor.kind, reasonFor.text.trim()); setReasonFor(null) }}>Simpan</ActionButton>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

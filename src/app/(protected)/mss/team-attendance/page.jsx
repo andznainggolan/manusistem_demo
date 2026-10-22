@@ -4,6 +4,10 @@ import { useAttendanceStore }  from '@/store/attendanceStore'
 import { useEmployeeStore }    from '@/store/employeeStore'
 import { useT } from '@/store/languageStore'
 import { PageHeader, StatCard, SectionCard, DataTable, Tr, Td, FilterBar, FilterPill, StatusBadge, EmptyState } from '@/components/ui'
+import { useShiftStore } from '@/store/shiftStore'
+import { useTimeSettingsStore } from '@/store/timeSettingsStore'
+import { shiftFor } from '@/lib/workSchedule'
+import { evaluateRecord } from '@/lib/attendanceRules'
 
 const STATUS_STYLE = {
   Present: 'bg-green-100 text-green-700',
@@ -13,6 +17,7 @@ const STATUS_STYLE = {
 }
 
 const STATUS_TONE = {
+  Pending: 'warning',
   Present: 'success',
   Late:    'warning',
   Absent:  'danger',
@@ -23,6 +28,11 @@ export default function TeamAttendancePage() {
   const t = useT()
   const { records }   = useAttendanceStore()
   const { employees } = useEmployeeStore()
+  const { assignments, schedules, patterns, shifts } = useShiftStore()
+  const { settings: rules, approvals } = useTimeSettingsStore()
+  const statusOf = (r) => rules.requireApproval
+    ? evaluateRecord(r, shiftFor(r.userId, r.date, { assignments, schedules, patterns, shifts }), rules, approvals).status
+    : r.status
 
   const dates = [...new Set(records.map(r => r.date))].sort((a,b) => b.localeCompare(a))
   const [selDate, setSelDate] = useState(dates[0] || '')
@@ -30,9 +40,9 @@ export default function TeamAttendancePage() {
   const dayRecords = records.filter(r => r.date === selDate)
   const activeEmps = employees.filter(e => e.status === 'Active')
 
-  const summary = (status) => dayRecords.filter(r => r.status === status).length
+  const summary = (status) => dayRecords.filter(r => statusOf(r) === status).length
 
-  const TONES = { Present: 'green', Late: 'orange', Absent: 'red', Leave: 'blue' }
+  const TONES = { Present: 'green', Late: 'orange', Pending: 'purple', Absent: 'red', Leave: 'blue' }
 
   return (
     <div>
@@ -63,8 +73,8 @@ export default function TeamAttendancePage() {
 
       {/* Summary */}
       <div className='grid grid-cols-2 md:grid-cols-4 gap-4 mb-6'>
-        {['Present','Late','Absent','Leave'].map(s => (
-          <StatCard key={s} label={s} value={summary(s)} tone={TONES[s]} />
+        {['Present','Late', ...(rules.requireApproval ? ['Pending'] : []), 'Absent','Leave'].map(s => (
+          <StatCard key={s} label={s === 'Pending' ? 'Menunggu approval' : (s === 'Absent' && rules.requireApproval ? 'Alpa' : s)} value={summary(s)} tone={TONES[s]} />
         ))}
       </div>
 
@@ -92,7 +102,7 @@ export default function TeamAttendancePage() {
                 <Td className='text-gray-600'>{rec?.checkOut || '—'}</Td>
                 <Td>
                   {rec ? (
-                    <StatusBadge tone={STATUS_TONE[rec.status]}>{rec.status}</StatusBadge>
+                    <StatusBadge tone={STATUS_TONE[statusOf(rec)]}>{statusOf(rec) === 'Pending' ? 'Menunggu approval' : (statusOf(rec) === 'Absent' && rules.requireApproval ? 'Alpa' : statusOf(rec))}</StatusBadge>
                   ) : (
                     <span className='text-xs text-gray-400'>{t('Tidak ada data', 'No data')}</span>
                   )}
