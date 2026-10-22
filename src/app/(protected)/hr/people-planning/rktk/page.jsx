@@ -5,6 +5,7 @@ import { useEmployeeStore } from '@/store/employeeStore'
 import { useRktkPlanStore } from '@/store/rktkPlanStore'
 import { useT } from '@/store/languageStore'
 import { PageHeader, SectionCard, FormField, Select, EmptyState, StatCard } from '@/components/ui'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
 
@@ -103,7 +104,7 @@ export default function RktkPage() {
     return { perPc, grand, grandTotal: grand.reduce((a, b) => a + b, 0) }
   }, [leaves, values]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const pcLabel = (pc) => pc === 0 ? 'PC N/A' : `PC ${pc}`
+  const pcLabel = (pc) => pc === 0 ? (IS_SCHOOL ? 'Tanpa golongan' : 'PC N/A') : (IS_SCHOOL ? (grades.find(g => g.pc === pc)?.code || pc) : `PC ${pc}`)
 
   const leafLabel = (item) => {
     if (viewBy === 'position') return `${item.code} - ${item.name}`.toUpperCase()
@@ -126,7 +127,7 @@ export default function RktkPage() {
       <PageHeader
         icon='📊'
         title='RKTK'
-        subtitle={t('Rencana New Hire per bulan — drilldown per Position Class (PC), by Position atau by Headcount.','Monthly New Hire plan — drilldown by Position Class (PC), by Position or by Headcount.')}
+        subtitle={t(IS_SCHOOL ? 'Rencana New Hire per bulan — drilldown per golongan/jenjang, by Position atau by Headcount.' : 'Rencana New Hire per bulan — drilldown per Position Class (PC), by Position atau by Headcount.','Monthly New Hire plan — drilldown by Position Class (PC), by Position or by Headcount.')}
       />
 
       {/* Parameters */}

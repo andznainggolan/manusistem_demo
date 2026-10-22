@@ -8,6 +8,7 @@ import {
   useSuccessionPlanStore, blankPlan, PREPARATION_ITEMS, DEVELOPMENT_ITEMS,
 } from '@/store/successionPlanStore'
 import { useTalentCycleStore, DOC_STATUS, STATUS_TONE } from '@/store/talentCycleStore'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 import {
   PageHeader, SectionCard, DataTable, Tr, Td,
   StatusBadge, ActionButton, EmptyState, SearchBar, Select, Input, FormField,
@@ -203,7 +204,7 @@ export default function SuccessionPlanPage() {
                   <div className='mt-3 grid grid-cols-2 gap-x-4 gap-y-2 rounded-xl bg-gray-50 p-3 text-sm sm:grid-cols-3'>
                     <div><div className='text-[11px] text-gray-400'>PT</div><div className='font-medium text-gray-700'>{pInfo.pt}</div></div>
                     <div><div className='text-[11px] text-gray-400'>Department</div><div className='font-medium text-gray-700'>{pInfo.dept}</div></div>
-                    <div><div className='text-[11px] text-gray-400'>Position Class</div><div className='font-medium text-gray-700'>{pInfo.class}</div></div>
+                    <div><div className='text-[11px] text-gray-400'>{IS_SCHOOL ? 'Golongan / Jenjang' : 'Position Class'}</div><div className='font-medium text-gray-700'>{pInfo.class}</div></div>
                     <div className='sm:col-span-2'><div className='text-[11px] text-gray-400'>Position Title</div><div className='font-medium text-gray-700'>{pInfo.title}</div></div>
                     <div><div className='text-[11px] text-gray-400'>Current Incumbent</div><div className='font-medium text-gray-700'>{pInfo.incumbent}</div></div>
                   </div>
@@ -242,7 +243,7 @@ export default function SuccessionPlanPage() {
                   <div className='mt-3 grid grid-cols-2 gap-x-4 gap-y-2 rounded-xl bg-gray-50 p-3 text-sm sm:grid-cols-3'>
                     <div><div className='text-[11px] text-gray-400'>Successor Name</div><div className='font-medium text-gray-700'>{sInfo.name}</div></div>
                     <div><div className='text-[11px] text-gray-400'>Position Title</div><div className='font-medium text-gray-700'>{sInfo.title}</div></div>
-                    <div><div className='text-[11px] text-gray-400'>Position Class</div><div className='font-medium text-gray-700'>{sInfo.class}</div></div>
+                    <div><div className='text-[11px] text-gray-400'>{IS_SCHOOL ? 'Golongan / Jenjang' : 'Position Class'}</div><div className='font-medium text-gray-700'>{sInfo.class}</div></div>
                     <div>
                       <div className='text-[11px] text-gray-400'>Individual Class</div>
                       <input value={form.successorIndividualClass} onChange={e=>setForm(f=>({...f,successorIndividualClass:e.target.value}))}

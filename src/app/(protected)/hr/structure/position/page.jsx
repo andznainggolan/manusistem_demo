@@ -5,6 +5,7 @@ import { useState, useMemo }  from 'react'
 import { useStructureStore, PC_CATEGORY_COLOR } from '@/store/structureStore'
 import { useCompetencyStore, COMPETENCY_CATEGORIES, LEVEL_LABELS, resolvePositionCompetencies } from '@/store/competencyStore'
 import { useT } from '@/store/languageStore'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 import {
   PageHeader, StatCard, SectionCard, DataTable, Tr, Td, FormField, Input, Select,
   StatusBadge, ActionButton, EmptyState,
@@ -215,12 +216,12 @@ export default function PositionPage() {
 
       {/* Grade Reference */}
       <div className='mt-6'>
-        <SectionCard title={t('Position Class Reference (PC 1–72)','Position Class Reference (PC 1–72)')} icon='📊'>
+        <SectionCard title={IS_SCHOOL ? 'Referensi Golongan dan Jenjang' : t('Position Class Reference (PC 1–72)','Position Class Reference (PC 1–72)')} icon='📊'>
           {Object.entries(gradeGroups).map(([cat, items]) => (
             <div key={cat} className='mb-6 last:mb-0'>
               <div className='mb-3 flex items-center gap-2'>
                 <span className={`rounded-full px-3 py-1 text-xs font-bold ${PC_CATEGORY_COLOR[cat]}`}>{cat}</span>
-                <span className='text-xs text-gray-400'>PC {items[0].pc}{items.length > 1 ? `–${items[items.length-1].pc}` : ''}</span>
+                <span className='text-xs text-gray-400'>{IS_SCHOOL ? `${items[0].code}${items.length > 1 ? ` – ${items[items.length-1].code}` : ''}` : `PC ${items[0].pc}${items.length > 1 ? `–${items[items.length-1].pc}` : ''}`}</span>
               </div>
               <div className='grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8'>
                 {items.map(g => (
@@ -286,9 +287,9 @@ export default function PositionPage() {
                 </Select>
               </FormField>
 
-              <FormField label='Grade (Position Class)' required>
+              <FormField label={IS_SCHOOL ? 'Golongan / Jenjang' : 'Grade (Position Class)'} required>
                 <Select value={form.gradeId} onChange={e=>setForm(f=>({...f,gradeId:e.target.value}))}>
-                  <option value=''>-- {t('Pilih PC','Select PC')} --</option>
+                  <option value=''>-- {IS_SCHOOL ? 'Pilih golongan' : t('Pilih PC','Select PC')} --</option>
                   {Object.entries(gradeGroups).map(([cat, items]) => (
                     <optgroup key={cat} label={`── ${cat} ──`}>
                       {items.map(g => (

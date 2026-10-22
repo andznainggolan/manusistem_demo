@@ -15,6 +15,7 @@ import { useT } from '@/store/languageStore'
 import { RELS, GENDERS, RELIGIONS, MARITAL, COUNTRIES, CITIES, EDU_LEVELS, SKILL_LVLS } from '@/utils/constants'
 import { FormField, Input, Select, ActionButton, StatusBadge, DocCompletionDonut } from '@/components/ui'
 import WorkerCategoryBadge from '@/components/jla/WorkerCategoryBadge'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 const TABS = ['Employment', 'Bio', 'Dependent', 'Profile', 'History', 'Salary', 'Personal Document']
 
@@ -591,8 +592,8 @@ export default function EmployeeProfilePage() {
               <KVRow label={t('Business Unit', 'Business Unit')} value={businessUnit?.name} />
               <KVRow label={t('Departemen', 'Department')}   value={department?.name} />
               <KVRow label={t('Posisi', 'Position')}         value={position?.name} />
-              <KVRow label={t('Grade', 'Grade')}             value={gradeIdEff ? `PC ${gradeIdEff}` : null} />
-              <KVRow label='IC'                              value={individualClassIdEff ? `IC ${individualClassIdEff}` : null} />
+              <KVRow label={IS_SCHOOL ? 'Golongan / Jenjang' : t('Grade', 'Grade')} value={gradeIdEff ? (IS_SCHOOL ? (grades.find(g => g.id === gradeIdEff)?.code + ' · ' + (grades.find(g => g.id === gradeIdEff)?.name || '')) : `PC ${gradeIdEff}`) : null} />
+              <KVRow label={IS_SCHOOL ? 'Golongan individu' : 'IC'} value={individualClassIdEff ? (IS_SCHOOL ? (grades.find(g => g.id === individualClassIdEff)?.code || null) : `IC ${individualClassIdEff}`) : null} />
               <KVRow label={t('Tipe Kepegawaian', 'Employment Type')} value={employmentTypeEff} />
               <KVRow label={t('Tanggal Bergabung', 'Join Date')} value={emp.joinDate} />
               {emp.endDate && <KVRow label={t('Tanggal Akhir', 'End Date')} value={emp.endDate} />}

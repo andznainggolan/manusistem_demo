@@ -6,6 +6,7 @@ import { PC_CATEGORY_COLOR } from '@/store/structureStore'
 import { Field, Input, Select, Section, GradeSelect, CascadingOrgSelects, selectClass } from './EmployeeShared'
 import HistorySection from './HistorySection'
 import { EMP_TYPES, CURRENCY_LOV } from '@/utils/constants'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 export default function TabEmployment({ emp, S, update, grade, flash, addHistory, updateHistory, deleteHistory, allEmployees, onSelectEmployee }) {
   const [form,           setForm          ] = useState({ ...emp })
@@ -117,7 +118,7 @@ export default function TabEmployment({ emp, S, update, grade, flash, addHistory
       })()}
 
       {/* Grade */}
-      <Section title='Grade (Position Class & Individual Class)'>
+      <Section title={IS_SCHOOL ? 'Golongan / Jenjang' : 'Grade (Position Class & Individual Class)'}>
         {(() => {
           const ic = grade(form.individualClassId)
           let cmpBadge = null
@@ -129,19 +130,19 @@ export default function TabEmployment({ emp, S, update, grade, flash, addHistory
           return (
             <div className='space-y-4'>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <Field label='Grade / PC (Position Class)'>
-                  <GradeSelect value={form.gradeId} onChange={e => setForm(f => ({ ...f, gradeId: +e.target.value }))} grades={S.grades} placeholder='-- Pilih PC --' />
+                <Field label={IS_SCHOOL ? 'Golongan / Jenjang jabatan' : 'Grade / PC (Position Class)'}>
+                  <GradeSelect value={form.gradeId} onChange={e => setForm(f => ({ ...f, gradeId: +e.target.value }))} grades={S.grades} placeholder={IS_SCHOOL ? '-- Pilih golongan --' : '-- Pilih PC --'} />
                 </Field>
-                {gradeCard(g, 'PC')}
+                {gradeCard(g, IS_SCHOOL ? 'Jabatan' : 'PC')}
               </div>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <Field label='IC (Individual Class)'>
-                  <GradeSelect value={form.individualClassId} onChange={e => setForm(f => ({ ...f, individualClassId: +e.target.value }))} grades={S.grades} placeholder='-- Pilih IC --' />
+                <Field label={IS_SCHOOL ? 'Golongan individu (opsional)' : 'IC (Individual Class)'}>
+                  <GradeSelect value={form.individualClassId} onChange={e => setForm(f => ({ ...f, individualClassId: +e.target.value }))} grades={S.grades} placeholder={IS_SCHOOL ? '-- Pilih golongan --' : '-- Pilih IC --'} />
                   <p className='text-xs text-gray-400 mt-1'>
                     {t('Grade melekat pada karyawan secara pribadi. Umumnya sama dengan PC.', 'Grade personally attached to the employee (Individual Class). Usually the same as PC.')}
                   </p>
                 </Field>
-                {gradeCard(ic, 'IC')}
+                {gradeCard(ic, IS_SCHOOL ? 'Individu' : 'IC')}
               </div>
               {cmpBadge && (
                 <div className='flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5'>

@@ -5,7 +5,7 @@ import { useEmployeeStore } from './employeeStore'
 import { useStructureStore } from './structureStore'
 import { calcPayslip, DEFAULT_PAYROLL_SETTINGS } from '@/lib/payrollCalc'
 import { IS_SCHOOL } from '@/lib/demoProfile'
-import { SCHOOL_EMPLOYEES, SCHOOL_POSITIONS, SCHOOL_GRADES } from '@/data/schoolSeed'
+import { SCHOOL_EMPLOYEES, SCHOOL_POSITIONS, SCHOOL_GRADE_BY_ID } from '@/data/schoolSeed'
 import { useJlaStore } from './jlaStore'
 import { weekSummary } from '@/lib/jla'
 
@@ -28,12 +28,12 @@ const BASE_PAYSLIPS = SEED_PAYSLIP_INPUTS.map((p) => ({
 // School profile: last month published + this month in Draft, basic salary =
 // the midpoint of each employee's position grade, so Payroll Run isn't empty.
 function buildSchoolPayslips() {
-  const gradeOf = (positionId) => SCHOOL_GRADES[SCHOOL_POSITIONS.find(p => p.id === positionId).gradeId]
+  const gradeOf = (positionId) => SCHOOL_GRADE_BY_ID[SCHOOL_POSITIONS.find(p => p.id === positionId).gradeId]
   const rows = []
   ;[['2026-09', 'Published'], ['2026-10', 'Draft']].forEach(([period, status]) => {
     SCHOOL_EMPLOYEES.forEach(e => {
       const g = gradeOf(e.positionId)
-      const basic = Math.round((g.min + g.max) / 2 / 10000) * 10000
+      const basic = Math.round((g.minSalary + g.maxSalary) / 2 / 10000) * 10000
       const ptkpStatus = e.maritalStatus === 'Married' ? 'K/0' : 'TK/0'
       rows.push({
         id: rows.length + 1, empId: e.id, name: e.name, period, status, ptkpStatus, npwp: true, variableAllowances: [],

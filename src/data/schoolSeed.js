@@ -54,60 +54,80 @@ export const SCHOOL_JOB_FAMILIES = [
   { id:4, code:'JF004', name:'Layanan Umum',          description:'Kebersihan, keamanan, transportasi, dan teknisi', status:'Active' },
 ]
 
-// Salary ranges per grade level (IDR/month). Only these Mercer PC levels are
-// kept in the school profile; the default payroll basic is each range's midpoint.
-export const SCHOOL_GRADES = {
-  5:  { name:'Staf Pelaksana I',      min:5400000,  max:6200000 },
-  7:  { name:'Staf Pelaksana II',     min:5600000,  max:6800000 },
-  10: { name:'Guru Honorer',          min:5500000,  max:8000000 },
-  13: { name:'Staf Administrasi',     min:6000000,  max:8500000 },
-  15: { name:'Teknisi',               min:7000000,  max:10000000 },
-  20: { name:'Guru Pratama',          min:7500000,  max:11000000 },
-  25: { name:'Guru Madya',            min:9000000,  max:14000000 },
-  46: { name:'Koordinator',           min:12000000, max:17000000 },
-  53: { name:'Wakil Kepala / Manajer',min:15000000, max:22000000 },
-  57: { name:'Sekretaris / Senior',   min:20000000, max:28000000 },
-  58: { name:'Kepala Sekolah',        min:22000000, max:32000000 },
-  62: { name:'Anggota Dewan',         min:30000000, max:45000000 },
-  70: { name:'Ketua Dewan Sekolah',   min:40000000, max:60000000 },
-  72: { name:'Ketua Yayasan',         min:50000000, max:80000000 },
-}
+// Grade scale modelled on Indonesian ASN: golongan ruang PNS (I/a-IV/e), jenjang
+// jabatan fungsional Guru, golongan PPPK (I-XVII) for honorer, and non-golongan
+// pembina/pengurus. Salary ranges are the foundation's own sample scale (IDR/month).
+const M = 1000000
+const PNS_ROWS = [
+  ['I/a', 'Juru Muda', 'Golongan I', 5.4, 5.8], ['I/b', 'Juru Muda Tingkat I', 'Golongan I', 5.5, 6.0],
+  ['I/c', 'Juru', 'Golongan I', 5.6, 6.2], ['I/d', 'Juru Tingkat I', 'Golongan I', 5.8, 6.5],
+  ['II/a', 'Pengatur Muda', 'Golongan II', 6.0, 6.8], ['II/b', 'Pengatur Muda Tingkat I', 'Golongan II', 6.2, 7.2],
+  ['II/c', 'Pengatur', 'Golongan II', 6.5, 7.6], ['II/d', 'Pengatur Tingkat I', 'Golongan II', 6.8, 8.0],
+  ['III/a', 'Penata Muda', 'Golongan III', 7.0, 8.6], ['III/b', 'Penata Muda Tingkat I', 'Golongan III', 7.6, 9.4],
+  ['III/c', 'Penata', 'Golongan III', 8.2, 10.4], ['III/d', 'Penata Tingkat I', 'Golongan III', 9.0, 11.5],
+  ['IV/a', 'Pembina', 'Golongan IV', 10.5, 13.5], ['IV/b', 'Pembina Tingkat I', 'Golongan IV', 11.5, 15],
+  ['IV/c', 'Pembina Utama Muda', 'Golongan IV', 13, 17], ['IV/d', 'Pembina Utama Madya', 'Golongan IV', 15, 20],
+  ['IV/e', 'Pembina Utama', 'Golongan IV', 17, 24],
+]
+const GURU_ROWS = [
+  ['Guru III/a', 'Guru Pertama (Penata Muda)', 7.5, 9.0], ['Guru III/b', 'Guru Pertama (Penata Muda Tk. I)', 8.0, 9.8],
+  ['Guru III/c', 'Guru Muda (Penata)', 9.0, 11.2], ['Guru III/d', 'Guru Muda (Penata Tk. I)', 9.8, 12.2],
+  ['Guru IV/a', 'Guru Madya (Pembina)', 11.5, 14.5], ['Guru IV/b', 'Guru Madya (Pembina Tk. I)', 12.5, 16],
+  ['Guru IV/c', 'Guru Madya (Pembina Utama Muda)', 14, 18],
+  ['Guru IV/d', 'Guru Utama (Pembina Utama Madya)', 16, 21], ['Guru IV/e', 'Guru Utama (Pembina Utama)', 18, 25],
+]
+const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII']
+const OFFICE_ROWS = [
+  ['Pembina', 'Pembina Yayasan (Ketua Yayasan)', 45, 75], ['Pengurus', 'Pengurus Yayasan', 22, 32],
+  ['Ketua Dewan', 'Ketua Dewan Sekolah', 35, 55], ['Anggota Dewan', 'Anggota Dewan Sekolah', 20, 32],
+]
+const gradeBase = { isBoard: false, isIntern: false, isNonMgr: false, isMgr: false }
+export const SCHOOL_GRADE_LIST = [
+  ...PNS_ROWS.map(([code, name, category, lo, hi], i) => ({ id: 1 + i, code, pc: 1 + i, name, category, minSalary: lo * M, maxSalary: hi * M, ...gradeBase })),
+  ...GURU_ROWS.map(([code, name, lo, hi], i) => ({ id: 21 + i, code, pc: 21 + i, name, category: 'Jenjang Guru', minSalary: lo * M, maxSalary: hi * M, ...gradeBase })),
+  ...ROMAN.map((r, i) => {
+    const lo = 5.4 + i * 0.2
+    return { id: 41 + i, code: `PPPK ${r}`, pc: 41 + i, name: `PPPK Golongan ${r}`, category: 'PPPK / Honorer', minSalary: Math.round(lo * M), maxSalary: Math.round(lo * 1.2 * M), ...gradeBase }
+  }),
+  ...OFFICE_ROWS.map(([code, name, lo, hi], i) => ({ id: 61 + i, code, pc: 61 + i, name, category: 'Pembina dan Pengurus', minSalary: lo * M, maxSalary: hi * M, ...gradeBase, isBoard: true })),
+]
+export const SCHOOL_GRADE_BY_ID = Object.fromEntries(SCHOOL_GRADE_LIST.map(g => [g.id, g]))
 
 // [id, departmentId, jobFamilyId, gradeId, name]
 const POSITION_ROWS = [
-  [1,  1, 1, 72, 'Ketua Yayasan'],
-  [2,  1, 1, 57, 'Sekretaris Yayasan'],
-  [3,  2, 1, 70, 'Ketua Dewan Sekolah'],
-  [4,  2, 1, 62, 'Anggota Dewan Sekolah'],
-  [5,  3, 1, 58, 'Kepala Sekolah TK'],
-  [6,  3, 2, 20, 'Guru TK'],
-  [7,  4, 1, 58, 'Kepala Sekolah SD'],
-  [8,  4, 2, 20, 'Guru Kelas SD'],
-  [9,  5, 1, 58, 'Kepala Sekolah SMP'],
-  [10, 5, 1, 53, 'Wakil Kepala Sekolah SMP'],
-  [11, 5, 2, 20, 'Guru Matematika SMP'],
-  [12, 5, 2, 20, 'Guru Bahasa Inggris SMP'],
-  [13, 5, 2, 20, 'Guru IPA SMP'],
-  [14, 5, 2, 10, 'Guru Honorer SMP'],
-  [15, 6, 1, 58, 'Kepala Sekolah SMA'],
-  [16, 6, 1, 53, 'Wakil Kepala Sekolah SMA'],
+  [1,  1, 1, 61, 'Ketua Yayasan'],
+  [2,  1, 1, 62, 'Sekretaris Yayasan'],
+  [3,  2, 1, 63, 'Ketua Dewan Sekolah'],
+  [4,  2, 1, 64, 'Anggota Dewan Sekolah'],
+  [5,  3, 1, 26, 'Kepala Sekolah TK'],
+  [6,  3, 2, 22, 'Guru TK'],
+  [7,  4, 1, 26, 'Kepala Sekolah SD'],
+  [8,  4, 2, 23, 'Guru Kelas SD'],
+  [9,  5, 1, 27, 'Kepala Sekolah SMP'],
+  [10, 5, 1, 25, 'Wakil Kepala Sekolah SMP'],
+  [11, 5, 2, 24, 'Guru Matematika SMP'],
+  [12, 5, 2, 22, 'Guru Bahasa Inggris SMP'],
+  [13, 5, 2, 23, 'Guru IPA SMP'],
+  [14, 5, 2, 45, 'Guru Honorer SMP'],
+  [15, 6, 1, 27, 'Kepala Sekolah SMA'],
+  [16, 6, 1, 25, 'Wakil Kepala Sekolah SMA'],
   [17, 6, 2, 25, 'Guru Matematika SMA'],
-  [18, 6, 2, 25, 'Guru Fisika SMA'],
-  [19, 6, 2, 10, 'Guru Honorer SMA'],
-  [20, 7, 2, 46, 'Koordinator Pastoral'],
-  [21, 7, 2, 20, 'Guru Agama Katolik'],
-  [22, 8, 2, 20, 'Konselor (BK)'],
-  [23, 9, 3, 46, 'Kepala Tata Usaha'],
-  [24, 9, 3, 13, 'Staf Tata Usaha'],
-  [25, 9, 3, 13, 'Pustakawan'],
-  [26, 10, 3, 46, 'Kepala Keuangan'],
-  [27, 10, 3, 13, 'Staf Keuangan'],
-  [28, 11, 3, 53, 'HR Manager'],
-  [29, 11, 3, 20, 'HR Officer'],
-  [30, 12, 4, 5,  'Petugas Kebersihan'],
-  [31, 13, 4, 7,  'Satpam'],
-  [32, 14, 4, 7,  'Driver'],
-  [33, 15, 4, 15, 'Teknisi IT'],
+  [18, 6, 2, 24, 'Guru Fisika SMA'],
+  [19, 6, 2, 45, 'Guru Honorer SMA'],
+  [20, 7, 2, 25, 'Koordinator Pastoral'],
+  [21, 7, 2, 23, 'Guru Agama Katolik'],
+  [22, 8, 2, 22, 'Konselor (BK)'],
+  [23, 9, 3, 12, 'Kepala Tata Usaha'],
+  [24, 9, 3, 9, 'Staf Tata Usaha'],
+  [25, 9, 3, 9, 'Pustakawan'],
+  [26, 10, 3, 12, 'Kepala Keuangan'],
+  [27, 10, 3, 9, 'Staf Keuangan'],
+  [28, 11, 3, 13, 'HR Manager'],
+  [29, 11, 3, 10, 'HR Officer'],
+  [30, 12, 4, 3,  'Petugas Kebersihan'],
+  [31, 13, 4, 5,  'Satpam'],
+  [32, 14, 4, 6,  'Driver'],
+  [33, 15, 4, 9, 'Teknisi IT'],
 ]
 
 export const SCHOOL_POSITIONS = POSITION_ROWS.map(([id, departmentId, jobFamilyId, gradeId, name]) => ({
@@ -198,6 +218,7 @@ export const SCHOOL_EMPLOYEES = EMP_ROWS.map(([id, name, gender, positionId, man
     birthPlace: 'Jakarta', nationality: 'Indonesian', city: 'Jakarta', country: 'Indonesia',
     phone: `0812-3000-${String(1000 + id)}`,
     role: ROLE_BY_ID[id] || 'employee',
+    gradeId: pos.gradeId, individualClassId: pos.gradeId,
   }
 })
 

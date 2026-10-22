@@ -5,6 +5,7 @@ import { useEmployeeStore } from '@/store/employeeStore'
 import { useAdjustmentPlanStore } from '@/store/adjustmentPlanStore'
 import { useT } from '@/store/languageStore'
 import { PageHeader, SectionCard, FormField, Select, EmptyState, StatCard } from '@/components/ui'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
 
@@ -74,7 +75,7 @@ export default function AdjustmentPlanningPage() {
   const checkedIn   = (emps, m) => emps.reduce((s, e) => s + (val(e.id, m).adjust ? 1 : 0), 0)
   const pcFilledIn  = (emps, m) => emps.reduce((s, e) => s + (val(e.id, m).pc ? 1 : 0), 0)
   const icFilledIn  = (emps, m) => emps.reduce((s, e) => s + (val(e.id, m).ic ? 1 : 0), 0)
-  const pcLabel     = (pc) => pc === 0 ? 'PC N/A' : `PC ${pc}`
+  const pcLabel     = (pc) => pc === 0 ? (IS_SCHOOL ? 'Tanpa golongan' : 'PC N/A') : (IS_SCHOOL ? (grades.find(g => g.pc === pc)?.code || pc) : `PC ${pc}`)
 
   const grandPerMonth   = data ? MONTHS.map((_, m) => checkedIn(data.emps, m)) : []
   const grandPcPerMonth = data ? MONTHS.map((_, m) => pcFilledIn(data.emps, m)) : []

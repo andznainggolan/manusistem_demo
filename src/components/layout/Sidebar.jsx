@@ -222,6 +222,7 @@ const HR_GROUPS = [
     { label: 'Company',          href: '/hr/structure/company',           icon: ic('building') },
     { label: 'Department',       href: '/hr/structure/department',        icon: ic('users') },
     { label: 'Position',         href: '/hr/structure/position',          icon: ic('briefcase') },
+    ...(IS_SCHOOL ? [{ label: 'Master Grade', href: '/hr/structure/grade', icon: ic('layers') }] : []),
     { label: 'Headcount',        href: '/hr/structure/headcount',         icon: ic('person') },
     { label: 'Org Chart',        href: '/hr/org-chart',                   icon: ic('map') },
   ]},

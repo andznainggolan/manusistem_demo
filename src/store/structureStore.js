@@ -4,7 +4,7 @@ import { dbStorage } from '@/lib/dbStorage'
 import { IS_SCHOOL } from '@/lib/demoProfile'
 import {
   SCHOOL_ENTERPRISES, SCHOOL_DIVISIONS, SCHOOL_COMPANIES, SCHOOL_BUSINESS_UNITS, SCHOOL_DEPARTMENTS,
-  SCHOOL_JOB_FAMILIES, SCHOOL_POSITIONS, SCHOOL_HEADCOUNTS, SCHOOL_GRADES, SCHOOL_NEXT_IDS,
+  SCHOOL_JOB_FAMILIES, SCHOOL_POSITIONS, SCHOOL_HEADCOUNTS, SCHOOL_GRADE_LIST, SCHOOL_NEXT_IDS,
 } from '@/data/schoolSeed'
 
 // Hierarchy: Enterprise → Division (sub-group) → Company → Business Unit → Department
@@ -147,23 +147,32 @@ const CATEGORY_COLOR = {
   'SVP':             'bg-red-100 text-red-700',
   'EVP':             'bg-red-200 text-red-800',
   'C-Level':         'bg-rose-200 text-rose-900',
+  'Golongan I':      'bg-slate-100 text-slate-700',
+  'Golongan II':     'bg-blue-100 text-blue-700',
+  'Golongan III':    'bg-teal-100 text-teal-700',
+  'Golongan IV':     'bg-indigo-100 text-indigo-700',
+  'Jenjang Guru':    'bg-emerald-100 text-emerald-800',
+  'PPPK / Honorer':  'bg-amber-100 text-amber-800',
+  'Pembina dan Pengurus': 'bg-rose-200 text-rose-900',
 }
 
 export const PC_CATEGORY_COLOR = CATEGORY_COLOR
 
-const SEED_GRADES = PC_MAP.filter(([pc]) => !IS_SCHOOL || SCHOOL_GRADES[pc]).map(([pc, label, category, min, max]) => ({
+const BASE_GRADES = PC_MAP.map(([pc, label, category, min, max]) => ({
   id:          pc,
   code:        `PC${String(pc).padStart(2,'0')}`,
   pc,
-  name:        IS_SCHOOL ? SCHOOL_GRADES[pc].name : label,
+  name:        label,
   category,
-  minSalary:   IS_SCHOOL ? SCHOOL_GRADES[pc].min : min,
-  maxSalary:   IS_SCHOOL ? SCHOOL_GRADES[pc].max : max,
+  minSalary:   min,
+  maxSalary:   max,
   isBoard:     pc <= 3,
   isIntern:    pc === 4,
   isNonMgr:    pc >= 40 && pc <= 52,
   isMgr:       pc >= 53,
 }))
+
+const SEED_GRADES = IS_SCHOOL ? SCHOOL_GRADE_LIST : BASE_GRADES
 
 const SEED_JOB_FAMILIES = [
   { id:1, code:'JF001', name:'Engineering',       description:'Software & hardware development roles', status:'Active' },
@@ -312,7 +321,9 @@ export const useStructureStore = create(persist((set) => ({
   // a duplicate.
   name: 'hcm-structure-headcounts-v1',
   storage: createJSONStorage(() => dbStorage),
-  partialize: (state) => ({ headcounts: state.headcounts, companies: state.companies }),
+  partialize: (state) => (IS_SCHOOL
+    ? { headcounts: state.headcounts, companies: state.companies, grades: state.grades }
+    : { headcounts: state.headcounts, companies: state.companies }),
 }))
 
 // Append `incoming` items whose id isn't already present in `existing` —
