@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 // Raw time entries ingested from an external time-tracking integration
 // (CSV drop) — employeeNumber is matched against Employee.nik at import
@@ -22,7 +23,7 @@ let _entryId = SEED_ENTRIES.length + 1
 
 export const useTimeEntryStore = create(persist(
   (set) => ({
-    timeEntries: SEED_ENTRIES.map(x => ({ ...x })),
+    timeEntries: (IS_SCHOOL ? [] : SEED_ENTRIES).map(x => ({ ...x })),
 
     addEntries: (rows) => set(s => ({
       timeEntries: [...s.timeEntries, ...rows.map(r => ({ id: _entryId++, ...r }))],

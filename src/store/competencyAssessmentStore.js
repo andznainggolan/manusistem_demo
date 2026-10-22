@@ -1,6 +1,7 @@
 import { create }  from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 // Competency assessment per employee per cycle — self + manager ratings (1-5).
 export const CURRENT_PERIOD = '2026-H1'
@@ -39,7 +40,7 @@ const SEED = {
 export const useCompetencyAssessmentStore = create(
   persist(
     (set, get) => ({
-      assessments: { ...SEED },
+      assessments: IS_SCHOOL ? {} : { ...SEED },
 
       getAssessment: (employeeId, period = CURRENT_PERIOD) =>
         get().assessments[key(employeeId, period)] || null,

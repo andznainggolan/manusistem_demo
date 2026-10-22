@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
+import { SCHOOL_VIP_SESSIONS } from '@/data/schoolSeed'
 
 const SEED = [
   {
@@ -67,7 +69,7 @@ export const computeWeightedScore = (topics = []) => {
 export const useVipStore = create(
   persist(
     (set, get) => ({
-      sessions: SEED,
+      sessions: IS_SCHOOL ? SCHOOL_VIP_SESSIONS : SEED,
 
       submitVip: (data) => {
         const newSession = {

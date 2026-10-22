@@ -4,8 +4,10 @@ import { dbStorage } from '@/lib/dbStorage'
 import { useEmployeeStore } from './employeeStore'
 import { useStructureStore } from './structureStore'
 import { calcPayslip, DEFAULT_PAYROLL_SETTINGS } from '@/lib/payrollCalc'
+import { IS_SCHOOL } from '@/lib/demoProfile'
+import { SCHOOL_EMPLOYEES, SCHOOL_POSITIONS, SCHOOL_GRADES } from '@/data/schoolSeed'
 
-const SEED_PAYSLIP_INPUTS = [
+const SEED_PAYSLIP_INPUTS = IS_SCHOOL ? [] : [
   { id:1, empId:1, name:'Budi Santoso',  period:'2025-05', basic:12000000, allowance:2000000, ptkpStatus:'K/1',  npwp:true  },
   { id:2, empId:2, name:'Dewi Rahayu',   period:'2025-05', basic:20000000, allowance:3000000, ptkpStatus:'K/0',  npwp:true  },
   { id:3, empId:3, name:'Rina Marlina',  period:'2025-05', basic:15000000, allowance:2500000, ptkpStatus:'TK/0', npwp:true  },
@@ -13,13 +15,37 @@ const SEED_PAYSLIP_INPUTS = [
   { id:5, empId:5, name:'Sari Indah',    period:'2025-05', basic:11000000, allowance:1500000, ptkpStatus:'TK/0', npwp:false },
 ]
 
-const SEED_PAYSLIPS = SEED_PAYSLIP_INPUTS.map((p) => ({
+const BASE_PAYSLIPS = SEED_PAYSLIP_INPUTS.map((p) => ({
   ...p, status: 'Published',
   ...calcPayslip({
     basic: p.basic, allowance: p.allowance, ptkpStatus: p.ptkpStatus, hasNpwp: p.npwp,
     bpjsKesehatan: true, bpjsTk: true, settings: DEFAULT_PAYROLL_SETTINGS,
   }),
 }))
+
+// School profile: last month published + this month in Draft, basic salary =
+// the midpoint of each employee's position grade, so Payroll Run isn't empty.
+function buildSchoolPayslips() {
+  const gradeOf = (positionId) => SCHOOL_GRADES[SCHOOL_POSITIONS.find(p => p.id === positionId).gradeId]
+  const rows = []
+  ;[['2026-09', 'Published'], ['2026-10', 'Draft']].forEach(([period, status]) => {
+    SCHOOL_EMPLOYEES.forEach(e => {
+      const g = gradeOf(e.positionId)
+      const basic = Math.round((g.min + g.max) / 2 / 10000) * 10000
+      const ptkpStatus = e.maritalStatus === 'Married' ? 'K/0' : 'TK/0'
+      rows.push({
+        id: rows.length + 1, empId: e.id, name: e.name, period, status, ptkpStatus, npwp: true, variableAllowances: [],
+        ...calcPayslip({
+          basic, allowance: 0, variableAllowance: 0, overtime: 0, otherDeduction: 0,
+          ptkpStatus, hasNpwp: true, bpjsKesehatan: true, bpjsTk: true, settings: DEFAULT_PAYROLL_SETTINGS,
+        }),
+      })
+    })
+  })
+  return rows
+}
+
+const SEED_PAYSLIPS = IS_SCHOOL ? buildSchoolPayslips() : BASE_PAYSLIPS
 
 let _id     = SEED_PAYSLIPS.length + 1
 

@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
 import { localDateStr } from '@/lib/workSchedule'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 const today = new Date()
 // Local calendar date, not toISOString() — that converts to UTC first, which
@@ -11,11 +12,13 @@ const fmt = localDateStr
 
 // Generate seed attendance for last 14 days
 const genRecords = () => {
-  const employees = [
-    { id: 1, name: 'Budi Santoso' },
-    { id: 2, name: 'Dewi Rahayu' },
-    { id: 5, name: 'Sari Indah' },
-  ]
+  const employees = IS_SCHOOL
+    ? [{ id: 15, name: 'Yohanes Aditya' }, { id: 9, name: 'Margareta Widya' }, { id: 7, name: 'Elisabeth Kartika' }, { id: 29, name: 'Rudi Hartanto' }]
+    : [
+        { id: 1, name: 'Budi Santoso' },
+        { id: 2, name: 'Dewi Rahayu' },
+        { id: 5, name: 'Sari Indah' },
+      ]
   const records = []
   let _id = 1
   for (let i = 13; i >= 0; i--) {

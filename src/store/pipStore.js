@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 const PERNYATAAN = [
   'Sebagai bagian dari Rencana Perbaikan Kinerja (PIP) ini, karyawan diharapkan untuk mencapai target kinerja yang telah ditetapkan dalam periode yang disepakati. Apabila karyawan tidak dapat memenuhi standar kinerja yang diharapkan, baik dalam hal pencapaian target, peningkatan kualitas, atau pengembangan keterampilan yang telah disepakati, maka perusahaan berhak untuk mengambil tindakan lebih lanjut sesuai dengan kebijakan perusahaan, yang dapat mencakup Pemutusan Hubungan Kerja (PHK).',
@@ -108,7 +109,7 @@ export const PIP_STATUS = {
 export const usePipStore = create(
   persist(
     (set, get) => ({
-      sessions: SEED,
+      sessions: IS_SCHOOL ? [] : SEED,
 
       submitPip: (data) => {
         const newSession = {

@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
+import { SCHOOL_ANNOUNCEMENTS } from '@/data/schoolSeed'
 
 // Company announcements shown on the Home page (ESS Dashboard) and maintained
 // under HR Administration → Settings → Announcement.
@@ -17,7 +19,7 @@ export const CATEGORY_TONE = {
 
 const today = () => new Date().toISOString().slice(0, 10)
 
-const SEED = [
+const BASE_SEED = [
   {
     id: 1, title: 'Penyesuaian Jam Kerja Ramadan',
     body: 'Selama bulan Ramadan, jam kerja menjadi 08.00–16.00 WIB. Istirahat pukul 12.00–12.30. Berlaku untuk seluruh karyawan kantor pusat dan cabang.',
@@ -37,6 +39,8 @@ const SEED = [
     startDate: '2026-01-01', endDate: '2026-12-31', createdAt: '2026-03-01',
   },
 ]
+
+const SEED = IS_SCHOOL ? SCHOOL_ANNOUNCEMENTS : BASE_SEED
 
 let _id = SEED.length + 1
 

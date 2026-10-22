@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
+import { SCHOOL_SUCCESSORS } from '@/data/schoolSeed'
 
 let _sid = 9100
 const genId = () => _sid++
@@ -64,7 +66,7 @@ export const readinessMeta = (value) =>
 const _sc = (id, employeeId, employeeName, currentPosition, competencyFit, scope, emergency = false) =>
   ({ id, employeeId, employeeName, currentPosition, competencyFit, scope, assessed: true, emergency, notes: '' })
 
-export const SEED_SUCCESSORS = {
+const BASE_SUCCESSORS = {
   21: [
     _sc(9001, 990001, 'Andi Wijaya',      'SVP Corporate Strategy',        45, 'Partial'),
     _sc(9002, 990002, 'Sri Mulyani',      'VP Business Development',        40, 'Minimal'),
@@ -94,6 +96,8 @@ export const SEED_SUCCESSORS = {
   ],
   // Posisi 19 (CFO) sengaja tanpa successor → single point of failure untuk demo.
 }
+
+export const SEED_SUCCESSORS = IS_SCHOOL ? SCHOOL_SUCCESSORS : BASE_SUCCESSORS
 
 export const useSuccessorReadinessStore = create(
   persist(

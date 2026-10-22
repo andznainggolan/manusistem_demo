@@ -2,6 +2,7 @@ import { create }         from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
 import { generateSteps }  from '@/store/workflowStore'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 const uid = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`
 
@@ -314,7 +315,7 @@ function deriveStatus(steps) {
 export const useOnboardingStore = create(
   persist(
     (set) => ({
-      onboardings: SEED,
+      onboardings: IS_SCHOOL ? [] : SEED,
 
       addOnboarding: (data) => {
         const id = _nextId++

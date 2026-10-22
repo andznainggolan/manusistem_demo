@@ -7,6 +7,7 @@ import { useDocumentTypeStore } from '@/store/documentTypeStore'
 import { useCandidateDocumentStore, CANDIDATE_DOCUMENT_MAX_BYTES } from '@/store/candidateDocumentStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useNotificationSettingsStore, resolveTemplate } from '@/store/notificationSettingsStore'
+import { BRAND_NAME } from '@/lib/demoProfile'
 
 // Dedicated apply page instead of a modal — with 6+ mandatory documents the
 // form is genuinely long, and a modal just clips it. Lives outside
@@ -133,7 +134,7 @@ export default function ApplyPage() {
       <nav className='sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur'>
         <div className='mx-auto flex max-w-2xl items-center gap-3 px-6 py-3.5'>
           <img src='/logos/manusistem.png' alt='' className='h-8 w-8 rounded-lg object-contain' />
-          <span className='text-sm font-bold text-gray-800'>Manusistem</span>
+          <span className='text-sm font-bold text-gray-800'>{BRAND_NAME}</span>
         </div>
       </nav>
 

@@ -4,9 +4,10 @@ import { useRouter }           from 'next/navigation'
 import { useAuthStore }        from '@/store/authStore'
 import { useBrandingStore }    from '@/store/brandingStore'
 import { TALENT_ONLY_ROLES }   from '@/constants/roles'
+import { IS_SCHOOL }           from '@/lib/demoProfile'
 
 // ─── Demo / simulation accounts shown on the login screen ─────────────────────
-const DEMO_GROUPS = [
+const CORPORATE_DEMO_GROUPS = [
   { title: 'Onboarding', accounts: [
     { label: 'Onboarding Admin',    username: 'onboarding-admin',    password: 'ob123' },
     { label: 'Onboarding Manager',  username: 'onboarding-manager',  password: 'ob123' },
@@ -27,6 +28,31 @@ const DEMO_GROUPS = [
     { label: 'Learning Management', username: 'learning', password: 'learning123' },
   ]},
 ]
+
+const SCHOOL_DEMO_GROUPS = [
+  { title: 'Pimpinan', accounts: [
+    { label: 'Ketua Yayasan',           username: 'ketuayayasan', password: 'pass123' },
+    { label: 'Ketua Dewan Sekolah',     username: 'ketuadewan',   password: 'pass123' },
+    { label: 'Kepala Sekolah SMP',      username: 'kepsek-smp',   password: 'pass123' },
+    { label: 'Wakil Kepala Sekolah SMP', username: 'wakasek-smp', password: 'pass123' },
+  ]},
+  { title: 'Guru', accounts: [
+    { label: 'Guru Matematika SMP', username: 'guru-mat',   password: 'pass123' },
+    { label: 'Guru Agama Katolik',  username: 'guru-agama', password: 'pass123' },
+    { label: 'Guru Honorer SMP',    username: 'honorer',    password: 'pass123' },
+  ]},
+  { title: 'Tata Usaha dan Umum', accounts: [
+    { label: 'Kepala Tata Usaha', username: 'kepala-tu', password: 'pass123' },
+    { label: 'Satpam',            username: 'satpam',    password: 'pass123' },
+    { label: 'Driver',            username: 'driver',    password: 'pass123' },
+  ]},
+  { title: 'HR dan Admin', accounts: [
+    { label: 'HR Manager',   username: 'hr',        password: 'pass123' },
+    { label: 'HR Officer',   username: 'hrofficer', password: 'pass123' },
+    { label: 'Admin Sistem', username: 'admin',     password: 'pass123' },
+  ]},
+]
+const DEMO_GROUPS = IS_SCHOOL ? SCHOOL_DEMO_GROUPS : CORPORATE_DEMO_GROUPS
 
 const DEMO_MASTER_PASSWORD = 'manusistem12345'
 const DEMO_UNLOCK_KEY = 'hcm-demo-unlocked'

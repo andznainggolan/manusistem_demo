@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
+import { SCHOOL_KEY_POSITIONS } from '@/data/schoolSeed'
 
 // ─── Key Position Assessment ──────────────────────────────────────────────────
 // Framework penetapan Key Position. Setiap posisi di sistem dinilai dengan 3
@@ -21,7 +23,7 @@ export const isKeyPosition = (a) => !!(a && a.q1 && a.q2 && a.q3)
 const _seed = (assessedBy = 'Corporate Organization Development', assessedAt = '2026-01-10') =>
   ({ q1: true, q2: true, q3: true, assessedBy, assessedAt })
 
-export const SEED_KEY_POSITIONS = {
+const BASE_KEY_POSITIONS = {
   4:  _seed(),
   7:  _seed(),
   9:  _seed(),
@@ -32,6 +34,8 @@ export const SEED_KEY_POSITIONS = {
   20: _seed(),
   21: _seed(),
 }
+
+export const SEED_KEY_POSITIONS = IS_SCHOOL ? SCHOOL_KEY_POSITIONS : BASE_KEY_POSITIONS
 
 export const useKeyPositionStore = create(
   persist(

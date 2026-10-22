@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 // File constraints (informational — enforced in UI)
 export const LOGO_CONSTRAINTS = {
@@ -54,10 +55,10 @@ export const useBrandingStore = create(
 
       // ── Career Site ──────────────────────────────────────────────
       careerHeroImage: null,     // wide banner background (base64) or null → falls back to brand gradient
-      careerHeroTitle: 'Karir di Manusistem',
-      careerHeroSubtitle: 'Temukan peluang karir yang sesuai untukmu dan jadilah bagian dari perjalanan kami.',
+      careerHeroTitle: IS_SCHOOL ? 'Karir di Lia Stephanie Catholic School' : 'Karir di Manusistem',
+      careerHeroSubtitle: IS_SCHOOL ? 'Bergabunglah bersama tim pendidik kami dalam membentuk generasi muda yang beriman, cerdas, dan berkarakter.' : 'Temukan peluang karir yang sesuai untukmu dan jadilah bagian dari perjalanan kami.',
       careerFooterImage: null,   // footer banner background (base64) or null → falls back to navy
-      careerFooterText: 'Manusistem — Human Capital Management System',
+      careerFooterText: IS_SCHOOL ? 'Lia Stephanie Catholic School — Yayasan Lia Stephanie' : 'Manusistem — Human Capital Management System',
       careerNavLinks: [],        // [{ id, label, url }] — shown in the career site top nav & footer
 
       setCareerHeroImage:    (dataUrl) => set({ careerHeroImage: dataUrl }),

@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
+import { SCHOOL_REQUISITIONS, SCHOOL_CANDIDATES, SCHOOL_INTERVIEWS } from '@/data/schoolSeed'
 
 // Recruitment / ATS: Job Requisition -> Candidate (attached to a requisition,
 // moves through STAGES) -> Interview (attached to a candidate). Candidate
@@ -23,7 +25,7 @@ export const CANDIDATE_SOURCES = ['Job Portal', 'LinkedIn', 'Referral', 'Career 
 export const INTERVIEW_TYPES = ['Phone', 'Video', 'Onsite']
 export const INTERVIEW_RESULTS = ['Scheduled', 'Passed', 'Failed', 'No Show']
 
-const SEED_REQUISITIONS = [
+const BASE_REQUISITIONS = [
   { id: 1, positionTitle: 'Software Engineer', departmentId: 1, companyId: 1, employmentType: 'Permanent',
     headcount: 3, status: 'Posted External', priority: 'High',
     requestedBy: 2, requestedByName: 'Dewi Rahayu', requestedDate: '2026-06-01', targetDate: '2026-09-30',
@@ -46,7 +48,7 @@ const SEED_REQUISITIONS = [
     notes: 'Posisi terisi.' },
 ]
 
-const SEED_CANDIDATES = [
+const BASE_CANDIDATES = [
   { id: 1, name: 'Putri Ayu Lestari', email: 'putri.ayu@testing.com', phone: '0812-3456-7801',
     requisitionId: 1, source: 'LinkedIn', appliedDate: '2026-07-10', stage: 'Interview', rating: 4, notes: 'Portfolio kuat di React.' },
   { id: 2, name: 'Bimo Aditya', email: 'bimo.aditya@testing.com', phone: '0812-3456-7802',
@@ -63,7 +65,7 @@ const SEED_CANDIDATES = [
     requisitionId: 4, source: 'Career Site', appliedDate: '2026-03-15', stage: 'Pending Employee', rating: 5, notes: 'Onboarding 1 Mei 2026.' },
 ]
 
-const SEED_INTERVIEWS = [
+const BASE_INTERVIEWS = [
   { id: 1, candidateId: 1, requisitionId: 1, date: '2026-08-05', time: '10:00', type: 'Video',
     interviewerNames: 'Dewi Rahayu, Rizky Pratama', location: 'meet.google.com/abc-defg', result: 'Scheduled', notes: '' },
   { id: 2, candidateId: 4, requisitionId: 1, date: '2026-07-28', time: '14:00', type: 'Onsite',
@@ -71,6 +73,10 @@ const SEED_INTERVIEWS = [
   { id: 3, candidateId: 5, requisitionId: 2, date: '2026-08-01', time: '09:30', type: 'Phone',
     interviewerNames: 'Ahmad Fauzi', location: '-', result: 'Scheduled', notes: '' },
 ]
+
+const SEED_REQUISITIONS = IS_SCHOOL ? SCHOOL_REQUISITIONS : BASE_REQUISITIONS
+const SEED_CANDIDATES = IS_SCHOOL ? SCHOOL_CANDIDATES : BASE_CANDIDATES
+const SEED_INTERVIEWS = IS_SCHOOL ? SCHOOL_INTERVIEWS : BASE_INTERVIEWS
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
 

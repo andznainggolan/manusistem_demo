@@ -2,6 +2,8 @@
 import { persist as zustandPersist } from 'zustand/middleware'
 import { autoAssignOnboardingForEmployee } from './onboardingAutoAssign'
 import { persist } from '@/lib/persist'
+import { IS_SCHOOL } from '@/lib/demoProfile'
+import { SCHOOL_EMPLOYEES, SCHOOL_NEXT_IDS } from '@/data/schoolSeed'
 
 // ─── Action & Reason LOV ──────────────────────────────────────────────────────
 export const HISTORY_ACTIONS = [
@@ -156,7 +158,7 @@ const SEED_EMPLOYEES = [
   { id:99, name:'Performance Employee', managerId:98, status:'Active', joinDate:'2024-06-01', companyId:1, departmentId:1, positionId:2, employmentType:'Permanent', department:'Engineering', position:'Software Engineer',   nik:'ENG-099', email:'performance-employee@testing.com' },
 ]
 
-let _empId     = 1
+let _empId     = IS_SCHOOL ? SCHOOL_NEXT_IDS.employee : 1
 let _depId     = 10
 let _eduId     = 10
 let _certId    = 10
@@ -169,7 +171,7 @@ export const useEmployeeStore = create(
   (set, get) => ({
   // Demo seed employees (ids 1–50, used by login/demo flows). Imported employees
   // from the Excel upload (ids 200001+) are hydrated at runtime — see bottom of file.
-  employees: SEED_EMPLOYEES.map(e => ({ ...e,
+  employees: (IS_SCHOOL ? SCHOOL_EMPLOYEES : SEED_EMPLOYEES).map(e => ({ ...e,
     dependents:     (e.dependents     || []).map(x=>({...x})),
     education:      (e.education      || []).map(x=>({...x})),
     certifications: (e.certifications || []).map(x=>({...x})),
@@ -345,7 +347,7 @@ export const useEmployeeStore = create(
 // otherwise the static /public JSON. Appended once on the client, non-destructively,
 // on top of the demo seed. Nested arrays are normalized so DB rows (which omit them)
 // don't break the CRUD actions above.
-if (typeof window !== 'undefined' && !window.__kpbEmployeesLoaded) {
+if (!IS_SCHOOL && typeof window !== 'undefined' && !window.__kpbEmployeesLoaded) {
   window.__kpbEmployeesLoaded = true
   const norm = (e) => ({ dependents: [], education: [], certifications: [], skills: [], history: [], ...e })
   const load = async () => {

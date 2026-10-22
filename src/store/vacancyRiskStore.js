@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
+import { SCHOOL_VACANCY_RISK } from '@/data/schoolSeed'
 
 // ─── Vacancy Risk Assessment ──────────────────────────────────────────────────
 // Menilai risiko kekosongan (vacancy) dari incumbent sebuah Key Position.
@@ -63,7 +65,7 @@ export const riskLevelOf = (a) => {
 const _va = (retirement, contract, mobility, health, notes = '') =>
   ({ retirement, contract, mobility, health, notes, assessedBy: 'Corporate Organization Development', assessedAt: '2026-01-12' })
 
-export const SEED_VACANCY_RISK = {
+const BASE_VACANCY_RISK = {
   21: _va('Short',  'Short',  'Medium', 'Sehat',   'CEO mendekati masa pensiun — perlu percepatan suksesi.'),
   18: _va('Medium', 'Long',   'Long',   'Sehat'),
   19: _va('Long',   'Long',   'Medium', 'Sehat'),
@@ -73,6 +75,8 @@ export const SEED_VACANCY_RISK = {
   9:  _va('Short',  'Short',  'Short',  'Sakit',   'Incumbent berencana pindah & kondisi kesehatan perlu perhatian.'),
   7:  _va('Medium', 'Medium', 'Long',   'Sehat'),
 }
+
+export const SEED_VACANCY_RISK = IS_SCHOOL ? SCHOOL_VACANCY_RISK : BASE_VACANCY_RISK
 
 export const useVacancyRiskStore = create(
   persist(

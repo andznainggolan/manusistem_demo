@@ -1,4 +1,6 @@
 // ─── Demo seed: 9-Box placements + performance ratings ────────────────────────
+import { IS_SCHOOL } from '@/lib/demoProfile'
+
 // So the Talent Profile, 9-Box matrix and TRM views aren't empty during the
 // executive demo. Deterministic (stable across reloads) and internally
 // consistent: each employee's performance band matches their 9-Box row and
@@ -7,8 +9,12 @@
 // Employees to seed: a slice of the imported population (shown on the first
 // Talent Profile pages) plus the curated demo employees.
 const SEED_IDS = []
-for (let i = 200001; i <= 200150; i++) SEED_IDS.push(i)
-;[1, 2, 3, 5, 7, 10, 11, 30, 31, 32, 33, 92, 93, 95, 96].forEach(id => SEED_IDS.push(id))
+if (IS_SCHOOL) {
+  for (let i = 1; i <= 41; i++) SEED_IDS.push(i)
+} else {
+  for (let i = 200001; i <= 200150; i++) SEED_IDS.push(i)
+  ;[1, 2, 3, 5, 7, 10, 11, 30, 31, 32, 33, 92, 93, 95, 96].forEach(id => SEED_IDS.push(id))
+}
 
 // The nine boxes as [row, col] with a weight (Core Player heaviest, few
 // Underperformers) for a realistic talent distribution.

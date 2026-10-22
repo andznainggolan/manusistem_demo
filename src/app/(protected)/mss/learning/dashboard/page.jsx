@@ -2,8 +2,10 @@
 import Icon from '@/components/ui/Icon'
 import Link from 'next/link'
 import { useT } from '@/store/languageStore'
+import { IS_SCHOOL } from '@/lib/demoProfile'
+import { SCHOOL_LMS } from '@/data/schoolSeed'
 
-const TEAM_SUMMARY = [
+const BASE_TEAM_SUMMARY = [
   { name:'Ahmad Fauzi', role:'Finance Analyst', mandatory:3, completed:2, overdue:0, progress:75 },
   { name:'Dewi Sari', role:'HR Specialist', mandatory:4, completed:4, overdue:0, progress:100 },
   { name:'Budi Rahayu', role:'Ops Coordinator', mandatory:3, completed:1, overdue:1, progress:40 },
@@ -11,10 +13,13 @@ const TEAM_SUMMARY = [
   { name:'Rizky Pratama', role:'IT Engineer', mandatory:2, completed:0, overdue:2, progress:0 },
 ]
 
-const PENDING_APPROVAL = [
+const BASE_PENDING_APPROVAL = [
   { id:1, employee:'Rizky Pratama', type:'External Training', course:'AWS Solutions Architect', submitted:'2025-07-10', cost:8500000 },
   { id:2, employee:'Budi Rahayu', type:'External Training', course:'K3 Expert Certification', submitted:'2025-07-12', cost:5000000 },
 ]
+
+const TEAM_SUMMARY = IS_SCHOOL ? SCHOOL_LMS.teamSummary : BASE_TEAM_SUMMARY
+const PENDING_APPROVAL = IS_SCHOOL ? SCHOOL_LMS.pendingApproval : BASE_PENDING_APPROVAL
 
 export default function TeamLearningDashboard() {
   const t = useT()

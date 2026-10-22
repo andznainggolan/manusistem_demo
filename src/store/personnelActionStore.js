@@ -1,6 +1,7 @@
 ﻿import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 export const PA_ACTIONS = [
   'Promote',
@@ -159,7 +160,7 @@ let _nextId = 20
 export const usePersonnelActionStore = create(
   persist(
     (set, get) => ({
-      pas:        SEED_PA.map(p => ({ ...p })),
+      pas:        (IS_SCHOOL ? [] : SEED_PA).map(p => ({ ...p })),
       paCounters: { 2024: 1, 2025: 4, 2026: 2 },
 
       nextNumber: () => {

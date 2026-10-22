@@ -1,6 +1,11 @@
 ﻿import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_SCHOOL } from '@/lib/demoProfile'
+import {
+  SCHOOL_ENTERPRISES, SCHOOL_DIVISIONS, SCHOOL_COMPANIES, SCHOOL_BUSINESS_UNITS, SCHOOL_DEPARTMENTS,
+  SCHOOL_JOB_FAMILIES, SCHOOL_POSITIONS, SCHOOL_HEADCOUNTS, SCHOOL_GRADES, SCHOOL_NEXT_IDS,
+} from '@/data/schoolSeed'
 
 // Hierarchy: Enterprise → Division (sub-group) → Company → Business Unit → Department
 
@@ -146,14 +151,14 @@ const CATEGORY_COLOR = {
 
 export const PC_CATEGORY_COLOR = CATEGORY_COLOR
 
-const SEED_GRADES = PC_MAP.map(([pc, label, category, min, max]) => ({
+const SEED_GRADES = PC_MAP.filter(([pc]) => !IS_SCHOOL || SCHOOL_GRADES[pc]).map(([pc, label, category, min, max]) => ({
   id:          pc,
   code:        `PC${String(pc).padStart(2,'0')}`,
   pc,
-  name:        label,
+  name:        IS_SCHOOL ? SCHOOL_GRADES[pc].name : label,
   category,
-  minSalary:   min,
-  maxSalary:   max,
+  minSalary:   IS_SCHOOL ? SCHOOL_GRADES[pc].min : min,
+  maxSalary:   IS_SCHOOL ? SCHOOL_GRADES[pc].max : max,
   isBoard:     pc <= 3,
   isIntern:    pc === 4,
   isNonMgr:    pc >= 40 && pc <= 52,
@@ -249,17 +254,18 @@ const SEED_HEADCOUNTS = [
 ]
 
 let _eId=2, _dId=4, _coId=4, _bId=9, _dpId=11, _jfId=5, _posId=56, _gId=73, _hcId=8
+if (IS_SCHOOL) { _eId=2; _dId=3; _coId=3; _bId=10; _dpId=16; _jfId=5; _posId=34; _gId=73; _hcId=SCHOOL_NEXT_IDS.headcount }
 
 export const useStructureStore = create(persist((set) => ({
-  enterprises:   SEED_ENTERPRISES.map(x=>({...x})),
-  divisions:     SEED_DIVISIONS.map(x=>({...x})),
-  companies:     SEED_COMPANIES.map(x=>({...x})),
-  businessUnits: SEED_BUSINESS_UNITS.map(x=>({...x})),
-  departments:   SEED_DEPARTMENTS.map(x=>({...x})),
+  enterprises:   (IS_SCHOOL ? SCHOOL_ENTERPRISES : SEED_ENTERPRISES).map(x=>({...x})),
+  divisions:     (IS_SCHOOL ? SCHOOL_DIVISIONS : SEED_DIVISIONS).map(x=>({...x})),
+  companies:     (IS_SCHOOL ? SCHOOL_COMPANIES : SEED_COMPANIES).map(x=>({...x})),
+  businessUnits: (IS_SCHOOL ? SCHOOL_BUSINESS_UNITS : SEED_BUSINESS_UNITS).map(x=>({...x})),
+  departments:   (IS_SCHOOL ? SCHOOL_DEPARTMENTS : SEED_DEPARTMENTS).map(x=>({...x})),
   grades:        SEED_GRADES.map(x=>({...x})),
-  jobFamilies:   SEED_JOB_FAMILIES.map(x=>({...x})),
-  positions:     SEED_POSITIONS.map(x=>({...x})),
-  headcounts:    SEED_HEADCOUNTS.map(x=>({...x})),
+  jobFamilies:   (IS_SCHOOL ? SCHOOL_JOB_FAMILIES : SEED_JOB_FAMILIES).map(x=>({...x})),
+  positions:     (IS_SCHOOL ? SCHOOL_POSITIONS : SEED_POSITIONS).map(x=>({...x})),
+  headcounts:    (IS_SCHOOL ? SCHOOL_HEADCOUNTS : SEED_HEADCOUNTS).map(x=>({...x})),
 
   addEnterprise:    (d)    => set(s=>({ enterprises:   [...s.enterprises,   { id:_eId++,  ...d }] })),
   updateEnterprise: (id,d) => set(s=>({ enterprises:   s.enterprises.map(x=>x.id===id?{...x,...d}:x) })),
@@ -321,7 +327,7 @@ const dedupeAppend = (existing, incoming) => {
 // Source priority: DB via /api/structure (when a database is configured & seeded),
 // otherwise the static /public JSON. Appended once on the client, non-destructively,
 // on top of the demo seed. Grades are kept from the seed (standard Mercer PC map).
-if (typeof window !== 'undefined' && !window.__kpbStructureLoaded) {
+if (!IS_SCHOOL && typeof window !== 'undefined' && !window.__kpbStructureLoaded) {
   window.__kpbStructureLoaded = true
   const load = async () => {
     try { const r = await fetch('/api/structure'); if (r.ok) { const d = await r.json(); if (d && Array.isArray(d.positions) && d.positions.length) return d } } catch {}

@@ -2,11 +2,13 @@
 import Icon from '@/components/ui/Icon'
 import { useState } from 'react'
 import { useT } from '@/store/languageStore'
+import { IS_SCHOOL } from '@/lib/demoProfile'
+import { SCHOOL_LMS } from '@/data/schoolSeed'
 
-const CATEGORIES = ['All','Leadership & Management','K3 & Safety','Compliance','Digital Skills','Soft Skills','HR & People','Finance','Sales & Marketing']
+const CATEGORIES = IS_SCHOOL ? SCHOOL_LMS.categories : ['All','Leadership & Management','K3 & Safety','Compliance','Digital Skills','Soft Skills','HR & People','Finance','Sales & Marketing']
 const TYPES      = ['All','ILT','Self-Paced','Blended']
 
-const CATALOG = [
+const BASE_CATALOG = [
   { id:1, title:'K3 & Keselamatan Kerja Dasar', category:'K3 & Safety', type:'ILT', duration:'8 jam', instructor:'Budi Santoso', rating:4.8, enrolled:850, level:'Beginner', status:'Available' },
   { id:2, title:'Leadership Fundamentals Level 1', category:'Leadership & Management', type:'Blended', duration:'24 jam', instructor:'Sari Dewi', rating:4.9, enrolled:320, level:'Intermediate', status:'Available' },
   { id:3, title:'Excel Advanced for HR', category:'Digital Skills', type:'Self-Paced', duration:'6 jam', instructor:'Online', rating:4.6, enrolled:540, level:'Intermediate', status:'Available' },
@@ -16,6 +18,8 @@ const CATALOG = [
   { id:7, title:'Financial Statement Analysis', category:'Finance', type:'Blended', duration:'12 jam', instructor:'Dewi Sari', rating:4.6, enrolled:130, level:'Intermediate', status:'Available' },
   { id:8, title:'Sales Excellence & Negotiation', category:'Sales & Marketing', type:'ILT', duration:'16 jam', instructor:'Tim Sales', rating:4.7, enrolled:175, level:'Intermediate', status:'Available' },
 ]
+
+const CATALOG = IS_SCHOOL ? SCHOOL_LMS.catalog : BASE_CATALOG
 
 export default function CourseCatalogPage() {
   const t = useT()

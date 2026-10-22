@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRecruitmentStore, isPublished } from '@/store/recruitmentStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useBrandingStore } from '@/store/brandingStore'
+import { IS_SCHOOL, BRAND_NAME } from '@/lib/demoProfile'
 
 // Public, unauthenticated job board — lives outside (protected), so it gets
 // none of the app shell (sidebar/topbar/auth redirect). A requisition shows
@@ -77,10 +78,10 @@ function CareersBody() {
   // defaults while the client may rehydrate customized values.
   const navLinks = mounted ? careerNavLinks : []
   const heroImage = mounted ? careerHeroImage : null
-  const heroTitle = mounted ? careerHeroTitle : 'Karir di Manusistem'
+  const heroTitle = mounted ? careerHeroTitle : `Karir di ${BRAND_NAME}`
   const heroSubtitle = mounted ? careerHeroSubtitle : 'Temukan peluang karir yang sesuai untukmu.'
   const footerImage = mounted ? careerFooterImage : null
-  const footerText = mounted ? careerFooterText : 'Manusistem — Human Capital Management System'
+  const footerText = mounted ? careerFooterText : (IS_SCHOOL ? 'Lia Stephanie Catholic School — Yayasan Lia Stephanie' : 'Manusistem — Human Capital Management System')
 
   const NavLink = ({ link, className }) => (
     isExternalLink(link.url)
@@ -95,7 +96,7 @@ function CareersBody() {
         <div className='mx-auto flex max-w-4xl items-center justify-between gap-4 px-6 py-3.5'>
           <div className='flex items-center gap-2.5'>
             <img src={mounted && loginLogo ? loginLogo : '/logos/manusistem.png'} alt='' className='h-8 w-8 rounded-lg object-contain' />
-            <span className='text-sm font-bold text-gray-800'>Manusistem</span>
+            <span className='text-sm font-bold text-gray-800'>{BRAND_NAME}</span>
           </div>
           <div className='flex items-center gap-5'>
             {navLinks.map(link => (
@@ -174,7 +175,7 @@ function CareersBody() {
               ))}
             </div>
           )}
-          <p className='mt-4 text-[11px] text-white/50'>© {new Date().getFullYear()} Manusistem</p>
+          <p className='mt-4 text-[11px] text-white/50'>© {new Date().getFullYear()} {BRAND_NAME}</p>
         </div>
       </footer>
     </div>
