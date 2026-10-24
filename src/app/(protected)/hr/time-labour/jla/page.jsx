@@ -21,7 +21,7 @@ export default function HrJlaPage() {
       <PageHeader
         icon='🗓️'
         title='Job Load Analysis (JLA)'
-        subtitle='Atur kategori pekerja, target jam kerja guru, jadwal mengajar, dan cara payroll memakai jam kerja. Task ditambahkan oleh kepala sekolah.'
+        subtitle='Atur kategori pekerja, target jam kerja guru, jadwal mengajar, dan cara payroll memakai jam kerja. Task ditambahkan oleh kepala sekolah atau atasan langsung.'
       />
       <div className='mb-6 flex flex-wrap gap-2'>
         {TABS.map(t => (
@@ -42,6 +42,7 @@ export default function HrJlaPage() {
 function SettingsTab() {
   const { settings, taskTypes, updateSettings, addTaskType, updateTaskType } = useJlaStore()
   const [name, setName] = useState('')
+  const [teaching, setTeaching] = useState(false)
   const hourOptions = []
   for (let m = 5 * 60; m <= 22 * 60; m += 30) hourOptions.push(toHHMM(m))
   return (
@@ -85,20 +86,24 @@ function SettingsTab() {
         </div>
       </SectionCard>
 
-      <SectionCard title='Jenis Task' icon='📋' subtitle='Daftar pilihan saat kepala sekolah menambah task' className='xl:col-span-2'>
+      <SectionCard title='Jenis Task' icon='📋' subtitle='Daftar pilihan saat kepala sekolah atau atasan langsung menambah task' className='xl:col-span-2'>
         <div className='flex flex-wrap gap-2'>
           {taskTypes.map(t => (
             <button key={t.id} type='button' onClick={() => updateTaskType(t.id, { active: !t.active })}
               title={t.active ? 'Klik untuk menonaktifkan' : 'Klik untuk mengaktifkan'}
               className={`rounded-full px-3 py-1.5 text-xs font-semibold ring-1 transition ${t.active ? 'bg-teal-50 text-teal-700 ring-teal-200' : 'bg-gray-100 text-gray-400 line-through ring-gray-200'}`}>
-              {t.name}
+              {t.name}{t.teaching ? ' (jam mengajar)' : ''}
             </button>
           ))}
         </div>
         <div className='mt-4 flex max-w-md gap-2'>
           <Input value={name} onChange={e => setName(e.target.value)} placeholder='Nama jenis task baru' />
-          <ActionButton onClick={() => { if (name.trim()) { addTaskType(name); setName('') } }}>Tambah</ActionButton>
+          <ActionButton onClick={() => { if (name.trim()) { addTaskType(name, teaching); setName(''); setTeaching(false) } }}>Tambah</ActionButton>
         </div>
+        <label className='mt-2 flex max-w-md items-start gap-2 text-xs text-gray-500'>
+          <input type='checkbox' className='mt-0.5 accent-teal-700' checked={teaching} onChange={e => setTeaching(e.target.checked)} />
+          <span>Dihitung sebagai jam mengajar: guru mengampu mata pelajaran lain (perbantuan) dan mengisi nama mata pelajaran saat menugaskan.</span>
+        </label>
       </SectionCard>
     </div>
   )

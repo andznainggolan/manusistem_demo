@@ -25,9 +25,12 @@ export const fmtHours = (h) => {
 
 const sumHours = (list) => list.reduce((s, x) => s + durationHours(x.start, x.end), 0)
 
+// A task flagged `teaching` (a teacher covering another subject) counts as
+// teaching hours, not as an extra task.
 export function weekSummary(employeeId, blocks, tasks, targetHours = 40) {
-  const teaching = sumHours(blocks.filter(b => b.employeeId === employeeId))
-  const task = sumHours(tasks.filter(t => t.employeeId === employeeId))
+  const mine = tasks.filter(t => t.employeeId === employeeId)
+  const teaching = sumHours(blocks.filter(b => b.employeeId === employeeId)) + sumHours(mine.filter(t => t.teaching))
+  const task = sumHours(mine.filter(t => !t.teaching))
   const total = teaching + task
   const gap = Math.max(0, targetHours - total)
   return { teaching, task, total, gap, target: targetHours, achieved: total >= targetHours }
@@ -42,6 +45,11 @@ export function findConflict(employeeId, day, start, end, blocks, tasks, ignoreT
   const task = tasks.find(t => t.employeeId === employeeId && t.day === day && t.id !== ignoreTaskId && overlaps(start, end, t.start, t.end))
   if (task) return { kind: 'task', label: 'task lain', start: task.start, end: task.end }
   return null
+}
+
+// True when the teacher has nothing on any of the given days in that time range.
+export function isFreeOn(employeeId, days, start, end, blocks, tasks) {
+  return days.every(day => !findConflict(employeeId, day, start, end, blocks, tasks))
 }
 
 // Hours inside the working window that are still unassigned in a week.

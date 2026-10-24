@@ -27,7 +27,8 @@ export const useJlaStore = create(persist(
 
     updateSettings: (patch) => set(s => ({ settings: { ...s.settings, ...patch } })),
 
-    addTaskType: (name) => set(s => ({ taskTypes: [...s.taskTypes, { id: nextId(s.taskTypes), name: name.trim(), active: true }] })),
+    // teaching: the task is a teaching assignment (covering another subject) and counts as teaching hours.
+    addTaskType: (name, teaching = false) => set(s => ({ taskTypes: [...s.taskTypes, { id: nextId(s.taskTypes), name: name.trim(), active: true, teaching }] })),
     updateTaskType: (id, patch) => set(s => ({ taskTypes: s.taskTypes.map(x => x.id === id ? { ...x, ...patch } : x) })),
 
     setCategory: (employeeId, category) => set(s => ({ categories: { ...s.categories, [employeeId]: category } })),
@@ -36,7 +37,7 @@ export const useJlaStore = create(persist(
     deleteTeachingBlock: (id) => set(s => ({ teachingBlocks: s.teachingBlocks.filter(x => x.id !== id) })),
 
     // days: array of day keys. Returns { ok, error }. Nothing is saved when any day conflicts.
-    addTasks: ({ employeeId, days, start, end, taskTypeId, note, createdBy, createdByName }) => {
+    addTasks: ({ employeeId, days, start, end, taskTypeId, note, subject = '', createdBy, createdByName }) => {
       const { teachingBlocks, tasks } = get()
       for (const day of days) {
         const c = findConflict(employeeId, day, start, end, teachingBlocks, tasks)
@@ -44,8 +45,10 @@ export const useJlaStore = create(persist(
       }
       set(s => {
         let id = nextId(s.tasks)
+        const teaching = !!s.taskTypes.find(t => t.id === taskTypeId)?.teaching
         const created = days.map(day => ({
           id: id++, employeeId, day, start, end, taskTypeId, note: note || '',
+          ...(teaching ? { teaching: true, subject } : {}),
           createdBy, createdByName, createdAt: new Date().toISOString(),
         }))
         return { tasks: [...s.tasks, ...created] }
@@ -57,6 +60,9 @@ export const useJlaStore = create(persist(
       const cur = tasks.find(t => t.id === id)
       if (!cur) return { ok: false }
       const next = { ...cur, ...patch }
+      const teaching = !!get().taskTypes.find(t => t.id === next.taskTypeId)?.teaching
+      if (teaching) next.teaching = true
+      else { delete next.teaching; delete next.subject }
       const c = findConflict(next.employeeId, next.day, next.start, next.end, teachingBlocks, tasks, id)
       if (c) return { ok: false, error: { day: next.day, ...c } }
       set(s => ({ tasks: s.tasks.map(t => t.id === id ? next : t) }))
@@ -64,5 +70,18 @@ export const useJlaStore = create(persist(
     },
     deleteTask: (id) => set(s => ({ tasks: s.tasks.filter(t => t.id !== id) })),
   }),
-  { name: 'hcm-jla-v1', storage: createJSONStorage(() => dbStorage) }
+  {
+    name: 'hcm-jla-v1',
+    storage: createJSONStorage(() => dbStorage),
+    // v1 -> v2: stored school data gains the "teach another subject" task type
+    // without losing the tasks and settings already saved.
+    version: 2,
+    migrate: (state, version) => {
+      if (version < 2 && IS_SCHOOL && state?.taskTypes && !state.taskTypes.some(t => t.teaching)) {
+        const seed = SCHOOL_JLA_TASK_TYPES.find(t => t.teaching)
+        if (seed) state.taskTypes = [...state.taskTypes, { ...seed, id: nextId(state.taskTypes) }]
+      }
+      return state
+    },
+  }
 ))

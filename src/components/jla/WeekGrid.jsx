@@ -64,13 +64,13 @@ export default function WeekGrid({ blocks, tasks, taskTypes, windowStart, window
               {tasks.filter(t => t.day === d.key).map(t => (
                 <div
                   key={`t${t.id}`}
-                  className={`absolute inset-x-0.5 overflow-hidden rounded-md bg-teal-600 px-1.5 py-0.5 text-[11px] leading-tight text-white ring-1 ring-teal-700 ${editable ? 'cursor-pointer hover:bg-teal-700' : ''}`}
+                  className={`absolute inset-x-0.5 overflow-hidden rounded-md px-1.5 py-0.5 text-[11px] leading-tight text-white ring-1 ${t.teaching ? 'bg-indigo-600 ring-indigo-700' : 'bg-teal-600 ring-teal-700'} ${editable ? (t.teaching ? 'cursor-pointer hover:bg-indigo-700' : 'cursor-pointer hover:bg-teal-700') : ''}`}
                   style={{ top: topOf(t.start), height: heightOf(t.start, t.end) - 2 }}
                   onClick={(e) => { e.stopPropagation(); onTaskClick && onTaskClick(t) }}
-                  title={`${typeName(t.taskTypeId)} (${fmtHours(durationHours(t.start, t.end))} jam)`}
+                  title={`${t.teaching && t.subject ? `Mengajar ${t.subject}` : typeName(t.taskTypeId)} (${fmtHours(durationHours(t.start, t.end))} jam)`}
                 >
                   <div className='font-semibold'>{t.start}-{t.end}</div>
-                  <div className='truncate'>{typeName(t.taskTypeId)}</div>
+                  <div className='truncate'>{t.teaching && t.subject ? t.subject : typeName(t.taskTypeId)}</div>
                 </div>
               ))}
             </div>
@@ -79,6 +79,7 @@ export default function WeekGrid({ blocks, tasks, taskTypes, windowStart, window
         <div className='mt-3 flex flex-wrap items-center gap-4 text-[11px] text-gray-500'>
           <span className='flex items-center gap-1.5'><span className='h-3 w-3 rounded bg-sky-100 ring-1 ring-sky-200' /> Jam mengajar (tetap)</span>
           <span className='flex items-center gap-1.5'><span className='h-3 w-3 rounded bg-teal-600' /> Task tambahan</span>
+          {tasks.some(t => t.teaching) && <span className='flex items-center gap-1.5'><span className='h-3 w-3 rounded bg-indigo-600' /> Mengajar mata pelajaran lain</span>}
           <span className='flex items-center gap-1.5'><span className='h-3 w-3 rounded border border-gray-200 bg-white' /> Waktu kosong{editable ? ' (klik untuk isi)' : ''}</span>
         </div>
       </div>

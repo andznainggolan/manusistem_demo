@@ -477,6 +477,8 @@ export const SCHOOL_JLA_TASK_TYPES = [
   { id: 6, name: 'Rapat dan Koordinasi', active: true },
   { id: 7, name: 'Pengembangan Perangkat Ajar', active: true },
   { id: 8, name: 'Pembinaan Siswa (Wali Kelas)', active: true },
+  // Guru yang sedang kosong membantu mengajar mata pelajaran lain; dihitung jam mengajar.
+  { id: 9, name: 'Mengajar Mata Pelajaran Lain (Perbantuan)', active: true, teaching: true },
 ]
 
 const WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']

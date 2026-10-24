@@ -4,7 +4,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useEmployeeStore } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useJlaStore } from '@/store/jlaStore'
-import { DAYS, toMin, toHHMM, fmtHours, durationHours, weekSummary, freeHoursInWindow } from '@/lib/jla'
+import { DAYS, toMin, toHHMM, fmtHours, durationHours, weekSummary, freeHoursInWindow, isFreeOn } from '@/lib/jla'
 import WeekGrid from '@/components/jla/WeekGrid'
 import { StatCard, SectionCard, ActionButton, StatusBadge, EmptyState, FormField, Select, Input } from '@/components/ui'
 
@@ -26,7 +26,14 @@ export default function JlaBoard({ scope = 'unit' }) {
   const viewerPosition = positions.find(p => p.id === viewer?.positionId)?.name || ''
   const buOf = (emp) => departments.find(d => d.id === emp.departmentId)?.businessUnitId
   const seesAll = scope === 'all' || currentUser?.role === 'superadmin' || currentUser?.role?.startsWith('hr')
-  const canEdit = currentUser?.role === 'superadmin' || viewerPosition.startsWith('Kepala Sekolah')
+  const isPrincipal = viewerPosition.startsWith('Kepala Sekolah')
+  // Tasks are assigned by the principal of the teacher's unit, by the teacher's
+  // direct supervisor, or by an administrator.
+  const canEditEmp = (emp) => !!emp && (
+    currentUser?.role === 'superadmin'
+    || (isPrincipal && buOf(emp) === buOf(viewer || {}))
+    || emp.managerId === currentUser?.id
+  )
 
   const target = settings.targetHours
   const teachers = useMemo(() => employees
@@ -38,10 +45,26 @@ export default function JlaBoard({ scope = 'unit' }) {
 
   const [selectedId, setSelectedId] = useState(null)
   const selected = teachers.find(t => t.emp.id === selectedId) || teachers[0] || null
+  const canEdit = canEditEmp(selected?.emp)
+  const anyEditable = teachers.some(t => canEditEmp(t.emp))
 
-  const [form, setForm] = useState(null) // { id?, taskTypeId, days, start, end, note, error }
+  const [form, setForm] = useState(null) // { id?, taskTypeId, days, start, end, subject, note, error }
   const options = timeOptions(settings.windowStart, settings.windowEnd)
   const activeTypes = taskTypes.filter(t => t.active)
+  const isTeachingType = (id) => !!taskTypes.find(t => String(t.id) === String(id))?.teaching
+
+  // Finder: which teachers are free in a slot, so they can be lent to another subject.
+  const [finder, setFinder] = useState({ days: ['Monday'], start: '13:00', end: '15:00' })
+  const finderValid = toMin(finder.end) > toMin(finder.start) && finder.days.length > 0
+  const available = useMemo(() => !finderValid ? [] : teachers.filter(t =>
+    canEditEmp(t.emp) && isFreeOn(t.emp.id, finder.days, finder.start, finder.end, teachingBlocks, tasks)),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [teachers, finder, finderValid, teachingBlocks, tasks, currentUser?.id, viewer?.id])
+  const assignTo = (emp) => {
+    setSelectedId(emp.id)
+    const teachType = activeTypes.find(t => t.teaching)
+    setForm({ taskTypeId: teachType?.id || activeTypes[0]?.id || '', days: finder.days, start: finder.start, end: finder.end, subject: '', note: '', error: '' })
+  }
 
   const achievedCount = teachers.filter(t => t.sum.achieved).length
   const totalGap = teachers.reduce((s, t) => s + t.sum.gap, 0)
@@ -50,18 +73,19 @@ export default function JlaBoard({ scope = 'unit' }) {
     if (!canEdit || !selected) return
     const startMin = toMin(start)
     const end = toHHMM(Math.min(startMin + 60, toMin(settings.windowEnd)))
-    setForm({ taskTypeId: activeTypes[0]?.id || '', days: [day], start, end, note: '', error: '' })
+    setForm({ taskTypeId: activeTypes[0]?.id || '', days: [day], start, end, subject: '', note: '', error: '' })
   }
   const openEdit = (task) => {
     if (!canEdit) return
-    setForm({ id: task.id, taskTypeId: task.taskTypeId, days: [task.day], start: task.start, end: task.end, note: task.note || '', error: '' })
+    setForm({ id: task.id, taskTypeId: task.taskTypeId, days: [task.day], start: task.start, end: task.end, subject: task.subject || '', note: task.note || '', error: '' })
   }
   const save = () => {
     if (!form || !selected) return
     if (!form.taskTypeId) return setForm({ ...form, error: 'Pilih jenis task.' })
     if (!form.days.length) return setForm({ ...form, error: 'Pilih minimal satu hari.' })
     if (toMin(form.end) <= toMin(form.start)) return setForm({ ...form, error: 'Jam selesai harus setelah jam mulai.' })
-    const base = { taskTypeId: Number(form.taskTypeId), start: form.start, end: form.end, note: form.note.trim() }
+    if (isTeachingType(form.taskTypeId) && !form.subject.trim()) return setForm({ ...form, error: 'Isi mata pelajaran dan kelas yang diampu.' })
+    const base = { taskTypeId: Number(form.taskTypeId), start: form.start, end: form.end, note: form.note.trim(), subject: form.subject.trim() }
     const res = form.id
       ? updateTask(form.id, { ...base, day: form.days[0] })
       : addTasks({ employeeId: selected.emp.id, days: form.days, ...base, createdBy: currentUser.id, createdByName: currentUser.name })
@@ -73,6 +97,8 @@ export default function JlaBoard({ scope = 'unit' }) {
   }
 
   const typeName = (id) => taskTypes.find(t => t.id === id)?.name || 'Task'
+  // Subject names without the class suffix ("Matematika 8A-8C" -> "Matematika"), for the suggestions list.
+  const subjectOptions = [...new Set(teachingBlocks.map(b => b.label.replace(/\s+\d[\w-]*$/, '').trim()).filter(l => l && !/^(Kelas|Kelompok)$/.test(l)))].sort()
   const selectedTasks = selected ? tasks.filter(t => t.employeeId === selected.emp.id)
     .sort((a, b) => DAYS.findIndex(d => d.key === a.day) - DAYS.findIndex(d => d.key === b.day) || toMin(a.start) - toMin(b.start)) : []
   const free = selected ? freeHoursInWindow(selected.emp.id, teachingBlocks, tasks, settings.windowStart, settings.windowEnd) : 0
@@ -87,10 +113,65 @@ export default function JlaBoard({ scope = 'unit' }) {
         <StatCard tone='purple' icon='🕒' label='Total jam kurang / minggu' value={`${fmtHours(totalGap)} jam`} />
       </div>
 
-      {!canEdit && (
+      {!anyEditable && (
         <div className='mb-4 rounded-xl bg-amber-50 px-4 py-2.5 text-xs text-amber-800 ring-1 ring-amber-200'>
-          Mode lihat saja. Task ditambahkan oleh kepala sekolah untuk guru di unitnya.
+          Mode lihat saja. Task ditambahkan oleh kepala sekolah untuk guru di unitnya, atau oleh atasan langsung guru.
         </div>
+      )}
+
+      {anyEditable && (
+        <SectionCard className='mb-6' title='Cari Guru yang Tersedia' icon='🔎'
+          subtitle='Guru yang kosong di waktu tertentu bisa ditugaskan membantu mata pelajaran lain, misalnya guru olahraga mengajar agama'>
+          <div className='flex flex-wrap items-end gap-4'>
+            <div>
+              <span className='mb-1.5 block text-xs font-semibold text-gray-600'>Hari</span>
+              <div className='flex flex-wrap gap-1.5'>
+                {DAYS.map(d => {
+                  const on = finder.days.includes(d.key)
+                  return (
+                    <button key={d.key} type='button'
+                      onClick={() => setFinder(f => ({ ...f, days: f.days.includes(d.key) ? f.days.filter(x => x !== d.key) : [...f.days, d.key] }))}
+                      className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold ring-1 transition ${on ? 'bg-teal-600 text-white ring-teal-600' : 'bg-white text-gray-600 ring-gray-200 hover:bg-gray-50'}`}>
+                      {d.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+            <FormField label='Mulai' className='w-28'>
+              <Select value={finder.start} onChange={e => setFinder({ ...finder, start: e.target.value })}>
+                {options.slice(0, -1).map(o => <option key={o} value={o}>{o}</option>)}
+              </Select>
+            </FormField>
+            <FormField label='Selesai' className='w-28'>
+              <Select value={finder.end} onChange={e => setFinder({ ...finder, end: e.target.value })}>
+                {options.slice(1).map(o => <option key={o} value={o}>{o}</option>)}
+              </Select>
+            </FormField>
+          </div>
+          <div className='mt-4' data-testid='jla-available'>
+            {!finderValid ? (
+              <p className='text-xs text-amber-700'>Pilih minimal satu hari dan jam selesai setelah jam mulai.</p>
+            ) : available.length === 0 ? (
+              <p className='text-xs text-gray-500'>Tidak ada guru yang kosong penuh di waktu itu.</p>
+            ) : (
+              <>
+                <p className='mb-2 text-xs text-gray-500'>{available.length} guru kosong di semua hari terpilih ({finder.start}-{finder.end}), diurutkan dari kekurangan jam terbesar:</p>
+                <div className='grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3'>
+                  {available.map(({ emp, sum }) => (
+                    <div key={emp.id} className='flex items-center justify-between gap-2 rounded-xl border border-gray-100 px-3 py-2'>
+                      <div className='min-w-0'>
+                        <div className='truncate text-sm font-semibold text-gray-800'>{emp.name}</div>
+                        <div className='truncate text-[11px] text-gray-400'>{positionName(emp)} · {fmtHours(sum.total)}/{target} jam</div>
+                      </div>
+                      <ActionButton size='sm' variant='secondary' onClick={() => assignTo(emp)}>Tugaskan</ActionButton>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </SectionCard>
       )}
 
       {teachers.length === 0 ? (
@@ -172,7 +253,11 @@ export default function JlaBoard({ scope = 'unit' }) {
                           <td className='px-5 py-2.5 font-medium text-gray-700'>{dayLabel(t.day)}</td>
                           <td className='px-3 py-2.5 tabular-nums text-gray-600'>{t.start}-{t.end}</td>
                           <td className='px-3 py-2.5 text-gray-600'>{fmtHours(durationHours(t.start, t.end))} jam</td>
-                          <td className='px-3 py-2.5'><StatusBadge tone='info'>{typeName(t.taskTypeId)}</StatusBadge></td>
+                          <td className='px-3 py-2.5'>
+                            <StatusBadge tone={t.teaching ? 'success' : 'info'}>{typeName(t.taskTypeId)}</StatusBadge>
+                            {t.teaching && t.subject && <div className='mt-1 text-xs font-semibold text-indigo-700'>{t.subject}</div>}
+                            {t.createdByName && <div className='mt-0.5 text-[11px] text-gray-400'>oleh {t.createdByName}</div>}
+                          </td>
                           <td className='px-3 py-2.5 text-xs text-gray-500'>{t.note || '-'}</td>
                           {canEdit && (
                             <td className='px-5 py-2.5 text-right'>
@@ -207,6 +292,13 @@ export default function JlaBoard({ scope = 'unit' }) {
                   {activeTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                 </Select>
               </FormField>
+              {isTeachingType(form.taskTypeId) && (
+                <FormField label='Mata pelajaran dan kelas yang diampu' required hint='Dihitung sebagai jam mengajar guru ini, bukan task tambahan.'>
+                  <Input list='jla-subjects' value={form.subject} placeholder='mis. Pendidikan Agama Katolik 7A'
+                    onChange={e => setForm({ ...form, subject: e.target.value, error: '' })} />
+                  <datalist id='jla-subjects'>{subjectOptions.map(o => <option key={o} value={o} />)}</datalist>
+                </FormField>
+              )}
               <div>
                 <span className='mb-1.5 block text-xs font-semibold text-gray-600'>Hari <span className='text-red-500'>*</span></span>
                 <div className='flex flex-wrap gap-2'>
