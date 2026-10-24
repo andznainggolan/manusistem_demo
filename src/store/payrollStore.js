@@ -8,6 +8,9 @@ import { IS_SCHOOL } from '@/lib/demoProfile'
 import { SCHOOL_EMPLOYEES, SCHOOL_POSITIONS, SCHOOL_GRADE_BY_ID } from '@/data/schoolSeed'
 import { useJlaStore } from './jlaStore'
 import { weekSummary } from '@/lib/jla'
+import { useAttendanceStore } from './attendanceStore'
+import { useJlaRealStore } from './jlaRealStore'
+import { summarize, monthRange, weekdaysBetween } from '@/lib/jlaRealization'
 
 const SEED_PAYSLIP_INPUTS = IS_SCHOOL ? [] : [
   { id:1, empId:1, name:'Budi Santoso',  period:'2025-05', basic:12000000, allowance:2000000, ptkpStatus:'K/1',  npwp:true  },
@@ -69,13 +72,27 @@ function defaultBasicFor(emp) {
 
 // School profile: Guru payroll follows Job Load Analysis (JLA). In 'prorate'
 // mode a weekly shortfall against the target deducts the same share of basic.
-function jlaAdjustment(empId, basic) {
+// With the 'realization' basis the weekly plan is scaled by how much of the period's
+// plan was actually realised (confirmed hours, or attendance when not confirmed).
+export function jlaAdjustment(empId, basic, period) {
   if (!IS_SCHOOL) return null
-  const { settings, categories, teachingBlocks, tasks } = useJlaStore.getState()
+  const { settings, categories, teachingBlocks, tasks, taskTypes } = useJlaStore.getState()
   if (categories[empId] !== 'Guru') return null
   const sum = weekSummary(empId, teachingBlocks, tasks, settings.targetHours)
-  const deduction = settings.payrollMode === 'prorate' && !sum.achieved ? Math.round(basic * sum.gap / sum.target) : 0
-  return { hours: sum.total, target: sum.target, deduction }
+  let hours = sum.total
+  const basis = settings.payrollBasis === 'realization' && period ? 'realization' : 'plan'
+  if (basis === 'realization') {
+    const { from, to } = monthRange(period)
+    const real = summarize(empId, weekdaysBetween(from, to), {
+      blocks: teachingBlocks, tasks, attendance: useAttendanceStore.getState().records,
+      recs: useJlaRealStore.getState().records,
+      typeName: (id) => taskTypes.find(t => t.id === id)?.name || 'Task',
+    })
+    if (real.planned > 0) hours = sum.total * (real.realized / real.planned)
+  }
+  const gap = Math.max(0, sum.target - hours)
+  const deduction = settings.payrollMode === 'prorate' && gap > 0.0001 ? Math.round(basic * gap / sum.target) : 0
+  return { hours, target: sum.target, deduction, basis }
 }
 
 const EMPTY_PROFILE = {
@@ -146,7 +163,7 @@ export const usePayrollStore = create(persist(
         const basic = profile.basic ?? defaultBasicFor(emp)
         const allowance = profile.allowance || 0
         const variableAllowance = sumVariableAllowances(profile.variableAllowances)
-        const jla = jlaAdjustment(emp.id, basic)
+        const jla = jlaAdjustment(emp.id, basic, period)
         const calc = calcPayslip({
           basic, allowance, variableAllowance, overtime: 0, otherDeduction: jla?.deduction || 0,
           ptkpStatus: profile.ptkpStatus, hasNpwp: profile.npwp,
@@ -167,7 +184,7 @@ export const usePayrollStore = create(persist(
     recalcDraftFromJla: (period) => set((s) => ({
       payslips: s.payslips.map((p) => {
         if (p.period !== period || p.status !== 'Draft') return p
-        const adj = jlaAdjustment(p.empId, p.basic)
+        const adj = jlaAdjustment(p.empId, p.basic, period)
         if (!adj) return p
         const calc = calcPayslip({
           basic: p.basic, allowance: p.allowance || 0, variableAllowance: p.variableAllowance || 0,

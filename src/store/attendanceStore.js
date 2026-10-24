@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
 import { localDateStr } from '@/lib/workSchedule'
 import { IS_SCHOOL } from '@/lib/demoProfile'
+import { SCHOOL_EMPLOYEES, SCHOOL_WORKER_CATEGORIES, SCHOOL_TEACHING_BLOCKS, SCHOOL_JLA_TASKS } from '@/data/schoolSeed'
 
 const today = new Date()
 // Local calendar date, not toISOString() — that converts to UTC first, which
@@ -17,10 +18,20 @@ const shiftTime = (hhmm, deltaMin) => {
   return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
 }
 
-// Generate seed attendance for last 14 days
+const DAY_KEYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+// First and last clock time of a teacher's JLA plan on a weekday, or null when the teacher has no plan that day.
+const planSpan = (empId, day) => {
+  const items = [...SCHOOL_TEACHING_BLOCKS, ...SCHOOL_JLA_TASKS].filter(x => x.employeeId === empId && x.day === day)
+  if (!items.length) return null
+  return [items.map(x => x.start).sort()[0], items.map(x => x.end).sort().slice(-1)[0]]
+}
+
+// Generate seed attendance for the last 14 days (60 in the school demo)
 const genRecords = () => {
   const employees = IS_SCHOOL
-    ? [{ id: 15, name: 'Yohanes Aditya' }, { id: 9, name: 'Margareta Widya' }, { id: 7, name: 'Elisabeth Kartika' }, { id: 29, name: 'Rudi Hartanto' }]
+    ? [
+        ...SCHOOL_EMPLOYEES.filter(e => SCHOOL_WORKER_CATEGORIES[e.id] === 'Guru' || [9, 7, 29].includes(e.id)).map(e => ({ id: e.id, name: e.name })),
+      ]
     : [
         { id: 1, name: 'Budi Santoso' },
         { id: 2, name: 'Dewi Rahayu' },
@@ -28,7 +39,8 @@ const genRecords = () => {
       ]
   const records = []
   let _id = 1
-  for (let i = 13; i >= 0; i--) {
+  // School demo goes back ~2 months so the monthly JLA realisation report has evidence to compare with.
+  for (let i = IS_SCHOOL ? 60 : 13; i >= 0; i--) {
     const d = new Date(today)
     d.setDate(d.getDate() - i)
     const dow = d.getDay()
@@ -38,7 +50,14 @@ const genRecords = () => {
       if (IS_SCHOOL) {
         // Times follow each employee's real school shift; every sixth day is a late arrival
         // so the approval flow has something to show. Deterministic, not random.
-        const [start, end] = SCHOOL_HOURS[emp.id] || ['07:00', '15:00']
+        let [start, end] = SCHOOL_HOURS[emp.id] || ['07:00', '15:00']
+        if (SCHOOL_WORKER_CATEGORIES[emp.id] === 'Guru') {
+          // Teachers clock in before their first lesson and out after their last plan item, never before the shift ends.
+          const span = planSpan(emp.id, DAY_KEYS[dow])
+          if (!span) return
+          start = span[0] < '07:00' ? span[0] : '07:00'
+          end = span[1] > '15:00' ? span[1] : '15:00'
+        }
         const late = (emp.id + i) % 6 === 0
         records.push({
           id: _id++, userId: emp.id, name: emp.name, date: ds,
@@ -63,7 +82,7 @@ const genRecords = () => {
   return records
 }
 
-let _id = 100
+let _id = 10000
 
 export const todayStr = () => localDateStr(new Date())
 
@@ -101,5 +120,21 @@ export const useAttendanceStore = create(persist(
         ),
       })),
   }),
-  { name: IS_SCHOOL ? 'hcm-attendance-school-v1' : 'hcm-attendance-v1', storage: createJSONStorage(() => dbStorage) }
+  {
+    name: IS_SCHOOL ? 'hcm-attendance-school-v2' : 'hcm-attendance-v1',
+    storage: createJSONStorage(() => dbStorage),
+    // School demo: the seed is dated relative to the day it was first loaded, so
+    // later days would have no attendance. Top up missing past days from the seed
+    // (never today, and never over an existing record).
+    merge: (persisted, current) => {
+      const merged = { ...current, ...persisted }
+      if (!IS_SCHOOL || !persisted?.records) return merged
+      const have = new Set(persisted.records.map(r => `${r.userId}|${r.date}`))
+      const todayS = fmt(new Date())
+      let nid = persisted.records.reduce((m, r) => Math.max(m, Number(r.id) || 0), 0) + 1
+      const extra = current.records.filter(r => r.date < todayS && !have.has(`${r.userId}|${r.date}`)).map(r => ({ ...r, id: nid++ }))
+      merged.records = [...persisted.records, ...extra]
+      return merged
+    },
+  }
 ))

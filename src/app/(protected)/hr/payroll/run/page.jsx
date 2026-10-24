@@ -1,11 +1,11 @@
 'use client'
 import Icon from '@/components/ui/Icon'
 import { useState }                    from 'react'
-import { usePayrollStore, formatRp }   from '@/store/payrollStore'
+import { usePayrollStore, formatRp, jlaAdjustment } from '@/store/payrollStore'
 import { useT } from '@/store/languageStore'
 import { IS_SCHOOL } from '@/lib/demoProfile'
 import { useJlaStore } from '@/store/jlaStore'
-import { weekSummary, fmtHours } from '@/lib/jla'
+import { fmtHours } from '@/lib/jla'
 import {
   PageHeader, StatCard, SectionCard, DataTable, Tr, Td,
   StatusBadge, ActionButton, FormField, Select, EmptyState,
@@ -15,8 +15,12 @@ export default function PayrollRunPage() {
   const t = useT()
   const { payslips, generatePeriod, publishPeriod, removePayslip, recalcDraftFromJla } = usePayrollStore()
   const jla = useJlaStore()
-  const modeLabel = jla.settings.payrollMode === 'prorate' ? 'Potongan proporsional' : 'Gaji tetap (JLA pemantau)'
-  const hoursOf = (empId) => jla.categories[empId] === 'Guru' ? weekSummary(empId, jla.teachingBlocks, jla.tasks, jla.settings.targetHours) : null
+  const modeLabel = (jla.settings.payrollMode === 'prorate' ? 'Potongan proporsional' : 'Gaji tetap (JLA pemantau)') + (jla.settings.payrollBasis === 'realization' ? ', dasar realisasi' : ', dasar plan')
+  // Weekly hours behind the payroll rule: the plan, or the plan scaled by realisation (see JLA > Pengaturan).
+  const hoursOf = (empId) => {
+    const a = jla.categories[empId] === 'Guru' ? jlaAdjustment(empId, 0, period) : null
+    return a ? { total: a.hours, target: a.target, achieved: a.hours >= a.target - 0.0001, basis: a.basis } : null
+  }
   const [period, setPeriod] = useState(() => {
     const d = new Date()
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`

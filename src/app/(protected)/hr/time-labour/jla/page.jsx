@@ -5,10 +5,12 @@ import { useStructureStore } from '@/store/structureStore'
 import { useJlaStore, WORKER_CATEGORIES, PAYROLL_MODES } from '@/store/jlaStore'
 import { DAYS, toMin, toHHMM, findConflict, fmtHours, durationHours, weekSummary } from '@/lib/jla'
 import JlaBoard from '@/components/jla/JlaBoard'
+import JlaRealizationBoard from '@/components/jla/JlaRealizationBoard'
 import { PageHeader, SectionCard, FormField, Input, Select, ActionButton, StatusBadge } from '@/components/ui'
 
 const TABS = [
-  { key: 'ringkasan', label: 'Ringkasan' },
+  { key: 'ringkasan', label: 'Ringkasan (Plan)' },
+  { key: 'realisasi', label: 'Realisasi' },
   { key: 'pengaturan', label: 'Pengaturan' },
   { key: 'kategori', label: 'Kategori Pekerja' },
   { key: 'mengajar', label: 'Jadwal Mengajar' },
@@ -32,6 +34,7 @@ export default function HrJlaPage() {
         ))}
       </div>
       {tab === 'ringkasan' && <JlaBoard scope='all' />}
+      {tab === 'realisasi' && <JlaRealizationBoard scope='all' />}
       {tab === 'pengaturan' && <SettingsTab />}
       {tab === 'kategori' && <CategoryTab />}
       {tab === 'mengajar' && <TeachingTab />}
@@ -83,6 +86,30 @@ function SettingsTab() {
             </label>
           ))}
           <p className='text-xs text-gray-400'>Setelah mengganti mode, buka Payroll Run dan klik "Hitung Ulang dari JLA" untuk periode Draft.</p>
+        </div>
+      </SectionCard>
+
+      <SectionCard title='Realisasi' icon='✅' subtitle='Plan dibandingkan dengan absensi dan konfirmasi guru'>
+        <div className='space-y-3'>
+          {[
+            ['plan', 'Payroll memakai jam plan', 'Potongan proporsional dihitung dari jam plan (jadwal mengajar dan task), seperti sebelumnya.'],
+            ['realization', 'Payroll memakai jam realisasi', 'Jam plan dikalikan persentase realisasi bulan payroll (konfirmasi guru, atau absensi bila tidak dikonfirmasi). Berlaku untuk mode potongan proporsional.'],
+          ].map(([v, title, hint]) => (
+            <label key={v}
+              className={`flex cursor-pointer gap-3 rounded-xl border p-4 transition ${(settings.payrollBasis || 'plan') === v ? 'border-teal-300 bg-teal-50' : 'border-gray-200 hover:bg-gray-50'}`}>
+              <input type='radio' name='payrollBasis' className='mt-1 h-4 w-4 accent-teal-700' checked={(settings.payrollBasis || 'plan') === v}
+                onChange={() => updateSettings({ payrollBasis: v })} />
+              <span>
+                <span className='block text-sm font-semibold text-gray-800'>{title}</span>
+                <span className='block text-xs text-gray-500'>{hint}</span>
+              </span>
+            </label>
+          ))}
+          <FormField label='Batas konfirmasi guru (hari ke belakang)' hint='Guru bisa mengonfirmasi realisasi sampai sekian hari setelah tanggalnya. Default 7.'>
+            <Input type='number' min={1} max={31} className='max-w-[120px]' value={settings.confirmWindowDays || 7}
+              onChange={e => updateSettings({ confirmWindowDays: Math.max(1, Math.min(31, Math.floor(Number(e.target.value) || 7))) })} />
+          </FormField>
+          <p className='text-xs text-gray-400'>Setelah mengganti dasar payroll, buka Payroll Run dan klik "Hitung Ulang dari JLA" untuk periode Draft.</p>
         </div>
       </SectionCard>
 

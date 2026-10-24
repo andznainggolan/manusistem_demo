@@ -1,11 +1,11 @@
 'use client'
 import { useMemo, useState } from 'react'
-import { useAuthStore } from '@/store/authStore'
 import { useEmployeeStore } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useJlaStore } from '@/store/jlaStore'
 import { DAYS, toMin, toHHMM, fmtHours, durationHours, weekSummary, freeHoursInWindow, isFreeOn } from '@/lib/jla'
 import WeekGrid from '@/components/jla/WeekGrid'
+import { useJlaAuthority } from '@/components/jla/useJlaAuthority'
 import { StatCard, SectionCard, ActionButton, StatusBadge, EmptyState, FormField, Select, Input } from '@/components/ui'
 
 const dayLabel = (key) => DAYS.find(d => d.key === key)?.label || key
@@ -17,23 +17,12 @@ function timeOptions(windowStart, windowEnd) {
 }
 
 export default function JlaBoard({ scope = 'unit' }) {
-  const { currentUser } = useAuthStore()
   const { employees } = useEmployeeStore()
   const { departments, positions } = useStructureStore()
   const { settings, taskTypes, categories, teachingBlocks, tasks, addTasks, updateTask, deleteTask } = useJlaStore()
 
-  const viewer = employees.find(e => e.id === currentUser?.id)
-  const viewerPosition = positions.find(p => p.id === viewer?.positionId)?.name || ''
-  const buOf = (emp) => departments.find(d => d.id === emp.departmentId)?.businessUnitId
+  const { currentUser, viewer, buOf, canManage: canEditEmp } = useJlaAuthority()
   const seesAll = scope === 'all' || currentUser?.role === 'superadmin' || currentUser?.role?.startsWith('hr')
-  const isPrincipal = viewerPosition.startsWith('Kepala Sekolah')
-  // Tasks are assigned by the principal of the teacher's unit, by the teacher's
-  // direct supervisor, or by an administrator.
-  const canEditEmp = (emp) => !!emp && (
-    currentUser?.role === 'superadmin'
-    || (isPrincipal && buOf(emp) === buOf(viewer || {}))
-    || emp.managerId === currentUser?.id
-  )
 
   const target = settings.targetHours
   const teachers = useMemo(() => employees
