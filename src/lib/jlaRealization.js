@@ -45,12 +45,20 @@ export const weekKey = (empId, monday) => `${empId}|${monday}`
 export function planForWeek(empId, monday, blocks, tasks, weeks = {}) {
   const ov = weeks[weekKey(empId, monday)]
   if (ov) return { blocks: ov.blocks, tasks: ov.tasks, override: true }
-  const friday = addDays(monday, 4)
+  // The planning view shows the whole default pattern for any week. (Realisation, in
+  // occurrencesFor, only counts a default task from the day it was created.)
   return {
     blocks: blocks.filter(b => b.employeeId === empId),
-    tasks: tasks.filter(t => t.employeeId === empId && (!t.createdAt || String(t.createdAt).slice(0, 10) <= friday)),
+    tasks: tasks.filter(t => t.employeeId === empId),
     override: false,
   }
+}
+
+/** The week to open by default: this week, or the coming one on Saturday and Sunday. */
+export const activeMonday = (today) => {
+  const dow = new Date(`${today}T00:00:00`).getDay()
+  const m = mondayOf(today)
+  return dow === 0 || dow === 6 ? addDays(m, 7) : m
 }
 
 /** Plan items of one teacher on one date, in time order. */

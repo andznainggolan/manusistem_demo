@@ -5,7 +5,7 @@ import { useStructureStore } from '@/store/structureStore'
 import { useJlaStore } from '@/store/jlaStore'
 import { useJlaWeekStore } from '@/store/jlaWeekStore'
 import { localDateStr } from '@/lib/workSchedule'
-import { mondayOf, addDays, weekDates, planForWeek, weekKey } from '@/lib/jlaRealization'
+import { mondayOf, activeMonday, addDays, weekDates, planForWeek } from '@/lib/jlaRealization'
 import { DAYS, toMin, toHHMM, fmtHours, durationHours, weekSummary, freeHoursInWindow, isFreeOn } from '@/lib/jla'
 import WeekGrid from '@/components/jla/WeekGrid'
 import { useJlaAuthority } from '@/components/jla/useJlaAuthority'
@@ -40,7 +40,7 @@ export default function JlaBoard({ scope = 'unit' }) {
   const [now, setNow] = useState(null)   // the clock only exists in the browser
   useEffect(() => { setNow(new Date()) }, [])
   const [monday, setMonday] = useState(null)
-  useEffect(() => { if (now) setMonday(m => m || mondayOf(localDateStr(now))) }, [now])
+  useEffect(() => { if (now) setMonday(m => m || activeMonday(localDateStr(now))) }, [now])
   const today = now ? localDateStr(now) : null
   const weekly = view === 'weekly' && !!monday
   const dates = weekly ? weekDates(monday) : null
@@ -155,7 +155,7 @@ export default function JlaBoard({ scope = 'unit' }) {
             <ActionButton size='sm' variant='secondary' onClick={() => setMonday(addDays(monday, -7))} aria-label='Minggu sebelumnya'>‹</ActionButton>
             <span className='min-w-[190px] text-center text-sm font-bold text-gray-800' data-testid='week-label'>{fmtRange(monday)}</span>
             <ActionButton size='sm' variant='secondary' onClick={() => setMonday(addDays(monday, 7))} aria-label='Minggu berikutnya'>›</ActionButton>
-            <ActionButton size='sm' variant='secondary' disabled={monday === mondayOf(today)} onClick={() => setMonday(mondayOf(today))}>Minggu ini</ActionButton>
+            <ActionButton size='sm' variant='secondary' disabled={monday === activeMonday(today)} onClick={() => setMonday(activeMonday(today))}>{activeMonday(today) === mondayOf(today) ? 'Minggu ini' : 'Minggu depan'}</ActionButton>
             <input type='date' value={monday} onChange={e => e.target.value && setMonday(mondayOf(e.target.value))} aria-label='Lompat ke tanggal'
               className='rounded-xl border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-gray-700' />
           </div>
