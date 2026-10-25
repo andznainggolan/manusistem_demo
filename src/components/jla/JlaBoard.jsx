@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useEmployeeStore } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useJlaStore } from '@/store/jlaStore'
-import { useJlaWeekStore } from '@/store/jlaWeekStore'
+import { useJlaDraft } from '@/store/jlaDraft'
 import { localDateStr } from '@/lib/workSchedule'
 import { mondayOf, activeMonday, addDays, weekDates, planForWeek } from '@/lib/jlaRealization'
 import { DAYS, toMin, toHHMM, fmtHours, durationHours, weekSummary, freeHoursInWindow, isFreeOn } from '@/lib/jla'
@@ -28,9 +28,12 @@ function timeOptions(windowStart, windowEnd) {
 export default function JlaBoard({ scope = 'unit' }) {
   const { employees } = useEmployeeStore()
   const { departments, positions } = useStructureStore()
-  const { settings, taskTypes, categories, teachingBlocks, tasks, addTasks, updateTask, deleteTask, deleteTeachingBlock, clearWeek } = useJlaStore()
+  const { settings, taskTypes, categories } = useJlaStore()
+  // Everything on the calendar edits a draft copy; Simpan writes it to the saved plans.
+  const draft = useJlaDraft()
+  const { teachingBlocks, tasks, addTasks, updateTask, deleteTask, deleteTeachingBlock, clearWeek } = draft.jla
 
-  const wk = useJlaWeekStore()
+  const wk = draft.wk
   const weeks = wk.weeks
 
   const { currentUser, viewer, buOf, canManage: canEditEmp } = useJlaAuthority()
@@ -140,10 +143,19 @@ export default function JlaBoard({ scope = 'unit' }) {
     wk.copyFromPrevious(selected.emp.id, monday, tplOf(selected.emp.id))
   }
 
-  if (view === 'weekly' && !monday) return null
+  if (!draft.ready || (view === 'weekly' && !monday)) return null
 
   return (
     <div>
+      {draft.dirty && (
+        <div className='sticky top-2 z-30 mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-amber-50 px-4 py-3 shadow-md ring-1 ring-amber-300' data-testid='draft-bar'>
+          <span className='text-sm font-semibold text-amber-900'>Ada perubahan yang belum disimpan. Perubahan baru berlaku setelah Anda klik Simpan.</span>
+          <div className='flex gap-2'>
+            <ActionButton size='sm' variant='secondary' onClick={draft.discard}>Buang Perubahan</ActionButton>
+            <ActionButton size='sm' onClick={draft.save}>Simpan</ActionButton>
+          </div>
+        </div>
+      )}
       <div className='mb-6 flex flex-wrap items-center justify-between gap-3'>
         <div className='inline-flex rounded-xl bg-gray-100 p-1'>
           {[['weekly', 'Kalender Mingguan'], ['default', 'Default per Guru']].map(([k, label]) => (
@@ -417,7 +429,7 @@ export default function JlaBoard({ scope = 'unit' }) {
             <div className='mt-5 flex gap-2'>
               {form.id && <ActionButton variant='danger' onClick={() => { doDeleteTask(selected.emp.id, form.id); setForm(null) }}>Hapus</ActionButton>}
               <ActionButton variant='secondary' className='flex-1' onClick={() => setForm(null)}>Batal</ActionButton>
-              <ActionButton className='flex-1' onClick={save}>Simpan</ActionButton>
+              <ActionButton className='flex-1' onClick={save}>Terapkan</ActionButton>
             </div>
           </div>
         </div>

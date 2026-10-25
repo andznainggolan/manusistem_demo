@@ -17,8 +17,7 @@ const DEFAULT_SETTINGS = { targetHours: 40, payrollMode: 'monitor', windowStart:
 
 const nextId = (list) => list.reduce((m, x) => Math.max(m, x.id), 0) + 1
 
-export const useJlaStore = create(persist(
-  (set, get) => ({
+export const jlaCreator = (set, get) => ({
     settings: { ...DEFAULT_SETTINGS },
     taskTypes: (IS_SCHOOL ? SCHOOL_JLA_TASK_TYPES : []).map(x => ({ ...x })),
     categories: IS_SCHOOL ? { ...SCHOOL_WORKER_CATEGORIES } : {},
@@ -85,7 +84,10 @@ export const useJlaStore = create(persist(
       return { ok: true }
     },
     deleteTask: (id) => set(s => ({ tasks: s.tasks.filter(t => t.id !== id) })),
-  }),
+})
+
+export const useJlaStore = create(persist(
+  jlaCreator,
   {
     name: 'hcm-jla-v1',
     storage: createJSONStorage(() => dbStorage),

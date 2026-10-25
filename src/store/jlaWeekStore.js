@@ -21,8 +21,7 @@ function materialize(weeks, empId, monday, tpl) {
   return { blocks: copy(p.blocks), tasks: copy(p.tasks) }
 }
 
-export const useJlaWeekStore = create(persist(
-  (set, get) => {
+export const weekCreator = (set, get) => {
     const put = (empId, monday, plan) => set(s => ({ weeks: { ...s.weeks, [weekKey(empId, monday)]: plan } }))
     return {
       weeks: {},
@@ -94,6 +93,9 @@ export const useJlaWeekStore = create(persist(
         put(empId, monday, { blocks: copy(prev.blocks), tasks: copy(prev.tasks) })
       },
     }
-  },
+}
+
+export const useJlaWeekStore = create(persist(
+  weekCreator,
   { name: 'hcm-jla-weeks-v1', storage: createJSONStorage(() => dbStorage) }
 ))

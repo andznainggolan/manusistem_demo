@@ -11,6 +11,7 @@ import { localDateStr } from '@/lib/workSchedule'
 import { mondayOf, activeMonday, addDays, planForWeek, summarize, periodRange, weekdaysBetween } from '@/lib/jlaRealization'
 import { downloadTemplate, downloadTeacherPlan, downloadSummary, planRows, readTemplate, validateRows, groupItems, JENIS } from '@/lib/jlaExcel'
 import { useJlaAuthority } from '@/components/jla/useJlaAuthority'
+import { useJlaDraft } from '@/store/jlaDraft'
 import { SectionCard, ActionButton, StatusBadge, FormField, Select, Input, StatCard } from '@/components/ui'
 
 const PERIODS = [['week', 'Minggu ini'], ['lastweek', 'Minggu lalu'], ['month', 'Bulan ini'], ['lastmonth', 'Bulan lalu']]
@@ -25,6 +26,7 @@ export default function JlaExcelBoard({ scope = 'unit' }) {
   const recs = useJlaRealStore(s => s.records)
   const attendance = useAttendanceStore(s => s.records)
   const { currentUser, viewer, buOf, canImport } = useJlaAuthority()
+  const draft = useJlaDraft()
   const seesAll = scope === 'all' || currentUser?.role === 'superadmin' || currentUser?.role?.startsWith('hr')
 
   const [now, setNow] = useState(null)
@@ -215,8 +217,9 @@ export default function JlaExcelBoard({ scope = 'unit' }) {
                 </tbody>
               </table>
             </div>
+            {draft.dirty && <p className='mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800'>Ada perubahan kalender yang belum disimpan. Simpan atau buang dulu di Kalender Mingguan sebelum mengimpor.</p>}
             <div className='mt-4 flex gap-2'>
-              <ActionButton disabled={!okGroups.length} onClick={doImport}>Impor {okGroups.length} Jadwal Guru</ActionButton>
+              <ActionButton disabled={!okGroups.length || draft.dirty} onClick={doImport}>Impor {okGroups.length} Jadwal Guru</ActionButton>
               <ActionButton variant='secondary' onClick={() => setRaw(null)}>Batal</ActionButton>
             </div>
           </div>
