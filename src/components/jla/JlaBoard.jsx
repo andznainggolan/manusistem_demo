@@ -288,6 +288,13 @@ export default function JlaBoard({ scope = 'unit' }) {
                   Waktu kosong dalam jam kerja ({settings.windowStart}-{settings.windowEnd}): <b>{fmtHours(free)} jam</b> per minggu.
                   {canEdit && ' Klik area kosong untuk menambah task; klik sebuah blok untuk menghapus atau mengubahnya.'}
                 </p>
+                {weekly && (
+                  <div className='mb-3 flex items-center justify-between gap-2' data-testid='grid-week-nav'>
+                    <ActionButton size='sm' variant='secondary' onClick={() => setMonday(addDays(monday, -7))}>‹ Minggu Sebelumnya</ActionButton>
+                    <span className='text-sm font-bold text-gray-800'>{fmtRange(monday)}</span>
+                    <ActionButton size='sm' variant='secondary' onClick={() => setMonday(addDays(monday, 7))}>Minggu Berikutnya ›</ActionButton>
+                  </div>
+                )}
                 <WeekGrid
                   blocks={selPlan.blocks}
                   tasks={selPlan.tasks}
