@@ -321,6 +321,19 @@ export const useStructureStore = create(persist((set) => ({
   // a duplicate.
   name: 'hcm-structure-headcounts-v1',
   storage: createJSONStorage(() => dbStorage),
+  // School demo: saved data from before the sample teachers (employee ids 42+) existed gets their
+  // seats added, with fresh ids so nothing collides with seats created in the meantime.
+  merge: (persisted, current) => {
+    const merged = { ...current, ...persisted }
+    if (!IS_SCHOOL || !Array.isArray(persisted?.headcounts)) return merged
+    const seated = new Set(persisted.headcounts.map(h => h.employeeId).filter(Boolean))
+    let nid = Math.max(0, ...persisted.headcounts.map(h => Number(h.id) || 0)) + 1
+    const extra = SCHOOL_HEADCOUNTS.filter(h => h.employeeId > 41 && !seated.has(h.employeeId))
+      .map(h => ({ ...h, id: nid, code: `HC${String(nid++).padStart(3, '0')}` }))
+    _hcId = Math.max(_hcId, nid)
+    merged.headcounts = [...persisted.headcounts, ...extra]
+    return merged
+  },
   partialize: (state) => (IS_SCHOOL
     ? { headcounts: state.headcounts, companies: state.companies, grades: state.grades }
     : { headcounts: state.headcounts, companies: state.companies }),

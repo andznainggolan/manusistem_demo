@@ -67,5 +67,19 @@ export const useShiftStore = create(persist(
     addAssignment:    (a) => set(st=>({ assignments: [...st.assignments, { id:_aId++, ...a }] })),
     deleteAssignment: (id)=>  set(st=>({ assignments: st.assignments.filter(a=>a.id!==id) })),
   }),
-  { name: 'hcm-shift-v1', storage: createJSONStorage(() => dbStorage) }
+  {
+    name: 'hcm-shift-v1',
+    storage: createJSONStorage(() => dbStorage),
+    // School demo: assign the sample teachers (employee ids 42+) to their schedule in saved data too.
+    merge: (persisted, current) => {
+      const merged = { ...current, ...persisted }
+      if (!IS_SCHOOL || !Array.isArray(persisted?.assignments)) return merged
+      const assigned = new Set(persisted.assignments.map(a => a.userId))
+      let nid = Math.max(0, ...persisted.assignments.map(a => Number(a.id) || 0)) + 1
+      const extra = SEED_ASSIGNMENTS.filter(a => a.userId > 41 && !assigned.has(a.userId)).map(a => ({ ...a, id: nid++ }))
+      _aId = Math.max(_aId, nid)
+      merged.assignments = [...persisted.assignments, ...extra]
+      return merged
+    },
+  }
 ))

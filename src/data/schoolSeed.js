@@ -178,7 +178,20 @@ const EMP_ROWS = [
   [39, 'Siti Aminah',            'Female', 30, 28,   'Outsource', '2022-03-01', '1989-08-08', 'Islam',   'Married'],
   [40, 'Mulyadi',                'Male',   31, 28,   'Outsource', '2020-10-05', '1984-07-13', 'Islam',   'Married'],
   [41, 'Heri Purnomo',           'Male',   32, 28,   'Permanent', '2021-09-06', '1987-03-27', 'Kristen', 'Married'],
+  // Sample teams: each principal has teachers reporting to them. SD: four class teachers under the
+  // SD principal (6). SMP and SMA: teachers reporting directly to the principal (7, 8), besides the
+  // deputy principal's team. Ids start after the original 41 so earlier saved data stays valid.
+  [42, 'Antonia Kristiani',      'Female', 8,  6,    'Permanent', '2019-07-15', '1991-02-19', 'Katolik', 'Married'],
+  [43, 'Fransiskus Dani',        'Male',   8,  6,    'Permanent', '2020-07-20', '1992-08-30', 'Katolik', 'Single'],
+  [44, 'Maria Goretti Sinta',    'Female', 8,  6,    'Permanent', '2022-07-18', '1994-05-12', 'Katolik', 'Single'],
+  [45, 'Robertus Aji',           'Male',   8,  6,    'Contract',  '2025-07-14', '1997-11-03', 'Katolik', 'Single'],
+  [46, 'Yustina Maharani',       'Female', 13, 7,    'Permanent', '2021-07-19', '1993-09-21', 'Katolik', 'Married'],
+  [47, 'Thomas Aquino Putra',    'Male',   14, 7,    'Contract',  '2025-07-14', '1999-01-15', 'Katolik', 'Single'],
+  [48, 'Stanislaus Bagas',       'Male',   17, 8,    'Permanent', '2018-07-16', '1988-04-08', 'Katolik', 'Married'],
+  [49, 'Veronica Ayuningtyas',   'Female', 18, 8,    'Permanent', '2020-07-20', '1990-12-02', 'Katolik', 'Married'],
+  [50, 'Petrus Dwi Nugroho',     'Male',   19, 8,    'Contract',  '2025-07-14', '1998-06-26', 'Katolik', 'Single'],
 ]
+const BASE_EMPLOYEE_MAX_ID = 41
 
 const posById = Object.fromEntries(SCHOOL_POSITIONS.map(p => [p.id, p]))
 const deptById = Object.fromEntries(SCHOOL_DEPARTMENTS.map(d => [d.id, d]))
@@ -195,6 +208,8 @@ const USERNAME_BY_ID = {
   24: 'pastoral', 25: 'guru-agama', 27: 'konselor',
   28: 'kepala-tu', 29: 'staf-tu', 30: 'pustakawan', 31: 'kepala-keuangan', 32: 'staf-keuangan',
   33: 'hr', 34: 'hrofficer', 35: 'kebersihan', 36: 'satpam', 37: 'driver', 38: 'admin',
+  42: 'guru-sd2', 43: 'guru-sd3', 44: 'guru-sd4', 45: 'guru-sd5',
+  46: 'guru-ipa-smp', 47: 'honorer-smp', 48: 'guru-mat-sma2', 49: 'guru-fisika2', 50: 'honorer-sma',
 }
 const ROLE_BY_ID = {
   38: 'superadmin', 33: 'hr', 34: 'hr_officer',
@@ -250,12 +265,16 @@ function buildHeadcounts() {
   }
   const seatOfEmp = {}
   SCHOOL_POSITIONS.forEach(p => {
-    SCHOOL_EMPLOYEES.filter(e => e.positionId === p.id).forEach(e => {
+    SCHOOL_EMPLOYEES.filter(e => e.positionId === p.id && e.id <= BASE_EMPLOYEE_MAX_ID).forEach(e => {
       seats.push({ positionId: p.id, name: nextName(p.id), employeeId: e.id, supervisorEmp: e.managerId })
     })
     VACANT_SEATS.filter(([pid]) => pid === p.id).forEach(([, sup]) => {
       seats.push({ positionId: p.id, name: nextName(p.id), employeeId: null, supervisorEmp: sup })
     })
+  })
+  // Sample teachers added later get their seats after every original seat, so existing ids never shift.
+  SCHOOL_EMPLOYEES.filter(e => e.id > BASE_EMPLOYEE_MAX_ID).forEach(e => {
+    seats.push({ positionId: e.positionId, name: nextName(e.positionId), employeeId: e.id, supervisorEmp: e.managerId })
   })
   seats.forEach((s, i) => { s.id = i + 1; if (s.employeeId) seatOfEmp[s.employeeId] = s.id })
   return seats.map(s => ({
@@ -463,7 +482,7 @@ export const SCHOOL_VIP_SESSIONS = [
 // ─── Job Load Analysis (JLA) ─────────────────────────────────────────────────
 // Guru = pendidik dengan jam mengajar tetap; target minimal 40 jam/minggu, sisa
 // jam diisi task oleh kepala sekolah. Employee = tenaga kependidikan/umum.
-const GURU_IDS = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27]
+const GURU_IDS = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 42, 43, 44, 45, 46, 47, 48, 49, 50]
 export const SCHOOL_WORKER_CATEGORIES = Object.fromEntries(
   SCHOOL_EMPLOYEES.map(e => [e.id, GURU_IDS.includes(e.id) ? 'Guru' : 'Employee'])
 )
@@ -500,6 +519,16 @@ const TEACHING = [
   [25, WEEK, [['07:30', '10:30', 'Pendidikan Agama Katolik'], ['11:00', '13:00', 'Pendidikan Agama Katolik']]],
   [26, WEEK, [['08:00', '11:00', 'Pendidikan Agama Katolik'], ['12:00', '14:00', 'Pendidikan Agama Katolik']]],
   [27, WEEK, [['08:00', '12:00', 'Bimbingan Konseling']]],
+  // sample teachers
+  [42, WEEK, [['07:00', '10:00', 'Kelas 1A'], ['10:30', '13:00', 'Kelas 1A']]],
+  [43, WEEK, [['07:00', '10:00', 'Kelas 2B'], ['10:30', '13:30', 'Kelas 2B']]],
+  [44, WEEK, [['07:00', '10:00', 'Kelas 4A'], ['10:30', '14:00', 'Kelas 4A']]],
+  [45, WEEK, [['07:00', '10:00', 'Kelas 6B'], ['10:30', '13:00', 'Kelas 6B']]],
+  [46, WEEK, [['08:00', '11:00', 'IPA 7A-7C'], ['12:00', '14:00', 'IPA 8D']]],
+  [47, ['Tuesday', 'Thursday'], [['08:00', '13:00', 'Seni Musik 7-9']]],
+  [48, WEEK, [['07:00', '09:00', 'Matematika 10'], ['10:00', '12:00', 'Matematika 11 IPS'], ['13:00', '15:00', 'Matematika Peminatan 12']]],
+  [49, WEEK, [['08:00', '11:00', 'Fisika 10'], ['13:00', '15:00', 'Praktikum Laboratorium Fisika']]],
+  [50, ['Monday', 'Wednesday', 'Friday'], [['08:00', '13:00', 'Bahasa Indonesia 10-12']]],
 ]
 export const SCHOOL_TEACHING_BLOCKS = (() => {
   const out = []

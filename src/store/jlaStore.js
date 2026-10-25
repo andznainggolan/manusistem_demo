@@ -93,11 +93,21 @@ export const useJlaStore = create(persist(
     storage: createJSONStorage(() => dbStorage),
     // v1 -> v2: stored school data gains the "teach another subject" task type
     // without losing the tasks and settings already saved.
-    version: 2,
+    version: 3,
     migrate: (state, version) => {
       if (version < 2 && IS_SCHOOL && state?.taskTypes && !state.taskTypes.some(t => t.teaching)) {
         const seed = SCHOOL_JLA_TASK_TYPES.find(t => t.teaching)
         if (seed) state.taskTypes = [...state.taskTypes, { ...seed, id: nextId(state.taskTypes) }]
+      }
+      // v2 -> v3: the sample teachers (employee ids 42+) get their category and weekly timetable.
+      if (version < 3 && IS_SCHOOL && state) {
+        const cats = { ...(state.categories || {}) }
+        Object.entries(SCHOOL_WORKER_CATEGORIES).forEach(([id, c]) => { if (Number(id) > 41 && !(id in cats)) cats[id] = c })
+        state.categories = cats
+        const blocks = state.teachingBlocks || []
+        const have = new Set(blocks.map(b => b.employeeId))
+        let nid = nextId(blocks)
+        state.teachingBlocks = [...blocks, ...SCHOOL_TEACHING_BLOCKS.filter(b => b.employeeId > 41 && !have.has(b.employeeId)).map(b => ({ ...b, id: nid++ }))]
       }
       return state
     },
