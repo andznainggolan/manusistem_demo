@@ -186,7 +186,7 @@ export default function JlaBoard({ scope = 'unit' }) {
 
       {!anyEditable && (
         <div className='mb-4 rounded-xl bg-amber-50 px-4 py-2.5 text-xs text-amber-800 ring-1 ring-amber-200'>
-          Mode lihat saja. Task ditambahkan oleh kepala sekolah untuk guru di unitnya, atau oleh atasan langsung guru.
+          Mode lihat saja. Jadwal dan task guru hanya bisa diatur oleh atasannya (langsung maupun di atasnya).
         </div>
       )}
 
@@ -280,7 +280,7 @@ export default function JlaBoard({ scope = 'unit' }) {
               <SectionCard
                 title={selected.emp.name}
                 icon='🗓️'
-                subtitle={`${positionName(selected.emp)} · ${selected.emp.department}${weekly ? ` · ${selPlan.override ? 'Disesuaikan khusus minggu ini' : 'Mengikuti pola default'}` : ' · Pola default'}`}
+                subtitle={`${positionName(selected.emp)} · ${selected.emp.department}${weekly ? ` · ${selPlan.override ? 'Disesuaikan khusus minggu ini' : 'Mengikuti pola default'}` : ' · Pola default'}${canEdit ? '' : ' · Lihat saja'}`}
                 actions={(
                   <>
                     <ActionButton size='sm' variant='secondary' onClick={() => downloadTeacherPlan({ emp: selected.emp, plan: selPlan, monday: weekly ? monday : '', typeName, settings, positionName, target })}>Unduh Excel</ActionButton>

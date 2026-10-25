@@ -204,7 +204,7 @@ export function validateRows(raw, ctx, mode) {
     if (!x.nik) errors.push('NIK kosong')
     else if (!emp) errors.push('NIK tidak ditemukan')
     else if (ctx.categories[emp.id] !== 'Guru') errors.push('Bukan pekerja kategori Guru')
-    else if (!ctx.canImport(emp)) errors.push('Di luar wewenang Anda (bukan unit Anda)')
+    else if (!ctx.canImport(emp)) errors.push('Di luar wewenang Anda (bukan bawahan Anda)')
     const kind = JENIS_ALIAS[norm(x.jenis)]
     if (!kind) errors.push('Jenis tidak dikenal (Mengajar Tetap, Task, atau Mengajar Perbantuan)')
     const day = DAY_ALIAS[norm(x.hari)]
