@@ -25,7 +25,7 @@ export default function JlaExcelBoard({ scope = 'unit' }) {
   const wk = useJlaWeekStore()
   const recs = useJlaRealStore(s => s.records)
   const attendance = useAttendanceStore(s => s.records)
-  const { currentUser, viewer, buOf, canImport, isAdmin, isHr } = useJlaAuthority()
+  const { currentUser, viewer, buOf, canImport, importsAll } = useJlaAuthority(scope)
   const draft = useJlaDraft()
   const seesAll = scope === 'all' || currentUser?.role === 'superadmin' || currentUser?.role?.startsWith('hr')
 
@@ -168,7 +168,7 @@ export default function JlaExcelBoard({ scope = 'unit' }) {
         </div>
         <p className='mt-1 text-xs text-gray-400'>
           {mode === 'replace' ? 'Jadwal guru pada pola default atau minggu yang ada di file diganti seluruhnya oleh isi file.' : 'Baris file ditambahkan; jadwal yang sudah ada dipertahankan dan tidak boleh bertumpuk.'}
-          {isAdmin || isHr ? '' : ' Anda hanya bisa mengimpor jadwal guru yang menjadi bawahan Anda.'}
+          {importsAll ? '' : ' Anda hanya bisa mengimpor jadwal guru yang menjadi bawahan Anda.'}
         </p>
         {error && <p className='mt-3 rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-600'>{error}</p>}
         {done && (

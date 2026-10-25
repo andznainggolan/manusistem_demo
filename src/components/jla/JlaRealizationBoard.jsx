@@ -37,7 +37,7 @@ export default function JlaRealizationBoard({ scope = 'unit' }) {
   const { records: recs, validate } = useJlaRealStore()
   const attendance = useAttendanceStore(s => s.records)
   const weeks = useJlaWeekStore(s => s.weeks)
-  const { currentUser, viewer, buOf, canManage } = useJlaAuthority()
+  const { currentUser, viewer, buOf, canManage } = useJlaAuthority(scope)
 
   const [now, setNow] = useState(null)
   useEffect(() => { setNow(new Date()) }, [])

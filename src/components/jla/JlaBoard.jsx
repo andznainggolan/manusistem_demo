@@ -36,7 +36,7 @@ export default function JlaBoard({ scope = 'unit' }) {
   const wk = draft.wk
   const weeks = wk.weeks
 
-  const { currentUser, viewer, buOf, canManage: canEditEmp } = useJlaAuthority()
+  const { currentUser, viewer, buOf, canManage: canEditEmp } = useJlaAuthority(scope)
   const seesAll = scope === 'all' || currentUser?.role === 'superadmin' || currentUser?.role?.startsWith('hr')
 
   // 'weekly': a dated calendar week that may differ from the default pattern; 'default': the pattern itself.
@@ -187,6 +187,7 @@ export default function JlaBoard({ scope = 'unit' }) {
       {!anyEditable && (
         <div className='mb-4 rounded-xl bg-amber-50 px-4 py-2.5 text-xs text-amber-800 ring-1 ring-amber-200'>
           Mode lihat saja. Jadwal dan task guru hanya bisa diatur oleh atasannya (langsung maupun di atasnya).
+          {scope === 'unit' && currentUser?.role === 'superadmin' && ' Admin mengatur semua guru dari HR Administration > Job Load Analysis.'}
         </div>
       )}
 
