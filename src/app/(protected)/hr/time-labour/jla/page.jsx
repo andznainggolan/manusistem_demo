@@ -7,6 +7,7 @@ import { DAYS, toMin, toHHMM, findConflict, fmtHours, durationHours, weekSummary
 import JlaBoard from '@/components/jla/JlaBoard'
 import JlaRealizationBoard from '@/components/jla/JlaRealizationBoard'
 import JlaExcelBoard from '@/components/jla/JlaExcelBoard'
+import { useJlaDraft } from '@/store/jlaDraft'
 import { PageHeader, SectionCard, FormField, Input, Select, ActionButton, StatusBadge } from '@/components/ui'
 
 const TABS = [
@@ -20,6 +21,7 @@ const TABS = [
 
 export default function HrJlaPage() {
   const [tab, setTab] = useState('ringkasan')
+  const draft = useJlaDraft()
   return (
     <div>
       <PageHeader
@@ -31,7 +33,7 @@ export default function HrJlaPage() {
         {TABS.map(t => (
           <button key={t.key} onClick={() => setTab(t.key)}
             className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${tab === t.key ? 'bg-[#052B52] text-white shadow' : 'bg-white text-gray-600 ring-1 ring-gray-200 hover:bg-gray-50'}`}>
-            {t.label}
+            {t.label}{t.key === 'ringkasan' && draft.dirty ? ' •' : ''}
           </button>
         ))}
       </div>

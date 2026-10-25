@@ -1,16 +1,6 @@
 'use client'
-import { PageHeader } from '@/components/ui'
-import JlaRealizationBoard from '@/components/jla/JlaRealizationBoard'
+import MssJlaTabs from '@/components/jla/MssJlaTabs'
 
-export default function MssJlaRealizationPage() {
-  return (
-    <div>
-      <PageHeader
-        icon='📊'
-        title='Realisasi JLA'
-        subtitle='Bandingkan plan dengan realisasi jam mengajar dan task guru, lalu validasi konfirmasi yang melebihi bukti absensi.'
-      />
-      <JlaRealizationBoard scope='unit' />
-    </div>
-  )
+export default function MssJlaPage() {
+  return <MssJlaTabs initialTab='realisasi' />
 }
