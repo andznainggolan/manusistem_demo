@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation'
 import { useEmployeeStore }  from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useT } from '@/store/languageStore'
+import { useAuthStore } from '@/store/authStore'
+import { HR_ROLES, TALENT_ONLY_ROLES } from '@/constants/roles'
+import { ESS_GROUPS, MSS_GROUPS, LMS_GROUPS, HR_GROUPS, SA_GROUPS } from '@/components/layout/Sidebar'
 
 // ─── Static page index ────────────────────────────────────────────────────────
 const PAGES = [
@@ -90,10 +93,65 @@ const PAGES = [
   { label: 'Career Site',               href: '/sysadmin/branding/career-site',                icon: '🌐', section: 'System Administration' },
 ]
 
+// Every sidebar menu page, flattened. The static PAGES above keep their own labels; this adds
+// whatever the menu has and PAGES does not (new pages, profile-specific pages such as JLA).
+const PORTALS = [
+  { id: 'ess', name: 'Employee Self-Service', icon: '👤', groups: ESS_GROUPS },
+  { id: 'mss', name: 'Manager Self-Service',  icon: '👥', groups: MSS_GROUPS },
+  { id: 'lms', name: 'Learning',              icon: '📚', groups: LMS_GROUPS },
+  { id: 'hr',  name: 'HR Administration',     icon: '🏢', groups: HR_GROUPS },
+  { id: 'sa',  name: 'System Administration', icon: '⚙️', groups: SA_GROUPS },
+]
+// Extra words a page can be found by besides its label (abbreviations, Indonesian terms).
+const KEYWORDS = {
+  '/ess/job-load': 'jla job load analysis beban kerja realisasi',
+  '/mss/jla': 'jla job load analysis beban kerja realisasi import export excel',
+  '/hr/time-labour/jla': 'jla job load analysis beban kerja realisasi import export excel',
+  '/hr/time-labour/geofencing': 'geofence lokasi gps radius clock in',
+  '/hr/time-labour/time-settings': 'toleransi terlambat pulang cepat approval alpa',
+  '/mss/approve-attendance': 'approval terlambat pulang cepat alpa',
+}
+const STATIC_HREFS = new Set(PAGES.map(p => p.href))
+const MENU_PAGES = (() => {
+  const seen = new Set(STATIC_HREFS)
+  const out = []
+  PORTALS.forEach(portal => portal.groups.forEach(g => {
+    const entries = g.isParent
+      ? (g.subGroups || []).flatMap(sg => sg.items.map(it => ({ it, where: `${g.title} · ${sg.title}` })))
+      : (g.items || []).map(it => ({ it, where: g.title }))
+    entries.forEach(({ it, where }) => {
+      if (seen.has(it.href)) return
+      seen.add(it.href)
+      out.push({ label: it.label, href: it.href, icon: portal.icon, section: `${portal.name} · ${where}`, portal: portal.id })
+    })
+  }))
+  return out
+})()
+
 export default function GlobalSearch() {
   const t      = useT()
   const router = useRouter()
   const { employees } = useEmployeeStore()
+  const { currentUser } = useAuthStore()
+
+  // Same access rules as the sidebar: only pages of portals the account can open.
+  const role = currentUser?.role
+  const fullHR = HR_ROLES.includes(role)
+  const talentOnly = TALENT_ONLY_ROLES.includes(role)
+  const canHR  = fullHR || talentOnly
+  const canSA  = role === 'superadmin'
+  const canMgr = role === 'manager' || canSA || employees.some(e => e.managerId === currentUser?.id)
+  const canOpen = (p) => {
+    if (p.portal === 'mss') return canMgr
+    if (p.portal === 'sa')  return canSA
+    if (p.portal === 'hr')  return fullHR || (talentOnly && p.section.includes('Talent Management'))
+    if (p.portal) return true
+    if (p.href === '/hr/emergency-sos') return canHR || canMgr
+    if (p.href.startsWith('/hr'))       return fullHR || (talentOnly && p.href.startsWith('/hr/talent'))
+    if (p.href.startsWith('/mss'))      return canMgr
+    if (p.href.startsWith('/sysadmin')) return canSA
+    return true
+  }
   const { positions, departments, companies } = useStructureStore()
 
   const posName     = (id) => positions.find(p  => p.id  === +id)?.name       || ''
@@ -112,10 +170,9 @@ export default function GlobalSearch() {
 
   const q = query.trim().toLowerCase()
 
-  const matchedPages = q.length < 1 ? [] : PAGES.filter(p =>
-    p.label.toLowerCase().includes(q) ||
-    p.section.toLowerCase().includes(q)
-  ).slice(0, 6)
+  const matchedPages = q.length < 1 ? [] : [...PAGES, ...MENU_PAGES].filter(p =>
+    canOpen(p) && (p.label.toLowerCase().includes(q) || p.section.toLowerCase().includes(q) || (KEYWORDS[p.href] || '').includes(q))
+  ).slice(0, 8)
 
   const matchedEmps = q.length < 1 ? [] : employees.filter(e =>
     e.name.toLowerCase().includes(q) ||

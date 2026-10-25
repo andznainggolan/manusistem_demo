@@ -329,6 +329,10 @@ const SA_GROUPS = [
   ]},
 ]
 
+// The quick search (GlobalSearch) builds its page index from these, so a page added to the
+// menu is searchable without a second list to keep up to date.
+export { ESS_GROUPS, MSS_GROUPS, LMS_GROUPS, HR_GROUPS, SA_GROUPS }
+
 // ─── Restricted-account filtering ─────────────────────────────────────────────
 // When an `allow` list (path prefixes) is passed, the sidebar keeps only the
 // menu items the account may reach — empty groups and empty sections drop out —
