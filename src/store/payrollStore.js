@@ -10,6 +10,7 @@ import { useJlaStore } from './jlaStore'
 import { weekSummary } from '@/lib/jla'
 import { useAttendanceStore } from './attendanceStore'
 import { useJlaRealStore } from './jlaRealStore'
+import { useJlaWeekStore } from './jlaWeekStore'
 import { summarize, monthRange, weekdaysBetween } from '@/lib/jlaRealization'
 
 const SEED_PAYSLIP_INPUTS = IS_SCHOOL ? [] : [
@@ -84,7 +85,7 @@ export function jlaAdjustment(empId, basic, period) {
   if (basis === 'realization') {
     const { from, to } = monthRange(period)
     const real = summarize(empId, weekdaysBetween(from, to), {
-      blocks: teachingBlocks, tasks, attendance: useAttendanceStore.getState().records,
+      blocks: teachingBlocks, tasks, weeks: useJlaWeekStore.getState().weeks, attendance: useAttendanceStore.getState().records,
       recs: useJlaRealStore.getState().records,
       typeName: (id) => taskTypes.find(t => t.id === id)?.name || 'Task',
     })

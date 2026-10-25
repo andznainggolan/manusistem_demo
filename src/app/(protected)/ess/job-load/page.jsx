@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react'
 import { useAuthStore } from '@/store/authStore'
 import { useJlaStore } from '@/store/jlaStore'
 import { useJlaRealStore } from '@/store/jlaRealStore'
+import { useJlaWeekStore } from '@/store/jlaWeekStore'
 import { useAttendanceStore } from '@/store/attendanceStore'
 import { fmtHours, weekSummary, toMin } from '@/lib/jla'
 import { localDateStr } from '@/lib/workSchedule'
-import { occurrencesFor, evaluateItem, summarize, periodRange, weekdaysBetween, recKey, STATUS_LABEL, SOURCE_LABEL } from '@/lib/jlaRealization'
+import { occurrencesFor, evaluateItem, summarize, periodRange, weekdaysBetween, recKey, mondayOf, weekDates, planForWeek, STATUS_LABEL, SOURCE_LABEL } from '@/lib/jlaRealization'
 import WeekGrid from '@/components/jla/WeekGrid'
 import { PageHeader, StatCard, SectionCard, EmptyState, StatusBadge, ActionButton, FormField, Input } from '@/components/ui'
 
@@ -18,10 +19,9 @@ export default function MyJobLoadPage() {
   const { settings, taskTypes, categories, teachingBlocks, tasks } = useJlaStore()
   const { records: recs, confirm } = useJlaRealStore()
   const attendance = useAttendanceStore(s => s.records)
+  const weeks = useJlaWeekStore(s => s.weeks)
   const uid = currentUser?.id
   const isGuru = categories[uid] === 'Guru'
-  const sum = weekSummary(uid, teachingBlocks, tasks, settings.targetHours)
-  const mine = (list) => list.filter(x => x.employeeId === uid)
 
   const [now, setNow] = useState(null)        // null on the server: the clock only exists in the browser
   useEffect(() => { setNow(new Date()) }, [])
@@ -43,10 +43,14 @@ export default function MyJobLoadPage() {
 
   const att = date ? attendance.find(r => r.userId === uid && r.date === date) || null : null
   const onLeave = att?.status === 'Leave'
-  const items = date && !onLeave ? occurrencesFor(uid, date, teachingBlocks, tasks, typeName) : []
+  const items = date && !onLeave ? occurrencesFor(uid, date, teachingBlocks, tasks, typeName, weeks) : []
   const ended = (item) => date !== today || toMin(item.end) <= nowMin
 
-  const ctx = { blocks: teachingBlocks, tasks, attendance, recs, typeName, now: now || new Date() }
+  const ctx = { blocks: teachingBlocks, tasks, weeks, attendance, recs, typeName, now: now || new Date() }
+  // This week's plan: a week-specific one if the supervisor adjusted it, otherwise the default pattern.
+  const monday = today ? mondayOf(today) : null
+  const plan = monday ? planForWeek(uid, monday, teachingBlocks, tasks, weeks) : { blocks: [], tasks: [], override: false }
+  const sum = weekSummary(uid, plan.blocks, plan.tasks, settings.targetHours)
   const weekRange = periodRange('week', now || new Date())
   const weekReal = now ? summarize(uid, weekdaysBetween(weekRange.from, weekRange.to), ctx) : null
 
@@ -84,10 +88,12 @@ export default function MyJobLoadPage() {
             <StatCard tone={sum.achieved ? 'green' : 'orange'} icon='⏱️' label={`Total plan / target ${settings.targetHours}`} value={`${fmtHours(sum.total)} jam`} />
             <StatCard tone={sum.achieved ? 'green' : 'purple'} icon={sum.achieved ? '✅' : '🕒'} label={sum.achieved ? 'Status plan' : 'Plan masih kurang'} value={sum.achieved ? 'Tercapai' : `${fmtHours(sum.gap)} jam`} />
           </div>
-          <SectionCard title='Jadwal Minggu Ini (Plan)' icon='🗓️' className='mb-6'>
+          <SectionCard title='Jadwal Minggu Ini (Plan)' icon='🗓️' className='mb-6'
+            subtitle={plan.override ? 'Disesuaikan khusus minggu ini oleh atasan' : 'Mengikuti pola default'}>
             <WeekGrid
-              blocks={mine(teachingBlocks)} tasks={mine(tasks)} taskTypes={taskTypes}
+              blocks={plan.blocks} tasks={plan.tasks} taskTypes={taskTypes}
               windowStart={settings.windowStart} windowEnd={settings.windowEnd} editable={false}
+              dates={monday ? weekDates(monday) : null} today={today}
             />
           </SectionCard>
 

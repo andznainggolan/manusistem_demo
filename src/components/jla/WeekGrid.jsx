@@ -5,7 +5,9 @@ const PX_PER_HOUR = 44
 
 // Weekly timetable: teaching blocks (blue), tasks (teal), free time is empty
 // and clickable when `editable`. Clicking a free spot calls onFreeClick(day, 'HH:MM').
-export default function WeekGrid({ blocks, tasks, taskTypes, windowStart, windowEnd, editable, onFreeClick, onTaskClick, onBlockClick }) {
+// `dates` (5 'YYYY-MM-DD', Monday first) turns the weekday headers into a dated calendar week;
+// `today` highlights that column.
+export default function WeekGrid({ blocks, tasks, taskTypes, windowStart, windowEnd, editable, onFreeClick, onTaskClick, onBlockClick, dates = null, today = null }) {
   const ws = toMin(windowStart), we = toMin(windowEnd)
   const hours = []
   for (let m = ws; m < we; m += 60) hours.push(m)
@@ -27,9 +29,22 @@ export default function WeekGrid({ blocks, tasks, taskTypes, windowStart, window
       <div className='min-w-[640px]'>
         <div className='grid' style={{ gridTemplateColumns: '48px repeat(5, minmax(0, 1fr))' }}>
           <div />
-          {DAYS.map(d => (
-            <div key={d.key} className='pb-2 text-center text-xs font-bold uppercase tracking-wide text-gray-500'>{d.label}</div>
-          ))}
+          {DAYS.map((d, i) => {
+            const date = dates?.[i]
+            const hours = [...blocks, ...tasks].filter(x => x.day === d.key).reduce((sum, x) => sum + durationHours(x.start, x.end), 0)
+            const isToday = date && date === today
+            return (
+              <div key={d.key} className='pb-2 text-center'>
+                <div className={`text-xs font-bold uppercase tracking-wide ${isToday ? 'text-teal-700' : 'text-gray-500'}`}>{d.label}</div>
+                {date && (
+                  <div className={`mx-auto mt-0.5 w-fit rounded-full px-2 text-[11px] font-semibold ${isToday ? 'bg-teal-600 text-white' : 'text-gray-500'}`}>
+                    {new Date(`${date}T00:00:00`).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                  </div>
+                )}
+                <div className='mt-0.5 text-[10px] font-medium text-gray-400'>{hours > 0 ? `${fmtHours(hours)} jam` : '-'}</div>
+              </div>
+            )
+          })}
         </div>
         <div className='grid' style={{ gridTemplateColumns: '48px repeat(5, minmax(0, 1fr))' }}>
           <div className='relative' style={{ height }}>
@@ -42,7 +57,7 @@ export default function WeekGrid({ blocks, tasks, taskTypes, windowStart, window
           {DAYS.map(d => (
             <div
               key={d.key}
-              className={`relative border-l border-gray-100 ${editable ? 'cursor-copy hover:bg-teal-50/40' : ''}`}
+              className={`relative border-l border-gray-100 ${dates && dates[DAYS.findIndex(x => x.key === d.key)] === today ? 'bg-teal-50/30' : ''} ${editable ? 'cursor-copy hover:bg-teal-50/40' : ''}`}
               style={{ height }}
               onClick={(e) => handleFree(e, d.key)}
               title={editable ? 'Klik area kosong untuk menambah task' : undefined}

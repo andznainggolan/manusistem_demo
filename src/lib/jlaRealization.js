@@ -23,15 +23,47 @@ export const SOURCE_LABEL = {
   ditolak: 'Validasi ditolak (absensi)',
 }
 
+export const mondayOf = (date) => {
+  const d = new Date(`${date}T00:00:00`)
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7))
+  return localDateStr(d)
+}
+export const addDays = (date, n) => {
+  const d = new Date(`${date}T00:00:00`)
+  d.setDate(d.getDate() + n)
+  return localDateStr(d)
+}
+/** Monday..Friday dates of the week that starts on `monday`. */
+export const weekDates = (monday) => [0, 1, 2, 3, 4].map(n => addDays(monday, n))
+export const weekKey = (empId, monday) => `${empId}|${monday}`
+
+/**
+ * The plan that applies to a teacher in the week starting `monday`:
+ * a week-specific plan when one was saved, otherwise the default weekly pattern.
+ * `weeks` is the week store's map. Returns { blocks, tasks, override }.
+ */
+export function planForWeek(empId, monday, blocks, tasks, weeks = {}) {
+  const ov = weeks[weekKey(empId, monday)]
+  if (ov) return { blocks: ov.blocks, tasks: ov.tasks, override: true }
+  const friday = addDays(monday, 4)
+  return {
+    blocks: blocks.filter(b => b.employeeId === empId),
+    tasks: tasks.filter(t => t.employeeId === empId && (!t.createdAt || String(t.createdAt).slice(0, 10) <= friday)),
+    override: false,
+  }
+}
+
 /** Plan items of one teacher on one date, in time order. */
-export function occurrencesFor(empId, date, blocks, tasks, typeName = () => 'Task') {
+export function occurrencesFor(empId, date, blocks, tasks, typeName = () => 'Task', weeks = {}) {
   const day = dayKeyOf(date)
+  const ov = weeks[weekKey(empId, mondayOf(date))]
+  if (ov) { blocks = ov.blocks; tasks = ov.tasks }   // a week-specific plan replaces the default pattern
   const items = []
   blocks.filter(b => b.employeeId === empId && b.day === day).forEach(b => items.push({
     key: itemKey('b', b.id), kind: 'block', id: b.id, start: b.start, end: b.end, label: b.label,
     teaching: true, hours: durationHours(b.start, b.end),
   }))
-  tasks.filter(t => t.employeeId === empId && t.day === day && (!t.createdAt || date >= String(t.createdAt).slice(0, 10))).forEach(t => items.push({
+  tasks.filter(t => t.employeeId === empId && t.day === day && (ov || !t.createdAt || date >= String(t.createdAt).slice(0, 10))).forEach(t => items.push({
     key: itemKey('t', t.id), kind: 'task', id: t.id, start: t.start, end: t.end,
     label: t.teaching && t.subject ? t.subject : typeName(t.taskTypeId), teaching: !!t.teaching,
     hours: durationHours(t.start, t.end),
@@ -85,7 +117,7 @@ export function weekdaysBetween(from, to) {
 /**
  * Plan vs realisation for one teacher over some dates. Only items that have already
  * ended count; days of approved leave are excused.
- * ctx = { blocks, tasks, attendance, recs, typeName, now }
+ * ctx = { blocks, tasks, weeks, attendance, recs, typeName, now }
  */
 export function summarize(empId, dates, ctx) {
   const now = ctx.now || new Date()
@@ -96,7 +128,7 @@ export function summarize(empId, dates, ctx) {
     if (date > today) return
     const att = ctx.attendance.find(r => r.userId === empId && r.date === date) || null
     if (att?.status === 'Leave') return
-    occurrencesFor(empId, date, ctx.blocks, ctx.tasks, ctx.typeName).forEach(item => {
+    occurrencesFor(empId, date, ctx.blocks, ctx.tasks, ctx.typeName, ctx.weeks).forEach(item => {
       if (date === today && toMin(item.end) > nowMin) return
       const rec = ctx.recs[recKey(empId, date, item.key)] || null
       const ev = evaluateItem(item, rec, att, date, now)

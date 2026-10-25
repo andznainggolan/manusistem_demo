@@ -4,6 +4,7 @@ import { useEmployeeStore } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useJlaStore } from '@/store/jlaStore'
 import { useJlaRealStore } from '@/store/jlaRealStore'
+import { useJlaWeekStore } from '@/store/jlaWeekStore'
 import { useAttendanceStore } from '@/store/attendanceStore'
 import { fmtHours } from '@/lib/jla'
 import { localDateStr } from '@/lib/workSchedule'
@@ -34,6 +35,7 @@ export default function JlaRealizationBoard({ scope = 'unit' }) {
   const { settings, taskTypes, categories, teachingBlocks, tasks } = useJlaStore()
   const { records: recs, validate } = useJlaRealStore()
   const attendance = useAttendanceStore(s => s.records)
+  const weeks = useJlaWeekStore(s => s.weeks)
   const { currentUser, viewer, buOf, canManage } = useJlaAuthority()
 
   const [now, setNow] = useState(null)
@@ -53,13 +55,13 @@ export default function JlaRealizationBoard({ scope = 'unit' }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [employees, categories, seesAll, viewer?.id, departments])
 
-  const ctx = { blocks: teachingBlocks, tasks, attendance, recs, typeName, now: now || new Date() }
+  const ctx = { blocks: teachingBlocks, tasks, weeks, attendance, recs, typeName, now: now || new Date() }
   const range = now ? periodRange(period, now) : null
   const dates = range ? weekdaysBetween(range.from, range.to) : []
 
   const rows = useMemo(() => !now ? [] : teachers.map(emp => ({ emp, ...summarize(emp.id, dates, ctx) })),
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  [teachers, period, now, teachingBlocks, tasks, attendance, recs])
+  [teachers, period, now, teachingBlocks, tasks, weeks, attendance, recs])
 
   // Validation queue looks back a month regardless of the report period.
   const queue = useMemo(() => {
@@ -70,7 +72,7 @@ export default function JlaRealizationBoard({ scope = 'unit' }) {
       summarize(emp.id, span, ctx).rows.filter(r => r.needsValidation).map(r => ({ ...r, emp })))
       .sort((a, b) => b.date.localeCompare(a.date))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [teachers, now, teachingBlocks, tasks, attendance, recs, viewer?.id])
+  }, [teachers, now, teachingBlocks, tasks, weeks, attendance, recs, viewer?.id])
 
   const totalPlan = rows.reduce((s, r) => s + r.planned, 0)
   const totalReal = rows.reduce((s, r) => s + r.realized, 0)

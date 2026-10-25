@@ -1,14 +1,22 @@
 'use client'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useEmployeeStore } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useJlaStore } from '@/store/jlaStore'
+import { useJlaWeekStore } from '@/store/jlaWeekStore'
+import { localDateStr } from '@/lib/workSchedule'
+import { mondayOf, addDays, weekDates, planForWeek, weekKey } from '@/lib/jlaRealization'
 import { DAYS, toMin, toHHMM, fmtHours, durationHours, weekSummary, freeHoursInWindow, isFreeOn } from '@/lib/jla'
 import WeekGrid from '@/components/jla/WeekGrid'
 import { useJlaAuthority } from '@/components/jla/useJlaAuthority'
 import { StatCard, SectionCard, ActionButton, StatusBadge, EmptyState, FormField, Select, Input } from '@/components/ui'
 
 const dayLabel = (key) => DAYS.find(d => d.key === key)?.label || key
+
+const fmtRange = (monday) => {
+  const a = new Date(`${monday}T00:00:00`), b = new Date(`${addDays(monday, 4)}T00:00:00`)
+  return `${a.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} - ${b.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`
+}
 
 function timeOptions(windowStart, windowEnd) {
   const out = []
@@ -21,16 +29,35 @@ export default function JlaBoard({ scope = 'unit' }) {
   const { departments, positions } = useStructureStore()
   const { settings, taskTypes, categories, teachingBlocks, tasks, addTasks, updateTask, deleteTask, deleteTeachingBlock, clearWeek } = useJlaStore()
 
+  const wk = useJlaWeekStore()
+  const weeks = wk.weeks
+
   const { currentUser, viewer, buOf, canManage: canEditEmp } = useJlaAuthority()
   const seesAll = scope === 'all' || currentUser?.role === 'superadmin' || currentUser?.role?.startsWith('hr')
+
+  // 'weekly': a dated calendar week that may differ from the default pattern; 'default': the pattern itself.
+  const [view, setView] = useState('weekly')
+  const [now, setNow] = useState(null)   // the clock only exists in the browser
+  useEffect(() => { setNow(new Date()) }, [])
+  const [monday, setMonday] = useState(null)
+  useEffect(() => { if (now) setMonday(m => m || mondayOf(localDateStr(now))) }, [now])
+  const today = now ? localDateStr(now) : null
+  const weekly = view === 'weekly' && !!monday
+  const dates = weekly ? weekDates(monday) : null
+
+  const planOf = (empId) => weekly
+    ? planForWeek(empId, monday, teachingBlocks, tasks, weeks)
+    : { blocks: teachingBlocks.filter(b => b.employeeId === empId), tasks: tasks.filter(t => t.employeeId === empId), override: false }
+  // The default pattern of one teacher, copied into a week the first time that week is edited.
+  const tplOf = (empId) => ({ blocks: teachingBlocks.filter(b => b.employeeId === empId), tasks: tasks.filter(t => t.employeeId === empId) })
 
   const target = settings.targetHours
   const teachers = useMemo(() => employees
     .filter(e => e.status === 'Active' && categories[e.id] === 'Guru' && (seesAll || buOf(e) === buOf(viewer || {})))
-    .map(e => ({ emp: e, sum: weekSummary(e.id, teachingBlocks, tasks, target) }))
+    .map(e => { const pl = planOf(e.id); return { emp: e, override: pl.override, sum: weekSummary(e.id, pl.blocks, pl.tasks, target) } })
     .sort((a, b) => b.sum.gap - a.sum.gap || a.emp.name.localeCompare(b.emp.name)),
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  [employees, categories, teachingBlocks, tasks, target, seesAll, viewer?.id, departments])
+  [employees, categories, teachingBlocks, tasks, weeks, weekly, monday, target, seesAll, viewer?.id, departments])
 
   const [selectedId, setSelectedId] = useState(null)
   const selected = teachers.find(t => t.emp.id === selectedId) || teachers[0] || null
@@ -47,10 +74,12 @@ export default function JlaBoard({ scope = 'unit' }) {
   // Finder: which teachers are free in a slot, so they can be lent to another subject.
   const [finder, setFinder] = useState({ days: ['Monday'], start: '13:00', end: '15:00' })
   const finderValid = toMin(finder.end) > toMin(finder.start) && finder.days.length > 0
-  const available = useMemo(() => !finderValid ? [] : teachers.filter(t =>
-    canEditEmp(t.emp) && isFreeOn(t.emp.id, finder.days, finder.start, finder.end, teachingBlocks, tasks)),
+  const available = useMemo(() => !finderValid ? [] : teachers.filter(t => {
+    const pl = planOf(t.emp.id)
+    return canEditEmp(t.emp) && isFreeOn(t.emp.id, finder.days, finder.start, finder.end, pl.blocks, pl.tasks)
+  }),
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  [teachers, finder, finderValid, teachingBlocks, tasks, currentUser?.id, viewer?.id])
+  [teachers, finder, finderValid, teachingBlocks, tasks, weeks, weekly, monday, currentUser?.id, viewer?.id])
   const assignTo = (emp) => {
     setSelectedId(emp.id)
     const teachType = activeTypes.find(t => t.teaching)
@@ -78,8 +107,8 @@ export default function JlaBoard({ scope = 'unit' }) {
     if (isTeachingType(form.taskTypeId) && !form.subject.trim()) return setForm({ ...form, error: 'Isi mata pelajaran dan kelas yang diampu.' })
     const base = { taskTypeId: Number(form.taskTypeId), start: form.start, end: form.end, note: form.note.trim(), subject: form.subject.trim() }
     const res = form.id
-      ? updateTask(form.id, { ...base, day: form.days[0] })
-      : addTasks({ employeeId: selected.emp.id, days: form.days, ...base, createdBy: currentUser.id, createdByName: currentUser.name })
+      ? doUpdate(selected.emp.id, form.id, { ...base, day: form.days[0] })
+      : doAdd({ employeeId: selected.emp.id, days: form.days, ...base, createdBy: currentUser.id, createdByName: currentUser.name })
     if (!res.ok) {
       const c = res.error
       return setForm({ ...form, error: `Bentrok pada hari ${dayLabel(c.day)} dengan ${c.kind === 'mengajar' ? `jam mengajar (${c.label})` : 'task lain'} ${c.start}-${c.end}.` })
@@ -88,17 +117,53 @@ export default function JlaBoard({ scope = 'unit' }) {
   }
 
   const typeName = (id) => taskTypes.find(t => t.id === id)?.name || 'Task'
-  const weekBlocks = selected ? teachingBlocks.filter(b => b.employeeId === selected.emp.id) : []
-  const weekTasks = selected ? tasks.filter(t => t.employeeId === selected.emp.id) : []
+  const selPlan = selected ? planOf(selected.emp.id) : { blocks: [], tasks: [], override: false }
+  const weekBlocks = selPlan.blocks
+  const weekTasks = selPlan.tasks
   // Subject names without the class suffix ("Matematika 8A-8C" -> "Matematika"), for the suggestions list.
   const subjectOptions = [...new Set(teachingBlocks.map(b => b.label.replace(/\s+\d[\w-]*$/, '').trim()).filter(l => l && !/^(Kelas|Kelompok)$/.test(l)))].sort()
-  const selectedTasks = selected ? tasks.filter(t => t.employeeId === selected.emp.id)
+  const selectedTasks = selected ? [...selPlan.tasks]
     .sort((a, b) => DAYS.findIndex(d => d.key === a.day) - DAYS.findIndex(d => d.key === b.day) || toMin(a.start) - toMin(b.start)) : []
-  const free = selected ? freeHoursInWindow(selected.emp.id, teachingBlocks, tasks, settings.windowStart, settings.windowEnd) : 0
+  const free = selected ? freeHoursInWindow(selected.emp.id, selPlan.blocks, selPlan.tasks, settings.windowStart, settings.windowEnd) : 0
   const positionName = (e) => positions.find(p => p.id === e.positionId)?.name || e.position
+
+  // Edits go to the week-specific plan in the weekly view, to the default pattern otherwise.
+  const doAdd = (a) => weekly ? wk.addTasks(a.employeeId, monday, tplOf(a.employeeId), { ...a, teaching: isTeachingType(a.taskTypeId) }) : addTasks(a)
+  const doUpdate = (empId, id, patch) => weekly ? wk.updateTask(empId, monday, tplOf(empId), id, { ...patch, teaching: isTeachingType(patch.taskTypeId) }) : updateTask(id, patch)
+  const doDeleteTask = (empId, id) => weekly ? wk.deleteTask(empId, monday, tplOf(empId), id) : deleteTask(id)
+  const doDeleteBlock = (empId, id) => weekly ? wk.deleteBlock(empId, monday, tplOf(empId), id) : deleteTeachingBlock(id)
+  const doClear = (empId, opts) => weekly ? wk.clearWeek(empId, monday, tplOf(empId), opts) : clearWeek(empId, opts)
+  const copyPrevious = () => {
+    if (!selected) return
+    if (selPlan.override && !window.confirm('Minggu ini sudah disesuaikan. Timpa dengan salinan minggu sebelumnya?')) return
+    wk.copyFromPrevious(selected.emp.id, monday, tplOf(selected.emp.id))
+  }
+
+  if (view === 'weekly' && !monday) return null
 
   return (
     <div>
+      <div className='mb-6 flex flex-wrap items-center justify-between gap-3'>
+        <div className='inline-flex rounded-xl bg-gray-100 p-1'>
+          {[['weekly', 'Kalender Mingguan'], ['default', 'Default per Guru']].map(([k, label]) => (
+            <button key={k} type='button' onClick={() => setView(k)}
+              className={`rounded-lg px-4 py-1.5 text-sm font-semibold transition ${view === k ? 'bg-white text-[#052B52] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{label}</button>
+          ))}
+        </div>
+        {weekly ? (
+          <div className='flex flex-wrap items-center gap-2' data-testid='week-nav'>
+            <ActionButton size='sm' variant='secondary' onClick={() => setMonday(addDays(monday, -7))} aria-label='Minggu sebelumnya'>‹</ActionButton>
+            <span className='min-w-[190px] text-center text-sm font-bold text-gray-800' data-testid='week-label'>{fmtRange(monday)}</span>
+            <ActionButton size='sm' variant='secondary' onClick={() => setMonday(addDays(monday, 7))} aria-label='Minggu berikutnya'>›</ActionButton>
+            <ActionButton size='sm' variant='secondary' disabled={monday === mondayOf(today)} onClick={() => setMonday(mondayOf(today))}>Minggu ini</ActionButton>
+            <input type='date' value={monday} onChange={e => e.target.value && setMonday(mondayOf(e.target.value))} aria-label='Lompat ke tanggal'
+              className='rounded-xl border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-gray-700' />
+          </div>
+        ) : (
+          <p className='text-xs text-gray-500'>Pola default berlaku setiap minggu yang belum disesuaikan secara khusus.</p>
+        )}
+      </div>
+
       <div className='mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4'>
         <StatCard tone='brand' icon='🧑‍🏫' label='Guru dipantau' value={String(teachers.length)} />
         <StatCard tone='green' icon='✅' label={`Tercapai ${target} jam`} value={String(achievedCount)} />
@@ -202,9 +267,11 @@ export default function JlaBoard({ scope = 'unit' }) {
               <SectionCard
                 title={selected.emp.name}
                 icon='🗓️'
-                subtitle={`${positionName(selected.emp)} · ${selected.emp.department}`}
+                subtitle={`${positionName(selected.emp)} · ${selected.emp.department}${weekly ? ` · ${selPlan.override ? 'Disesuaikan khusus minggu ini' : 'Mengikuti pola default'}` : ' · Pola default'}`}
                 actions={canEdit ? (
                   <>
+                    {weekly && <ActionButton size='sm' variant='secondary' onClick={copyPrevious}>Salin dari Minggu Lalu</ActionButton>}
+                    {weekly && selPlan.override && <ActionButton size='sm' variant='secondary' onClick={() => wk.resetWeek(selected.emp.id, monday)}>Kembali ke Default</ActionButton>}
                     <ActionButton size='sm' variant='secondary' disabled={weekBlocks.length + weekTasks.length === 0}
                       onClick={() => setClearDialog({ blocks: true, tasks: true })}>Kosongkan Minggu</ActionButton>
                     <ActionButton size='sm' onClick={() => openAdd('Monday', settings.windowStart)}>+ Tambah Task</ActionButton>
@@ -222,8 +289,10 @@ export default function JlaBoard({ scope = 'unit' }) {
                   {canEdit && ' Klik area kosong untuk menambah task; klik sebuah blok untuk menghapus atau mengubahnya.'}
                 </p>
                 <WeekGrid
-                  blocks={teachingBlocks.filter(b => b.employeeId === selected.emp.id)}
-                  tasks={tasks.filter(t => t.employeeId === selected.emp.id)}
+                  blocks={selPlan.blocks}
+                  tasks={selPlan.tasks}
+                  dates={dates}
+                  today={today}
                   taskTypes={taskTypes}
                   windowStart={settings.windowStart}
                   windowEnd={settings.windowEnd}
@@ -260,7 +329,7 @@ export default function JlaBoard({ scope = 'unit' }) {
                           {canEdit && (
                             <td className='px-5 py-2.5 text-right'>
                               <button onClick={() => openEdit(t)} className='mr-3 text-xs font-semibold text-teal-700 hover:underline'>Ubah</button>
-                              <button onClick={() => deleteTask(t.id)} className='text-xs font-semibold text-red-600 hover:underline'>Hapus</button>
+                              <button onClick={() => doDeleteTask(selected.emp.id, t.id)} className='text-xs font-semibold text-red-600 hover:underline'>Hapus</button>
                             </td>
                           )}
                         </tr>
@@ -281,6 +350,7 @@ export default function JlaBoard({ scope = 'unit' }) {
               <div>
                 <h3 className='text-base font-bold text-gray-800'>{form.id ? 'Ubah Task' : 'Tambah Task'}</h3>
                 <p className='text-xs text-gray-400'>{selected.emp.name} · {positionName(selected.emp)}</p>
+                <p className='text-[11px] text-teal-700'>{weekly ? `Berlaku untuk minggu ${fmtRange(monday)}` : 'Berlaku untuk pola default (setiap minggu)'}</p>
               </div>
               <button onClick={() => setForm(null)} className='text-xl font-bold leading-none text-gray-400 hover:text-gray-600'>×</button>
             </div>
@@ -334,7 +404,7 @@ export default function JlaBoard({ scope = 'unit' }) {
               </p>
             </div>
             <div className='mt-5 flex gap-2'>
-              {form.id && <ActionButton variant='danger' onClick={() => { deleteTask(form.id); setForm(null) }}>Hapus</ActionButton>}
+              {form.id && <ActionButton variant='danger' onClick={() => { doDeleteTask(selected.emp.id, form.id); setForm(null) }}>Hapus</ActionButton>}
               <ActionButton variant='secondary' className='flex-1' onClick={() => setForm(null)}>Batal</ActionButton>
               <ActionButton className='flex-1' onClick={save}>Simpan</ActionButton>
             </div>
@@ -351,10 +421,12 @@ export default function JlaBoard({ scope = 'unit' }) {
               <div className='font-semibold'>{blockDialog.label}</div>
               <div className='text-xs'>{dayLabel(blockDialog.day)}, {blockDialog.start}-{blockDialog.end} ({fmtHours(durationHours(blockDialog.start, blockDialog.end))} jam)</div>
             </div>
-            <p className='mt-3 text-xs text-gray-500'>Blok ini bagian dari jadwal mengajar tetap dan berlaku setiap minggu. Menghapusnya juga mengubah perhitungan plan dan realisasi.</p>
+            <p className='mt-3 text-xs text-gray-500'>{weekly
+              ? `Hanya berlaku untuk minggu ${fmtRange(monday)}. Pola default dan minggu lain tidak berubah.`
+              : 'Blok ini bagian dari pola default dan berlaku setiap minggu yang belum disesuaikan. Menghapusnya juga mengubah perhitungan plan dan realisasi.'}</p>
             <div className='mt-4 flex gap-2'>
               <ActionButton variant='secondary' className='flex-1' onClick={() => setBlockDialog(null)}>Batal</ActionButton>
-              <ActionButton variant='danger' className='flex-1' onClick={() => { deleteTeachingBlock(blockDialog.id); setBlockDialog(null) }}>Hapus Blok</ActionButton>
+              <ActionButton variant='danger' className='flex-1' onClick={() => { doDeleteBlock(selected.emp.id, blockDialog.id); setBlockDialog(null) }}>Hapus Blok</ActionButton>
             </div>
           </div>
         </div>
@@ -377,11 +449,13 @@ export default function JlaBoard({ scope = 'unit' }) {
                 <span><b>Task tambahan</b><span className='block text-xs text-gray-500'>{weekTasks.length} blok, termasuk mengajar perbantuan</span></span>
               </label>
             </div>
-            <p className='mt-3 text-xs text-gray-500'>Jadwal ini berlaku setiap minggu, jadi semua hari Senin sampai Jumat ikut kosong. Realisasi minggu-minggu lalu yang memakai blok ini ikut berubah. Tidak bisa dibatalkan.</p>
+            <p className='mt-3 text-xs text-gray-500'>{weekly
+              ? `Hanya minggu ${fmtRange(monday)} yang dikosongkan. Pola default dan minggu lain tidak berubah; "Kembali ke Default" mengembalikannya.`
+              : 'Ini pola default, jadi semua minggu yang belum disesuaikan ikut kosong. Realisasi minggu-minggu lalu yang memakai pola ini ikut berubah. Tidak bisa dibatalkan.'}</p>
             <div className='mt-4 flex gap-2'>
               <ActionButton variant='secondary' className='flex-1' onClick={() => setClearDialog(null)}>Batal</ActionButton>
               <ActionButton variant='danger' className='flex-1' disabled={!clearDialog.blocks && !clearDialog.tasks}
-                onClick={() => { clearWeek(selected.emp.id, { blocks: clearDialog.blocks, tasks: clearDialog.tasks }); setClearDialog(null) }}>Kosongkan</ActionButton>
+                onClick={() => { doClear(selected.emp.id, { blocks: clearDialog.blocks, tasks: clearDialog.tasks }); setClearDialog(null) }}>Kosongkan</ActionButton>
             </div>
           </div>
         </div>
