@@ -20,7 +20,7 @@ export const useGenAiSettingsStore = create(persist(
     // BYOK connector — customer's own key.
     provider: 'Anthropic',
     apiKey: '',
-    model: 'claude-sonnet-5',
+    model: 'claude-sonnet-5-5',
 
     // Embedded connector — Manusistem's own key, metered per customer.
     creditsLimit: 50,

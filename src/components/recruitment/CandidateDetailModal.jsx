@@ -3,6 +3,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRecruitmentStore, ACTIVE_STAGES } from '@/store/recruitmentStore'
 import { useCandidateDocumentStore } from '@/store/candidateDocumentStore'
 import { usePsychotestAttemptStore } from '@/store/psychotestAttemptStore'
+import { useAuthStore } from '@/store/authStore'
+import { useGenAiSettingsStore } from '@/store/genAiSettingsStore'
+import { requestCandidateScore } from '@/lib/candidateAi'
 import { useT } from '@/store/languageStore'
 import { StatusBadge } from '@/components/ui'
 
@@ -36,7 +39,10 @@ function useBlobUrl(doc) {
  */
 export default function CandidateDetailModal({ candidateId, onClose, onMove, onReject }) {
   const t = useT()
-  const { candidates, requisitions, interviews } = useRecruitmentStore()
+  const { candidates, requisitions, interviews, updateCandidate } = useRecruitmentStore()
+  const { currentUser } = useAuthStore()
+  const { mode: aiMode, creditsUsed, creditsLimit } = useGenAiSettingsStore()
+  const spendCredit = useGenAiSettingsStore(s => s.useCredit)   // a store action, not a React hook
   const { documents } = useCandidateDocumentStore()
   const { attempts } = usePsychotestAttemptStore()
 
@@ -44,6 +50,13 @@ export default function CandidateDetailModal({ candidateId, onClose, onMove, onR
   const docs = useMemo(() => documents.filter(d => d.candidateId === candidateId)
     .sort((a, b) => (isCv(b) - isCv(a)) || String(b.uploadedAt).localeCompare(String(a.uploadedAt))), [documents, candidateId])
   const [docId, setDocId] = useState(null)
+
+  // Rating by the recruiter (a person, saved explicitly) and the AI suggestion (advice only).
+  const [draftRating, setDraftRating] = useState(c?.rating || 0)
+  const [draftNote, setDraftNote] = useState(c?.ratingNote || '')
+  const [aiBusy, setAiBusy] = useState(false)
+  const [aiError, setAiError] = useState('')
+  const [showHistory, setShowHistory] = useState(false)
   const doc = docs.find(d => d.id === docId) || docs[0] || null
   const blobUrl = useBlobUrl(doc)
 
@@ -55,6 +68,25 @@ export default function CandidateDetailModal({ candidateId, onClose, onMove, onR
 
   if (!c) return null
   const req = requisitions.find(r => r.id === c.requisitionId)
+  const ratingDirty = draftRating !== (c.rating || 0) || draftNote.trim() !== (c.ratingNote || '')
+  const saveRating = () => {
+    const entry = { rating: draftRating, note: draftNote.trim(), by: currentUser?.id ?? null, byName: currentUser?.name || '', at: new Date().toISOString() }
+    updateCandidate(c.id, {
+      rating: draftRating, ratingNote: entry.note, ratedBy: entry.by, ratedByName: entry.byName, ratedAt: entry.at,
+      ratingHistory: [...(c.ratingHistory || []), entry].slice(-20),
+    })
+  }
+  const aiOutOfCredit = aiMode === 'embedded' && creditsUsed >= creditsLimit
+  const askAi = async () => {
+    setAiBusy(true); setAiError('')
+    try {
+      const cv = docs.find(isCv) || null
+      const r = await requestCandidateScore({ candidate: c, requisition: req, cv })
+      updateCandidate(c.id, { aiAssessment: { ...r, at: new Date().toISOString(), byName: currentUser?.name || '', docName: r.cvRead && cv ? cv.fileName : '' } })
+      if (aiMode === 'embedded') spendCredit(1)
+    } catch (e) { setAiError(e.message) } finally { setAiBusy(false) }
+  }
+  const ai = c.aiAssessment
   const ivs = interviews.filter(i => i.candidateId === c.id).sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`))
   const tests = attempts.filter(a => a.candidateId === c.id)
   const idx = ACTIVE_STAGES.indexOf(c.stage)
@@ -82,8 +114,91 @@ export default function CandidateDetailModal({ candidateId, onClose, onMove, onR
               <p><span className='text-gray-400'>{t('Melamar untuk', 'Applied for')}:</span> <span className='font-semibold text-gray-700'>{req?.positionTitle || '-'}</span></p>
               <p><span className='text-gray-400'>{t('Sumber', 'Source')}:</span> {c.source}</p>
               <p><span className='text-gray-400'>{t('Tanggal lamar', 'Applied date')}:</span> {c.appliedDate}</p>
-              {c.rating > 0 && <p><span className='text-gray-400'>Rating:</span> <Stars n={c.rating} /></p>}
               {c.notes && <p className='rounded-xl bg-gray-50 p-3 text-xs text-gray-600'>{c.notes}</p>}
+            </div>
+
+            <div data-testid='rating-section'>
+              <p className='mb-1.5 text-xs font-bold uppercase tracking-wide text-gray-400'>{t('Penilaian Recruiter', 'Recruiter Rating')}</p>
+              <div className='flex items-center gap-0.5'>
+                {[1, 2, 3, 4, 5].map(n => (
+                  <button key={n} type='button' aria-label={`${n} ${t('bintang', 'stars')}`} data-testid='rate-star'
+                    onClick={() => setDraftRating(draftRating === n ? 0 : n)}
+                    className={`text-2xl leading-none transition ${n <= draftRating ? 'text-amber-400' : 'text-gray-200 hover:text-amber-200'}`}>★</button>
+                ))}
+                <span className='ml-2 text-xs text-gray-400'>{draftRating ? `${draftRating}/5` : t('Belum dinilai', 'Not rated')}</span>
+              </div>
+              <textarea rows={2} value={draftNote} onChange={e => setDraftNote(e.target.value)} data-testid='rate-note'
+                placeholder={t('Catatan penilaian (opsional)', 'Rating note (optional)')}
+                className='mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 text-xs outline-none focus:border-teal-300 focus:ring-2 focus:ring-teal-100' />
+              <div className='mt-1.5 flex items-center justify-between gap-2'>
+                <span className='text-[11px] text-gray-400'>
+                  {c.ratedByName ? `${t('Dinilai oleh', 'Rated by')} ${c.ratedByName}, ${String(c.ratedAt).slice(0, 10)}`
+                    : c.rating > 0 ? t('Rating awal dari data contoh; belum ada penilai tercatat.', 'Initial rating from sample data; no rater recorded.') : ''}
+                </span>
+                <button type='button' disabled={!ratingDirty} onClick={saveRating} data-testid='rate-save'
+                  className='shrink-0 rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-40'>
+                  {t('Simpan Penilaian', 'Save Rating')}
+                </button>
+              </div>
+              {(c.ratingHistory || []).length > 0 && (
+                <div className='mt-1'>
+                  <button type='button' onClick={() => setShowHistory(v => !v)} className='text-[11px] font-semibold text-teal-700 hover:underline'>
+                    {showHistory ? t('Sembunyikan riwayat', 'Hide history') : `${t('Riwayat penilaian', 'Rating history')} (${c.ratingHistory.length})`}
+                  </button>
+                  {showHistory && (
+                    <div className='mt-1 space-y-1'>
+                      {[...c.ratingHistory].reverse().map((h, i) => (
+                        <div key={i} className='rounded-lg bg-gray-50 px-2.5 py-1.5 text-[11px] text-gray-600'>
+                          <b>{h.rating ? `${h.rating}/5` : t('Rating dihapus', 'Rating cleared')}</b> · {h.byName || '-'} · {String(h.at).slice(0, 10)}{h.note ? ` · ${h.note}` : ''}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div data-testid='ai-section'>
+              <p className='mb-1.5 text-xs font-bold uppercase tracking-wide text-gray-400'>✨ {t('Saran AI', 'AI Suggestion')}</p>
+              {aiMode === 'off' ? (
+                <p className='text-xs text-gray-400'>{t('Gen AI nonaktif. Administrator dapat mengaktifkannya di System Admin > Settings > Gen AI.', 'Gen AI is off. An administrator can enable it under System Admin > Settings > Gen AI.')}</p>
+              ) : (
+                <>
+                  <button type='button' onClick={askAi} disabled={aiBusy || aiOutOfCredit} data-testid='ai-ask'
+                    className='rounded-lg border border-violet-200 bg-violet-50 px-3 py-1.5 text-xs font-semibold text-violet-700 transition hover:bg-violet-100 disabled:cursor-not-allowed disabled:opacity-50'>
+                    {aiBusy ? t('AI sedang membaca CV…', 'AI is reading the CV…') : ai ? t('Minta Saran Ulang', 'Ask Again') : t('Minta Saran AI', 'Ask AI')}
+                  </button>
+                  <span className='ml-2 text-[11px] text-gray-400'>
+                    {docs.some(isCv) ? t('Membaca CV dan membandingkannya dengan persyaratan lowongan.', 'Reads the CV and compares it with the requisition.') : t('Belum ada CV; penilaian hanya dari catatan.', 'No CV yet; assessed from notes only.')}
+                    {aiMode === 'embedded' ? ` · ${t('kredit', 'credits')} ${creditsUsed}/${creditsLimit}` : ''}
+                  </span>
+                  {aiOutOfCredit && <p className='mt-1 text-xs text-red-600'>{t('Kredit AI habis.', 'AI credits used up.')}</p>}
+                  {aiError && <p className='mt-1 rounded-lg bg-red-50 px-2.5 py-1.5 text-xs text-red-600' data-testid='ai-error'>{aiError}</p>}
+                </>
+              )}
+              {ai && (
+                <div className='mt-2 space-y-2 rounded-xl border border-violet-100 bg-violet-50/40 p-3 text-xs' data-testid='ai-result'>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-base'><Stars n={ai.score} /> <span className='text-xs font-bold text-violet-700'>{ai.score}/5</span></span>
+                    <span className='text-[10px] font-semibold uppercase text-violet-500'>{t('Keyakinan', 'Confidence')}: {ai.confidence}</span>
+                  </div>
+                  <p className='text-gray-700'>{ai.summary}</p>
+                  {ai.strengths?.length > 0 && <div><p className='font-bold text-emerald-700'>{t('Kekuatan', 'Strengths')}</p><ul className='list-disc pl-4 text-gray-600'>{ai.strengths.map((x, i) => <li key={i}>{x}</li>)}</ul></div>}
+                  {ai.concerns?.length > 0 && <div><p className='font-bold text-amber-700'>{t('Perlu diperhatikan', 'Concerns')}</p><ul className='list-disc pl-4 text-gray-600'>{ai.concerns.map((x, i) => <li key={i}>{x}</li>)}</ul></div>}
+                  {ai.requirementsMissing?.length > 0 && <div><p className='font-bold text-red-700'>{t('Persyaratan belum terlihat', 'Requirements not evident')}</p><ul className='list-disc pl-4 text-gray-600'>{ai.requirementsMissing.map((x, i) => <li key={i}>{x}</li>)}</ul></div>}
+                  <p className='text-[10px] text-gray-400'>
+                    {ai.provider} · {ai.model} · {String(ai.at).slice(0, 10)}{ai.byName ? ` · ${ai.byName}` : ''}
+                    {ai.docName ? ` · ${t('membaca', 'read')} ${ai.docName}` : ` · ${t('CV tidak dibaca', 'CV not read')}${ai.cvNote ? ` (${ai.cvNote})` : ''}`}
+                  </p>
+                  <div className='flex items-center justify-between gap-2'>
+                    <button type='button' onClick={() => setDraftRating(ai.score)} data-testid='ai-use'
+                      className='rounded-lg border border-violet-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-violet-700 hover:bg-violet-50'>
+                      {t('Pakai sebagai rating', 'Use as rating')}
+                    </button>
+                    <span className='text-[10px] italic text-gray-400'>{t('Saran saja, bukan keputusan. Periksa CV sebelum menolak.', 'Advice only, not a decision. Check the CV before rejecting.')}</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>

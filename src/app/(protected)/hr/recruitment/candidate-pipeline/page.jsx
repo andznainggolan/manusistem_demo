@@ -48,6 +48,9 @@ function CandidateCard({ c, onMove, onReject, onOpen, employee, headcount, compa
       <p className='text-sm font-semibold text-gray-800'>{c.name}</p>
       <p className='mt-0.5 text-[11px] text-gray-400'>{c.source} · {c.appliedDate}</p>
       {c.rating > 0 && <div className='mt-1'><Stars n={c.rating} /></div>}
+      {!c.rating && c.aiAssessment && (
+        <p className='mt-1 text-[10px] font-semibold text-violet-500' title={t('Saran AI, belum dinilai recruiter', 'AI suggestion, not yet rated by a recruiter')}>✨ {t('Saran AI', 'AI')} {c.aiAssessment.score}/5</p>
+      )}
       {notesWithoutCancel && <p className='mt-1.5 line-clamp-2 text-[11px] text-gray-500'>{notesWithoutCancel}</p>}
       {cancelMatch && (
         <div className='mt-1.5 rounded-lg bg-gray-100 px-2.5 py-1.5 text-[11px] text-gray-600'>
