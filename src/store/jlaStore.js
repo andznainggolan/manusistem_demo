@@ -35,6 +35,11 @@ export const useJlaStore = create(persist(
 
     addTeachingBlock: (b) => set(s => ({ teachingBlocks: [...s.teachingBlocks, { id: nextId(s.teachingBlocks), ...b }] })),
     deleteTeachingBlock: (id) => set(s => ({ teachingBlocks: s.teachingBlocks.filter(x => x.id !== id) })),
+    // Empties one teacher's weekly calendar: fixed teaching blocks and/or tasks.
+    clearWeek: (employeeId, { blocks = true, tasks = true } = {}) => set(s => ({
+      teachingBlocks: blocks ? s.teachingBlocks.filter(b => b.employeeId !== employeeId) : s.teachingBlocks,
+      tasks: tasks ? s.tasks.filter(t => t.employeeId !== employeeId) : s.tasks,
+    })),
 
     // days: array of day keys. Returns { ok, error }. Nothing is saved when any day conflicts.
     addTasks: ({ employeeId, days, start, end, taskTypeId, note, subject = '', createdBy, createdByName }) => {

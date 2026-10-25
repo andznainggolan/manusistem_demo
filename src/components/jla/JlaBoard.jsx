@@ -19,7 +19,7 @@ function timeOptions(windowStart, windowEnd) {
 export default function JlaBoard({ scope = 'unit' }) {
   const { employees } = useEmployeeStore()
   const { departments, positions } = useStructureStore()
-  const { settings, taskTypes, categories, teachingBlocks, tasks, addTasks, updateTask, deleteTask } = useJlaStore()
+  const { settings, taskTypes, categories, teachingBlocks, tasks, addTasks, updateTask, deleteTask, deleteTeachingBlock, clearWeek } = useJlaStore()
 
   const { currentUser, viewer, buOf, canManage: canEditEmp } = useJlaAuthority()
   const seesAll = scope === 'all' || currentUser?.role === 'superadmin' || currentUser?.role?.startsWith('hr')
@@ -38,6 +38,8 @@ export default function JlaBoard({ scope = 'unit' }) {
   const anyEditable = teachers.some(t => canEditEmp(t.emp))
 
   const [form, setForm] = useState(null) // { id?, taskTypeId, days, start, end, subject, note, error }
+  const [blockDialog, setBlockDialog] = useState(null) // a fixed teaching block clicked on the calendar
+  const [clearDialog, setClearDialog] = useState(null) // { blocks, tasks } checkboxes
   const options = timeOptions(settings.windowStart, settings.windowEnd)
   const activeTypes = taskTypes.filter(t => t.active)
   const isTeachingType = (id) => !!taskTypes.find(t => String(t.id) === String(id))?.teaching
@@ -86,6 +88,8 @@ export default function JlaBoard({ scope = 'unit' }) {
   }
 
   const typeName = (id) => taskTypes.find(t => t.id === id)?.name || 'Task'
+  const weekBlocks = selected ? teachingBlocks.filter(b => b.employeeId === selected.emp.id) : []
+  const weekTasks = selected ? tasks.filter(t => t.employeeId === selected.emp.id) : []
   // Subject names without the class suffix ("Matematika 8A-8C" -> "Matematika"), for the suggestions list.
   const subjectOptions = [...new Set(teachingBlocks.map(b => b.label.replace(/\s+\d[\w-]*$/, '').trim()).filter(l => l && !/^(Kelas|Kelompok)$/.test(l)))].sort()
   const selectedTasks = selected ? tasks.filter(t => t.employeeId === selected.emp.id)
@@ -200,7 +204,11 @@ export default function JlaBoard({ scope = 'unit' }) {
                 icon='🗓️'
                 subtitle={`${positionName(selected.emp)} · ${selected.emp.department}`}
                 actions={canEdit ? (
-                  <ActionButton size='sm' onClick={() => openAdd('Monday', settings.windowStart)}>+ Tambah Task</ActionButton>
+                  <>
+                    <ActionButton size='sm' variant='secondary' disabled={weekBlocks.length + weekTasks.length === 0}
+                      onClick={() => setClearDialog({ blocks: true, tasks: true })}>Kosongkan Minggu</ActionButton>
+                    <ActionButton size='sm' onClick={() => openAdd('Monday', settings.windowStart)}>+ Tambah Task</ActionButton>
+                  </>
                 ) : null}
               >
                 <div className='mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4'>
@@ -211,7 +219,7 @@ export default function JlaBoard({ scope = 'unit' }) {
                 </div>
                 <p className='mb-3 text-xs text-gray-500'>
                   Waktu kosong dalam jam kerja ({settings.windowStart}-{settings.windowEnd}): <b>{fmtHours(free)} jam</b> per minggu.
-                  {canEdit && ' Klik area kosong pada jadwal untuk menambah task.'}
+                  {canEdit && ' Klik area kosong untuk menambah task; klik sebuah blok untuk menghapus atau mengubahnya.'}
                 </p>
                 <WeekGrid
                   blocks={teachingBlocks.filter(b => b.employeeId === selected.emp.id)}
@@ -222,6 +230,7 @@ export default function JlaBoard({ scope = 'unit' }) {
                   editable={canEdit}
                   onFreeClick={openAdd}
                   onTaskClick={openEdit}
+                  onBlockClick={setBlockDialog}
                 />
               </SectionCard>
 
@@ -325,8 +334,54 @@ export default function JlaBoard({ scope = 'unit' }) {
               </p>
             </div>
             <div className='mt-5 flex gap-2'>
+              {form.id && <ActionButton variant='danger' onClick={() => { deleteTask(form.id); setForm(null) }}>Hapus</ActionButton>}
               <ActionButton variant='secondary' className='flex-1' onClick={() => setForm(null)}>Batal</ActionButton>
               <ActionButton className='flex-1' onClick={save}>Simpan</ActionButton>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {blockDialog && selected && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4' onClick={() => setBlockDialog(null)}>
+          <div className='w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl' onClick={e => e.stopPropagation()}>
+            <h3 className='text-base font-bold text-gray-800'>Blok jam mengajar</h3>
+            <p className='mb-3 text-xs text-gray-400'>{selected.emp.name} · {positionName(selected.emp)}</p>
+            <div className='rounded-xl bg-sky-50 px-4 py-3 text-sm text-sky-900'>
+              <div className='font-semibold'>{blockDialog.label}</div>
+              <div className='text-xs'>{dayLabel(blockDialog.day)}, {blockDialog.start}-{blockDialog.end} ({fmtHours(durationHours(blockDialog.start, blockDialog.end))} jam)</div>
+            </div>
+            <p className='mt-3 text-xs text-gray-500'>Blok ini bagian dari jadwal mengajar tetap dan berlaku setiap minggu. Menghapusnya juga mengubah perhitungan plan dan realisasi.</p>
+            <div className='mt-4 flex gap-2'>
+              <ActionButton variant='secondary' className='flex-1' onClick={() => setBlockDialog(null)}>Batal</ActionButton>
+              <ActionButton variant='danger' className='flex-1' onClick={() => { deleteTeachingBlock(blockDialog.id); setBlockDialog(null) }}>Hapus Blok</ActionButton>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {clearDialog && selected && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4' onClick={() => setClearDialog(null)}>
+          <div className='w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl' onClick={e => e.stopPropagation()}>
+            <h3 className='text-base font-bold text-gray-800'>Kosongkan jadwal minggu</h3>
+            <p className='mb-3 text-xs text-gray-400'>{selected.emp.name} · {positionName(selected.emp)}</p>
+            <div className='space-y-2'>
+              <label className='flex cursor-pointer items-start gap-2 rounded-xl border border-gray-200 p-3 text-sm'>
+                <input type='checkbox' className='mt-0.5 accent-red-600' checked={clearDialog.blocks} disabled={weekBlocks.length === 0}
+                  onChange={e => setClearDialog({ ...clearDialog, blocks: e.target.checked })} />
+                <span><b>Jam mengajar tetap</b><span className='block text-xs text-gray-500'>{weekBlocks.length} blok ({fmtHours(weekBlocks.reduce((s, b) => s + durationHours(b.start, b.end), 0))} jam)</span></span>
+              </label>
+              <label className='flex cursor-pointer items-start gap-2 rounded-xl border border-gray-200 p-3 text-sm'>
+                <input type='checkbox' className='mt-0.5 accent-red-600' checked={clearDialog.tasks} disabled={weekTasks.length === 0}
+                  onChange={e => setClearDialog({ ...clearDialog, tasks: e.target.checked })} />
+                <span><b>Task tambahan</b><span className='block text-xs text-gray-500'>{weekTasks.length} blok, termasuk mengajar perbantuan</span></span>
+              </label>
+            </div>
+            <p className='mt-3 text-xs text-gray-500'>Jadwal ini berlaku setiap minggu, jadi semua hari Senin sampai Jumat ikut kosong. Realisasi minggu-minggu lalu yang memakai blok ini ikut berubah. Tidak bisa dibatalkan.</p>
+            <div className='mt-4 flex gap-2'>
+              <ActionButton variant='secondary' className='flex-1' onClick={() => setClearDialog(null)}>Batal</ActionButton>
+              <ActionButton variant='danger' className='flex-1' disabled={!clearDialog.blocks && !clearDialog.tasks}
+                onClick={() => { clearWeek(selected.emp.id, { blocks: clearDialog.blocks, tasks: clearDialog.tasks }); setClearDialog(null) }}>Kosongkan</ActionButton>
             </div>
           </div>
         </div>

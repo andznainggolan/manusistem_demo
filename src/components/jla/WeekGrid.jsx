@@ -5,7 +5,7 @@ const PX_PER_HOUR = 44
 
 // Weekly timetable: teaching blocks (blue), tasks (teal), free time is empty
 // and clickable when `editable`. Clicking a free spot calls onFreeClick(day, 'HH:MM').
-export default function WeekGrid({ blocks, tasks, taskTypes, windowStart, windowEnd, editable, onFreeClick, onTaskClick }) {
+export default function WeekGrid({ blocks, tasks, taskTypes, windowStart, windowEnd, editable, onFreeClick, onTaskClick, onBlockClick }) {
   const ws = toMin(windowStart), we = toMin(windowEnd)
   const hours = []
   for (let m = ws; m < we; m += 60) hours.push(m)
@@ -53,9 +53,10 @@ export default function WeekGrid({ blocks, tasks, taskTypes, windowStart, window
               {blocks.filter(b => b.day === d.key).map(b => (
                 <div
                   key={`b${b.id}`}
-                  className='absolute inset-x-0.5 overflow-hidden rounded-md bg-sky-100 px-1.5 py-0.5 text-[11px] leading-tight text-sky-900 ring-1 ring-sky-200'
+                  className={`absolute inset-x-0.5 overflow-hidden rounded-md bg-sky-100 px-1.5 py-0.5 text-[11px] leading-tight text-sky-900 ring-1 ring-sky-200 ${editable && onBlockClick ? 'cursor-pointer hover:bg-sky-200' : ''}`}
                   style={{ top: topOf(b.start), height: heightOf(b.start, b.end) - 2 }}
-                  onClick={(e) => e.stopPropagation()}
+                  title={editable && onBlockClick ? 'Klik untuk menghapus blok ini' : undefined}
+                  onClick={(e) => { e.stopPropagation(); if (editable && onBlockClick) onBlockClick(b) }}
                 >
                   <div className='font-semibold'>{b.start}-{b.end}</div>
                   <div className='truncate'>{b.label}</div>
