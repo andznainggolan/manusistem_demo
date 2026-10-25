@@ -6,6 +6,7 @@ import { useStructureStore } from '@/store/structureStore'
 import { useEmployeeStore } from '@/store/employeeStore'
 import { useT } from '@/store/languageStore'
 import { PageHeader, Select, SearchBar, StatusBadge, EmptyState } from '@/components/ui'
+import CandidateDetailModal from '@/components/recruitment/CandidateDetailModal'
 
 // Caps a column's height so hundreds of candidates in one stage scroll
 // within their own column instead of stretching the whole page.
@@ -31,7 +32,7 @@ const Stars = ({ n }) => (
 // line-clamped notes blob.
 const CANCEL_NOTE_RE = /\s*\[(?:Employment dibatalkan|Employment cancelled): ([^\]]+)\]/
 
-function CandidateCard({ c, onMove, onReject, employee, headcount, companyName, t }) {
+function CandidateCard({ c, onMove, onReject, onOpen, employee, headcount, companyName, t }) {
   const idx = ACTIVE_STAGES.indexOf(c.stage)
   const next = c.stage === 'Rejected' ? null : ACTIVE_STAGES[idx + 1]
   // Rejected has no recorded prior stage (any active stage can reject), so
@@ -41,7 +42,9 @@ function CandidateCard({ c, onMove, onReject, employee, headcount, companyName, 
   const cancelMatch = c.notes && c.notes.match(CANCEL_NOTE_RE)
   const notesWithoutCancel = c.notes ? c.notes.replace(CANCEL_NOTE_RE, '').trim() : ''
   return (
-    <div className='rounded-xl border border-gray-100 bg-white p-3 shadow-sm'>
+    <div role='button' tabIndex={0} onClick={() => onOpen(c)} onKeyDown={e => { if (e.key === 'Enter') onOpen(c) }}
+      title={t('Klik untuk melihat detail dan CV', 'Click to see details and CV')}
+      className='cursor-pointer rounded-xl border border-gray-100 bg-white p-3 shadow-sm transition hover:border-teal-300 hover:shadow-md' data-testid='candidate-card'>
       <p className='text-sm font-semibold text-gray-800'>{c.name}</p>
       <p className='mt-0.5 text-[11px] text-gray-400'>{c.source} · {c.appliedDate}</p>
       {c.rating > 0 && <div className='mt-1'><Stars n={c.rating} /></div>}
@@ -63,19 +66,19 @@ function CandidateCard({ c, onMove, onReject, employee, headcount, companyName, 
       )}
       <div className='mt-2.5 flex items-center gap-1.5'>
         {prev && (
-          <button onClick={() => onMove(c, prev)} title={`${t('Kembali ke', 'Back to')} ${prev}`}
+          <button onClick={(e) => { e.stopPropagation(); onMove(c, prev) }} title={`${t('Kembali ke', 'Back to')} ${prev}`}
             className='shrink-0 rounded-lg px-2 py-1.5 text-[11px] font-semibold text-gray-400 hover:bg-gray-100 hover:text-gray-600'>
             ←
           </button>
         )}
         {next && (
-          <button onClick={() => onMove(c, next)}
+          <button onClick={(e) => { e.stopPropagation(); onMove(c, next) }}
             className='flex-1 rounded-lg bg-gray-100 px-2 py-1.5 text-[11px] font-semibold text-gray-700 hover:bg-gray-200'>
             {next} →
           </button>
         )}
         {c.stage !== 'Rejected' && c.stage !== 'Pending Employee' && (
-          <button onClick={() => onReject(c)}
+          <button onClick={(e) => { e.stopPropagation(); onReject(c) }}
             className='shrink-0 rounded-lg px-2 py-1.5 text-[11px] font-semibold text-red-500 hover:bg-red-50'>
             {t('Tolak', 'Reject')}
           </button>
@@ -94,6 +97,7 @@ function PipelineBody() {
 
   const [reqId, setReqId] = useState(params.get('requisitionId') || 'all')
   const [q, setQ] = useState('')
+  const [openId, setOpenId] = useState(null) // candidate whose detail popup is open
 
   const byReq = reqId === 'all' ? candidates : candidates.filter(c => c.requisitionId === Number(reqId))
   const needle = q.trim().toLowerCase()
@@ -157,7 +161,7 @@ function PipelineBody() {
                     const req = employee ? requisitions.find(r => r.id === cand.requisitionId) : null
                     const headcount = req?.headcountId ? headcounts.find(h => h.id === req.headcountId) : null
                     return (
-                      <CandidateCard key={cand.id} c={cand} onMove={move} onReject={reject} t={t}
+                      <CandidateCard key={cand.id} c={cand} onMove={move} onReject={reject} onOpen={x => setOpenId(x.id)} t={t}
                         employee={employee} headcount={headcount}
                         companyName={employee ? companyName(employee.companyId) : null} />
                     )
@@ -170,6 +174,10 @@ function PipelineBody() {
         </div>
         )}
       </>
+      )}
+
+      {openId != null && (
+        <CandidateDetailModal candidateId={openId} onClose={() => setOpenId(null)} onMove={move} onReject={reject} />
       )}
     </div>
   )
