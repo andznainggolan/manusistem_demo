@@ -70,6 +70,18 @@ export const useJlaWeekStore = create(persist(
         put(empId, monday, { blocks: blocks ? [] : plan.blocks, tasks: tasks ? [] : plan.tasks })
       },
 
+      // Excel import into one week. items = { blocks, tasks }; 'replace' starts the week from the file,
+      // 'append' adds to the week's current plan (the default pattern when it has none).
+      importPlan: (empId, monday, tpl, items, mode, by) => {
+        const base = mode === 'append' ? materialize(get().weeks, empId, monday, tpl) : { blocks: [], tasks: [] }
+        let bid = nextId(base.blocks), tid = nextId(base.tasks)
+        const at = new Date().toISOString()
+        put(empId, monday, {
+          blocks: [...base.blocks, ...items.blocks.map(b => ({ id: bid++, employeeId: empId, ...b }))],
+          tasks: [...base.tasks, ...items.tasks.map(t => ({ id: tid++, employeeId: empId, ...t, createdBy: by?.id, createdByName: by?.name, createdAt: at }))],
+        })
+      },
+
       // Back to following the default pattern.
       resetWeek: (empId, monday) => set(s => {
         const { [weekKey(empId, monday)]: _drop, ...rest } = s.weeks

@@ -22,5 +22,9 @@ export function useJlaAuthority() {
     || (isPrincipal && buOf(emp) === buOf(viewer || {}))
     || emp.managerId === currentUser?.id
   )
-  return { currentUser, viewer, buOf, isAdmin, isPrincipal, canManage }
+  // Excel import is wider than editing one calendar and narrower than "any supervisor":
+  // administrators and HR for everyone, a principal for the teachers of their own unit.
+  const isHr = !!currentUser?.role?.startsWith('hr')
+  const canImport = (emp) => !!emp && (isAdmin || isHr || (isPrincipal && buOf(emp) === buOf(viewer || {})))
+  return { currentUser, viewer, buOf, isAdmin, isHr, isPrincipal, canManage, canImport }
 }

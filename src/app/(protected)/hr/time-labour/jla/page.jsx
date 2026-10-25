@@ -6,11 +6,13 @@ import { useJlaStore, WORKER_CATEGORIES, PAYROLL_MODES } from '@/store/jlaStore'
 import { DAYS, toMin, toHHMM, findConflict, fmtHours, durationHours, weekSummary } from '@/lib/jla'
 import JlaBoard from '@/components/jla/JlaBoard'
 import JlaRealizationBoard from '@/components/jla/JlaRealizationBoard'
+import JlaExcelBoard from '@/components/jla/JlaExcelBoard'
 import { PageHeader, SectionCard, FormField, Input, Select, ActionButton, StatusBadge } from '@/components/ui'
 
 const TABS = [
   { key: 'ringkasan', label: 'Ringkasan (Plan)' },
   { key: 'realisasi', label: 'Realisasi' },
+  { key: 'excel', label: 'Import / Export' },
   { key: 'pengaturan', label: 'Pengaturan' },
   { key: 'kategori', label: 'Kategori Pekerja' },
   { key: 'mengajar', label: 'Jadwal Mengajar' },
@@ -35,6 +37,7 @@ export default function HrJlaPage() {
       </div>
       {tab === 'ringkasan' && <JlaBoard scope='all' />}
       {tab === 'realisasi' && <JlaRealizationBoard scope='all' />}
+      {tab === 'excel' && <JlaExcelBoard scope='all' />}
       {tab === 'pengaturan' && <SettingsTab />}
       {tab === 'kategori' && <CategoryTab />}
       {tab === 'mengajar' && <TeachingTab />}

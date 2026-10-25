@@ -155,6 +155,7 @@ const MSS_GROUPS = [
     { label: 'Approve Attendance',         href: '/mss/approve-attendance', icon: ic('checkCircle') },
     ...(IS_SCHOOL ? [{ label: 'Job Load Analysis (JLA)', href: '/mss/jla', icon: ic('layers') }] : []),
     ...(IS_SCHOOL ? [{ label: 'Realisasi JLA', href: '/mss/jla-realization', icon: ic('checkCircle') }] : []),
+    ...(IS_SCHOOL ? [{ label: 'Import / Export JLA', href: '/mss/jla-excel', icon: ic('upload') }] : []),
   ]},
   { title: 'Performance', icon: ic('gauge'), items: [
     { label: 'Team Performance Check-In', href: '/mss/check-in',           icon: ic('gauge') },

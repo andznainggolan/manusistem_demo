@@ -8,6 +8,7 @@ import { localDateStr } from '@/lib/workSchedule'
 import { mondayOf, activeMonday, addDays, weekDates, planForWeek } from '@/lib/jlaRealization'
 import { DAYS, toMin, toHHMM, fmtHours, durationHours, weekSummary, freeHoursInWindow, isFreeOn } from '@/lib/jla'
 import WeekGrid from '@/components/jla/WeekGrid'
+import { downloadTeacherPlan } from '@/lib/jlaExcel'
 import { useJlaAuthority } from '@/components/jla/useJlaAuthority'
 import { StatCard, SectionCard, ActionButton, StatusBadge, EmptyState, FormField, Select, Input } from '@/components/ui'
 
@@ -268,15 +269,18 @@ export default function JlaBoard({ scope = 'unit' }) {
                 title={selected.emp.name}
                 icon='🗓️'
                 subtitle={`${positionName(selected.emp)} · ${selected.emp.department}${weekly ? ` · ${selPlan.override ? 'Disesuaikan khusus minggu ini' : 'Mengikuti pola default'}` : ' · Pola default'}`}
-                actions={canEdit ? (
+                actions={(
                   <>
+                    <ActionButton size='sm' variant='secondary' onClick={() => downloadTeacherPlan({ emp: selected.emp, plan: selPlan, monday: weekly ? monday : '', typeName, settings, positionName, target })}>Unduh Excel</ActionButton>
+                    {canEdit && <>
                     {weekly && <ActionButton size='sm' variant='secondary' onClick={copyPrevious}>Salin dari Minggu Lalu</ActionButton>}
                     {weekly && selPlan.override && <ActionButton size='sm' variant='secondary' onClick={() => wk.resetWeek(selected.emp.id, monday)}>Kembali ke Default</ActionButton>}
                     <ActionButton size='sm' variant='secondary' disabled={weekBlocks.length + weekTasks.length === 0}
                       onClick={() => setClearDialog({ blocks: true, tasks: true })}>Kosongkan Minggu</ActionButton>
                     <ActionButton size='sm' onClick={() => openAdd('Monday', settings.windowStart)}>+ Tambah Task</ActionButton>
+                    </>}
                   </>
-                ) : null}
+                )}
               >
                 <div className='mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4'>
                   <Chip label='Jam mengajar' value={`${fmtHours(selected.sum.teaching)} jam`} />

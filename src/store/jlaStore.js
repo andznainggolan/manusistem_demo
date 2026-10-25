@@ -35,6 +35,17 @@ export const useJlaStore = create(persist(
 
     addTeachingBlock: (b) => set(s => ({ teachingBlocks: [...s.teachingBlocks, { id: nextId(s.teachingBlocks), ...b }] })),
     deleteTeachingBlock: (id) => set(s => ({ teachingBlocks: s.teachingBlocks.filter(x => x.id !== id) })),
+    // Excel import into the default pattern. items = { blocks, tasks }; mode 'replace' swaps the
+    // teacher's whole pattern, 'append' adds to it. New ids start above every id used so far.
+    importPlan: (employeeId, items, mode, by) => set(s => {
+      const keep = (list) => mode === 'replace' ? list.filter(x => x.employeeId !== employeeId) : list
+      let bid = nextId(s.teachingBlocks), tid = nextId(s.tasks)
+      const at = new Date().toISOString()
+      return {
+        teachingBlocks: [...keep(s.teachingBlocks), ...items.blocks.map(b => ({ id: bid++, employeeId, ...b }))],
+        tasks: [...keep(s.tasks), ...items.tasks.map(t => ({ id: tid++, employeeId, ...t, createdBy: by?.id, createdByName: by?.name, createdAt: at }))],
+      }
+    }),
     // Empties one teacher's weekly calendar: fixed teaching blocks and/or tasks.
     clearWeek: (employeeId, { blocks = true, tasks = true } = {}) => set(s => ({
       teachingBlocks: blocks ? s.teachingBlocks.filter(b => b.employeeId !== employeeId) : s.teachingBlocks,

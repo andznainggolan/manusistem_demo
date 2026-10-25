@@ -6,10 +6,11 @@ import { useJlaStore } from '@/store/jlaStore'
 import { useJlaRealStore } from '@/store/jlaRealStore'
 import { useJlaWeekStore } from '@/store/jlaWeekStore'
 import { useAttendanceStore } from '@/store/attendanceStore'
-import { fmtHours } from '@/lib/jla'
+import { fmtHours, weekSummary } from '@/lib/jla'
 import { localDateStr } from '@/lib/workSchedule'
 import { summarize, periodRange, weekdaysBetween, STATUS_LABEL, SOURCE_LABEL } from '@/lib/jlaRealization'
 import { useJlaAuthority } from '@/components/jla/useJlaAuthority'
+import { downloadSummary } from '@/lib/jlaExcel'
 import { StatCard, SectionCard, ActionButton, StatusBadge, EmptyState, FilterBar, FilterPill, FormField, Input } from '@/components/ui'
 
 const PERIODS = [
@@ -121,6 +122,9 @@ export default function JlaRealizationBoard({ scope = 'unit' }) {
               <div className='flex gap-2'>
                 <ActionButton size='sm' variant='secondary' onClick={exportSummary}>Unduh Rekap (CSV)</ActionButton>
                 <ActionButton size='sm' variant='secondary' onClick={exportDetail}>Unduh Detail Harian (CSV)</ActionButton>
+                <ActionButton size='sm' onClick={() => downloadSummary({
+                  planRowsData: rows.map(r => ({ emp: r.emp, sum: weekSummary(r.emp.id, teachingBlocks.filter(b => b.employeeId === r.emp.id), tasks.filter(t => t.employeeId === r.emp.id), settings.targetHours) })),
+                  planLabel: 'pola default', realRows: rows, range, positionName, target: settings.targetHours })}>Unduh Summary (Excel)</ActionButton>
               </div>
             </div>
             {rows.length === 0 ? (
