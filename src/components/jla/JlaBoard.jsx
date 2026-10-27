@@ -7,7 +7,7 @@ import { useJlaDraft } from '@/store/jlaDraft'
 import { sigOf } from '@/store/jlaWeekStore'
 import { localDateStr } from '@/lib/workSchedule'
 import { mondayOf, activeMonday, addDays, weekDates, planForWeek } from '@/lib/jlaRealization'
-import { DAYS, toMin, toHHMM, fmtHours, durationHours, weekSummary, freeHoursInWindow, isFreeOn } from '@/lib/jla'
+import { DAYS, toMin, toHHMM, fmtHours, durationHours, weekSummary, freeHoursInWindow, isFreeOn, composeSubject, splitSubject } from '@/lib/jla'
 import WeekGrid from '@/components/jla/WeekGrid'
 import { downloadTeacherPlan } from '@/lib/jlaExcel'
 import { useJlaAuthority } from '@/components/jla/useJlaAuthority'
@@ -29,7 +29,7 @@ function timeOptions(windowStart, windowEnd) {
 export default function JlaBoard({ scope = 'unit' }) {
   const { employees } = useEmployeeStore()
   const { departments, positions } = useStructureStore()
-  const { settings, taskTypes, categories } = useJlaStore()
+  const { settings, taskTypes, categories, subjects } = useJlaStore()
   // Everything on the calendar edits a draft copy; Simpan writes it to the saved plans.
   const draft = useJlaDraft()
   const { teachingBlocks, tasks, addTasks, updateTask, deleteTask, deleteTeachingBlock, clearWeek } = draft.jla
@@ -69,7 +69,8 @@ export default function JlaBoard({ scope = 'unit' }) {
   const canEdit = canEditEmp(selected?.emp)
   const anyEditable = teachers.some(t => canEditEmp(t.emp))
 
-  const [form, setForm] = useState(null) // { id?, taskTypeId, days, start, end, subject, note, error }
+  // subjectName: a choice from `subjects`, or '__other' with the typed name in subjectOther; className: class/group (optional).
+  const [form, setForm] = useState(null) // { id?, taskTypeId, days, start, end, subjectName, subjectOther, className, note, error }
   const [blockDialog, setBlockDialog] = useState(null) // a fixed teaching block clicked on the calendar
   const [clearDialog, setClearDialog] = useState(null) // { blocks, tasks } checkboxes
   const options = timeOptions(settings.windowStart, settings.windowEnd)
@@ -87,8 +88,8 @@ export default function JlaBoard({ scope = 'unit' }) {
   [teachers, finder, finderValid, teachingBlocks, tasks, weeks, weekly, monday, currentUser?.id, viewer?.id])
   const assignTo = (emp) => {
     setSelectedId(emp.id)
-    const teachType = activeTypes.find(t => t.teaching)
-    setForm({ taskTypeId: teachType?.id || activeTypes[0]?.id || '', days: finder.days, start: finder.start, end: finder.end, subject: '', note: '', error: '' })
+    const teachType = activeTypes.find(t => t.teaching && /perbantuan/i.test(t.name)) || activeTypes.find(t => t.teaching)
+    setForm({ taskTypeId: teachType?.id || activeTypes[0]?.id || '', days: finder.days, start: finder.start, end: finder.end, subjectName: '', subjectOther: '', className: '', note: '', error: '' })
   }
 
   const achievedCount = teachers.filter(t => t.sum.achieved).length
@@ -98,19 +99,27 @@ export default function JlaBoard({ scope = 'unit' }) {
     if (!canEdit || !selected) return
     const startMin = toMin(start)
     const end = toHHMM(Math.min(startMin + 60, toMin(settings.windowEnd)))
-    setForm({ taskTypeId: activeTypes[0]?.id || '', days: [day], start, end, subject: '', note: '', error: '' })
+    setForm({ taskTypeId: activeTypes[0]?.id || '', days: [day], start, end, subjectName: '', subjectOther: '', className: '', note: '', error: '' })
   }
   const openEdit = (task) => {
     if (!canEdit) return
-    setForm({ id: task.id, taskTypeId: task.taskTypeId, days: [task.day], start: task.start, end: task.end, subject: task.subject || '', note: task.note || '', error: '' })
+    // Older tasks only have the combined text; split it back into subject and class where it matches the list.
+    const known = task.subjectName && subjects.includes(task.subjectName)
+    const sp = task.subjectName ? { name: known ? task.subjectName : '', other: known ? '' : task.subjectName, className: task.className || '' } : splitSubject(task.subject, subjects)
+    setForm({ id: task.id, taskTypeId: task.taskTypeId, days: [task.day], start: task.start, end: task.end,
+      subjectName: sp.name || (sp.other ? '__other' : ''), subjectOther: sp.other, className: sp.className, note: task.note || '', error: '' })
   }
   const save = () => {
     if (!form || !selected) return
     if (!form.taskTypeId) return setForm({ ...form, error: 'Pilih jenis task.' })
     if (!form.days.length) return setForm({ ...form, error: 'Pilih minimal satu hari.' })
     if (toMin(form.end) <= toMin(form.start)) return setForm({ ...form, error: 'Jam selesai harus setelah jam mulai.' })
-    if (isTeachingType(form.taskTypeId) && !form.subject.trim()) return setForm({ ...form, error: 'Isi mata pelajaran dan kelas yang diampu.' })
-    const base = { taskTypeId: Number(form.taskTypeId), start: form.start, end: form.end, note: form.note.trim(), subject: form.subject.trim() }
+    const teaching = isTeachingType(form.taskTypeId)
+    const subjectName = form.subjectName === '__other' ? form.subjectOther.trim() : form.subjectName
+    if (teaching && !subjectName) return setForm({ ...form, error: 'Pilih mata pelajaran yang diampu.' })
+    const className = form.className.trim()
+    const base = { taskTypeId: Number(form.taskTypeId), start: form.start, end: form.end, note: form.note.trim(),
+      subject: teaching ? composeSubject(subjectName, className) : '', subjectName: teaching ? subjectName : '', className: teaching ? className : '' }
     const res = form.id
       ? doUpdate(selected.emp.id, form.id, { ...base, day: form.days[0] })
       : doAdd({ employeeId: selected.emp.id, days: form.days, ...base, createdBy: currentUser.id, createdByName: currentUser.name })
@@ -125,8 +134,6 @@ export default function JlaBoard({ scope = 'unit' }) {
   const selPlan = selected ? planOf(selected.emp.id) : { blocks: [], tasks: [], override: false }
   const weekBlocks = selPlan.blocks
   const weekTasks = selPlan.tasks
-  // Subject names without the class suffix ("Matematika 8A-8C" -> "Matematika"), for the suggestions list.
-  const subjectOptions = [...new Set(teachingBlocks.map(b => b.label.replace(/\s+\d[\w-]*$/, '').trim()).filter(l => l && !/^(Kelas|Kelompok)$/.test(l)))].sort()
   const selectedTasks = selected ? [...selPlan.tasks]
     .sort((a, b) => DAYS.findIndex(d => d.key === a.day) - DAYS.findIndex(d => d.key === b.day) || toMin(a.start) - toMin(b.start)) : []
   const free = selected ? freeHoursInWindow(selected.emp.id, selPlan.blocks, selPlan.tasks, settings.windowStart, settings.windowEnd) : 0
@@ -417,11 +424,23 @@ export default function JlaBoard({ scope = 'unit' }) {
                 </Select>
               </FormField>
               {isTeachingType(form.taskTypeId) && (
-                <FormField label='Mata pelajaran dan kelas yang diampu' required hint='Dihitung sebagai jam mengajar guru ini, bukan task tambahan.'>
-                  <Input list='jla-subjects' value={form.subject} placeholder='mis. Pendidikan Agama Katolik 7A'
-                    onChange={e => setForm({ ...form, subject: e.target.value, error: '' })} />
-                  <datalist id='jla-subjects'>{subjectOptions.map(o => <option key={o} value={o} />)}</datalist>
-                </FormField>
+                <div className='space-y-3' data-testid='subject-fields'>
+                  <FormField label='Mata Pelajaran' required hint='Dihitung sebagai jam mengajar guru ini, bukan task tambahan.'>
+                    <Select value={form.subjectName} onChange={e => setForm({ ...form, subjectName: e.target.value, error: '' })}>
+                      <option value=''>- Pilih mata pelajaran -</option>
+                      {subjects.map(x => <option key={x} value={x}>{x}</option>)}
+                      <option value='__other'>Lainnya (ketik sendiri)</option>
+                    </Select>
+                  </FormField>
+                  {form.subjectName === '__other' && (
+                    <FormField label='Nama mata pelajaran' required>
+                      <Input value={form.subjectOther} placeholder='mis. Seni Musik' onChange={e => setForm({ ...form, subjectOther: e.target.value, error: '' })} />
+                    </FormField>
+                  )}
+                  <FormField label='Kelas (opsional)'>
+                    <Input value={form.className} placeholder='mis. 7A atau 8A-8C' onChange={e => setForm({ ...form, className: e.target.value, error: '' })} />
+                  </FormField>
+                </div>
               )}
               <div>
                 <span className='mb-1.5 block text-xs font-semibold text-gray-600'>Hari <span className='text-red-500'>*</span></span>

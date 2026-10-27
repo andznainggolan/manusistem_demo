@@ -498,6 +498,17 @@ export const SCHOOL_JLA_TASK_TYPES = [
   { id: 8, name: 'Pembinaan Siswa (Wali Kelas)', active: true },
   // Guru yang sedang kosong membantu mengajar mata pelajaran lain; dihitung jam mengajar.
   { id: 9, name: 'Mengajar Mata Pelajaran Lain (Perbantuan)', active: true, teaching: true },
+  // Guru mengampu mata pelajaran tertentu (dipilih dari daftar Mata Pelajaran); dihitung jam mengajar.
+  { id: 10, name: 'Mengajar Mata Pelajaran', active: true, teaching: true },
+]
+
+// Pilihan "Mata Pelajaran" saat menugaskan guru mengajar; HR dapat menambah atau menghapus di Pengaturan JLA.
+export const SCHOOL_SUBJECTS = [
+  'Matematika', 'Bahasa Inggris', 'Agama Katolik', 'Agama Islam', 'Agama Kristen', 'Agama Hindu', 'Agama Buddha',
+  'Bahasa Indonesia', 'Fisika', 'Kimia', 'IPA', 'IPS', 'Geografi', 'Biologi', 'Laboratorium', 'PPKn', 'Budi Pekerti',
+  'PLKJ', 'Keterampilan dan Kesenian', 'Olahraga',
+  // tambahan lazim di sekolah
+  'Informatika', 'Seni Budaya', 'Prakarya', 'Sejarah', 'Ekonomi', 'Sosiologi', 'Bahasa Mandarin', 'Bimbingan Konseling', 'Tematik (SD)',
 ]
 
 const WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']

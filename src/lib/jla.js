@@ -16,6 +16,14 @@ export const toMin = (hhmm) => {
 export const toHHMM = (min) =>
   `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`
 
+// A teaching task's subject is shown as "<mata pelajaran> <kelas>"; these split and join it.
+export const composeSubject = (name, className) => [name, className].filter(Boolean).join(' ')
+export function splitSubject(subject = '', subjects = []) {
+  const s = String(subject).trim()
+  const hit = [...subjects].sort((a, b) => b.length - a.length).find(x => s.toLowerCase().startsWith(x.toLowerCase()))
+  return hit ? { name: hit, other: '', className: s.slice(hit.length).trim() } : { name: '', other: s, className: '' }
+}
+
 export const durationHours = (start, end) => Math.max(0, (toMin(end) - toMin(start)) / 60)
 
 export const fmtHours = (h) => {

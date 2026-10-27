@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
 import { IS_SCHOOL } from '@/lib/demoProfile'
 import {
-  SCHOOL_WORKER_CATEGORIES, SCHOOL_JLA_TASK_TYPES, SCHOOL_TEACHING_BLOCKS, SCHOOL_JLA_TASKS,
+  SCHOOL_WORKER_CATEGORIES, SCHOOL_JLA_TASK_TYPES, SCHOOL_TEACHING_BLOCKS, SCHOOL_JLA_TASKS, SCHOOL_SUBJECTS,
 } from '@/data/schoolSeed'
 import { findConflict } from '@/lib/jla'
 
@@ -21,6 +21,7 @@ export const jlaCreator = (set, get) => ({
     settings: { ...DEFAULT_SETTINGS },
     taskTypes: (IS_SCHOOL ? SCHOOL_JLA_TASK_TYPES : []).map(x => ({ ...x })),
     categories: IS_SCHOOL ? { ...SCHOOL_WORKER_CATEGORIES } : {},
+    subjects: IS_SCHOOL ? [...SCHOOL_SUBJECTS] : [],   // choices for the "Mata Pelajaran" dropdown
     teachingBlocks: (IS_SCHOOL ? SCHOOL_TEACHING_BLOCKS : []).map(x => ({ ...x })),
     tasks: (IS_SCHOOL ? SCHOOL_JLA_TASKS : []).map(x => ({ ...x })),
 
@@ -28,6 +29,8 @@ export const jlaCreator = (set, get) => ({
 
     // teaching: the task is a teaching assignment (covering another subject) and counts as teaching hours.
     addTaskType: (name, teaching = false) => set(s => ({ taskTypes: [...s.taskTypes, { id: nextId(s.taskTypes), name: name.trim(), active: true, teaching }] })),
+    addSubject: (name) => set(s => s.subjects.some(x => x.toLowerCase() === name.trim().toLowerCase()) || !name.trim() ? s : { subjects: [...s.subjects, name.trim()] }),
+    removeSubject: (name) => set(s => ({ subjects: s.subjects.filter(x => x !== name) })),
     updateTaskType: (id, patch) => set(s => ({ taskTypes: s.taskTypes.map(x => x.id === id ? { ...x, ...patch } : x) })),
 
     setCategory: (employeeId, category) => set(s => ({ categories: { ...s.categories, [employeeId]: category } })),
@@ -52,7 +55,7 @@ export const jlaCreator = (set, get) => ({
     })),
 
     // days: array of day keys. Returns { ok, error }. Nothing is saved when any day conflicts.
-    addTasks: ({ employeeId, days, start, end, taskTypeId, note, subject = '', createdBy, createdByName }) => {
+    addTasks: ({ employeeId, days, start, end, taskTypeId, note, subject = '', subjectName = '', className = '', createdBy, createdByName }) => {
       const { teachingBlocks, tasks } = get()
       for (const day of days) {
         const c = findConflict(employeeId, day, start, end, teachingBlocks, tasks)
@@ -63,7 +66,7 @@ export const jlaCreator = (set, get) => ({
         const teaching = !!s.taskTypes.find(t => t.id === taskTypeId)?.teaching
         const created = days.map(day => ({
           id: id++, employeeId, day, start, end, taskTypeId, note: note || '',
-          ...(teaching ? { teaching: true, subject } : {}),
+          ...(teaching ? { teaching: true, subject, subjectName, className } : {}),
           createdBy, createdByName, createdAt: new Date().toISOString(),
         }))
         return { tasks: [...s.tasks, ...created] }
@@ -77,7 +80,7 @@ export const jlaCreator = (set, get) => ({
       const next = { ...cur, ...patch }
       const teaching = !!get().taskTypes.find(t => t.id === next.taskTypeId)?.teaching
       if (teaching) next.teaching = true
-      else { delete next.teaching; delete next.subject }
+      else { delete next.teaching; delete next.subject; delete next.subjectName; delete next.className }
       const c = findConflict(next.employeeId, next.day, next.start, next.end, teachingBlocks, tasks, id)
       if (c) return { ok: false, error: { day: next.day, ...c } }
       set(s => ({ tasks: s.tasks.map(t => t.id === id ? next : t) }))
@@ -93,7 +96,7 @@ export const useJlaStore = create(persist(
     storage: createJSONStorage(() => dbStorage),
     // v1 -> v2: stored school data gains the "teach another subject" task type
     // without losing the tasks and settings already saved.
-    version: 3,
+    version: 4,
     migrate: (state, version) => {
       if (version < 2 && IS_SCHOOL && state?.taskTypes && !state.taskTypes.some(t => t.teaching)) {
         const seed = SCHOOL_JLA_TASK_TYPES.find(t => t.teaching)
@@ -108,6 +111,15 @@ export const useJlaStore = create(persist(
         const have = new Set(blocks.map(b => b.employeeId))
         let nid = nextId(blocks)
         state.teachingBlocks = [...blocks, ...SCHOOL_TEACHING_BLOCKS.filter(b => b.employeeId > 41 && !have.has(b.employeeId)).map(b => ({ ...b, id: nid++ }))]
+      }
+      // v3 -> v4: the "Mengajar Mata Pelajaran" task type and the subject list.
+      if (version < 4 && IS_SCHOOL && state) {
+        const types = state.taskTypes || []
+        if (!types.some(t => t.name === 'Mengajar Mata Pelajaran')) {
+          const seed = SCHOOL_JLA_TASK_TYPES.find(t => t.name === 'Mengajar Mata Pelajaran')
+          if (seed) state.taskTypes = [...types, { ...seed, id: nextId(types) }]
+        }
+        if (!state.subjects) state.subjects = [...SCHOOL_SUBJECTS]
       }
       return state
     },

@@ -21,7 +21,7 @@ export default function JlaExcelBoard({ scope = 'unit' }) {
   const { employees } = useEmployeeStore()
   const { departments, positions } = useStructureStore()
   const jla = useJlaStore()
-  const { settings, taskTypes, categories, teachingBlocks, tasks } = jla
+  const { settings, taskTypes, categories, teachingBlocks, tasks, subjects } = jla
   const wk = useJlaWeekStore()
   const recs = useJlaRealStore(s => s.records)
   const attendance = useAttendanceStore(s => s.records)
@@ -56,7 +56,7 @@ export default function JlaExcelBoard({ scope = 'unit' }) {
   const run = async (fn) => { setBusy(true); try { await fn() } finally { setBusy(false) } }
 
   const dlTemplate = (prefilled) => run(() => downloadTemplate({
-    teachers, taskTypes, positionName,
+    teachers, taskTypes, positionName, subjects,
     rows: prefilled ? selectedTeachers.flatMap(e => planRows(e, planOf(e.id), typeName, monday)) : null,
     filename: prefilled ? `jadwal-jla-${monday || 'default'}.xlsx` : 'template-jla.xlsx',
   }))

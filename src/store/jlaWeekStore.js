@@ -38,7 +38,7 @@ export const weekCreator = (set, get) => {
         let id = nextId(plan.tasks)
         const created = args.days.map(day => ({
           id: id++, employeeId: empId, day, start: args.start, end: args.end, taskTypeId: args.taskTypeId, note: args.note || '',
-          ...(args.teaching ? { teaching: true, subject: args.subject || '' } : {}),
+          ...(args.teaching ? { teaching: true, subject: args.subject || '', subjectName: args.subjectName || '', className: args.className || '' } : {}),
           createdBy: args.createdBy, createdByName: args.createdByName, createdAt: new Date().toISOString(),
         }))
         put(empId, monday, { blocks: plan.blocks, tasks: [...plan.tasks, ...created] })
@@ -51,7 +51,7 @@ export const weekCreator = (set, get) => {
         if (!cur) return { ok: false }
         const next = { ...cur, ...patch }
         if (next.teaching) next.teaching = true
-        else { delete next.teaching; delete next.subject }
+        else { delete next.teaching; delete next.subject; delete next.subjectName; delete next.className }
         const c = findConflict(empId, next.day, next.start, next.end, plan.blocks, plan.tasks, id)
         if (c) return { ok: false, error: { day: next.day, ...c } }
         put(empId, monday, { blocks: plan.blocks, tasks: plan.tasks.map(t => t.id === id ? next : t) })

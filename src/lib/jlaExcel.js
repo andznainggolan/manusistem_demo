@@ -5,7 +5,7 @@ import { DAYS, toMin, toHHMM, fmtHours, findConflict, weekSummary } from '@/lib/
 import { mondayOf, addDays, weekDates } from '@/lib/jlaRealization'
 
 export const HEADERS = ['NIK', 'Nama (info)', 'Jenis', 'Hari', 'Mulai', 'Selesai', 'Mata Pelajaran / Jenis Task', 'Catatan', 'Minggu (tanggal Senin, kosong = pola default)']
-export const JENIS = { block: 'Mengajar Tetap', task: 'Task', assist: 'Mengajar Perbantuan' }
+export const JENIS = { block: 'Mengajar Tetap', task: 'Task', assist: 'Mengajar Perbantuan', subject: 'Mengajar Mata Pelajaran' }
 const DAY_LABEL = Object.fromEntries(DAYS.map(d => [d.key, d.label]))
 
 const norm = (v) => String(v ?? '').toLowerCase().replace(/[^a-z0-9]/g, '')
@@ -19,7 +19,7 @@ const DAY_ALIAS = {
 const JENIS_ALIAS = {
   mengajartetap: 'block', mengajar: 'block', jammengajar: 'block', blokmengajar: 'block',
   task: 'task', tasktambahan: 'task',
-  mengajarperbantuan: 'assist', perbantuan: 'assist',
+  mengajarperbantuan: 'assist', perbantuan: 'assist', mengajarmatapelajaran: 'subject',
 }
 
 // ---- cell conversions (Excel hands back times as day fractions and dates as serial numbers)
@@ -63,7 +63,7 @@ export function planRows(emp, plan, typeName, monday = '') {
   return [
     ...[...plan.blocks].sort(order).map(b => [emp.nik, emp.name, JENIS.block, DAY_LABEL[b.day], b.start, b.end, b.label, '', monday]),
     ...[...plan.tasks].sort(order).map(t => t.teaching
-      ? [emp.nik, emp.name, JENIS.assist, DAY_LABEL[t.day], t.start, t.end, t.subject || typeName(t.taskTypeId), t.note || '', monday]
+      ? [emp.nik, emp.name, typeName(t.taskTypeId) === 'Mengajar Mata Pelajaran' ? JENIS.subject : JENIS.assist, DAY_LABEL[t.day], t.start, t.end, t.subject || typeName(t.taskTypeId), t.note || '', monday]
       : [emp.nik, emp.name, JENIS.task, DAY_LABEL[t.day], t.start, t.end, typeName(t.taskTypeId), t.note || '', monday]),
   ]
 }
@@ -74,22 +74,22 @@ function instructionRows() {
     [],
     ['1. Isi sheet "Template": satu baris untuk satu blok jadwal.'],
     ['2. NIK harus sama dengan NIK karyawan kategori Guru (lihat sheet "Referensi"). Kolom Nama hanya informasi.'],
-    ['3. Jenis: "Mengajar Tetap" (jam mengajar), "Task" (task tambahan), atau "Mengajar Perbantuan" (guru mengajar mata pelajaran lain).'],
+    ['3. Jenis: "Mengajar Tetap" (jam mengajar), "Task" (task tambahan), "Mengajar Mata Pelajaran" (guru mengampu mata pelajaran, dihitung jam mengajar), atau "Mengajar Perbantuan" (guru mengajar mata pelajaran lain).'],
     ['4. Hari: Senin sampai Jumat. Mulai dan Selesai: format JJ:MM, misalnya 07:30.'],
-    ['5. Mata Pelajaran / Jenis Task: untuk Mengajar Tetap dan Perbantuan isi mata pelajaran dan kelas; untuk Task isi nama jenis task persis seperti di sheet "Referensi".'],
+    ['5. Mata Pelajaran / Jenis Task: untuk Mengajar Tetap, Mengajar Mata Pelajaran, dan Perbantuan isi mata pelajaran dan kelas (mis. "Matematika 7A"; nama mata pelajaran ada di sheet "Referensi"); untuk Task isi nama jenis task persis seperti di sheet "Referensi".'],
     ['6. Minggu: kosongkan untuk pola default (berlaku setiap minggu). Isi tanggal Senin (YYYY-MM-DD) untuk jadwal khusus minggu itu saja.'],
     ['7. Blok tidak boleh saling bertumpuk dan harus berada dalam jam kerja efektif.'],
     ['8. Saat impor Anda memilih: Ganti (jadwal guru pada pola atau minggu itu diganti isi file) atau Tambahkan (jadwal yang ada dipertahankan).'],
     ['9. Jika ada baris bermasalah pada seorang guru, guru itu dilewati seluruhnya dan yang lain tetap diimpor.'],
   ]
 }
-function referenceRows(teachers, taskTypes, positionName) {
+function referenceRows(teachers, taskTypes, positionName, subjects = []) {
   const types = taskTypes.filter(t => t.active && !t.teaching)
-  const n = Math.max(teachers.length, types.length, 5)
-  const rows = [['NIK Guru', 'Nama', 'Jabatan', '', 'Jenis Task (untuk jenis "Task")', '', 'Hari']]
+  const n = Math.max(teachers.length, types.length, subjects.length, 5)
+  const rows = [['NIK Guru', 'Nama', 'Jabatan', '', 'Jenis Task (untuk jenis "Task")', '', 'Hari', '', 'Mata Pelajaran']]
   for (let i = 0; i < n; i++) {
     const t = teachers[i]
-    rows.push([t?.nik || '', t?.name || '', t ? positionName(t) : '', '', types[i]?.name || '', '', DAYS[i]?.label || ''])
+    rows.push([t?.nik || '', t?.name || '', t ? positionName(t) : '', '', types[i]?.name || '', '', DAYS[i]?.label || '', '', subjects[i] || ''])
   }
   return rows
 }
@@ -101,11 +101,11 @@ const SAMPLE = [
 ]
 
 /** Empty template with sample rows, or prefilled with `rows` (current schedules). */
-export async function downloadTemplate({ teachers, taskTypes, positionName, rows = null, filename = 'template-jla.xlsx' }) {
+export async function downloadTemplate({ teachers, taskTypes, positionName, subjects = [], rows = null, filename = 'template-jla.xlsx' }) {
   await save(filename, [
     { name: 'Template', rows: [HEADERS, ...(rows || SAMPLE)], widths: TEMPLATE_WIDTHS },
     { name: 'Petunjuk', rows: instructionRows(), widths: [120] },
-    { name: 'Referensi', rows: referenceRows(teachers, taskTypes, positionName), widths: [14, 26, 30, 3, 34, 3, 10] },
+    { name: 'Referensi', rows: referenceRows(teachers, taskTypes, positionName, subjects), widths: [14, 26, 30, 3, 34, 3, 10, 3, 28] },
   ])
 }
 
@@ -196,7 +196,8 @@ export async function readTemplate(arrayBuffer) {
 export function validateRows(raw, ctx, mode) {
   const byNik = new Map(ctx.employees.map(e => [String(e.nik).trim().toLowerCase(), e]))
   const ws = toMin(ctx.settings.windowStart), we = toMin(ctx.settings.windowEnd)
-  const teachingType = ctx.taskTypes.find(t => t.active && t.teaching)
+  const assistType = ctx.taskTypes.find(t => t.active && t.teaching && /perbantuan/i.test(t.name))
+  const subjectType = ctx.taskTypes.find(t => t.active && t.teaching && !/perbantuan/i.test(t.name))
 
   const rows = raw.map(x => {
     const errors = []
@@ -206,7 +207,7 @@ export function validateRows(raw, ctx, mode) {
     else if (ctx.categories[emp.id] !== 'Guru') errors.push('Bukan pekerja kategori Guru')
     else if (!ctx.canImport(emp)) errors.push('Di luar wewenang Anda (bukan bawahan Anda)')
     const kind = JENIS_ALIAS[norm(x.jenis)]
-    if (!kind) errors.push('Jenis tidak dikenal (Mengajar Tetap, Task, atau Mengajar Perbantuan)')
+    if (!kind) errors.push('Jenis tidak dikenal (Mengajar Tetap, Task, Mengajar Mata Pelajaran, atau Mengajar Perbantuan)')
     const day = DAY_ALIAS[norm(x.hari)]
     if (!day) errors.push('Hari harus Senin sampai Jumat')
     const start = toTime(x.mulai), end = toTime(x.selesai)
@@ -224,8 +225,12 @@ export function validateRows(raw, ctx, mode) {
       else taskTypeId = t.id
     }
     if (kind === 'assist') {
-      if (!teachingType) errors.push('Jenis task perbantuan belum tersedia di Pengaturan')
-      else taskTypeId = teachingType.id
+      if (!assistType) errors.push('Jenis task perbantuan belum tersedia di Pengaturan')
+      else taskTypeId = assistType.id
+    }
+    if (kind === 'subject') {
+      if (!subjectType) errors.push('Jenis task "Mengajar Mata Pelajaran" belum tersedia di Pengaturan')
+      else taskTypeId = subjectType.id
     }
     let week = ''
     const wd = toDateStr(x.minggu)
@@ -264,7 +269,7 @@ export function groupItems(g) {
   const blocks = [], tasks = []
   g.rows.forEach(r => {
     if (r.kind === 'block') blocks.push({ day: r.day, start: r.start, end: r.end, label: r.ket })
-    else tasks.push({ day: r.day, start: r.start, end: r.end, taskTypeId: r.taskTypeId, note: r.catatan, ...(r.kind === 'assist' ? { teaching: true, subject: r.ket } : {}) })
+    else tasks.push({ day: r.day, start: r.start, end: r.end, taskTypeId: r.taskTypeId, note: r.catatan, ...(r.kind === 'assist' || r.kind === 'subject' ? { teaching: true, subject: r.ket } : {}) })
   })
   return { blocks, tasks }
 }

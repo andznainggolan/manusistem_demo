@@ -48,8 +48,9 @@ export default function HrJlaPage() {
 }
 
 function SettingsTab() {
-  const { settings, taskTypes, updateSettings, addTaskType, updateTaskType } = useJlaStore()
+  const { settings, taskTypes, subjects, updateSettings, addTaskType, updateTaskType, addSubject, removeSubject } = useJlaStore()
   const [name, setName] = useState('')
+  const [subjectName, setSubjectName] = useState('')
   const [teaching, setTeaching] = useState(false)
   const hourOptions = []
   for (let m = 5 * 60; m <= 22 * 60; m += 30) hourOptions.push(toHHMM(m))
@@ -116,6 +117,23 @@ function SettingsTab() {
           </FormField>
           <p className='text-xs text-gray-400'>Setelah mengganti dasar payroll, buka Payroll Run dan klik "Hitung Ulang dari JLA" untuk periode Draft.</p>
         </div>
+      </SectionCard>
+
+      <SectionCard title='Mata Pelajaran' icon='📚' subtitle='Pilihan dropdown "Mata Pelajaran" saat menugaskan guru mengajar' className='xl:col-span-2'>
+        <div className='flex flex-wrap gap-2' data-testid='subject-chips'>
+          {subjects.map(x => (
+            <span key={x} className='inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-200'>
+              {x}
+              <button type='button' aria-label={`Hapus ${x}`} onClick={() => removeSubject(x)} className='text-indigo-300 hover:text-red-500'>×</button>
+            </span>
+          ))}
+        </div>
+        <div className='mt-4 flex max-w-md gap-2'>
+          <Input value={subjectName} onChange={e => setSubjectName(e.target.value)} placeholder='Nama mata pelajaran baru'
+            onKeyDown={e => { if (e.key === 'Enter' && subjectName.trim()) { addSubject(subjectName); setSubjectName('') } }} />
+          <ActionButton onClick={() => { if (subjectName.trim()) { addSubject(subjectName); setSubjectName('') } }}>Tambah</ActionButton>
+        </div>
+        <p className='mt-2 text-xs text-gray-400'>Menghapus pilihan tidak mengubah task yang sudah dibuat. Guru juga bisa mengetik mata pelajaran lain lewat pilihan "Lainnya".</p>
       </SectionCard>
 
       <SectionCard title='Jenis Task' icon='📋' subtitle='Daftar pilihan saat kepala sekolah atau atasan langsung menambah task' className='xl:col-span-2'>
