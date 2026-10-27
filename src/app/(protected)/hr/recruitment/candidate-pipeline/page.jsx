@@ -7,6 +7,8 @@ import { useEmployeeStore } from '@/store/employeeStore'
 import { useT } from '@/store/languageStore'
 import { PageHeader, Select, Input, FormField, SectionCard, ActionButton, SearchBar, StatusBadge, EmptyState } from '@/components/ui'
 import CandidateDetailModal from '@/components/recruitment/CandidateDetailModal'
+import { useCandidateDocumentStore } from '@/store/candidateDocumentStore'
+import { useLiveSync } from '@/lib/useLiveSync'
 
 // Caps a column's height so hundreds of candidates in one stage scroll
 // within their own column instead of stretching the whole page.
@@ -101,6 +103,8 @@ function PipelineBody() {
   const { requisitions, candidates, updateCandidate } = useRecruitmentStore()
   const { headcounts, companies } = useStructureStore()
   const { employees } = useEmployeeStore()
+  // Applications arrive from the public career site in another browser: stay in step with the database.
+  const live = useLiveSync({ store: useRecruitmentStore, name: 'hcm-recruitment-v1' }, [{ store: useCandidateDocumentStore, name: 'hcm-candidate-documents-v1' }])
 
   // The board only shows candidates once the parameters are applied (a link from the
   // Candidate Database carries them in the URL and goes straight to the board).
@@ -150,8 +154,16 @@ function PipelineBody() {
         icon='🔀'
         title='Candidate Pipeline'
         subtitle={t('Pantau tahapan kandidat dari lamaran sampai diterima.', 'Track candidates from application through hire.')}
-        actions={applied && (
-          <ActionButton variant='secondary' onClick={change}>{t('Ubah Parameter', 'Change Parameters')}</ActionButton>
+        actions={(
+          <div className='flex items-center gap-3'>
+            <span className='text-[11px] text-gray-400' data-testid='live-status'>
+              {live.lastSync ? `${t('Diperbarui', 'Updated')} ${live.lastSync.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}` : ''}
+            </span>
+            <ActionButton variant='secondary' disabled={live.syncing} onClick={() => live.sync({ full: true })} data-testid='live-refresh'>
+              {live.syncing ? t('Memuat…', 'Loading…') : `↻ ${t('Muat Ulang', 'Refresh')}`}
+            </ActionButton>
+            {applied && <ActionButton variant='secondary' onClick={change}>{t('Ubah Parameter', 'Change Parameters')}</ActionButton>}
+          </div>
         )}
       />
 

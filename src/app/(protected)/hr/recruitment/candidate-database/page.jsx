@@ -7,6 +7,7 @@ import { usePsychotestStore } from '@/store/psychotestStore'
 import { usePsychotestAttemptStore } from '@/store/psychotestAttemptStore'
 import { useAuthStore } from '@/store/authStore'
 import { useT } from '@/store/languageStore'
+import { useLiveSync } from '@/lib/useLiveSync'
 import {
   PageHeader, StatCard, DataTable, Tr, Td, SearchBar, FilterBar, FilterPill,
   ActionButton, StatusBadge, EmptyState, FormField, Input, Select, inputClass,
@@ -43,6 +44,8 @@ export default function CandidateDatabasePage() {
   const { candidates, requisitions, addCandidate, updateCandidate, deleteCandidate } = useRecruitmentStore()
   const { types: docTypes } = useDocumentTypeStore()
   const { documents: candidateDocs, addDocument: addCandidateDocument } = useCandidateDocumentStore()
+  // New applications arrive from the career site in another browser: stay in step with the database.
+  const live = useLiveSync({ store: useRecruitmentStore, name: 'hcm-recruitment-v1' }, [{ store: useCandidateDocumentStore, name: 'hcm-candidate-documents-v1' }])
   const { tests: psychoTests } = usePsychotestStore()
   const { attempts: psychoAttempts, assign: assignPsychotest } = usePsychotestAttemptStore()
   const { currentUser } = useAuthStore()
@@ -137,6 +140,7 @@ export default function CandidateDatabasePage() {
         actions={
           <div className='flex items-center gap-3'>
             {flash && <span className='rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700'>{flash}</span>}
+            <ActionButton variant='secondary' disabled={live.syncing} onClick={() => live.sync({ full: true })}>{live.syncing ? t('Memuat…', 'Loading…') : `↻ ${t('Muat Ulang', 'Refresh')}`}</ActionButton>
             <ActionButton onClick={openAdd} icon='➕'>{t('Tambah Kandidat', 'Add Candidate')}</ActionButton>
           </div>
         }

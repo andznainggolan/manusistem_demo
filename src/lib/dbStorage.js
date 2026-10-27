@@ -68,6 +68,22 @@ if (typeof window !== 'undefined' && !window.__kpbDbStorageUnload) {
 export const dbStorage = {
   flushNow,
 
+  // Re-reads one key from the database, bypassing the one-time prime above, so a page that stays
+  // open can pick up changes made in another browser (e.g. an application from the career site).
+  // Returns the fresh serialized value, or null when it can't be read.
+  refreshKey: async (name) => {
+    try {
+      const r = await fetch(`/api/state/${encodeURIComponent(name)}`, { cache: 'no-store' })
+      if (!r.ok) return null
+      const { value } = await r.json()
+      if (value == null) return null
+      const map = await prime()
+      if (map) map[name] = value
+      local.set(name, value)
+      return value
+    } catch { return null }
+  },
+
   getItem: async (name) => {
     // Prefer the database (shared across devices); fall back to localStorage.
     const map = await prime()
