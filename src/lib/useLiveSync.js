@@ -4,9 +4,10 @@ import { dbStorage } from '@/lib/dbStorage'
 
 /**
  * Keeps a page's persisted stores in step with the database while the page stays open.
- * `primary` ({ store, name }) is checked every `intervalMs`; `others` are re-read on load, on
- * returning to the tab, on demand, and whenever the primary changed. Pending local edits are
- * written first so they are never replaced by an older copy.
+ * `primary` ({ store, name }) is checked on load, on returning to the tab and every `intervalMs`.
+ * `others` (large data such as documents) are re-read only when the primary changed or on demand
+ * (`sync({ full: true })`, the Muat Ulang button). Pending local edits are written first so they
+ * are never replaced by an older copy.
  */
 export function useLiveSync(primary, others = [], intervalMs = 20000) {
   const [syncing, setSyncing] = useState(false)
@@ -17,6 +18,9 @@ export function useLiveSync(primary, others = [], intervalMs = 20000) {
 
   const pull = async ({ store, name }) => {
     await dbStorage.flushNow(name)
+    // What the store was hydrated from is the baseline, so the first check does not reload needlessly.
+    // (Read before refreshKey, which refreshes the local copy too.)
+    if (seen.current[name] === undefined) { try { seen.current[name] = localStorage.getItem(name) } catch { seen.current[name] = null } }
     const value = await dbStorage.refreshKey(name)
     if (value == null) return false
     const changed = seen.current[name] !== value
@@ -25,7 +29,7 @@ export function useLiveSync(primary, others = [], intervalMs = 20000) {
     return changed
   }
 
-  const sync = useCallback(async ({ full = true } = {}) => {
+  const sync = useCallback(async ({ full = false } = {}) => {
     setSyncing(true)
     try {
       const { primary: p, others: o } = cfg.current
@@ -36,9 +40,9 @@ export function useLiveSync(primary, others = [], intervalMs = 20000) {
   }, [])
 
   useEffect(() => {
-    sync({ full: true })
-    const tick = setInterval(() => { if (document.visibilityState === 'visible') sync({ full: false }) }, intervalMs)
-    const back = () => { if (document.visibilityState === 'visible') sync({ full: true }) }
+    sync()
+    const tick = setInterval(() => { if (document.visibilityState === 'visible') sync() }, intervalMs)
+    const back = () => { if (document.visibilityState === 'visible') sync() }
     document.addEventListener('visibilitychange', back)
     window.addEventListener('focus', back)
     return () => { clearInterval(tick); document.removeEventListener('visibilitychange', back); window.removeEventListener('focus', back) }
