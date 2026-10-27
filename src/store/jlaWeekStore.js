@@ -12,6 +12,8 @@ const NEW_ID_BASE = 100000   // above any default-pattern id, so a new item neve
 
 const nextId = (list) => Math.max(NEW_ID_BASE, ...list.map(x => x.id)) + 1
 const copy = (list) => list.map(x => ({ ...x }))
+// What identifies an item for "is it already in the week": kind, day, time and its type or subject.
+export const sigOf = (x, kind) => `${kind}|${x.day}|${x.start}|${x.end}|${kind === 'b' ? x.label : `${x.taskTypeId}|${x.subject || ''}`}`
 
 // The week's plan, copied from the default pattern (tpl) when it does not exist yet.
 function materialize(weeks, empId, monday, tpl) {
@@ -86,6 +88,27 @@ export const weekCreator = (set, get) => {
         const { [weekKey(empId, monday)]: _drop, ...rest } = s.weeks
         return { weeks: rest }
       }),
+
+      // Adds the default pattern's items that a customised week lacks, keeping everything the
+      // week already has; items that would overlap are skipped. Returns { added, skipped }.
+      mergeFromDefault: (empId, monday, tpl) => {
+        const plan = materialize(get().weeks, empId, monday, tpl)
+        const blocks = [...plan.blocks], tasks = [...plan.tasks]
+        const have = new Set([...blocks.map(b => sigOf(b, 'b')), ...tasks.map(t => sigOf(t, 't'))])
+        let bid = nextId(blocks), tid = nextId(tasks), added = 0, skipped = 0
+        tpl.blocks.forEach(b => {
+          if (have.has(sigOf(b, 'b'))) return
+          if (findConflict(empId, b.day, b.start, b.end, blocks, tasks)) { skipped++; return }
+          blocks.push({ ...b, id: bid++ }); added++
+        })
+        tpl.tasks.forEach(t => {
+          if (have.has(sigOf(t, 't'))) return
+          if (findConflict(empId, t.day, t.start, t.end, blocks, tasks)) { skipped++; return }
+          tasks.push({ ...t, id: tid++ }); added++
+        })
+        put(empId, monday, { blocks, tasks })
+        return { added, skipped }
+      },
 
       // Copies the previous week's plan (its own, or the default if it has none) into this week.
       copyFromPrevious: (empId, monday, tpl) => {

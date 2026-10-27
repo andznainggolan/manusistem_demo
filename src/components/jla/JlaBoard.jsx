@@ -4,6 +4,7 @@ import { useEmployeeStore } from '@/store/employeeStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useJlaStore } from '@/store/jlaStore'
 import { useJlaDraft } from '@/store/jlaDraft'
+import { sigOf } from '@/store/jlaWeekStore'
 import { localDateStr } from '@/lib/workSchedule'
 import { mondayOf, activeMonday, addDays, weekDates, planForWeek } from '@/lib/jlaRealization'
 import { DAYS, toMin, toHHMM, fmtHours, durationHours, weekSummary, freeHoursInWindow, isFreeOn } from '@/lib/jla'
@@ -137,6 +138,24 @@ export default function JlaBoard({ scope = 'unit' }) {
   const doDeleteTask = (empId, id) => weekly ? wk.deleteTask(empId, monday, tplOf(empId), id) : deleteTask(id)
   const doDeleteBlock = (empId, id) => weekly ? wk.deleteBlock(empId, monday, tplOf(empId), id) : deleteTeachingBlock(id)
   const doClear = (empId, opts) => weekly ? wk.clearWeek(empId, monday, tplOf(empId), opts) : clearWeek(empId, opts)
+  // On a customised week: default items it does not have (changes to the default do not flow into it).
+  const [mergeMsg, setMergeMsg] = useState(null)   // { key, text }
+  const missingItems = weekly && selected && selPlan.override ? (() => {
+    const tpl = tplOf(selected.emp.id)
+    const have = new Set([...selPlan.blocks.map(b => sigOf(b, 'b')), ...selPlan.tasks.map(t => sigOf(t, 't'))])
+    const line = (x, text) => `${dayLabel(x.day)} ${x.start}-${x.end} ${text}`
+    return [
+      ...tpl.blocks.filter(b => !have.has(sigOf(b, 'b'))).map(b => line(b, b.label)),
+      ...tpl.tasks.filter(t => !have.has(sigOf(t, 't'))).map(t => line(t, t.teaching && t.subject ? t.subject : typeName(t.taskTypeId))),
+    ]
+  })() : []
+  const missingFromDefault = missingItems.length
+  const msgKey = selected ? `${selected.emp.id}|${monday}` : ''
+  const shownMsg = mergeMsg?.key === msgKey && draft.dirty ? mergeMsg : null   // only while the merge is still unsaved
+  const mergeDefault = () => {
+    const r = wk.mergeFromDefault(selected.emp.id, monday, tplOf(selected.emp.id))
+    setMergeMsg({ key: msgKey, text: `${r.added} kegiatan dari pola default ditambahkan${r.skipped ? `, ${r.skipped} dilewati karena bentrok dengan jadwal minggu ini` : ''}. Klik Simpan untuk menyimpan.` })
+  }
   const copyPrevious = () => {
     if (!selected) return
     if (selPlan.override && !window.confirm('Minggu ini sudah disesuaikan. Timpa dengan salinan minggu sebelumnya?')) return
@@ -295,6 +314,19 @@ export default function JlaBoard({ scope = 'unit' }) {
                   </>
                 )}
               >
+                {weekly && selPlan.override && (missingFromDefault > 0 || shownMsg) && (
+                  <div className='mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-sky-50 px-4 py-3 text-xs text-sky-900 ring-1 ring-sky-200' data-testid='override-notice'>
+                    <span>
+                      {shownMsg ? shownMsg.text
+                        : `Minggu ini disesuaikan khusus, jadi perubahan pada pola default tidak otomatis ikut. Pola default punya ${missingFromDefault} kegiatan yang belum ada di minggu ini: ${missingItems.slice(0, 4).join('; ')}${missingFromDefault > 4 ? `; dan ${missingFromDefault - 4} lainnya` : ''}.`}
+                    </span>
+                    {canEdit && missingFromDefault > 0 && (
+                      <span className='flex gap-2'>
+                        <ActionButton size='sm' variant='secondary' onClick={mergeDefault}>Ambil dari Pola Default</ActionButton>
+                      </span>
+                    )}
+                  </div>
+                )}
                 <div className='mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4'>
                   <Chip label='Jam mengajar' value={`${fmtHours(selected.sum.teaching)} jam`} />
                   <Chip label='Task tambahan' value={`${fmtHours(selected.sum.task)} jam`} />
