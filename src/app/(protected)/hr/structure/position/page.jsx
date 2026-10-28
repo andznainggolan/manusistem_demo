@@ -47,16 +47,25 @@ export default function PositionPage() {
 
   const flash = (text, type='success') => { setMsg({text,type}); setTimeout(()=>setMsg(null),3000) }
 
-  const openNew = () => { setEditing(null); setForm(BLANK); setShowModal(true) }
+  // Position codes are system-assigned: POS + the highest running number so far + 1 (POS200 -> POS201).
+  const nextPositionCode = () => {
+    const max = positions.reduce((m, p) => {
+      const n = /^POS(\d+)$/i.exec(p.code || '')
+      return n ? Math.max(m, parseInt(n[1], 10)) : m
+    }, 0)
+    return `POS${String(max + 1).padStart(3, '0')}`
+  }
+
+  const openNew = () => { setEditing(null); setForm({ ...BLANK, code: nextPositionCode() }); setShowModal(true) }
 
   const handleSave = () => {
-    if (!form.departmentId || !form.gradeId || !form.code || !form.name)
-      return flash(t('Department, grade, kode, dan nama wajib diisi.','Department, grade, code, and name are required.'),'error')
+    if (!form.departmentId || !form.gradeId || !form.name)
+      return flash(t('Department, grade, dan nama wajib diisi.','Department, grade, and name are required.'),'error')
     const data = {
       departmentId: +form.departmentId,
       jobFamilyId:  form.jobFamilyId ? +form.jobFamilyId : null,
       gradeId:      +form.gradeId,
-      code:         form.code,
+      code:         editing ? form.code : nextPositionCode(),   // recomputed on save in case another position was added meanwhile
       name:         form.name,
       status:       form.status,
     }
@@ -274,11 +283,13 @@ export default function PositionPage() {
                 />
               </FormField>
 
-              {[[t('Kode','Code'),'code'],[t('Nama Position','Position Name'),'name']].map(([lbl,key])=>(
-                <FormField key={key} label={lbl} required>
-                  <Input value={form[key]} onChange={e=>setForm(f=>({...f,[key]:e.target.value}))} />
-                </FormField>
-              ))}
+              <FormField label={t('Kode','Code')} hint={editing ? undefined : t('Nomor urut otomatis dari sistem.','Running number assigned by the system.')}>
+                <Input value={form.code} readOnly data-testid='position-code' className='bg-gray-50 font-mono text-gray-500' />
+              </FormField>
+              <FormField label={t('Nama Position','Position Name')} required>
+                <Input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} />
+              </FormField>
+
 
               <FormField label='Job Family'>
                 <Select value={form.jobFamilyId} onChange={e=>setForm(f=>({...f,jobFamilyId:e.target.value}))}>
