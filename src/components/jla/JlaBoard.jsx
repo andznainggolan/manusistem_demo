@@ -64,8 +64,14 @@ export default function JlaBoard({ scope = 'unit' }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [employees, categories, teachingBlocks, tasks, weeks, weekly, monday, target, seesAll, viewer?.id, departments])
 
+  // The teacher list defaults to A-Z by name; `teachers` stays in shortfall order for the free-teacher finder.
+  const [sortMode, setSortMode] = useState('name')
+  const listed = useMemo(() => sortMode === 'name'
+    ? [...teachers].sort((a, b) => a.emp.name.localeCompare(b.emp.name, 'id', { sensitivity: 'base' }))
+    : teachers, [teachers, sortMode])
+
   const [selectedId, setSelectedId] = useState(null)
-  const selected = teachers.find(t => t.emp.id === selectedId) || teachers[0] || null
+  const selected = listed.find(t => t.emp.id === selectedId) || listed[0] || null
   const canEdit = canEditEmp(selected?.emp)
   const anyEditable = teachers.some(t => canEditEmp(t.emp))
 
@@ -278,9 +284,16 @@ export default function JlaBoard({ scope = 'unit' }) {
         </SectionCard>
       ) : (
         <div className='grid grid-cols-1 gap-6 xl:grid-cols-[320px_1fr]'>
-          <SectionCard title='Guru' icon='🧑‍🏫' subtitle='Diurutkan dari kekurangan jam terbesar' bodyClass='p-2'>
+          <SectionCard title='Guru' icon='🧑‍🏫' subtitle={sortMode === 'name' ? 'Diurutkan nama (A-Z)' : 'Diurutkan dari kekurangan jam terbesar'} bodyClass='p-2'
+            actions={(
+              <select value={sortMode} onChange={e => setSortMode(e.target.value)} aria-label='Urutkan daftar guru' data-testid='jla-teacher-sort'
+                className='rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs text-gray-600'>
+                <option value='name'>Nama (A-Z)</option>
+                <option value='gap'>Kekurangan jam</option>
+              </select>
+            )}>
             <div className='max-h-[640px] space-y-1.5 overflow-y-auto p-1'>
-              {teachers.map(({ emp, sum }) => {
+              {listed.map(({ emp, sum }) => {
                 const active = selected?.emp.id === emp.id
                 const pct = Math.min(100, Math.round((sum.total / target) * 100))
                 return (
