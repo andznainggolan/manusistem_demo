@@ -212,17 +212,22 @@ export const SCHOOL_EMPLOYEES = EMP_ROWS.map(([id, name, positionId, managerId, 
   }
 })
 
-export const SCHOOL_USERS = SCHOOL_EMPLOYEES.map(e => ({
-  id: e.id,
-  employeeId: e.id,
-  username: HANDLE_BY_ID[e.id],
-  password: 'pass123',
-  name: e.name,
-  role: e.role,
-  dept: e.department,
-  position: e.position,
-  email: e.email,
-}))
+export const SCHOOL_USERS = [
+  ...SCHOOL_EMPLOYEES.map(e => ({
+    id: e.id,
+    employeeId: e.id,
+    username: HANDLE_BY_ID[e.id],
+    password: 'pass123',
+    name: e.name,
+    role: e.role,
+    dept: e.department,
+    position: e.position,
+    email: e.email,
+  })),
+  // Support account for the vendor's user support (Ramusen). Deliberately not linked to any employee.
+  { id: 900001, employeeId: null, username: 'admin', password: 'pass123', name: 'Admin Support Ramusen', role: 'superadmin',
+    dept: '-', position: 'System Administrator (Support)', email: `admin@${EMAIL_DOMAIN}` },
+]
 
 // ─── Headcounts (seats) ──────────────────────────────────────────────────────
 // Each employee holds one seat under their position; VACANT_SEATS are open
