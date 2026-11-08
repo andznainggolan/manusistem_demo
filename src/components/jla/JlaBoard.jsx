@@ -58,7 +58,7 @@ export default function JlaBoard({ scope = 'unit' }) {
 
   const target = settings.targetHours
   const teachers = useMemo(() => employees
-    .filter(e => e.status === 'Active' && categories[e.id] === 'Guru' && (seesAll || buOf(e) === buOf(viewer || {})))
+    .filter(e => e.status === 'Active' && categories[e.id] === 'Guru' && (seesAll || buOf(e) === buOf(viewer || {}) || canEditEmp(e)))
     .map(e => { const pl = planOf(e.id); return { emp: e, override: pl.override, sum: weekSummary(e.id, pl.blocks, pl.tasks, target) } })
     .sort((a, b) => b.sum.gap - a.sum.gap || a.emp.name.localeCompare(b.emp.name)),
   // eslint-disable-next-line react-hooks/exhaustive-deps

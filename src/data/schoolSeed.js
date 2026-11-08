@@ -459,23 +459,23 @@ export const SCHOOL_SUBJECTS = [
 const WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 // [employeeId, days, [[start, end, label], ...]]
 const TEACHING = [
-  [111, WEEK, [['07:30', '10:30', 'Kelompok A (TK)'], ['11:00', '13:00', 'Kelompok A (TK)']]],
-  [112, WEEK, [['07:30', '10:00', 'Matematika Kelas 1-3'], ['10:30', '13:00', 'Matematika Kelas 4-6']]],
-  [113, WEEK, [['07:30', '10:30', 'Kelas 4A'], ['11:00', '13:30', 'Kelas 4A']]],
+  [111, WEEK, [['07:00', '10:00', 'Kelompok A (TK)'], ['10:30', '12:30', 'Kelompok A (TK)']]],
+  [112, WEEK, [['07:00', '09:30', 'Matematika Kelas 1-3'], ['10:00', '12:30', 'Matematika Kelas 4-6']]],
+  [113, WEEK, [['07:00', '10:00', 'Kelas 4A'], ['10:30', '13:00', 'Kelas 4A']]],
   [114, WEEK, [['08:00', '11:00', 'Perpustakaan dan Literasi'], ['12:00', '14:00', 'Greenery Class']]],
-  [115, WEEK, [['07:30', '10:30', 'Kelas 2A'], ['11:00', '13:30', 'Kelas 2A']]],
-  [116, WEEK, [['07:30', '10:30', 'Kelas 5A (PYP)'], ['11:00', '14:00', 'Kelas 5A (PYP)']]],
+  [115, WEEK, [['07:00', '10:00', 'Kelas 2A'], ['10:30', '13:00', 'Kelas 2A']]],
+  [116, WEEK, [['07:00', '10:00', 'Kelas 5A (PYP)'], ['10:30', '13:30', 'Kelas 5A (PYP)']]],
   [117, WEEK, [['08:00', '11:00', 'Informatika 7-9'], ['12:00', '14:00', 'Pemrograman 10']]],
   [118, ['Monday', 'Wednesday', 'Friday'], [['08:00', '12:00', 'Seni Rupa (Painting) 1-9']]],
   [119, WEEK, [['08:00', '11:00', 'Bahasa Indonesia 7-9'], ['12:00', '14:00', 'Bahasa Indonesia 10']]],
   [120, ['Tuesday', 'Thursday'], [['08:00', '13:00', 'Seni Musik 1-9']]],
-  [121, WEEK, [['07:30', '10:30', 'PJOK 1-6'], ['11:00', '13:00', 'PJOK 7-9']]],
+  [121, WEEK, [['07:00', '10:00', 'PJOK 1-6'], ['10:30', '12:30', 'PJOK 7-9']]],
   [122, ['Monday', 'Wednesday', 'Thursday'], [['08:00', '13:00', 'Bahasa Mandarin 1-9']]],
   [123, WEEK, [['08:00', '10:00', 'PPKn 7-9'], ['11:00', '13:00', 'PPKn 10']]],
   [124, WEEK, [['08:00', '11:00', 'IPS 7-9'], ['12:00', '14:00', 'Entrepreneurship 10']]],
-  [125, WEEK, [['07:30', '10:30', 'English 1-6'], ['11:00', '14:00', 'English 7-9']]],
+  [125, WEEK, [['07:00', '10:00', 'English 1-6'], ['10:30', '13:30', 'English 7-9']]],
   [126, WEEK, [['08:00', '11:00', 'Religion 1-6'], ['12:00', '14:00', 'Religion 7-9']]],
-  [127, WEEK, [['07:30', '10:00', 'Math 7-9'], ['10:30', '13:00', 'Science 7-9'], ['13:30', '15:30', 'Math 10']]],
+  [127, WEEK, [['07:00', '09:30', 'Math 7-9'], ['10:00', '12:30', 'Science 7-9'], ['13:00', '15:00', 'Math 10']]],
 ]
 export const SCHOOL_TEACHING_BLOCKS = (() => {
   const out = []
@@ -488,7 +488,6 @@ export const SCHOOL_TEACHING_BLOCKS = (() => {
 // [employeeId, days, start, end, taskTypeId, note]
 const TASKS = [
   [125, WEEK, '14:00', '16:00', 2, 'Remedial dan pengayaan Bahasa Inggris'],
-  [127, WEEK, '15:30', '17:00', 3, 'Klub Sains'],
   [116, WEEK, '14:00', '16:00', 4, 'Administrasi kelas 5A'],
   [119, ['Monday', 'Tuesday', 'Wednesday'], '14:00', '16:00', 5, 'Koreksi ulangan harian'],
   [111, WEEK, '13:00', '15:00', 4, 'Administrasi kelompok dan laporan perkembangan anak'],

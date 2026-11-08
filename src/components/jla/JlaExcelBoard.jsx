@@ -36,7 +36,7 @@ export default function JlaExcelBoard({ scope = 'unit' }) {
   const positionName = (e) => positions.find(p => p.id === e.positionId)?.name || e.position
   const typeName = (id) => taskTypes.find(t => t.id === id)?.name || 'Task'
   const teachers = useMemo(() => employees
-    .filter(e => e.status === 'Active' && categories[e.id] === 'Guru' && (seesAll || buOf(e) === buOf(viewer || {})))
+    .filter(e => e.status === 'Active' && categories[e.id] === 'Guru' && (seesAll || buOf(e) === buOf(viewer || {}) || canImport(e)))
     .sort((a, b) => a.name.localeCompare(b.name)),
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [employees, categories, seesAll, viewer?.id, departments])

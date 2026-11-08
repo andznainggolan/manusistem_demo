@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
 import { PLACEMENTS } from '@/store/talentSeed'
+import { IS_SCHOOL } from '@/lib/demoProfile'
 
 // ─── Talent Review (9-Box Calibration) ────────────────────────────────────────
 // Grid: baris = Performance (High=3 … Low=1), kolom = Potential (Low=1 … High=3).
@@ -38,7 +39,8 @@ export const useTalentReviewStore = create(
   persist(
     (set) => ({
       // Map: { [employeeId]: { boxRow, boxCol, notes, updatedAt } }
-      placements: { ...PLACEMENTS },
+      // School profile: no 9-box placements are seeded for the real staff; HR places them in the review.
+      placements: IS_SCHOOL ? {} : { ...PLACEMENTS },
 
       // Tempatkan / pindahkan karyawan ke sebuah box.
       setBox: (employeeId, boxRow, boxCol, extra = {}) =>
@@ -66,6 +68,12 @@ export const useTalentReviewStore = create(
           return { placements: next }
         }),
     }),
-    { name: 'hcm-talent-review-v1', version: 1, storage: createJSONStorage(() => dbStorage) }
+    {
+      name: 'hcm-talent-review-v1', version: 2, storage: createJSONStorage(() => dbStorage),
+      // v1 -> v2: placements saved for the earlier sample staff (employee ids 1-41) no longer match anyone in the school demo.
+      migrate: (state, version) => (IS_SCHOOL && version < 2 && state
+        ? { ...state, placements: Object.fromEntries(Object.entries(state.placements || {}).filter(([id]) => Number(id) > 100)) }
+        : state),
+    }
   )
 )

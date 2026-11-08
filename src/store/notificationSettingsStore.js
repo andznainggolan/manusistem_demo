@@ -21,8 +21,8 @@ const SCHOOL_VARIABLES = [
   { key: 'candidateName', label: 'Nama Kandidat', sample: 'Maria Gabriella' },
   { key: 'email',         label: 'Email Kandidat', sample: 'maria.gabriella@email.com' },
   { key: 'phone',         label: 'Nomor Telepon', sample: '0812-3456-7890' },
-  { key: 'positionTitle', label: 'Posisi yang Dilamar', sample: 'Guru Matematika SMP' },
-  { key: 'departmentName',label: 'Departemen', sample: 'Akademik SMP' },
+  { key: 'positionTitle', label: 'Posisi yang Dilamar', sample: 'Guru Matematika dan Sains (MYP & SYP)' },
+  { key: 'departmentName',label: 'Departemen', sample: 'Akademik SMP dan SMA (MYP & SYP)' },
   { key: 'companyName',   label: 'Perusahaan', sample: 'Lia Stephanie Catholic School' },
   { key: 'appliedDate',   label: 'Tanggal Melamar', sample: '2026-10-22' },
 ]
