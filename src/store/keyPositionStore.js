@@ -69,7 +69,7 @@ export const useKeyPositionStore = create(
     {
       name: 'hcm-key-position-v1',
       storage: createJSONStorage(() => dbStorage),
-      version: 2,
+      version: 3,
       // Sisipkan seed ke state lama (yang mungkin kosong), tanpa menimpa data user.
       migrate: (state, from) => ({
         ...state,

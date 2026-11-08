@@ -96,7 +96,7 @@ export const useJlaStore = create(persist(
     storage: createJSONStorage(() => dbStorage),
     // v1 -> v2: stored school data gains the "teach another subject" task type
     // without losing the tasks and settings already saved.
-    version: 4,
+    version: 5,
     migrate: (state, version) => {
       if (version < 2 && IS_SCHOOL && state?.taskTypes && !state.taskTypes.some(t => t.teaching)) {
         const seed = SCHOOL_JLA_TASK_TYPES.find(t => t.teaching)
@@ -120,6 +120,13 @@ export const useJlaStore = create(persist(
           if (seed) state.taskTypes = [...types, { ...seed, id: nextId(types) }]
         }
         if (!state.subjects) state.subjects = [...SCHOOL_SUBJECTS]
+      }
+      // v4 -> v5: the sample staff were replaced by Lia Stephanie's real organisation, so worker categories,
+      // default timetables and default tasks restart from the new seed. Task types, subjects and settings stay.
+      if (version < 5 && IS_SCHOOL && state) {
+        state.categories = { ...SCHOOL_WORKER_CATEGORIES }
+        state.teachingBlocks = SCHOOL_TEACHING_BLOCKS.map(x => ({ ...x }))
+        state.tasks = SCHOOL_JLA_TASKS.map(x => ({ ...x }))
       }
       return state
     },

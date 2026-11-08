@@ -22,7 +22,7 @@ export function useJlaAuthority(scope = 'unit') {
   const buOf = (emp) => departments.find(d => d.id === emp.departmentId)?.businessUnitId
   const isAdmin = currentUser?.role === 'superadmin'
   const isHr = !!currentUser?.role?.startsWith('hr')
-  const isPrincipal = viewerPosition.startsWith('Kepala Sekolah')
+  const isPrincipal = /principal|head ?master|kepala sekolah/i.test(viewerPosition)
   const hrPage = scope === 'all'
 
   // Walks up the manager chain (guarding against loops) looking for the current user.

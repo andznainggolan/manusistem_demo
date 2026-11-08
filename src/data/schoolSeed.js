@@ -17,41 +17,39 @@ export const SCHOOL_COMPANIES = [
   { id:2, divisionId:1, code:'CO002', companyCode:'YLS',  name:'Yayasan Lia Stephanie',        legalEntity:'Yayasan', country:'Indonesia', status:'Active', emailDomain:'lscs-demo.sch.id' },
 ]
 
+// The school's real organisation (Lia Stephanie Catholic School): management, three academic units
+// (Kindergarten, Primary, MYP & SYP) and the support departments. The Yayasan company and its two
+// business units stay as structure only; nobody is seated there.
 export const SCHOOL_BUSINESS_UNITS = [
-  { id:1, companyId:2, code:'BU001', name:'Pengurus Yayasan',        costCenter:'CC-001', status:'Active' },
-  { id:2, companyId:2, code:'BU002', name:'Dewan Sekolah',           costCenter:'CC-002', status:'Active' },
-  { id:3, companyId:1, code:'BU003', name:'TK',                      costCenter:'CC-003', status:'Active' },
-  { id:4, companyId:1, code:'BU004', name:'SD',                      costCenter:'CC-004', status:'Active' },
-  { id:5, companyId:1, code:'BU005', name:'SMP',                     costCenter:'CC-005', status:'Active' },
-  { id:6, companyId:1, code:'BU006', name:'SMA',                     costCenter:'CC-006', status:'Active' },
-  { id:7, companyId:1, code:'BU007', name:'Pastoral dan Kesiswaan',  costCenter:'CC-007', status:'Active' },
-  { id:8, companyId:1, code:'BU008', name:'Tata Usaha dan Keuangan', costCenter:'CC-008', status:'Active' },
-  { id:9, companyId:1, code:'BU009', name:'Sarana dan Umum',         costCenter:'CC-009', status:'Active' },
+  { id:1, companyId:2, code:'BU001', name:'Pengurus Yayasan',                 costCenter:'CC-001', status:'Active' },
+  { id:2, companyId:2, code:'BU002', name:'Dewan Sekolah',                    costCenter:'CC-002', status:'Active' },
+  { id:3, companyId:1, code:'BU003', name:'Manajemen',                        costCenter:'CC-003', status:'Active' },
+  { id:4, companyId:1, code:'BU004', name:'Taman Kanak-Kanak (TK)',           costCenter:'CC-004', status:'Active' },
+  { id:5, companyId:1, code:'BU005', name:'Sekolah Dasar (Primary)',          costCenter:'CC-005', status:'Active' },
+  { id:6, companyId:1, code:'BU006', name:'SMP dan SMA (MYP & SYP)',          costCenter:'CC-006', status:'Active' },
+  { id:7, companyId:1, code:'BU007', name:'Keuangan',                         costCenter:'CC-007', status:'Active' },
+  { id:8, companyId:1, code:'BU008', name:'SDM dan Umum',                     costCenter:'CC-008', status:'Active' },
+  { id:9, companyId:1, code:'BU009', name:'Pemasaran dan Penerimaan Siswa',   costCenter:'CC-009', status:'Active' },
 ]
 
 export const SCHOOL_DEPARTMENTS = [
-  { id:1,  businessUnitId:1, code:'DEPT001', name:'Pengurus Yayasan',      status:'Active' },
-  { id:2,  businessUnitId:2, code:'DEPT002', name:'Dewan Sekolah',         status:'Active' },
-  { id:3,  businessUnitId:3, code:'DEPT003', name:'Akademik TK',           status:'Active' },
-  { id:4,  businessUnitId:4, code:'DEPT004', name:'Akademik SD',           status:'Active' },
-  { id:5,  businessUnitId:5, code:'DEPT005', name:'Akademik SMP',          status:'Active' },
-  { id:6,  businessUnitId:6, code:'DEPT006', name:'Akademik SMA',          status:'Active' },
-  { id:7,  businessUnitId:7, code:'DEPT007', name:'Pastoral',              status:'Active' },
-  { id:8,  businessUnitId:7, code:'DEPT008', name:'Bimbingan Konseling',   status:'Active' },
-  { id:9,  businessUnitId:8, code:'DEPT009', name:'Tata Usaha',            status:'Active' },
-  { id:10, businessUnitId:8, code:'DEPT010', name:'Keuangan',              status:'Active' },
-  { id:11, businessUnitId:8, code:'DEPT011', name:'Sumber Daya Manusia',   status:'Active' },
-  { id:12, businessUnitId:9, code:'DEPT012', name:'Kebersihan',            status:'Active' },
-  { id:13, businessUnitId:9, code:'DEPT013', name:'Keamanan',              status:'Active' },
-  { id:14, businessUnitId:9, code:'DEPT014', name:'Transportasi',          status:'Active' },
-  { id:15, businessUnitId:9, code:'DEPT015', name:'Teknologi Informasi',   status:'Active' },
+  { id:1,  businessUnitId:1, code:'DEPT001', name:'Pengurus Yayasan',          status:'Active' },
+  { id:2,  businessUnitId:2, code:'DEPT002', name:'Dewan Sekolah',             status:'Active' },
+  { id:3,  businessUnitId:3, code:'DEPT003', name:'Direksi',                   status:'Active' },
+  { id:4,  businessUnitId:3, code:'DEPT004', name:'Koordinasi Sekolah',        status:'Active' },
+  { id:5,  businessUnitId:4, code:'DEPT005', name:'Akademik TK',               status:'Active' },
+  { id:6,  businessUnitId:5, code:'DEPT006', name:'Akademik SD (Primary)',     status:'Active' },
+  { id:7,  businessUnitId:6, code:'DEPT007', name:'Akademik SMP dan SMA (MYP & SYP)', status:'Active' },
+  { id:8,  businessUnitId:7, code:'DEPT008', name:'Keuangan dan Pengadaan',    status:'Active' },
+  { id:9,  businessUnitId:8, code:'DEPT009', name:'HRGA',                      status:'Active' },
+  { id:10, businessUnitId:9, code:'DEPT010', name:'Marketing dan Admission',   status:'Active' },
 ]
 
+// Job category of every position: Management, Educational Personnel, or Staff.
 export const SCHOOL_JOB_FAMILIES = [
-  { id:1, code:'JF001', name:'Pimpinan dan Pembina',  description:'Dewan sekolah, pengurus yayasan, dan kepala sekolah', status:'Active' },
-  { id:2, code:'JF002', name:'Pendidik',              description:'Guru kelas, guru mata pelajaran, guru agama, konselor', status:'Active' },
-  { id:3, code:'JF003', name:'Tenaga Kependidikan',   description:'Tata usaha, keuangan, perpustakaan, dan SDM', status:'Active' },
-  { id:4, code:'JF004', name:'Layanan Umum',          description:'Kebersihan, keamanan, transportasi, dan teknisi', status:'Active' },
+  { id:1, code:'JF001', name:'Management',             description:'Direksi, koordinator sekolah, kepala sekolah, dan manajer', status:'Active' },
+  { id:2, code:'JF002', name:'Educational Personnel',  description:'Guru dan pendidik di TK, SD, SMP, dan SMA', status:'Active' },
+  { id:3, code:'JF003', name:'Staff',                  description:'Staf keuangan, SDM, umum, pengadaan, laboratorium, administrasi, dan pemasaran', status:'Active' },
 ]
 
 // Grade scale modelled on Indonesian ASN: golongan ruang PNS (I/a-IV/e), jenjang
@@ -94,40 +92,46 @@ export const SCHOOL_GRADE_LIST = [
 export const SCHOOL_GRADE_BY_ID = Object.fromEntries(SCHOOL_GRADE_LIST.map(g => [g.id, g]))
 
 // [id, departmentId, jobFamilyId, gradeId, name]
+// Titles are the school's own. Ids start at 101 so data saved from the earlier sample organisation
+// (ids 1-50) can never point at one of these people or positions.
 const POSITION_ROWS = [
-  [1,  1, 1, 61, 'Ketua Yayasan'],
-  [2,  1, 1, 62, 'Sekretaris Yayasan'],
-  [3,  2, 1, 63, 'Ketua Dewan Sekolah'],
-  [4,  2, 1, 64, 'Anggota Dewan Sekolah'],
-  [5,  3, 1, 26, 'Kepala Sekolah TK'],
-  [6,  3, 2, 22, 'Guru TK'],
-  [7,  4, 1, 26, 'Kepala Sekolah SD'],
-  [8,  4, 2, 23, 'Guru Kelas SD'],
-  [9,  5, 1, 27, 'Kepala Sekolah SMP'],
-  [10, 5, 1, 25, 'Wakil Kepala Sekolah SMP'],
-  [11, 5, 2, 24, 'Guru Matematika SMP'],
-  [12, 5, 2, 22, 'Guru Bahasa Inggris SMP'],
-  [13, 5, 2, 23, 'Guru IPA SMP'],
-  [14, 5, 2, 45, 'Guru Honorer SMP'],
-  [15, 6, 1, 27, 'Kepala Sekolah SMA'],
-  [16, 6, 1, 25, 'Wakil Kepala Sekolah SMA'],
-  [17, 6, 2, 25, 'Guru Matematika SMA'],
-  [18, 6, 2, 24, 'Guru Fisika SMA'],
-  [19, 6, 2, 45, 'Guru Honorer SMA'],
-  [20, 7, 2, 25, 'Koordinator Pastoral'],
-  [21, 7, 2, 23, 'Guru Agama Katolik'],
-  [22, 8, 2, 22, 'Konselor (BK)'],
-  [23, 9, 3, 12, 'Kepala Tata Usaha'],
-  [24, 9, 3, 9, 'Staf Tata Usaha'],
-  [25, 9, 3, 9, 'Pustakawan'],
-  [26, 10, 3, 12, 'Kepala Keuangan'],
-  [27, 10, 3, 9, 'Staf Keuangan'],
-  [28, 11, 3, 13, 'HR Manager'],
-  [29, 11, 3, 10, 'HR Officer'],
-  [30, 12, 4, 3,  'Petugas Kebersihan'],
-  [31, 13, 4, 5,  'Satpam'],
-  [32, 14, 4, 6,  'Driver'],
-  [33, 15, 4, 9, 'Teknisi IT'],
+  // Management
+  [101, 3,  1, 61, 'Operational Director'],
+  [102, 3,  1, 61, 'Financial Director'],
+  [103, 4,  1, 16, 'School Coordinator'],
+  [104, 5,  1, 26, 'Head Master of Kindergarten'],
+  [105, 7,  1, 27, 'MYP & SYP Principal'],
+  [106, 6,  1, 27, 'SD & Primary Principal'],
+  [107, 10, 1, 14, 'Marketing Manager'],
+  [108, 8,  1, 14, 'Finance Manager'],
+  [109, 9,  1, 14, 'HRGA'],
+  [110, 10, 1, 11, 'Marketing & Admission'],
+  // Educational Personnel
+  [111, 5,  2, 22, 'Kindergarten Teacher'],
+  [112, 6,  2, 23, 'Primary Year Mathematic Teacher'],
+  [113, 6,  2, 23, 'Primary School Year'],
+  [114, 6,  2, 23, 'Librarian & Greenery Teacher'],
+  [115, 6,  2, 23, 'Primary Year Teacher'],
+  [116, 6,  2, 23, 'Primary Year Program Teacher'],
+  [117, 7,  2, 24, 'Middle Year Program Teacher'],
+  [118, 7,  2, 23, 'Art (Painting)'],
+  [119, 7,  2, 23, 'Bahasa Indonesia'],
+  [120, 7,  2, 23, 'Teaching Art (Music)'],
+  [121, 7,  2, 23, 'PE / PJOK (Pendidikan Jasmani, Olahraga dan Kesehatan)'],
+  [122, 7,  2, 23, 'Bahasa Mandarin'],
+  [123, 7,  2, 23, 'Pancasila / PPKN'],
+  [124, 7,  2, 23, 'IPS / Entrepreneur'],
+  [125, 7,  2, 24, 'English'],
+  [126, 7,  2, 23, 'Religion'],
+  [127, 7,  2, 24, 'Math & Science'],
+  // Staff
+  [128, 9,  3, 9,  'General Affairs Staff'],
+  [129, 8,  3, 9,  'Purchasing Staff'],
+  [130, 7,  3, 8,  'Laboran Staff'],
+  [131, 4,  3, 9,  'Primary Year & Kindergarten Administrator'],
+  [132, 10, 3, 10, 'Digital Marketing Specialist'],
+  [133, 8,  3, 9,  'Staff Finance'],
+  [134, 9,  3, 10, 'Staff HR'],
 ]
 
 export const SCHOOL_POSITIONS = POSITION_ROWS.map(([id, departmentId, jobFamilyId, gradeId, name]) => ({
@@ -135,104 +139,75 @@ export const SCHOOL_POSITIONS = POSITION_ROWS.map(([id, departmentId, jobFamilyI
 }))
 
 // ─── Employees ───────────────────────────────────────────────────────────────
-// [id, name, gender, positionId, managerId, employmentType, joinDate, birthDate, religion, marital]
+// The school's real staff: names and job titles are theirs. Everything else is a demo placeholder
+// (join date, employment type, email, phone). Gender, birth date, religion and marital status are left
+// blank on purpose so HR fills them in.
+// Reporting lines: the Operational Director is the top; the Financial Director (the owner) is second;
+// the School Coordinator, Marketing Manager and HRGA report to the Operational Director; the three
+// principals report to the School Coordinator; the Finance Manager reports to the Financial Director;
+// teachers report to their principal or headmaster.
+// [id, name, positionId, managerId, username, role]
 const EMP_ROWS = [
-  [1,  'Stefanus Hartono',       'Male',   1,  2,    'Permanent', '2010-01-01', '1957-09-02', 'Katolik', 'Married'],
-  [2,  'Maria Veronica Setiawan','Female', 3,  null, 'Permanent', '2012-07-01', '1960-03-14', 'Katolik', 'Married'],
-  [3,  'Agustinus Wibowo',       'Male',   4,  2,    'Permanent', '2015-08-01', '1964-11-21', 'Katolik', 'Married'],
-  [4,  'Theresia Anindya',       'Female', 2,  1,    'Permanent', '2014-06-15', '1975-05-09', 'Katolik', 'Married'],
-  [5,  'Fransiska Lestari',      'Female', 5,  1,    'Permanent', '2016-07-18', '1979-02-27', 'Katolik', 'Married'],
-  [6,  'Yosef Prabowo',          'Male',   7,  1,    'Permanent', '2013-07-15', '1976-12-05', 'Katolik', 'Married'],
-  [7,  'Elisabeth Kartika',      'Female', 9,  1,    'Permanent', '2012-07-16', '1974-08-19', 'Katolik', 'Married'],
-  [8,  'Paulus Sutanto',         'Male',   15, 1,    'Permanent', '2011-07-18', '1972-04-30', 'Katolik', 'Married'],
-  [9,  'Margareta Widya',        'Female', 10, 7,    'Permanent', '2015-07-20', '1981-10-11', 'Katolik', 'Married'],
-  [10, 'Antonius Kurniawan',     'Male',   16, 8,    'Permanent', '2014-07-21', '1980-01-23', 'Katolik', 'Married'],
-  [11, 'Yuliana Sari',           'Female', 6,  5,    'Permanent', '2019-07-15', '1992-06-17', 'Katolik', 'Single'],
-  [12, 'Veronika Dewi',          'Female', 6,  5,    'Permanent', '2021-07-19', '1995-09-08', 'Kristen', 'Single'],
-  [13, 'Bernadus Hendra',        'Male',   8,  6,    'Permanent', '2018-07-16', '1990-03-03', 'Katolik', 'Married'],
-  [14, 'Lucia Permata',          'Female', 8,  6,    'Permanent', '2020-07-20', '1993-12-12', 'Katolik', 'Married'],
-  [15, 'Yohanes Aditya',         'Male',   11, 9,    'Permanent', '2017-07-17', '1989-07-25', 'Katolik', 'Married'],
-  [16, 'Monica Rahayu',          'Female', 11, 9,    'Permanent', '2020-01-13', '1991-05-01', 'Katolik', 'Single'],
-  [17, 'Gregorius Santoso',      'Male',   12, 9,    'Permanent', '2019-07-15', '1988-11-29', 'Katolik', 'Married'],
-  [18, 'Angela Putri',           'Female', 13, 9,    'Permanent', '2022-07-18', '1996-02-14', 'Katolik', 'Single'],
-  [19, 'Dominikus Rian',         'Male',   14, 9,    'Contract',  '2025-07-14', '1998-08-06', 'Katolik', 'Single'],
-  [20, 'Katarina Melati',        'Female', 14, 9,    'Contract',  '2025-07-14', '1999-04-22', 'Katolik', 'Single'],
-  [21, 'Benediktus Hasan',       'Male',   17, 10,   'Permanent', '2016-07-18', '1985-09-16', 'Katolik', 'Married'],
-  [22, 'Cecilia Handayani',      'Female', 18, 10,   'Permanent', '2018-07-16', '1987-01-31', 'Katolik', 'Married'],
-  [23, 'Ignatius Setiabudi',     'Male',   19, 10,   'Contract',  '2025-07-14', '1997-10-10', 'Katolik', 'Single'],
-  [24, 'Rm. Aloysius Pranoto',   'Male',   20, 1,    'Permanent', '2017-08-01', '1970-06-06', 'Katolik', 'Single'],
-  [25, 'Sr. Benedikta Maria',    'Female', 21, 24,   'Permanent', '2015-07-20', '1973-03-18', 'Katolik', 'Single'],
-  [26, 'Fidelis Raharjo',        'Male',   21, 24,   'Permanent', '2021-07-19', '1986-12-24', 'Katolik', 'Married'],
-  [27, 'Natalia Ayu',            'Female', 22, 24,   'Permanent', '2020-07-20', '1990-07-07', 'Katolik', 'Married'],
-  [28, 'Dewi Anggraini',         'Female', 23, 4,    'Permanent', '2013-03-01', '1978-04-04', 'Kristen', 'Married'],
-  [29, 'Rudi Hartanto',          'Male',   24, 28,   'Permanent', '2018-02-01', '1988-06-30', 'Katolik', 'Married'],
-  [30, 'Susanti Wijaya',         'Female', 25, 28,   'Permanent', '2019-09-02', '1991-11-15', 'Buddha',  'Single'],
-  [31, 'Henny Gunawan',          'Female', 26, 4,    'Permanent', '2014-05-01', '1977-09-09', 'Katolik', 'Married'],
-  [32, 'Albertus Tan',           'Male',   27, 31,   'Permanent', '2021-03-01', '1994-02-02', 'Katolik', 'Single'],
-  [33, 'Bambang Hermawan',       'Male',   28, 4,    'Permanent', '2016-02-01', '1979-10-20', 'Katolik', 'Married'],
-  [34, 'Intan Permatasari',      'Female', 29, 33,   'Permanent', '2022-01-10', '1996-12-01', 'Islam',   'Single'],
-  [35, 'Sugeng Riyadi',          'Male',   30, 28,   'Outsource', '2019-01-07', '1985-05-05', 'Islam',   'Married'],
-  [36, 'Joko Susanto',           'Male',   31, 28,   'Outsource', '2018-06-01', '1982-02-12', 'Islam',   'Married'],
-  [37, 'Wahyu Hidayat',          'Male',   32, 28,   'Permanent', '2017-04-03', '1983-01-18', 'Islam',   'Married'],
-  [38, 'Dimas Arya',             'Male',   33, 28,   'Permanent', '2023-02-01', '1993-11-11', 'Katolik', 'Single'],
-  [39, 'Siti Aminah',            'Female', 30, 28,   'Outsource', '2022-03-01', '1989-08-08', 'Islam',   'Married'],
-  [40, 'Mulyadi',                'Male',   31, 28,   'Outsource', '2020-10-05', '1984-07-13', 'Islam',   'Married'],
-  [41, 'Heri Purnomo',           'Male',   32, 28,   'Permanent', '2021-09-06', '1987-03-27', 'Kristen', 'Married'],
-  // Sample teams: each principal has teachers reporting to them. SD: four class teachers under the
-  // SD principal (6). SMP and SMA: teachers reporting directly to the principal (7, 8), besides the
-  // deputy principal's team. Ids start after the original 41 so earlier saved data stays valid.
-  [42, 'Antonia Kristiani',      'Female', 8,  6,    'Permanent', '2019-07-15', '1991-02-19', 'Katolik', 'Married'],
-  [43, 'Fransiskus Dani',        'Male',   8,  6,    'Permanent', '2020-07-20', '1992-08-30', 'Katolik', 'Single'],
-  [44, 'Maria Goretti Sinta',    'Female', 8,  6,    'Permanent', '2022-07-18', '1994-05-12', 'Katolik', 'Single'],
-  [45, 'Robertus Aji',           'Male',   8,  6,    'Contract',  '2025-07-14', '1997-11-03', 'Katolik', 'Single'],
-  [46, 'Yustina Maharani',       'Female', 13, 7,    'Permanent', '2021-07-19', '1993-09-21', 'Katolik', 'Married'],
-  [47, 'Thomas Aquino Putra',    'Male',   14, 7,    'Contract',  '2025-07-14', '1999-01-15', 'Katolik', 'Single'],
-  [48, 'Stanislaus Bagas',       'Male',   17, 8,    'Permanent', '2018-07-16', '1988-04-08', 'Katolik', 'Married'],
-  [49, 'Veronica Ayuningtyas',   'Female', 18, 8,    'Permanent', '2020-07-20', '1990-12-02', 'Katolik', 'Married'],
-  [50, 'Petrus Dwi Nugroho',     'Male',   19, 8,    'Contract',  '2025-07-14', '1998-06-26', 'Katolik', 'Single'],
+  // Management
+  [101, 'Ricky Antonio, BBA (HONs), MBA, MScIB',                  101, null, 'ricky',     'superadmin'],
+  [102, 'Nyvillia Kho, BA, M.Pd',                                 102, 101,  'nyvillia',  'manager'],
+  [103, 'Madya Ardi Wintana, S.S, M.Th',                          103, 101,  'madya',     'manager'],
+  [104, 'Anastasia Mia Paramita, S.Pd',                           104, 103,  'anastasia', 'manager'],
+  [105, 'I Nyoman Sandhika Martianto, S.IP',                      107, 101,  'nyoman',    'manager'],
+  [106, 'Abet Nego Aprianto, B.Ed., M.Pd.',                       105, 103,  'abet',      'manager'],
+  [107, 'Daniel Seminariyanto, S.Th',                             106, 103,  'daniel',    'manager'],
+  [108, 'Erny Elfrita Agustina Sidabutar, SE',                    108, 102,  'erny',      'manager'],
+  [109, 'Elisabeth Caterina, SH',                                 109, 101,  'elisabeth', 'hr'],
+  [110, 'Steve Mario Kullit, S.E',                                110, 105,  'steve',     'employee'],
+  // Educational Personnel
+  [111, 'Erna Emilia Simatupang, S.Pd',                           111, 104,  'erna',      'employee'],
+  [112, 'Veronika Sri Kusmiyati, S.Pd',                           112, 107,  'veronika',  'employee'],
+  [113, 'Maria Theresia Watu, S.Pd',                              113, 107,  'maria-theresia', 'employee'],
+  [114, 'Abraham Perez Paclarin, BsHRM',                          114, 107,  'abraham',   'employee'],
+  [115, 'Lailani Lana Raton, B.EEd, M.Ed, CTEFL',                 115, 107,  'lailani',   'employee'],
+  [116, 'Jennifer Paclarin De Leon, BsIT, BsEd, CTEFL, CSPE',     116, 107,  'jennifer',  'employee'],
+  [117, 'Albert, S.Kom',                                          117, 106,  'albert',    'employee'],
+  [118, 'Adriman Manalu, S.Pd',                                   118, 106,  'adriman',   'employee'],
+  [119, 'Angelita Octovina Putri Gamlia, S.Pd',                   119, 106,  'angelita',  'employee'],
+  [120, 'Elsa Emilia Pandora Sitorus, S.Pd',                      120, 106,  'elsa',      'employee'],
+  [121, 'Fanry Julius Sopacua, M.Pd',                             121, 106,  'fanry',     'employee'],
+  [122, 'Flavia Domitilla Fausta, S.Par',                         122, 106,  'flavia',    'employee'],
+  [123, 'Lisa Efata NurCahaya Damanik, S.Th',                     123, 106,  'lisa',      'employee'],
+  [124, 'Marcellina Alma Wiharti, S.Pd',                          124, 106,  'marcellina', 'employee'],
+  [125, 'Maria Jovita Widjaja, S.Pd',                             125, 106,  'maria-jovita', 'employee'],
+  [126, 'Gabriela Madeline Manurung, S.Pd',                       126, 106,  'gabriela',  'employee'],
+  [127, 'Renjith Rajan, B.Ed, BSc, M.Ed, M.Si',                   127, 106,  'renjith',   'employee'],
+  // Staff
+  [128, 'Nursinta Simarmata, S.Pd',                               128, 109,  'nursinta',  'employee'],
+  [129, 'Lenawati',                                               129, 108,  'lenawati',  'employee'],
+  [130, 'Dwi Purwanto, S.Pd',                                     130, 106,  'dwi',       'employee'],
+  [131, 'Yakobus Purwanto',                                       131, 103,  'yakobus',   'employee'],
+  [132, 'Gregorius Septyan Chandrari Maniallo, S.Sn',             132, 105,  'gregorius', 'employee'],
+  [133, 'Krisdayanti Sakoan, S.Th',                               133, 108,  'krisdayanti', 'employee'],
+  [134, 'Era Lusiana Sihaloho, S.Ak',                             134, 109,  'era',       'hr_officer'],
+  [135, 'Lulu Farhiyah, S.Akt',                                   133, 108,  'lulu',      'employee'],
 ]
-const BASE_EMPLOYEE_MAX_ID = 41
+const DEMO_JOIN_DATE = '2024-07-15'
 
 const posById = Object.fromEntries(SCHOOL_POSITIONS.map(p => [p.id, p]))
 const deptById = Object.fromEntries(SCHOOL_DEPARTMENTS.map(d => [d.id, d]))
 const buById = Object.fromEntries(SCHOOL_BUSINESS_UNITS.map(b => [b.id, b]))
 const EMAIL_DOMAIN = 'lscs-demo.sch.id'
+const HANDLE_BY_ID = Object.fromEntries(EMP_ROWS.map(r => [r[0], r[4]]))
 
-// Login username per employee id (key people get readable names; the rest use NIK).
-const USERNAME_BY_ID = {
-  1: 'ketuayayasan', 2: 'ketuadewan', 4: 'sekretaris',
-  5: 'kepsek-tk', 6: 'kepsek-sd', 7: 'kepsek-smp', 8: 'kepsek-sma',
-  9: 'wakasek-smp', 10: 'wakasek-sma',
-  11: 'guru-tk', 13: 'guru-sd', 15: 'guru-mat', 17: 'guru-inggris', 18: 'guru-ipa',
-  19: 'honorer', 21: 'guru-mat-sma', 22: 'guru-fisika',
-  24: 'pastoral', 25: 'guru-agama', 27: 'konselor',
-  28: 'kepala-tu', 29: 'staf-tu', 30: 'pustakawan', 31: 'kepala-keuangan', 32: 'staf-keuangan',
-  33: 'hr', 34: 'hrofficer', 35: 'kebersihan', 36: 'satpam', 37: 'driver', 38: 'admin',
-  42: 'guru-sd2', 43: 'guru-sd3', 44: 'guru-sd4', 45: 'guru-sd5',
-  46: 'guru-ipa-smp', 47: 'honorer-smp', 48: 'guru-mat-sma2', 49: 'guru-fisika2', 50: 'honorer-sma',
-}
-const ROLE_BY_ID = {
-  38: 'superadmin', 33: 'hr', 34: 'hr_officer',
-  1: 'manager', 2: 'manager', 4: 'manager', 5: 'manager', 6: 'manager', 7: 'manager', 8: 'manager',
-  9: 'manager', 10: 'manager', 24: 'manager', 28: 'manager', 31: 'manager',
-}
-
-export const SCHOOL_EMPLOYEES = EMP_ROWS.map(([id, name, gender, positionId, managerId, employmentType, joinDate, birthDate, religion, maritalStatus]) => {
+export const SCHOOL_EMPLOYEES = EMP_ROWS.map(([id, name, positionId, managerId, handle, role]) => {
   const pos = posById[positionId]
   const dept = deptById[pos.departmentId]
   const bu = buById[dept.businessUnitId]
-  const nikPrefix = bu.companyId === 2 ? 'YLS' : 'LSCS'
-  const nik = `${nikPrefix}-${String(id).padStart(3, '0')}`
-  const handle = USERNAME_BY_ID[id] || nik.toLowerCase()
   return {
-    id, name, managerId, status: 'Active', joinDate,
+    id, name, managerId, status: 'Active', joinDate: DEMO_JOIN_DATE,
     companyId: bu.companyId, departmentId: dept.id, positionId,
-    employmentType, department: dept.name, position: pos.name,
-    nik, email: `${handle.replace(/[^a-z0-9-]/g, '')}@${EMAIL_DOMAIN}`,
-    gender, birthDate, religion, maritalStatus,
-    birthPlace: 'Jakarta', nationality: 'Indonesian', city: 'Jakarta', country: 'Indonesia',
+    employmentType: 'Permanent', department: dept.name, position: pos.name,
+    nik: `LSCS-${String(id - 100).padStart(3, '0')}`, email: `${handle.replace(/[^a-z0-9-]/g, '')}@${EMAIL_DOMAIN}`,
+    gender: '', birthDate: '', religion: '', maritalStatus: '',
+    birthPlace: '', nationality: '', city: '', country: 'Indonesia',
     phone: `0812-3000-${String(1000 + id)}`,
-    role: ROLE_BY_ID[id] || 'employee',
+    role,
     gradeId: pos.gradeId, individualClassId: pos.gradeId,
   }
 })
@@ -240,7 +215,7 @@ export const SCHOOL_EMPLOYEES = EMP_ROWS.map(([id, name, gender, positionId, man
 export const SCHOOL_USERS = SCHOOL_EMPLOYEES.map(e => ({
   id: e.id,
   employeeId: e.id,
-  username: USERNAME_BY_ID[e.id] || e.nik.toLowerCase(),
+  username: HANDLE_BY_ID[e.id],
   password: 'pass123',
   name: e.name,
   role: e.role,
@@ -253,7 +228,7 @@ export const SCHOOL_USERS = SCHOOL_EMPLOYEES.map(e => ({
 // Each employee holds one seat under their position; VACANT_SEATS are open
 // seats ([positionId, supervisor employee id]) that recruitment fills.
 const VACANT_SEATS = [
-  [4, 2], [6, 5], [8, 6], [11, 9], [12, 9], [21, 24], [30, 28], [32, 28],
+  [111, 104], [115, 107], [125, 106], [126, 106], [127, 106], [128, 109],
 ]
 
 function buildHeadcounts() {
@@ -265,16 +240,12 @@ function buildHeadcounts() {
   }
   const seatOfEmp = {}
   SCHOOL_POSITIONS.forEach(p => {
-    SCHOOL_EMPLOYEES.filter(e => e.positionId === p.id && e.id <= BASE_EMPLOYEE_MAX_ID).forEach(e => {
+    SCHOOL_EMPLOYEES.filter(e => e.positionId === p.id).forEach(e => {
       seats.push({ positionId: p.id, name: nextName(p.id), employeeId: e.id, supervisorEmp: e.managerId })
     })
     VACANT_SEATS.filter(([pid]) => pid === p.id).forEach(([, sup]) => {
       seats.push({ positionId: p.id, name: nextName(p.id), employeeId: null, supervisorEmp: sup })
     })
-  })
-  // Sample teachers added later get their seats after every original seat, so existing ids never shift.
-  SCHOOL_EMPLOYEES.filter(e => e.id > BASE_EMPLOYEE_MAX_ID).forEach(e => {
-    seats.push({ positionId: e.positionId, name: nextName(e.positionId), employeeId: e.id, supervisorEmp: e.managerId })
   })
   seats.forEach((s, i) => { s.id = i + 1; if (s.employeeId) seatOfEmp[s.employeeId] = s.id })
   return seats.map(s => ({
@@ -302,32 +273,32 @@ const REQ = (o) => ({
 const name = (id) => SCHOOL_EMPLOYEES.find(e => e.id === id).name
 
 export const SCHOOL_REQUISITIONS = [
-  REQ({ id: 1, positionId: 11, positionTitle: 'Guru Matematika SMP', departmentId: 5, companyId: 1, headcountId: vacantSeatId(11),
-    status: 'Posted External', priority: 'High', requestedBy: 9, requestedByName: name(9), requestedDate: '2026-09-15', targetDate: '2026-12-31',
-    publishStartDate: '2026-09-20', publicTitle: 'Guru Matematika SMP',
-    jobDescription: 'Tanggung Jawab:\n- Mengajar Matematika kelas 7-9\n- Menyusun RPP dan evaluasi pembelajaran\n\nKualifikasi:\n- S1 Pendidikan Matematika\n- Pengalaman mengajar minimal 2 tahun',
-    notes: 'Pengganti guru yang pindah tugas.' }),
-  REQ({ id: 2, positionId: 12, positionTitle: 'Guru Bahasa Inggris SMP', departmentId: 5, companyId: 1, headcountId: vacantSeatId(12),
-    status: 'Posted External', priority: 'High', requestedBy: 9, requestedByName: name(9), requestedDate: '2026-09-20', targetDate: '2026-12-31',
-    publishStartDate: '2026-10-01', publicTitle: 'Guru Bahasa Inggris SMP',
-    jobDescription: 'Tanggung Jawab:\n- Mengajar Bahasa Inggris kelas 7-9\n- Membimbing klub debat\n\nKualifikasi:\n- S1 Pendidikan Bahasa Inggris\n- IELTS/TOEFL setara minimal B2' }),
-  REQ({ id: 3, positionId: 8, positionTitle: 'Guru Kelas SD', departmentId: 4, companyId: 1, headcountId: vacantSeatId(8),
-    status: 'Posted External', requestedBy: 6, requestedByName: name(6), requestedDate: '2026-09-10', targetDate: '2026-12-31',
-    publishStartDate: '2026-09-15', publicTitle: 'Guru Kelas SD',
+  REQ({ id: 1, positionId: 127, positionTitle: 'Math & Science', departmentId: 7, companyId: 1, headcountId: vacantSeatId(127),
+    status: 'Posted External', priority: 'High', requestedBy: 106, requestedByName: name(106), requestedDate: '2026-09-15', targetDate: '2026-12-31',
+    publishStartDate: '2026-09-20', publicTitle: 'Guru Matematika dan Sains (MYP & SYP)',
+    jobDescription: 'Tanggung Jawab:\n- Mengajar Matematika dan Sains jenjang MYP dan SYP\n- Menyusun rencana pembelajaran dan evaluasi\n\nKualifikasi:\n- S1 Pendidikan Matematika, Sains, atau sederajat\n- Pengalaman mengajar minimal 2 tahun',
+    notes: 'Penambahan guru untuk jenjang MYP dan SYP.' }),
+  REQ({ id: 2, positionId: 125, positionTitle: 'English', departmentId: 7, companyId: 1, headcountId: vacantSeatId(125),
+    status: 'Posted External', priority: 'High', requestedBy: 106, requestedByName: name(106), requestedDate: '2026-09-20', targetDate: '2026-12-31',
+    publishStartDate: '2026-10-01', publicTitle: 'Guru Bahasa Inggris (MYP & SYP)',
+    jobDescription: 'Tanggung Jawab:\n- Mengajar Bahasa Inggris jenjang MYP dan SYP\n- Membimbing klub debat\n\nKualifikasi:\n- S1 Pendidikan Bahasa Inggris\n- IELTS/TOEFL setara minimal B2' }),
+  REQ({ id: 3, positionId: 115, positionTitle: 'Primary Year Teacher', departmentId: 6, companyId: 1, headcountId: vacantSeatId(115),
+    status: 'Posted External', requestedBy: 107, requestedByName: name(107), requestedDate: '2026-09-10', targetDate: '2026-12-31',
+    publishStartDate: '2026-09-15', publicTitle: 'Guru Kelas SD (Primary Year)',
     jobDescription: 'Tanggung Jawab:\n- Wali kelas dan pengajar tematik kelas 1-6\n\nKualifikasi:\n- S1 PGSD atau sederajat\n- Sabar dan komunikatif dengan anak' }),
-  REQ({ id: 4, positionId: 21, positionTitle: 'Guru Agama Katolik', departmentId: 7, companyId: 1, headcountId: vacantSeatId(21),
-    status: 'Posted External', requestedBy: 24, requestedByName: name(24), requestedDate: '2026-09-25', targetDate: '2026-12-31',
-    publishStartDate: '2026-10-05', publicTitle: 'Guru Agama Katolik',
-    jobDescription: 'Tanggung Jawab:\n- Mengajar Pendidikan Agama Katolik dan membantu kegiatan pastoral\n\nKualifikasi:\n- S1 Pendidikan Agama Katolik\n- Aktif dalam kegiatan gereja' }),
-  REQ({ id: 5, positionId: 32, positionTitle: 'Driver', departmentId: 14, companyId: 1, headcountId: vacantSeatId(32),
-    status: 'Open', requestedBy: 28, requestedByName: name(28), requestedDate: '2026-10-08', targetDate: '2026-11-30',
-    notes: 'Untuk antar-jemput siswa; internal, belum dipublikasikan.' }),
-  REQ({ id: 6, positionId: 6, positionTitle: 'Guru TK', departmentId: 3, companyId: 1, headcountId: vacantSeatId(6),
-    status: 'On Hold', priority: 'Low', requestedBy: 5, requestedByName: name(5), requestedDate: '2026-08-20', targetDate: '2027-01-15',
-    notes: 'Menunggu persetujuan kuota dari yayasan.' }),
-  REQ({ id: 7, positionId: 30, positionTitle: 'Petugas Kebersihan', departmentId: 12, companyId: 1,
-    headcountId: SCHOOL_HEADCOUNTS.find(h => h.employeeId === 39)?.id ?? null,
-    status: 'Closed', requestedBy: 28, requestedByName: name(28), requestedDate: '2026-08-01', targetDate: '2026-09-30',
+  REQ({ id: 4, positionId: 126, positionTitle: 'Religion', departmentId: 7, companyId: 1, headcountId: vacantSeatId(126),
+    status: 'Posted External', requestedBy: 106, requestedByName: name(106), requestedDate: '2026-09-25', targetDate: '2026-12-31',
+    publishStartDate: '2026-10-05', publicTitle: 'Guru Agama',
+    jobDescription: 'Tanggung Jawab:\n- Mengajar Pendidikan Agama dan membantu kegiatan pembinaan karakter\n\nKualifikasi:\n- S1 Pendidikan Agama atau sederajat\n- Aktif dalam kegiatan keagamaan' }),
+  REQ({ id: 5, positionId: 128, positionTitle: 'General Affairs Staff', departmentId: 9, companyId: 1, headcountId: vacantSeatId(128),
+    status: 'Open', requestedBy: 109, requestedByName: name(109), requestedDate: '2026-10-08', targetDate: '2026-11-30',
+    notes: 'Mendukung operasional umum sekolah; internal, belum dipublikasikan.' }),
+  REQ({ id: 6, positionId: 111, positionTitle: 'Kindergarten Teacher', departmentId: 5, companyId: 1, headcountId: vacantSeatId(111),
+    status: 'On Hold', priority: 'Low', requestedBy: 104, requestedByName: name(104), requestedDate: '2026-08-20', targetDate: '2027-01-15',
+    notes: 'Menunggu persetujuan kuota dari manajemen.' }),
+  REQ({ id: 7, positionId: 129, positionTitle: 'Purchasing Staff', departmentId: 8, companyId: 1,
+    headcountId: SCHOOL_HEADCOUNTS.find(h => h.employeeId === 129)?.id ?? null,
+    status: 'Closed', requestedBy: 108, requestedByName: name(108), requestedDate: '2026-08-01', targetDate: '2026-09-30',
     notes: 'Posisi terisi.' }),
 ]
 
@@ -335,18 +306,18 @@ export const SCHOOL_CANDIDATES = [
   { id: 1, name: 'Cornelia Anggreni', email: 'cornelia.a@email-demo.com', phone: '0812-5500-0001', requisitionId: 1, source: 'LinkedIn', appliedDate: '2026-10-02', stage: 'Interview', rating: 4, notes: 'S1 Pendidikan Matematika, pengalaman mengajar 4 tahun.' },
   { id: 2, name: 'Bonifasius Pratama', email: 'boni.p@email-demo.com', phone: '0812-5500-0002', requisitionId: 1, source: 'Job Portal', appliedDate: '2026-10-04', stage: 'Screening', rating: 3, notes: '' },
   { id: 3, name: 'Elisabet Dwi Astuti', email: 'elisabet.da@email-demo.com', phone: '0812-5500-0003', requisitionId: 1, source: 'Career Site', appliedDate: '2026-10-12', stage: 'Applied', rating: 0, notes: '' },
-  { id: 4, name: 'Maximilianus Joko', email: 'max.joko@email-demo.com', phone: '0812-5500-0004', requisitionId: 2, source: 'Referral', appliedDate: '2026-10-06', stage: 'Interview', rating: 4, notes: 'IELTS 7.5. Direkomendasikan Margareta Widya.' },
+  { id: 4, name: 'Maximilianus Joko', email: 'max.joko@email-demo.com', phone: '0812-5500-0004', requisitionId: 2, source: 'Referral', appliedDate: '2026-10-06', stage: 'Interview', rating: 4, notes: 'IELTS 7.5. Direkomendasikan oleh MYP & SYP Principal.' },
   { id: 5, name: 'Agnes Monica Sari', email: 'agnes.ms@email-demo.com', phone: '0812-5500-0005', requisitionId: 3, source: 'Job Portal', appliedDate: '2026-09-22', stage: 'Offer', rating: 5, notes: 'PGSD, siap mulai Januari 2027.' },
-  { id: 6, name: 'Vincentius Adi', email: 'vincent.adi@email-demo.com', phone: '0812-5500-0006', requisitionId: 3, source: 'Walk-in', appliedDate: '2026-09-18', stage: 'Rejected', rating: 2, notes: 'Pengalaman mengajar anak usia dini kurang.' },
+  { id: 6, name: 'Vincentius Adi', email: 'vincent.adi@email-demo.com', phone: '0812-5500-0006', requisitionId: 3, source: 'Walk-in', appliedDate: '2026-09-18', stage: 'Rejected', rating: 2, notes: 'Pengalaman mengajar kelas dasar kurang.' },
   { id: 7, name: 'Clara Fransiska', email: 'clara.f@email-demo.com', phone: '0812-5500-0007', requisitionId: 4, source: 'Referral', appliedDate: '2026-10-09', stage: 'Screening', rating: 4, notes: 'Lulusan Pendidikan Agama Katolik.' },
   { id: 8, name: 'Rahmat Hidayat', email: 'rahmat.h@email-demo.com', phone: '0812-5500-0008', requisitionId: 7, source: 'Job Portal', appliedDate: '2026-08-12', stage: 'Pending Employee', rating: 5, notes: 'Mulai bekerja 1 November 2026.' },
-  { id: 9, name: 'Emilia Susanti', email: 'emilia.s@email-demo.com', phone: '0812-5500-0009', requisitionId: 5, source: 'Walk-in', appliedDate: '2026-10-14', stage: 'Applied', rating: 0, notes: 'Memiliki SIM B1 dan pengalaman antar-jemput.' },
+  { id: 9, name: 'Emilia Susanti', email: 'emilia.s@email-demo.com', phone: '0812-5500-0009', requisitionId: 5, source: 'Walk-in', appliedDate: '2026-10-14', stage: 'Applied', rating: 0, notes: 'Pengalaman administrasi umum dan pengelolaan fasilitas sekolah.' },
 ]
 
 export const SCHOOL_INTERVIEWS = [
-  { id: 1, candidateId: 1, requisitionId: 1, date: '2026-10-26', time: '10:00', type: 'Video', interviewerNames: 'Margareta Widya, Elisabeth Kartika', location: 'meet.google.com/lscs-guru-mat', result: 'Scheduled', notes: '' },
-  { id: 2, candidateId: 4, requisitionId: 2, date: '2026-10-23', time: '13:00', type: 'Onsite', interviewerNames: 'Margareta Widya', location: 'Ruang Kepala Sekolah SMP', result: 'Scheduled', notes: '' },
-  { id: 3, candidateId: 5, requisitionId: 3, date: '2026-10-14', time: '09:00', type: 'Onsite', interviewerNames: 'Yosef Prabowo', location: 'Ruang Kepala Sekolah SD', result: 'Passed', notes: 'Micro-teaching sangat baik.' },
+  { id: 1, candidateId: 1, requisitionId: 1, date: '2026-10-26', time: '10:00', type: 'Video', interviewerNames: `${name(106)}, ${name(109)}`, location: 'meet.google.com/lscs-math-science', result: 'Scheduled', notes: '' },
+  { id: 2, candidateId: 4, requisitionId: 2, date: '2026-10-23', time: '13:00', type: 'Onsite', interviewerNames: name(106), location: 'Ruang MYP & SYP Principal', result: 'Scheduled', notes: '' },
+  { id: 3, candidateId: 5, requisitionId: 3, date: '2026-10-14', time: '09:00', type: 'Onsite', interviewerNames: name(107), location: 'Ruang SD & Primary Principal', result: 'Passed', notes: 'Micro-teaching sangat baik.' },
 ]
 
 // ─── Time & Labor ────────────────────────────────────────────────────────────
@@ -375,12 +346,9 @@ export const SCHOOL_SCHEDULES = [
 ]
 
 const SCHEDULE_FOR = (e) => {
-  if (e.positionId === 31) return 3
-  const dept = deptById[e.departmentId]
-  const educator = [3, 4, 5, 6, 7, 8].includes(dept.id)
-  if (educator) return 1
-  if (e.id <= 4) return null
-  return 2
+  if (e.id === 101 || e.id === 102) return null   // the directors have no fixed schedule
+  const academic = [5, 6, 7].includes(e.departmentId)
+  return academic ? 1 : 2
 }
 export const SCHOOL_ASSIGNMENTS = SCHOOL_EMPLOYEES
   .map(e => ({ e, scheduleId: SCHEDULE_FOR(e) }))
@@ -400,81 +368,58 @@ export const SCHOOL_ANNOUNCEMENTS = [
     category: 'Acara', pinned: false, active: true, startDate: '2026-10-01', endDate: '', createdAt: '2026-10-08' },
 ]
 
-// ─── Talent: key positions, vacancy risk, successors (keyed by position id) ──
-const _kp = () => ({ q1: true, q2: true, q3: true, assessedBy: 'Pengurus Yayasan', assessedAt: '2026-10-01' })
-export const SCHOOL_KEY_POSITIONS = { 5: _kp(), 7: _kp(), 9: _kp(), 15: _kp(), 10: _kp(), 16: _kp(), 26: _kp(), 28: _kp() }
-
-const _va = (retirement, contract, mobility, health, notes = '') =>
-  ({ retirement, contract, mobility, health, notes, assessedBy: 'Pengurus Yayasan', assessedAt: '2026-10-02' })
-export const SCHOOL_VACANCY_RISK = {
-  5:  _va('Long',   'Long',   'Medium', 'Sehat'),
-  7:  _va('Medium', 'Medium', 'Long',   'Sehat'),
-  9:  _va('Short',  'Medium', 'Medium', 'Catatan', 'Kepala sekolah berencana studi lanjut; perlu persiapan pengganti.'),
-  15: _va('Medium', 'Long',   'Medium', 'Sehat'),
-  10: _va('Long',   'Medium', 'Short',  'Sehat',   'Wakil kepala sekolah berpeluang dipromosikan menjadi kepala sekolah.'),
-  16: _va('Long',   'Long',   'Medium', 'Sehat'),
-  26: _va('Medium', 'Medium', 'Long',   'Sehat'),
-  28: _va('Long',   'Long',   'Medium', 'Sehat'),
-}
-
-const _sc = (id, employeeId, employeeName, currentPosition, competencyFit, scope, emergency = false) =>
-  ({ id, employeeId, employeeName, currentPosition, competencyFit, scope, assessed: true, emergency, notes: '' })
-// Posisi 28 (HR Manager) sengaja tanpa successor, untuk menunjukkan celah suksesi.
-export const SCHOOL_SUCCESSORS = {
-  9:  [ _sc(9001, 9, 'Margareta Widya', 'Wakil Kepala Sekolah SMP', 78, 'Full', true),
-        _sc(9002, 15, 'Yohanes Aditya', 'Guru Matematika SMP', 55, 'Partial') ],
-  15: [ _sc(9003, 10, 'Antonius Kurniawan', 'Wakil Kepala Sekolah SMA', 82, 'Full', true) ],
-  7:  [ _sc(9004, 13, 'Bernadus Hendra', 'Guru Kelas SD', 52, 'Partial') ],
-  5:  [ _sc(9005, 11, 'Yuliana Sari', 'Guru TK', 48, 'Minimal') ],
-  10: [ _sc(9006, 15, 'Yohanes Aditya', 'Guru Matematika SMP', 62, 'Partial'),
-        _sc(9007, 17, 'Gregorius Santoso', 'Guru Bahasa Inggris SMP', 50, 'Partial') ],
-  16: [ _sc(9008, 21, 'Benediktus Hasan', 'Guru Matematika SMA', 70, 'Partial') ],
-  26: [ _sc(9009, 32, 'Albertus Tan', 'Staf Keuangan', 58, 'Partial') ],
-}
+// ─── Talent: key positions (keyed by position id) ────────────────────────────
+// Only the positions are marked as key positions. Vacancy risk and successors describe individual
+// people, so none are seeded for the real staff; HR adds them in Talent Management.
+const _kp = () => ({ q1: true, q2: true, q3: true, assessedBy: 'HRGA', assessedAt: '2026-10-01' })
+export const SCHOOL_KEY_POSITIONS = { 103: _kp(), 104: _kp(), 105: _kp(), 106: _kp(), 108: _kp(), 109: _kp() }
+export const SCHOOL_VACANCY_RISK = {}
+export const SCHOOL_SUCCESSORS = {}
 
 // ─── Learning (LMS) mock content shown on the catalog / team dashboard ───────
 export const SCHOOL_LMS = {
   categories: ['All', 'Pedagogi & Kurikulum', 'Pastoral & Karakter', 'Kepemimpinan Sekolah', 'Keselamatan & Perlindungan Anak', 'Teknologi Pembelajaran', 'Soft Skills', 'Administrasi & Keuangan'],
   catalog: [
-    { id:1, title:'Perlindungan Anak dan Keselamatan di Sekolah', category:'Keselamatan & Perlindungan Anak', type:'ILT', duration:'8 jam', instructor:'Sr. Benedikta Maria', rating:4.8, enrolled:38, level:'Beginner', status:'Available' },
-    { id:2, title:'Kurikulum Merdeka untuk Guru Mata Pelajaran', category:'Pedagogi & Kurikulum', type:'Blended', duration:'24 jam', instructor:'Tim Kurikulum', rating:4.9, enrolled:31, level:'Intermediate', status:'Available' },
+    { id:1, title:'Perlindungan Anak dan Keselamatan di Sekolah', category:'Keselamatan & Perlindungan Anak', type:'ILT', duration:'8 jam', instructor:'Tim HRGA', rating:4.8, enrolled:38, level:'Beginner', status:'Available' },
+    { id:2, title:'Kurikulum untuk Guru Mata Pelajaran (MYP & SYP)', category:'Pedagogi & Kurikulum', type:'Blended', duration:'24 jam', instructor:'Tim Kurikulum', rating:4.9, enrolled:31, level:'Intermediate', status:'Available' },
     { id:3, title:'Teknologi Pembelajaran dengan Google Workspace', category:'Teknologi Pembelajaran', type:'Self-Paced', duration:'6 jam', instructor:'Online', rating:4.6, enrolled:27, level:'Beginner', status:'Available' },
-    { id:4, title:'Pendidikan Karakter dan Spiritualitas Katolik', category:'Pastoral & Karakter', type:'Blended', duration:'16 jam', instructor:'Rm. Aloysius Pranoto', rating:4.7, enrolled:35, level:'Intermediate', status:'Available' },
+    { id:4, title:'Pendidikan Karakter dan Spiritualitas Katolik', category:'Pastoral & Karakter', type:'Blended', duration:'16 jam', instructor:'Tim Pastoral', rating:4.7, enrolled:35, level:'Intermediate', status:'Available' },
     { id:5, title:'Komunikasi Efektif dengan Orang Tua Siswa', category:'Soft Skills', type:'ILT', duration:'12 jam', instructor:'Tim Konseling', rating:4.5, enrolled:22, level:'Beginner', status:'Available' },
     { id:6, title:'Asesmen Formatif dan Penilaian Autentik', category:'Pedagogi & Kurikulum', type:'Self-Paced', duration:'20 jam', instructor:'Online', rating:4.4, enrolled:19, level:'Advanced', status:'Available' },
-    { id:7, title:'Kepemimpinan Kepala Sekolah', category:'Kepemimpinan Sekolah', type:'Blended', duration:'12 jam', instructor:'Dr. Maria Veronica Setiawan', rating:4.6, enrolled:8, level:'Intermediate', status:'Available' },
-    { id:8, title:'Pengelolaan Dana BOS dan Keuangan Sekolah', category:'Administrasi & Keuangan', type:'ILT', duration:'16 jam', instructor:'Henny Gunawan', rating:4.7, enrolled:9, level:'Intermediate', status:'Available' },
+    { id:7, title:'Kepemimpinan Kepala Sekolah', category:'Kepemimpinan Sekolah', type:'Blended', duration:'12 jam', instructor:'Tim Manajemen', rating:4.6, enrolled:8, level:'Intermediate', status:'Available' },
+    { id:8, title:'Pengelolaan Keuangan Sekolah', category:'Administrasi & Keuangan', type:'ILT', duration:'16 jam', instructor:'Tim Keuangan', rating:4.7, enrolled:9, level:'Intermediate', status:'Available' },
   ],
+  // Sample progress of the MYP & SYP team (shown to every manager as demo content).
   teamSummary: [
-    { name:'Margareta Widya', role:'Wakil Kepala Sekolah SMP', mandatory:3, completed:3, overdue:0, progress:100 },
-    { name:'Yohanes Aditya', role:'Guru Matematika SMP', mandatory:3, completed:2, overdue:0, progress:75 },
-    { name:'Monica Rahayu', role:'Guru Matematika SMP', mandatory:3, completed:1, overdue:1, progress:40 },
-    { name:'Gregorius Santoso', role:'Guru Bahasa Inggris SMP', mandatory:3, completed:2, overdue:0, progress:65 },
-    { name:'Angela Putri', role:'Guru IPA SMP', mandatory:2, completed:0, overdue:2, progress:0 },
+    { name: name(127), role:'Math & Science', mandatory:3, completed:3, overdue:0, progress:100 },
+    { name: name(125), role:'English', mandatory:3, completed:2, overdue:0, progress:75 },
+    { name: name(119), role:'Bahasa Indonesia', mandatory:3, completed:2, overdue:0, progress:65 },
+    { name: name(117), role:'Middle Year Program Teacher', mandatory:3, completed:1, overdue:1, progress:40 },
+    { name: name(124), role:'IPS / Entrepreneur', mandatory:2, completed:1, overdue:0, progress:50 },
   ],
   pendingApproval: [
-    { id:1, employee:'Yohanes Aditya', type:'External Training', course:'Workshop Pembina Olimpiade Matematika', submitted:'2026-10-12', cost:3500000 },
-    { id:2, employee:'Angela Putri', type:'External Training', course:'Pelatihan Pengelolaan Laboratorium IPA', submitted:'2026-10-15', cost:2500000 },
+    { id:1, employee: name(127), type:'External Training', course:'Workshop Pengajaran Matematika dan Sains', submitted:'2026-10-12', cost:3500000 },
+    { id:2, employee: name(125), type:'External Training', course:'Pelatihan Persiapan IELTS untuk Pengajar', submitted:'2026-10-15', cost:2500000 },
   ],
 }
 
 // ─── Performance: one VIP (goal) session for a teacher ───────────────────────
 export const SCHOOL_VIP_SESSIONS = [
   {
-    id: 1, employeeId: 15, employeeName: 'Yohanes Aditya', managerId: 9, managerName: 'Margareta Widya',
+    id: 1, employeeId: 127, employeeName: name(127), managerId: 106, managerName: name(106),
     name: 'Sasaran Semester Ganjil 2026/2027', date: '2026-09-14',
     submittedAt: '2026-09-14T09:00:00+07:00', status: 'Active',
-    managerApprovedAt: '2026-09-15T09:00:00+07:00', managerApprovedBy: 'Margareta Widya',
+    managerApprovedAt: '2026-09-15T09:00:00+07:00', managerApprovedBy: name(106),
     finalScore: null, ratingNote: '', ratedAt: null,
     topics: [
-      { id: 1, title: 'Peningkatan Hasil Belajar Matematika Kelas 8',
-        description: 'Meningkatkan rata-rata nilai asesmen tengah semester Matematika kelas 8 melalui remedial terjadwal dan latihan soal berjenjang.',
+      { id: 1, title: 'Peningkatan Hasil Belajar Matematika dan Sains',
+        description: 'Meningkatkan rata-rata nilai asesmen tengah semester melalui remedial terjadwal dan latihan soal berjenjang.',
         goalPlan: 'Sasaran Guru Mata Pelajaran 2026', weight: 60, status: 'In Progress',
-        checkInNotes: 'Rata-rata nilai naik dari 68 menjadi 74. Remedial berjalan tiap Selasa.' },
-      { id: 2, title: 'Penerapan Kurikulum Merdeka di Kelas',
-        description: 'Menyelesaikan pelatihan Kurikulum Merdeka dan menyusun modul ajar untuk tiga bab semester ganjil.',
+        checkInNotes: 'Remedial berjalan tiap Selasa. Hasil asesmen tengah semester menjadi bahan evaluasi.' },
+      { id: 2, title: 'Penyusunan Modul Ajar Semester Ganjil',
+        description: 'Menyusun modul ajar untuk tiga bab semester ganjil dan mengirimkannya ke MYP & SYP Principal.',
         goalPlan: 'Sasaran Guru Mata Pelajaran 2026', weight: 40, status: 'In Progress',
-        checkInNotes: 'Pelatihan selesai 2 dari 3 modul. Modul ajar bab 1 dan 2 sudah dikirim ke wakil kepala sekolah.' },
+        checkInNotes: 'Modul bab 1 dan 2 sudah dikirim.' },
     ],
   },
 ]
@@ -482,7 +427,7 @@ export const SCHOOL_VIP_SESSIONS = [
 // ─── Job Load Analysis (JLA) ─────────────────────────────────────────────────
 // Guru = pendidik dengan jam mengajar tetap; target minimal 40 jam/minggu, sisa
 // jam diisi task oleh kepala sekolah. Employee = tenaga kependidikan/umum.
-const GURU_IDS = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+const GURU_IDS = [111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127]   // Educational Personnel
 export const SCHOOL_WORKER_CATEGORIES = Object.fromEntries(
   SCHOOL_EMPLOYEES.map(e => [e.id, GURU_IDS.includes(e.id) ? 'Guru' : 'Employee'])
 )
@@ -514,32 +459,23 @@ export const SCHOOL_SUBJECTS = [
 const WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 // [employeeId, days, [[start, end, label], ...]]
 const TEACHING = [
-  [11, WEEK, [['07:00', '10:00', 'Kelompok A']]],
-  [12, WEEK, [['07:00', '10:00', 'Kelompok B']]],
-  [13, WEEK, [['07:00', '10:00', 'Kelas 3A'], ['10:30', '13:00', 'Kelas 3A']]],
-  [14, WEEK, [['07:00', '10:00', 'Kelas 5B'], ['10:30', '13:30', 'Kelas 5B']]],
-  [15, WEEK, [['07:00', '08:00', 'Matematika 7A'], ['09:00', '12:00', 'Matematika 8A-8C'], ['13:00', '16:00', 'Matematika 9A-9C']]],
-  [16, WEEK, [['07:00', '09:00', 'Matematika 7B-7C'], ['10:00', '12:00', 'Matematika 8D'], ['13:00', '15:00', 'Matematika 9D']]],
-  [17, WEEK, [['08:00', '11:00', 'Bahasa Inggris 7-8'], ['12:00', '15:00', 'Bahasa Inggris 9']]],
-  [18, WEEK, [['07:00', '10:00', 'IPA 7-8'], ['11:00', '14:00', 'IPA 9']]],
-  [19, ['Monday', 'Wednesday', 'Friday'], [['07:00', '11:00', 'Seni Budaya 7-9']]],
-  [20, ['Tuesday', 'Thursday'], [['08:00', '13:00', 'Prakarya 7-9']]],
-  [21, WEEK, [['07:00', '09:00', 'Matematika 10'], ['10:00', '12:00', 'Matematika 11'], ['13:00', '15:00', 'Matematika 12']]],
-  [22, WEEK, [['08:00', '12:00', 'Fisika 10-12'], ['13:00', '15:00', 'Praktikum Fisika']]],
-  [23, ['Tuesday', 'Thursday'], [['07:00', '12:00', 'Informatika 10-11']]],
-  [25, WEEK, [['07:30', '10:30', 'Pendidikan Agama Katolik'], ['11:00', '13:00', 'Pendidikan Agama Katolik']]],
-  [26, WEEK, [['08:00', '11:00', 'Pendidikan Agama Katolik'], ['12:00', '14:00', 'Pendidikan Agama Katolik']]],
-  [27, WEEK, [['08:00', '12:00', 'Bimbingan Konseling']]],
-  // sample teachers
-  [42, WEEK, [['07:00', '10:00', 'Kelas 1A'], ['10:30', '13:00', 'Kelas 1A']]],
-  [43, WEEK, [['07:00', '10:00', 'Kelas 2B'], ['10:30', '13:30', 'Kelas 2B']]],
-  [44, WEEK, [['07:00', '10:00', 'Kelas 4A'], ['10:30', '14:00', 'Kelas 4A']]],
-  [45, WEEK, [['07:00', '10:00', 'Kelas 6B'], ['10:30', '13:00', 'Kelas 6B']]],
-  [46, WEEK, [['08:00', '11:00', 'IPA 7A-7C'], ['12:00', '14:00', 'IPA 8D']]],
-  [47, ['Tuesday', 'Thursday'], [['08:00', '13:00', 'Seni Musik 7-9']]],
-  [48, WEEK, [['07:00', '09:00', 'Matematika 10'], ['10:00', '12:00', 'Matematika 11 IPS'], ['13:00', '15:00', 'Matematika Peminatan 12']]],
-  [49, WEEK, [['08:00', '11:00', 'Fisika 10'], ['13:00', '15:00', 'Praktikum Laboratorium Fisika']]],
-  [50, ['Monday', 'Wednesday', 'Friday'], [['08:00', '13:00', 'Bahasa Indonesia 10-12']]],
+  [111, WEEK, [['07:30', '10:30', 'Kelompok A (TK)'], ['11:00', '13:00', 'Kelompok A (TK)']]],
+  [112, WEEK, [['07:30', '10:00', 'Matematika Kelas 1-3'], ['10:30', '13:00', 'Matematika Kelas 4-6']]],
+  [113, WEEK, [['07:30', '10:30', 'Kelas 4A'], ['11:00', '13:30', 'Kelas 4A']]],
+  [114, WEEK, [['08:00', '11:00', 'Perpustakaan dan Literasi'], ['12:00', '14:00', 'Greenery Class']]],
+  [115, WEEK, [['07:30', '10:30', 'Kelas 2A'], ['11:00', '13:30', 'Kelas 2A']]],
+  [116, WEEK, [['07:30', '10:30', 'Kelas 5A (PYP)'], ['11:00', '14:00', 'Kelas 5A (PYP)']]],
+  [117, WEEK, [['08:00', '11:00', 'Informatika 7-9'], ['12:00', '14:00', 'Pemrograman 10']]],
+  [118, ['Monday', 'Wednesday', 'Friday'], [['08:00', '12:00', 'Seni Rupa (Painting) 1-9']]],
+  [119, WEEK, [['08:00', '11:00', 'Bahasa Indonesia 7-9'], ['12:00', '14:00', 'Bahasa Indonesia 10']]],
+  [120, ['Tuesday', 'Thursday'], [['08:00', '13:00', 'Seni Musik 1-9']]],
+  [121, WEEK, [['07:30', '10:30', 'PJOK 1-6'], ['11:00', '13:00', 'PJOK 7-9']]],
+  [122, ['Monday', 'Wednesday', 'Thursday'], [['08:00', '13:00', 'Bahasa Mandarin 1-9']]],
+  [123, WEEK, [['08:00', '10:00', 'PPKn 7-9'], ['11:00', '13:00', 'PPKn 10']]],
+  [124, WEEK, [['08:00', '11:00', 'IPS 7-9'], ['12:00', '14:00', 'Entrepreneurship 10']]],
+  [125, WEEK, [['07:30', '10:30', 'English 1-6'], ['11:00', '14:00', 'English 7-9']]],
+  [126, WEEK, [['08:00', '11:00', 'Religion 1-6'], ['12:00', '14:00', 'Religion 7-9']]],
+  [127, WEEK, [['07:30', '10:00', 'Math 7-9'], ['10:30', '13:00', 'Science 7-9'], ['13:30', '15:30', 'Math 10']]],
 ]
 export const SCHOOL_TEACHING_BLOCKS = (() => {
   const out = []
@@ -551,16 +487,18 @@ export const SCHOOL_TEACHING_BLOCKS = (() => {
 
 // [employeeId, days, start, end, taskTypeId, note]
 const TASKS = [
-  [17, WEEK, '15:00', '17:00', 2, 'Remedial IPS dan pengayaan Bahasa Inggris'],
-  [22, WEEK, '15:00', '17:00', 3, 'Klub Sains'],
-  [14, WEEK, '13:30', '15:30', 4, 'Administrasi wali kelas 5B'],
-  [16, ['Monday', 'Tuesday', 'Wednesday'], '15:00', '17:00', 5, 'Koreksi ulangan harian'],
-  [11, WEEK, '10:00', '12:00', 4, 'Administrasi kelompok dan laporan perkembangan anak'],
+  [125, WEEK, '14:00', '16:00', 2, 'Remedial dan pengayaan Bahasa Inggris'],
+  [127, WEEK, '15:30', '17:00', 3, 'Klub Sains'],
+  [116, WEEK, '14:00', '16:00', 4, 'Administrasi kelas 5A'],
+  [119, ['Monday', 'Tuesday', 'Wednesday'], '14:00', '16:00', 5, 'Koreksi ulangan harian'],
+  [111, WEEK, '13:00', '15:00', 4, 'Administrasi kelompok dan laporan perkembangan anak'],
 ]
 export const SCHOOL_JLA_TASKS = (() => {
   const out = []
   TASKS.forEach(([employeeId, days, start, end, taskTypeId, note]) => days.forEach(day => {
-    out.push({ id: out.length + 1, employeeId, day, start, end, taskTypeId, note, createdBy: 7, createdByName: 'Elisabeth Kartika', createdAt: '2026-10-05T08:00:00+07:00' })
+    // The task is assigned by the teacher's own supervisor.
+    const by = SCHOOL_EMPLOYEES.find(e => e.id === SCHOOL_EMPLOYEES.find(x => x.id === employeeId).managerId)
+    out.push({ id: out.length + 1, employeeId, day, start, end, taskTypeId, note, createdBy: by.id, createdByName: by.name, createdAt: '2026-10-05T08:00:00+07:00' })
   }))
   return out
 })()

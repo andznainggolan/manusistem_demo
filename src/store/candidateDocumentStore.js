@@ -42,11 +42,18 @@ export const useCandidateDocumentStore = create(persist(
     name: 'hcm-candidate-documents-v1',
     storage: createJSONStorage(() => dbStorage),
     // v1 -> v2: data saved before the sample CVs existed gets them once (later deletions stay deleted).
-    version: 2,
+    version: 3,
     migrate: (state, version) => {
       if (version < 2 && IS_SCHOOL && state) {
         const have = new Set((state.documents || []).map(d => d.id))
         state.documents = [...(state.documents || []), ...schoolSampleCvs().filter(d => !have.has(d.id))]
+      }
+      // v2 -> v3: the sample CVs name the position applied for, and those positions changed with the
+      // school's new organisation, so they are regenerated. Uploaded documents are untouched.
+      if (version < 3 && IS_SCHOOL && state) {
+        const fresh = schoolSampleCvs()
+        const freshIds = new Set(fresh.map(d => d.id))
+        state.documents = [...(state.documents || []).filter(d => !freshIds.has(d.id)), ...fresh]
       }
       return state
     },

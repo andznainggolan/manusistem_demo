@@ -328,7 +328,10 @@ export const useEmployeeStore = create(
   }),
   {
     name: 'kpb-employees',
-    version: 2,
+    version: 3,
+    // v2 -> v3: the school demo switched from the sample staff to Lia Stephanie's real organisation,
+    // so employees saved from the old sample are dropped and the new seed is used. Other profiles keep their data.
+    migrate: (state, version) => (IS_SCHOOL && version < 3 ? {} : state),
     // Non-destructively ensure any seed employees missing from a previously
     // persisted store (e.g. the newly added manager records) are present, so
     // every employee's managerId still resolves to a real record.

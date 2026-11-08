@@ -135,7 +135,25 @@ export const useRecruitmentStore = create(persist(
     })),
     deleteInterview: (id) => set(s => ({ interviews: s.interviews.filter(i => i.id !== id) })),
   }),
-  { name: 'hcm-recruitment-v1', storage: createJSONStorage(() => dbStorage) },
+  {
+    name: 'hcm-recruitment-v1',
+    storage: createJSONStorage(() => dbStorage),
+    // v0 -> v1: the school demo's sample requisitions, candidates and interviews (the first 7, 9 and 3) were
+    // rewritten for Lia Stephanie's real organisation. Those are replaced once; anything added later is kept.
+    version: 1,
+    migrate: (state, version) => {
+      if (version < 1 && IS_SCHOOL && state) {
+        const rest = (list, seedLength) => (list || []).filter(x => x.id > seedLength)
+        return {
+          ...state,
+          requisitions: [...SEED_REQUISITIONS.map(r => ({ ...r })), ...rest(state.requisitions, SEED_REQUISITIONS.length)],
+          candidates: [...SEED_CANDIDATES.map(c => ({ ...c })), ...rest(state.candidates, SEED_CANDIDATES.length)],
+          interviews: [...SEED_INTERVIEWS.map(i => ({ ...i })), ...rest(state.interviews, SEED_INTERVIEWS.length)],
+        }
+      }
+      return state
+    },
+  },
 ))
 
 // ─── One-time migration: 'Hired' → 'Pending Employee' ─────────────────────

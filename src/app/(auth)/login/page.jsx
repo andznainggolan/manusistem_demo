@@ -30,26 +30,29 @@ const CORPORATE_DEMO_GROUPS = [
 ]
 
 const SCHOOL_DEMO_GROUPS = [
-  { title: 'Pimpinan', accounts: [
-    { label: 'Ketua Yayasan',           username: 'ketuayayasan', password: 'pass123' },
-    { label: 'Ketua Dewan Sekolah',     username: 'ketuadewan',   password: 'pass123' },
-    { label: 'Kepala Sekolah SMP',      username: 'kepsek-smp',   password: 'pass123' },
-    { label: 'Wakil Kepala Sekolah SMP', username: 'wakasek-smp', password: 'pass123' },
+  { title: 'Management', accounts: [
+    { label: 'Operational Director (Admin Sistem)', username: 'ricky',     password: 'pass123' },
+    { label: 'Financial Director',                  username: 'nyvillia',  password: 'pass123' },
+    { label: 'School Coordinator',                  username: 'madya',     password: 'pass123' },
+    { label: 'MYP & SYP Principal',                 username: 'abet',      password: 'pass123' },
+    { label: 'SD & Primary Principal',              username: 'daniel',    password: 'pass123' },
+    { label: 'Head Master of Kindergarten',         username: 'anastasia', password: 'pass123' },
   ]},
-  { title: 'Guru', accounts: [
-    { label: 'Guru Matematika SMP', username: 'guru-mat',   password: 'pass123' },
-    { label: 'Guru Agama Katolik',  username: 'guru-agama', password: 'pass123' },
-    { label: 'Guru Honorer SMP',    username: 'honorer',    password: 'pass123' },
+  { title: 'Educational Personnel', accounts: [
+    { label: 'Math & Science',        username: 'renjith',  password: 'pass123' },
+    { label: 'English',               username: 'maria-jovita', password: 'pass123' },
+    { label: 'Primary Year Teacher',  username: 'lailani',  password: 'pass123' },
+    { label: 'Kindergarten Teacher',  username: 'erna',     password: 'pass123' },
   ]},
-  { title: 'Tata Usaha dan Umum', accounts: [
-    { label: 'Kepala Tata Usaha', username: 'kepala-tu', password: 'pass123' },
-    { label: 'Satpam',            username: 'satpam',    password: 'pass123' },
-    { label: 'Driver',            username: 'driver',    password: 'pass123' },
+  { title: 'Staff dan Manajer Pendukung', accounts: [
+    { label: 'Finance Manager',    username: 'erny',      password: 'pass123' },
+    { label: 'Marketing Manager',  username: 'nyoman',    password: 'pass123' },
+    { label: 'Staff Finance',      username: 'krisdayanti', password: 'pass123' },
+    { label: 'General Affairs Staff', username: 'nursinta', password: 'pass123' },
   ]},
-  { title: 'HR dan Admin', accounts: [
-    { label: 'HR Manager',   username: 'hr',        password: 'pass123' },
-    { label: 'HR Officer',   username: 'hrofficer', password: 'pass123' },
-    { label: 'Admin Sistem', username: 'admin',     password: 'pass123' },
+  { title: 'HR', accounts: [
+    { label: 'HRGA (HR)',  username: 'elisabeth', password: 'pass123' },
+    { label: 'Staff HR (HR Officer)', username: 'era', password: 'pass123' },
   ]},
 ]
 const DEMO_GROUPS = IS_SCHOOL ? SCHOOL_DEMO_GROUPS : CORPORATE_DEMO_GROUPS

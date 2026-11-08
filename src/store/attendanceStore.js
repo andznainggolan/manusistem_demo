@@ -11,7 +11,7 @@ const today = new Date()
 // of every day.
 const fmt = localDateStr
 
-const SCHOOL_HOURS = { 15: ['07:00', '15:00'], 9: ['07:00', '15:00'], 7: ['07:00', '15:00'], 29: ['07:30', '16:00'] }
+const SCHOOL_HOURS = { 128: ['07:30', '16:00'] }
 const shiftTime = (hhmm, deltaMin) => {
   const [h, m] = hhmm.split(':').map(Number)
   const total = h * 60 + m + deltaMin
@@ -30,7 +30,7 @@ const planSpan = (empId, day) => {
 const genRecords = () => {
   const employees = IS_SCHOOL
     ? [
-        ...SCHOOL_EMPLOYEES.filter(e => SCHOOL_WORKER_CATEGORIES[e.id] === 'Guru' || [9, 7, 29].includes(e.id)).map(e => ({ id: e.id, name: e.name })),
+        ...SCHOOL_EMPLOYEES.filter(e => SCHOOL_WORKER_CATEGORIES[e.id] === 'Guru' || [104, 106, 107, 128].includes(e.id)).map(e => ({ id: e.id, name: e.name })),
       ]
     : [
         { id: 1, name: 'Budi Santoso' },
@@ -121,7 +121,7 @@ export const useAttendanceStore = create(persist(
       })),
   }),
   {
-    name: IS_SCHOOL ? 'hcm-attendance-school-v2' : 'hcm-attendance-v1',
+    name: IS_SCHOOL ? 'hcm-attendance-school-v3' : 'hcm-attendance-v1',
     storage: createJSONStorage(() => dbStorage),
     // School demo: the seed is dated relative to the day it was first loaded, so
     // later days would have no attendance. Top up missing past days from the seed

@@ -208,6 +208,6 @@ export const useVipStore = create(
       getByManager: (managerId) =>
         get().sessions.filter(s => s.managerId === managerId),
     }),
-    { name: 'vip-store-v5', storage: createJSONStorage(() => dbStorage) }
+    { name: IS_SCHOOL ? 'vip-store-school-v6' : 'vip-store-v5', storage: createJSONStorage(() => dbStorage) }
   )
 )

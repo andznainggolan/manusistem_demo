@@ -263,7 +263,7 @@ const SEED_HEADCOUNTS = [
 ]
 
 let _eId=2, _dId=4, _coId=4, _bId=9, _dpId=11, _jfId=5, _posId=56, _gId=73, _hcId=8
-if (IS_SCHOOL) { _eId=2; _dId=3; _coId=3; _bId=10; _dpId=16; _jfId=5; _posId=34; _gId=73; _hcId=SCHOOL_NEXT_IDS.headcount }
+if (IS_SCHOOL) { _eId=2; _dId=3; _coId=3; _bId=10; _dpId=11; _jfId=4; _posId=Math.max(...SCHOOL_POSITIONS.map(p => p.id)) + 1; _gId=73; _hcId=SCHOOL_NEXT_IDS.headcount }
 
 export const useStructureStore = create(persist((set) => ({
   enterprises:   (IS_SCHOOL ? SCHOOL_ENTERPRISES : SEED_ENTERPRISES).map(x=>({...x})),
@@ -321,17 +321,17 @@ export const useStructureStore = create(persist((set) => ({
   // a duplicate.
   name: 'hcm-structure-headcounts-v1',
   storage: createJSONStorage(() => dbStorage),
-  // School demo: saved data from before the sample teachers (employee ids 42+) existed gets their
-  // seats added, with fresh ids so nothing collides with seats created in the meantime.
+  // The school demo switched to Lia Stephanie's real organisation: seats saved from the earlier sample
+  // staff are replaced by the new ones once. Companies and grades saved by the user are kept.
+  version: 1,
+  migrate: (state, version) => (IS_SCHOOL && version < 1 && state
+    ? { ...state, headcounts: SCHOOL_HEADCOUNTS.map(h => ({ ...h })) }
+    : state),
   merge: (persisted, current) => {
     const merged = { ...current, ...persisted }
-    if (!IS_SCHOOL || !Array.isArray(persisted?.headcounts)) return merged
-    const seated = new Set(persisted.headcounts.map(h => h.employeeId).filter(Boolean))
-    let nid = Math.max(0, ...persisted.headcounts.map(h => Number(h.id) || 0)) + 1
-    const extra = SCHOOL_HEADCOUNTS.filter(h => h.employeeId > 41 && !seated.has(h.employeeId))
-      .map(h => ({ ...h, id: nid, code: `HC${String(nid++).padStart(3, '0')}` }))
-    _hcId = Math.max(_hcId, nid)
-    merged.headcounts = [...persisted.headcounts, ...extra]
+    if (IS_SCHOOL && Array.isArray(persisted?.headcounts)) {
+      _hcId = Math.max(_hcId, Math.max(0, ...persisted.headcounts.map(h => Number(h.id) || 0)) + 1)
+    }
     return merged
   },
   partialize: (state) => (IS_SCHOOL

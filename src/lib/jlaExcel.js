@@ -95,9 +95,9 @@ function referenceRows(teachers, taskTypes, positionName, subjects = []) {
 }
 
 const SAMPLE = [
-  ['LSCS-015', 'Yohanes Aditya', JENIS.block, 'Senin', '07:00', '08:00', 'Matematika 7A', '', ''],
-  ['LSCS-015', 'Yohanes Aditya', JENIS.task, 'Senin', '08:00', '09:00', 'Remedial dan Pengayaan', 'Contoh task', ''],
-  ['LSCS-015', 'Yohanes Aditya', JENIS.assist, 'Selasa', '13:00', '15:00', 'Pendidikan Agama Katolik 7C', 'Contoh perbantuan, hanya minggu ini', '2026-10-26'],
+  ['LSCS-027', 'Renjith Rajan, B.Ed, BSc, M.Ed, M.Si', JENIS.block, 'Senin', '07:30', '08:30', 'Matematika 7A', '', ''],
+  ['LSCS-027', 'Renjith Rajan, B.Ed, BSc, M.Ed, M.Si', JENIS.task, 'Senin', '08:30', '09:30', 'Remedial dan Pengayaan', 'Contoh task', ''],
+  ['LSCS-027', 'Renjith Rajan, B.Ed, BSc, M.Ed, M.Si', JENIS.assist, 'Selasa', '13:00', '15:00', 'Pendidikan Agama 7C', 'Contoh perbantuan, hanya minggu ini', '2026-10-26'],
 ]
 
 /** Empty template with sample rows, or prefilled with `rows` (current schedules). */
