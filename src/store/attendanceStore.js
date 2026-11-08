@@ -88,7 +88,8 @@ export const todayStr = () => localDateStr(new Date())
 
 export const useAttendanceStore = create(persist(
   (set, get) => ({
-    records: genRecords(),
+    // School profile: no attendance is seeded for the real staff; it fills from Clock In/Out and Time Entries imports.
+    records: IS_SCHOOL ? [] : genRecords(),
 
     addRecord: (r) =>
       set((s) => ({ records: [...s.records, { id: _id++, ...r }] })),
@@ -121,7 +122,7 @@ export const useAttendanceStore = create(persist(
       })),
   }),
   {
-    name: IS_SCHOOL ? 'hcm-attendance-school-v3' : 'hcm-attendance-v1',
+    name: IS_SCHOOL ? 'hcm-attendance-school-v4' : 'hcm-attendance-v1',
     storage: createJSONStorage(() => dbStorage),
     // School demo: the seed is dated relative to the day it was first loaded, so
     // later days would have no attendance. Top up missing past days from the seed

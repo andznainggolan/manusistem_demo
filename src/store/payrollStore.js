@@ -5,7 +5,6 @@ import { useEmployeeStore } from './employeeStore'
 import { useStructureStore } from './structureStore'
 import { calcPayslip, DEFAULT_PAYROLL_SETTINGS } from '@/lib/payrollCalc'
 import { IS_SCHOOL } from '@/lib/demoProfile'
-import { SCHOOL_EMPLOYEES, SCHOOL_POSITIONS, SCHOOL_GRADE_BY_ID } from '@/data/schoolSeed'
 import { useJlaStore } from './jlaStore'
 import { weekSummary } from '@/lib/jla'
 import { useAttendanceStore } from './attendanceStore'
@@ -29,29 +28,9 @@ const BASE_PAYSLIPS = SEED_PAYSLIP_INPUTS.map((p) => ({
   }),
 }))
 
-// School profile: last month published + this month in Draft, basic salary =
-// the midpoint of each employee's position grade, so Payroll Run isn't empty.
-function buildSchoolPayslips() {
-  const gradeOf = (positionId) => SCHOOL_GRADE_BY_ID[SCHOOL_POSITIONS.find(p => p.id === positionId).gradeId]
-  const rows = []
-  ;[['2026-09', 'Published'], ['2026-10', 'Draft']].forEach(([period, status]) => {
-    SCHOOL_EMPLOYEES.forEach(e => {
-      const g = gradeOf(e.positionId)
-      const basic = Math.round((g.minSalary + g.maxSalary) / 2 / 10000) * 10000
-      const ptkpStatus = e.maritalStatus === 'Married' ? 'K/0' : 'TK/0'
-      rows.push({
-        id: rows.length + 1, empId: e.id, name: e.name, period, status, ptkpStatus, npwp: true, variableAllowances: [],
-        ...calcPayslip({
-          basic, allowance: 0, variableAllowance: 0, overtime: 0, otherDeduction: 0,
-          ptkpStatus, hasNpwp: true, bpjsKesehatan: true, bpjsTk: true, settings: DEFAULT_PAYROLL_SETTINGS,
-        }),
-      })
-    })
-  })
-  return rows
-}
-
-const SEED_PAYSLIPS = IS_SCHOOL ? buildSchoolPayslips() : BASE_PAYSLIPS
+// School profile: no payslips are seeded for the real staff; HR generates a period in Payroll Run, which uses the
+// midpoint of each employee's position grade as basic salary.
+const SEED_PAYSLIPS = IS_SCHOOL ? [] : BASE_PAYSLIPS
 
 let _id     = SEED_PAYSLIPS.length + 1
 
@@ -212,5 +191,5 @@ export const usePayrollStore = create(persist(
       set((s) => ({ payslips: s.payslips.map((p) => (p.id === id ? { ...p, ...d } : p)) })),
   }),
   // School profile gets its own key so cached/older seeded payslips (pre-grade-change) are not reused.
-  { name: IS_SCHOOL ? 'hcm-payroll-school-v3' : 'hcm-payroll-v2', storage: createJSONStorage(() => dbStorage) }
+  { name: IS_SCHOOL ? 'hcm-payroll-school-v4' : 'hcm-payroll-v2', storage: createJSONStorage(() => dbStorage) }
 ))
