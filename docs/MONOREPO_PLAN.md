@@ -196,7 +196,7 @@ Paket konfigurasi memindahkan **pengaturan**, bukan **data transaksi**.
 | Klien | Lingkungan | Alamat | Status |
 |---|---|---|---|
 | SOS | PROD | `https://sos.manusistem.com` | Ditetapkan |
-| SOS | TEST | `https://sos-test.manusistem.com` | Usulan, belum ditetapkan |
+| SOS | TEST | `https://sos-test.manusistem.com` | Ditetapkan |
 
 Pola umum: `https://<klien>.manusistem.com` untuk PROD dan `https://<klien>-test.manusistem.com` untuk TEST. Alamat tercatat di `APP_BASE_URL` pada `deploy/clients/<klien>/*.env`. Agar alamat ini bisa dipakai, DNS `manusistem.com` harus diarahkan ke tempat image dijalankan (D6) dan tiap subdomain memerlukan sertifikat HTTPS.
 
