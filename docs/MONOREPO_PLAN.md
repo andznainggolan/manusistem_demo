@@ -191,6 +191,15 @@ Paket konfigurasi memindahkan **pengaturan**, bukan **data transaksi**.
 | Client TEST | Sendiri per klien | Setelah demo | Salinan PROD yang dimasking | Dimatikan atau dialihkan |
 | Client PROD | Sendiri per klien | Setelah persetujuan TEST | Data nyata | Aktif |
 
+**Alamat aplikasi per klien**
+
+| Klien | Lingkungan | Alamat | Status |
+|---|---|---|---|
+| SOS | PROD | `https://sos.manusistem.com` | Ditetapkan |
+| SOS | TEST | `https://sos-test.manusistem.com` | Usulan, belum ditetapkan |
+
+Pola umum: `https://<klien>.manusistem.com` untuk PROD dan `https://<klien>-test.manusistem.com` untuk TEST. Alamat tercatat di `APP_BASE_URL` pada `deploy/clients/<klien>/*.env`. Agar alamat ini bisa dipakai, DNS `manusistem.com` harus diarahkan ke tempat image dijalankan (D6) dan tiap subdomain memerlukan sertifikat HTTPS.
+
 ### 2.4 Keputusan yang perlu disetujui
 
 | No | Keputusan | Usulan |
