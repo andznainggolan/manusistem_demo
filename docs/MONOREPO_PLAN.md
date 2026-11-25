@@ -217,6 +217,21 @@ Hal yang menjadi perhatian karena banyak driver (usulan, perlu diuji sebelum dem
 - **Vertikal.** Fleet management tidak termasuk tiga vertikal di rencana (education, outsourcing, corporate). Perlu diputuskan: memakai `outsourcing`, atau menambah vertikal `logistics` (D12).
 - **Data demo.** Bila thelorry hanya untuk demo, datanya fiktif di `seeds/demo/<vertikal>`. Data karyawan asli thelorry tidak boleh masuk repo yang public.
 
+**Status lingkungan thelorry (25 Nov 2026)**
+
+| Komponen | TEST | PROD |
+|---|---|---|
+| Project Neon (Singapore) | `thelorry-test` | `thelorry` |
+| Project Vercel (dari repo `manusistem_demo`, branch `main`) | `thelorry-test` | `thelorry` |
+| Variabel `DATABASE_URL` dan `DIRECT_URL` (Secret, Production) | Terpasang | Terpasang |
+| Domain di Vercel | `thelorry-test.manusistem.com` | `thelorry.manusistem.com` |
+| DNS (CNAME di zona `manusistem.com`, nameserver Jagoan) | Terpasang | Terpasang |
+
+Catatan:
+- Tiap lingkungan memakai database Neon sendiri (host berbeda), tanpa integrasi Marketplace Vercel.
+- Panel cPanel di Jagoan menyediakan **Setup Node.js App**, jadi hosting itu berpotensi menjalankan aplikasi Node.js. Ini jalur alternatif terhadap keputusan D6 (belum dicoba).
+- Setiap push ke `main` membangun ulang semua project Vercel yang terhubung ke repo ini (saat ini empat: dua demo dan dua thelorry).
+
 ### 2.4 Keputusan yang perlu disetujui
 
 | No | Keputusan | Usulan |
