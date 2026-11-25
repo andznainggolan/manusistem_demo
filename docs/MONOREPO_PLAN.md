@@ -226,7 +226,7 @@ Hal yang menjadi perhatian karena banyak driver (usulan, perlu diuji sebelum dem
 | D3 | Konfigurasi runtime menggantikan variabel `NEXT_PUBLIC_*` yang tertanam saat build | Baca konfigurasi dari endpoint runtime. **Catatan hasil pemeriksaan (Nov 2026):** `IS_SCHOOL` dari `src/lib/demoProfile.js` dipakai di 44 berkas, termasuk ±105 tempat di inisialisasi store. Ini perubahan lintas seluruh aplikasi, bukan penyesuaian kecil. Perlu dikerjakan di cabang terpisah dan dikoordinasikan dengan pekerjaan demo sekolah yang sedang berjalan |
 | D4 | Klasifikasi tiap kunci `AppState` menjadi konfigurasi atau data transaksi | Dikerjakan sebelum fitur export/import dibuat |
 | D5 | Memindahkan migrasi dari build ke langkah deploy | Ya. **Terblokir oleh D6:** di Vercel tidak ada langkah deploy terpisah dari build (`scripts/vercel-migrate.mjs` berjalan di build dan sengaja tidak menggagalkan build). Pemindahan baru masuk akal setelah tempat menjalankan image ditentukan |
-| D6 | Tempat menjalankan image: Vercel, container sendiri, atau lainnya | Belum ditentukan. Satu image Docker mengasumsikan container |
+| D6 | Tempat menjalankan aplikasi: Vercel, container sendiri, atau lainnya | **Sudah diputuskan: Vercel dulu** (Nov 2026). Hosting cPanel Jagoan hanya untuk redirect dan email, bukan menjalankan aplikasi. Pindah ke container/VPS dipertimbangkan nanti saat klien bertambah |
 | D7 | Apakah `apps/erp/` dan `modules/payroll/` dipecah sekarang atau nanti | Nanti. Mulai dengan `platform-core` dan `apps/hcm` |
 | D8 | Satu versi platform untuk semua modul, atau versi sendiri per modul | Satu versi platform. Modul tetap punya catatan perubahan sendiri |
 | D9 | Update ke klien: serentak atau bergelombang | **Sudah diputuskan: rilis kuartalan dengan jendela pilihan (cohort), seperti Oracle HCM Cloud** (lihat 2.6) |
@@ -283,7 +283,7 @@ Aturan:
 Setelah rencana disetujui, bertahap dan tiap tahap bisa dihentikan tanpa merusak yang sebelumnya:
 
 1. Rapikan konfigurasi runtime dan pindahkan migrasi dari build (D3, D5). Aplikasi tetap satu paket.
-2. Buat tag rilis, image Docker, dan alur staging ke demo.
+2. Buat tag rilis dan alur staging ke demo. Image Docker ditunda karena D6 memilih Vercel (Vercel membangun dari kode, bukan menjalankan image); `infra/docker/` dibiarkan kosong sampai ada pindah ke container.
 3. Pisahkan tenant demo dan skrip reset (D1).
 4. Buat `deploy/clients/<klien>/` dan integrasi vault (D2).
 5. Skrip masking dan refresh PROD ke TEST.
