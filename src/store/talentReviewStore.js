@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
 import { PLACEMENTS } from '@/store/talentSeed'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_SEEDED } from '@/lib/demoProfile'
 
 // ─── Talent Review (9-Box Calibration) ────────────────────────────────────────
 // Grid: baris = Performance (High=3 … Low=1), kolom = Potential (Low=1 … High=3).
@@ -40,7 +40,7 @@ export const useTalentReviewStore = create(
     (set) => ({
       // Map: { [employeeId]: { boxRow, boxCol, notes, updatedAt } }
       // School profile: no 9-box placements are seeded for the real staff; HR places them in the review.
-      placements: IS_SCHOOL ? {} : { ...PLACEMENTS },
+      placements: IS_SEEDED ? {} : { ...PLACEMENTS },
 
       // Tempatkan / pindahkan karyawan ke sebuah box.
       setBox: (employeeId, boxRow, boxCol, extra = {}) =>

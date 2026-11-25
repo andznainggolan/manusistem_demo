@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
+import { IS_THELORRY } from '@/lib/demoProfile'
+import { THELORRY_OVERTIME } from '@/data/thelorrySeed'
 
 // An Eligibility Group bundles three things for one overtime policy:
 //  1. Parameter — who it applies to (Company/Grade range/Department/Location/Type)
@@ -8,7 +10,7 @@ import { dbStorage } from '@/lib/dbStorage'
 //     unless that stage is set to auto-approve
 //  3. Compensation — paid out as Overtime Allowance (via an Overtime Matrix
 //     rate table) or as Compensatory Leave
-const SEED_GROUPS = [
+const BASE_GROUPS = [
   {
     id: 1, name: 'Staff & Senior Staff — Semua PT', active: true,
     companyIds: [], departmentIds: [], gradeFromId: 40, gradeToId: 52, location: '', employmentType: '',
@@ -18,7 +20,7 @@ const SEED_GROUPS = [
   },
 ]
 
-const SEED_MATRICES = [
+const BASE_MATRICES = [
   {
     id: 1, name: 'Matrix Standar — Hari Kerja', active: true,
     tiers: [
@@ -31,8 +33,11 @@ const SEED_MATRICES = [
   },
 ]
 
-let _groupId  = SEED_GROUPS.length + 1
-let _matrixId = SEED_MATRICES.length + 1
+const SEED_GROUPS = IS_THELORRY ? THELORRY_OVERTIME.eligibilityGroups : BASE_GROUPS
+const SEED_MATRICES = IS_THELORRY ? THELORRY_OVERTIME.overtimeMatrices : BASE_MATRICES
+
+let _groupId  = SEED_GROUPS.reduce((m, x) => Math.max(m, x.id), 0) + 1
+let _matrixId = SEED_MATRICES.reduce((m, x) => Math.max(m, x.id), 0) + 1
 let _tierId   = SEED_MATRICES.reduce((m, x) => Math.max(m, ...x.tiers.map(t => t.id)), 0) + 1
 
 export const useOvertimeStore = create(persist(

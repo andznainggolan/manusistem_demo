@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { persist as dbPersist } from '@/lib/persist'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY, IS_SEEDED } from '@/lib/demoProfile'
+import { THELORRY_USERS } from '@/data/thelorrySeed'
 import { SCHOOL_USERS } from '@/data/schoolSeed'
 
 // Seed users (sementara, nanti ganti ke API)
@@ -94,7 +95,7 @@ export const useAuthStore = create(
     (set, get) => ({
       currentUser: null,
       realUser:    null,   // original user when in proxy mode
-      userList: IS_SCHOOL ? SCHOOL_USERS : SEED_USERS,
+      userList: IS_SCHOOL ? SCHOOL_USERS : IS_THELORRY ? THELORRY_USERS : SEED_USERS,
       _hydrated: false,
 
       setHydrated: () => set({ _hydrated: true }),
@@ -140,7 +141,7 @@ export const useAuthStore = create(
 // One account per imported employee: username = employee ID (NIK), password =
 // "pass123", role copied from the employee. Source priority: DB via /api/users
 // (when configured & seeded), otherwise the static /public JSON. Appended once.
-if (!IS_SCHOOL && typeof window !== 'undefined' && !window.__kpbUsersLoaded) {
+if (!IS_SEEDED && typeof window !== 'undefined' && !window.__kpbUsersLoaded) {
   window.__kpbUsersLoaded = true
   const load = async () => {
     try { const r = await fetch('/api/users'); if (r.ok) { const rows = await r.json(); if (Array.isArray(rows) && rows.length) return rows } } catch {}

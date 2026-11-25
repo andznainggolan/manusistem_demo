@@ -1,7 +1,7 @@
 import { create }  from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SEEDED } from '@/lib/demoProfile'
 
 // ── HR interviewers & rooms (demo master data) ────────────────────────────────
 export const HR_INTERVIEWERS = [
@@ -169,7 +169,7 @@ const nextId = (list) => list.reduce((m, s) => Math.max(m, Number(s.id) || 0), 0
 export const useExitInterviewStore = create(
   persist(
     (set) => ({
-      schedules: IS_SCHOOL ? [] : SEED,
+      schedules: IS_SEEDED ? [] : SEED,
 
       addSchedule: (data) => {
         let created

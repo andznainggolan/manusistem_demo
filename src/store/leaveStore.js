@@ -2,7 +2,7 @@ import { create }                from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage }              from '@/lib/dbStorage'
 import { generateSteps }         from '@/store/workflowStore'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SEEDED } from '@/lib/demoProfile'
 
 const SEED_LEAVE_TYPES = [
   { id: 1, name: 'Cuti Tahunan',    maxDays: 12, active: true },
@@ -16,7 +16,7 @@ const DEFAULT_STEPS = () => [
   { level: 1, type: 'supervisor', label: 'Direct Supervisor', approverId: null, approverName: null, status: 'Pending', actedAt: null, note: '' },
 ]
 
-const SEED_LEAVES = IS_SCHOOL ? [] : [
+const SEED_LEAVES = IS_SEEDED ? [] : [
   { id: 1, userId: 1, name: 'Budi Santoso', submittedBy: 1, submittedByName: 'Budi Santoso',
     submittedAt: '2025-01-03T08:00:00+07:00', workflowName: 'Apply Leave',
     type: 'Cuti Tahunan', start: '2025-01-06', end: '2025-01-08', note: 'Liburan keluarga', status: 'Approved',

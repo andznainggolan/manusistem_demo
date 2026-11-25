@@ -1,5 +1,5 @@
 // ─── Demo seed: 9-Box placements + performance ratings ────────────────────────
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY } from '@/lib/demoProfile'
 
 // So the Talent Profile, 9-Box matrix and TRM views aren't empty during the
 // executive demo. Deterministic (stable across reloads) and internally
@@ -11,7 +11,7 @@ import { IS_SCHOOL } from '@/lib/demoProfile'
 const SEED_IDS = []
 if (IS_SCHOOL) {
   for (let i = 1; i <= 41; i++) SEED_IDS.push(i)
-} else {
+} else if (!IS_THELORRY) {
   for (let i = 200001; i <= 200150; i++) SEED_IDS.push(i)
   ;[1, 2, 3, 5, 7, 10, 11, 30, 31, 32, 33, 92, 93, 95, 96].forEach(id => SEED_IDS.push(id))
 }

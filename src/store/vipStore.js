@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY } from '@/lib/demoProfile'
 import { SCHOOL_VIP_SESSIONS } from '@/data/schoolSeed'
 
 const SEED = [
@@ -69,7 +69,7 @@ export const computeWeightedScore = (topics = []) => {
 export const useVipStore = create(
   persist(
     (set, get) => ({
-      sessions: IS_SCHOOL ? SCHOOL_VIP_SESSIONS : SEED,
+      sessions: IS_SCHOOL ? SCHOOL_VIP_SESSIONS : IS_THELORRY ? [] : SEED,
 
       submitVip: (data) => {
         const newSession = {
@@ -208,6 +208,6 @@ export const useVipStore = create(
       getByManager: (managerId) =>
         get().sessions.filter(s => s.managerId === managerId),
     }),
-    { name: IS_SCHOOL ? 'vip-store-school-v6' : 'vip-store-v5', storage: createJSONStorage(() => dbStorage) }
+    { name: IS_SCHOOL ? 'vip-store-school-v6' : IS_THELORRY ? 'vip-store-thelorry-v1' : 'vip-store-v5', storage: createJSONStorage(() => dbStorage) }
   )
 )

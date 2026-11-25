@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRecruitmentStore, isPublished } from '@/store/recruitmentStore'
 import { useStructureStore } from '@/store/structureStore'
 import { useBrandingStore } from '@/store/brandingStore'
-import { IS_SCHOOL, BRAND_NAME } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY, BRAND_NAME } from '@/lib/demoProfile'
 
 // Public, unauthenticated job board — lives outside (protected), so it gets
 // none of the app shell (sidebar/topbar/auth redirect). A requisition shows
@@ -81,7 +81,7 @@ function CareersBody() {
   const heroTitle = mounted ? careerHeroTitle : `Karir di ${BRAND_NAME}`
   const heroSubtitle = mounted ? careerHeroSubtitle : 'Temukan peluang karir yang sesuai untukmu.'
   const footerImage = mounted ? careerFooterImage : null
-  const footerText = mounted ? careerFooterText : (IS_SCHOOL ? 'Lia Stephanie Catholic School — Yayasan Lia Stephanie' : 'Manusistem — Human Capital Management System')
+  const footerText = mounted ? careerFooterText : (IS_SCHOOL ? 'Lia Stephanie Catholic School — Yayasan Lia Stephanie' : IS_THELORRY ? 'PT Thelorry Indonesia — Logistik dan Manajemen Armada' : 'Manusistem — Human Capital Management System')
 
   const NavLink = ({ link, className }) => (
     isExternalLink(link.url)

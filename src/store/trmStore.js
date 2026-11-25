@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
 import { boxScore, TALENT_BOXES } from '@/store/talentReviewStore'
 import { TRM_RECORDS } from '@/store/talentSeed'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_SEEDED } from '@/lib/demoProfile'
 
 // ─── Talent Review Meeting (TRM / PRP) ────────────────────────────────────────
 // Form untuk evaluasi kinerja & pengembangan serta menyusun Development Plan.
@@ -72,7 +72,7 @@ export const useTrmStore = create(
   persist(
     (set) => ({
       // Map: { [employeeId]: TrmRecord }
-      records: IS_SCHOOL ? {} : { ...TRM_RECORDS },
+      records: IS_SEEDED ? {} : { ...TRM_RECORDS },
 
       saveRecord: (employeeId, data) =>
         set(s => ({

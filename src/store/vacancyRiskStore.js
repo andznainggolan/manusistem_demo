@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY } from '@/lib/demoProfile'
 import { SCHOOL_VACANCY_RISK } from '@/data/schoolSeed'
 
 // ─── Vacancy Risk Assessment ──────────────────────────────────────────────────
@@ -76,7 +76,7 @@ const BASE_VACANCY_RISK = {
   7:  _va('Medium', 'Medium', 'Long',   'Sehat'),
 }
 
-export const SEED_VACANCY_RISK = IS_SCHOOL ? SCHOOL_VACANCY_RISK : BASE_VACANCY_RISK
+export const SEED_VACANCY_RISK = IS_SCHOOL ? SCHOOL_VACANCY_RISK : IS_THELORRY ? {} : BASE_VACANCY_RISK
 
 export const useVacancyRiskStore = create(
   persist(

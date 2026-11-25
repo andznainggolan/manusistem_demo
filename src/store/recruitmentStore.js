@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY } from '@/lib/demoProfile'
+import { THELORRY_REQUISITIONS, THELORRY_CANDIDATES, THELORRY_INTERVIEWS } from '@/data/thelorrySeed'
 import { SCHOOL_REQUISITIONS, SCHOOL_CANDIDATES, SCHOOL_INTERVIEWS } from '@/data/schoolSeed'
 
 // Recruitment / ATS: Job Requisition -> Candidate (attached to a requisition,
@@ -74,9 +75,9 @@ const BASE_INTERVIEWS = [
     interviewerNames: 'Ahmad Fauzi', location: '-', result: 'Scheduled', notes: '' },
 ]
 
-const SEED_REQUISITIONS = IS_SCHOOL ? SCHOOL_REQUISITIONS : BASE_REQUISITIONS
-const SEED_CANDIDATES = IS_SCHOOL ? SCHOOL_CANDIDATES : BASE_CANDIDATES
-const SEED_INTERVIEWS = IS_SCHOOL ? SCHOOL_INTERVIEWS : BASE_INTERVIEWS
+const SEED_REQUISITIONS = IS_SCHOOL ? SCHOOL_REQUISITIONS : IS_THELORRY ? THELORRY_REQUISITIONS : BASE_REQUISITIONS
+const SEED_CANDIDATES = IS_SCHOOL ? SCHOOL_CANDIDATES : IS_THELORRY ? THELORRY_CANDIDATES : BASE_CANDIDATES
+const SEED_INTERVIEWS = IS_SCHOOL ? SCHOOL_INTERVIEWS : IS_THELORRY ? THELORRY_INTERVIEWS : BASE_INTERVIEWS
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
 

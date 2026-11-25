@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
 import { localDateStr } from '@/lib/workSchedule'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY, IS_SEEDED } from '@/lib/demoProfile'
 import { SCHOOL_EMPLOYEES, SCHOOL_WORKER_CATEGORIES, SCHOOL_TEACHING_BLOCKS, SCHOOL_JLA_TASKS } from '@/data/schoolSeed'
 
 const today = new Date()
@@ -89,7 +89,7 @@ export const todayStr = () => localDateStr(new Date())
 export const useAttendanceStore = create(persist(
   (set, get) => ({
     // School profile: no attendance is seeded for the real staff; it fills from Clock In/Out and Time Entries imports.
-    records: IS_SCHOOL ? [] : genRecords(),
+    records: IS_SEEDED ? [] : genRecords(),
 
     addRecord: (r) =>
       set((s) => ({ records: [...s.records, { id: _id++, ...r }] })),
@@ -122,7 +122,7 @@ export const useAttendanceStore = create(persist(
       })),
   }),
   {
-    name: IS_SCHOOL ? 'hcm-attendance-school-v4' : 'hcm-attendance-v1',
+    name: IS_SCHOOL ? 'hcm-attendance-school-v4' : IS_THELORRY ? 'hcm-attendance-thelorry-v1' : 'hcm-attendance-v1',
     storage: createJSONStorage(() => dbStorage),
     // School demo: the seed is dated relative to the day it was first loaded, so
     // later days would have no attendance. Top up missing past days from the seed

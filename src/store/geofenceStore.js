@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY } from '@/lib/demoProfile'
+import { THELORRY_GEOFENCE_LOCATIONS } from '@/data/thelorrySeed'
 
 // Geofencing for online clock in/out. Off by default: clocking works from
 // anywhere, exactly as before.
@@ -13,7 +14,7 @@ export const DEFAULT_GEOFENCE = {
 }
 
 // Placeholder coordinates: replace with the real address in the settings page.
-const SEED_LOCATIONS = IS_SCHOOL
+const SEED_LOCATIONS = IS_THELORRY ? THELORRY_GEOFENCE_LOCATIONS : IS_SCHOOL
   ? [{ id: 'loc-lscs', name: 'Kampus LSCS (koordinat contoh)', lat: -6.1683, lng: 106.7589, radius: 100 }]
   : [{ id: 'loc-hq', name: 'Kantor Pusat (koordinat contoh)', lat: -6.1754, lng: 106.8272, radius: 100 }]
 

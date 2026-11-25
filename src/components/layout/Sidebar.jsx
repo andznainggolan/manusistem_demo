@@ -5,7 +5,7 @@ import { usePathname, useRouter }       from 'next/navigation'
 import { useAuthStore }                 from '@/store/authStore'
 import { useEmployeeStore }             from '@/store/employeeStore'
 import { HR_ROLES, TALENT_ONLY_ROLES }  from '@/constants/roles'
-import { IS_SCHOOL }                    from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_SEEDED }            from '@/lib/demoProfile'
 
 // ─── Strip icons (icon strip left) ────────────────────────────────────────────
 const IcHome   = () => <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -223,7 +223,7 @@ const HR_GROUPS = [
     { label: 'Company',          href: '/hr/structure/company',           icon: ic('building') },
     { label: 'Department',       href: '/hr/structure/department',        icon: ic('users') },
     { label: 'Position',         href: '/hr/structure/position',          icon: ic('briefcase') },
-    ...(IS_SCHOOL ? [{ label: 'Master Grade', href: '/hr/structure/grade', icon: ic('layers') }] : []),
+    ...(IS_SEEDED ? [{ label: 'Master Grade', href: '/hr/structure/grade', icon: ic('layers') }] : []),
     { label: 'Headcount',        href: '/hr/structure/headcount',         icon: ic('person') },
     { label: 'Org Chart',        href: '/hr/org-chart',                   icon: ic('map') },
   ]},

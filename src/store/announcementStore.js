@@ -1,8 +1,9 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY } from '@/lib/demoProfile'
 import { SCHOOL_ANNOUNCEMENTS } from '@/data/schoolSeed'
+import { THELORRY_ANNOUNCEMENTS } from '@/data/thelorrySeed'
 
 // Company announcements shown on the Home page (ESS Dashboard) and maintained
 // under HR Administration → Settings → Announcement.
@@ -40,7 +41,7 @@ const BASE_SEED = [
   },
 ]
 
-const SEED = IS_SCHOOL ? SCHOOL_ANNOUNCEMENTS : BASE_SEED
+const SEED = IS_SCHOOL ? SCHOOL_ANNOUNCEMENTS : IS_THELORRY ? THELORRY_ANNOUNCEMENTS : BASE_SEED
 
 let _id = SEED.length + 1
 

@@ -2,7 +2,7 @@ import { create }  from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
 import { addDays, todayStr } from '@/lib/offboarding'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SEEDED } from '@/lib/demoProfile'
 
 // Two owners of offboarding activities
 export const OFFBOARDING_CATEGORIES = ['HR', 'Atasan Langsung']
@@ -77,7 +77,7 @@ export const useOffboardingChecklistStore = create(
   persist(
     (set, get) => ({
       // { id, employeeId, category, title, description, picName, deadline, remark, status, evidence, completedAt }
-      items: (IS_SCHOOL ? [] : SEED_CHECKLIST).map(x => ({ ...x })),
+      items: (IS_SEEDED ? [] : SEED_CHECKLIST).map(x => ({ ...x })),
 
       // Set true once persisted state has been rehydrated. Guards seedForEmployee
       // so it can't reset a persisted employee's checklist during the brief

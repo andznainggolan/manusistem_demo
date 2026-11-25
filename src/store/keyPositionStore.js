@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY } from '@/lib/demoProfile'
 import { SCHOOL_KEY_POSITIONS } from '@/data/schoolSeed'
 
 // ─── Key Position Assessment ──────────────────────────────────────────────────
@@ -35,7 +35,7 @@ const BASE_KEY_POSITIONS = {
   21: _seed(),
 }
 
-export const SEED_KEY_POSITIONS = IS_SCHOOL ? SCHOOL_KEY_POSITIONS : BASE_KEY_POSITIONS
+export const SEED_KEY_POSITIONS = IS_SCHOOL ? SCHOOL_KEY_POSITIONS : IS_THELORRY ? {} : BASE_KEY_POSITIONS
 
 export const useKeyPositionStore = create(
   persist(

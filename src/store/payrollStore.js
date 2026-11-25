@@ -4,7 +4,7 @@ import { dbStorage } from '@/lib/dbStorage'
 import { useEmployeeStore } from './employeeStore'
 import { useStructureStore } from './structureStore'
 import { calcPayslip, DEFAULT_PAYROLL_SETTINGS } from '@/lib/payrollCalc'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY, IS_SEEDED } from '@/lib/demoProfile'
 import { useJlaStore } from './jlaStore'
 import { weekSummary } from '@/lib/jla'
 import { useAttendanceStore } from './attendanceStore'
@@ -12,7 +12,7 @@ import { useJlaRealStore } from './jlaRealStore'
 import { useJlaWeekStore } from './jlaWeekStore'
 import { summarize, monthRange, weekdaysBetween } from '@/lib/jlaRealization'
 
-const SEED_PAYSLIP_INPUTS = IS_SCHOOL ? [] : [
+const SEED_PAYSLIP_INPUTS = IS_SEEDED ? [] : [
   { id:1, empId:1, name:'Budi Santoso',  period:'2025-05', basic:12000000, allowance:2000000, ptkpStatus:'K/1',  npwp:true  },
   { id:2, empId:2, name:'Dewi Rahayu',   period:'2025-05', basic:20000000, allowance:3000000, ptkpStatus:'K/0',  npwp:true  },
   { id:3, empId:3, name:'Rina Marlina',  period:'2025-05', basic:15000000, allowance:2500000, ptkpStatus:'TK/0', npwp:true  },
@@ -30,7 +30,7 @@ const BASE_PAYSLIPS = SEED_PAYSLIP_INPUTS.map((p) => ({
 
 // School profile: no payslips are seeded for the real staff; HR generates a period in Payroll Run, which uses the
 // midpoint of each employee's position grade as basic salary.
-const SEED_PAYSLIPS = IS_SCHOOL ? [] : BASE_PAYSLIPS
+const SEED_PAYSLIPS = IS_SEEDED ? [] : BASE_PAYSLIPS
 
 let _id     = SEED_PAYSLIPS.length + 1
 
@@ -191,5 +191,5 @@ export const usePayrollStore = create(persist(
       set((s) => ({ payslips: s.payslips.map((p) => (p.id === id ? { ...p, ...d } : p)) })),
   }),
   // School profile gets its own key so cached/older seeded payslips (pre-grade-change) are not reused.
-  { name: IS_SCHOOL ? 'hcm-payroll-school-v4' : 'hcm-payroll-v2', storage: createJSONStorage(() => dbStorage) }
+  { name: IS_SCHOOL ? 'hcm-payroll-school-v4' : IS_THELORRY ? 'hcm-payroll-thelorry-v1' : 'hcm-payroll-v2', storage: createJSONStorage(() => dbStorage) }
 ))

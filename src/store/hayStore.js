@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SEEDED } from '@/lib/demoProfile'
 
 const SEED = [
   {
@@ -84,7 +84,7 @@ const SEED = [
 export const useHayStore = create(
   persist(
     (set, get) => ({
-      sessions: IS_SCHOOL ? [] : SEED,
+      sessions: IS_SEEDED ? [] : SEED,
 
       submitHay: (data) => {
         const { topic, goal, reality, options, wayForward, dueDate, ...rest } = data

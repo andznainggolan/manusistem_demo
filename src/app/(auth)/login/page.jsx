@@ -4,7 +4,8 @@ import { useRouter }           from 'next/navigation'
 import { useAuthStore }        from '@/store/authStore'
 import { useBrandingStore }    from '@/store/brandingStore'
 import { TALENT_ONLY_ROLES }   from '@/constants/roles'
-import { IS_SCHOOL }           from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY } from '@/lib/demoProfile'
+import { THELORRY_DEMO_GROUPS } from '@/data/thelorrySeed'
 
 // ─── Demo / simulation accounts shown on the login screen ─────────────────────
 const CORPORATE_DEMO_GROUPS = [
@@ -55,7 +56,7 @@ const SCHOOL_DEMO_GROUPS = [
     { label: 'Staff HR (HR Officer)', username: 'era', password: 'pass123' },
   ]},
 ]
-const DEMO_GROUPS = IS_SCHOOL ? SCHOOL_DEMO_GROUPS : CORPORATE_DEMO_GROUPS
+const DEMO_GROUPS = IS_SCHOOL ? SCHOOL_DEMO_GROUPS : IS_THELORRY ? THELORRY_DEMO_GROUPS : CORPORATE_DEMO_GROUPS
 
 const DEMO_MASTER_PASSWORD = 'manusistem12345'
 const DEMO_UNLOCK_KEY = 'hcm-demo-unlocked'

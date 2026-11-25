@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { dbStorage } from '@/lib/dbStorage'
-import { IS_SCHOOL } from '@/lib/demoProfile'
+import { IS_SCHOOL, IS_THELORRY } from '@/lib/demoProfile'
+import { THELORRY_SHIFTS, THELORRY_PATTERNS, THELORRY_SCHEDULES, THELORRY_ASSIGNMENTS } from '@/data/thelorrySeed'
 import { SCHOOL_SHIFTS, SCHOOL_PATTERNS, SCHOOL_SCHEDULES, SCHOOL_ASSIGNMENTS } from '@/data/schoolSeed'
 
 const BASE_SHIFTS = [
@@ -39,10 +40,10 @@ const BASE_ASSIGNMENTS = [
   { id:3, userId:5, name:'Sari Indah',   scheduleId:2, startDate:'2025-03-01' },
 ]
 
-const SEED_SHIFTS = IS_SCHOOL ? SCHOOL_SHIFTS : BASE_SHIFTS
-const SEED_PATTERNS = IS_SCHOOL ? SCHOOL_PATTERNS : BASE_PATTERNS
-const SEED_SCHEDULES = IS_SCHOOL ? SCHOOL_SCHEDULES : BASE_SCHEDULES
-const SEED_ASSIGNMENTS = IS_SCHOOL ? SCHOOL_ASSIGNMENTS : BASE_ASSIGNMENTS
+const SEED_SHIFTS = IS_SCHOOL ? SCHOOL_SHIFTS : IS_THELORRY ? THELORRY_SHIFTS : BASE_SHIFTS
+const SEED_PATTERNS = IS_SCHOOL ? SCHOOL_PATTERNS : IS_THELORRY ? THELORRY_PATTERNS : BASE_PATTERNS
+const SEED_SCHEDULES = IS_SCHOOL ? SCHOOL_SCHEDULES : IS_THELORRY ? THELORRY_SCHEDULES : BASE_SCHEDULES
+const SEED_ASSIGNMENTS = IS_SCHOOL ? SCHOOL_ASSIGNMENTS : IS_THELORRY ? THELORRY_ASSIGNMENTS : BASE_ASSIGNMENTS
 
 let _sId=SEED_SHIFTS.length+1, _pId=SEED_PATTERNS.length+1,
     _scId=SEED_SCHEDULES.length+1, _aId=SEED_ASSIGNMENTS.length+1
@@ -69,7 +70,7 @@ export const useShiftStore = create(persist(
   }),
   {
     // The school profile has its own key so schedules saved for the earlier sample staff are not reused.
-    name: IS_SCHOOL ? 'hcm-shift-school-v2' : 'hcm-shift-v1',
+    name: IS_SCHOOL ? 'hcm-shift-school-v2' : IS_THELORRY ? 'hcm-shift-thelorry-v1' : 'hcm-shift-v1',
     storage: createJSONStorage(() => dbStorage),
   }
 ))
