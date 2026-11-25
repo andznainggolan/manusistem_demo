@@ -232,6 +232,11 @@ Catatan:
 - Panel cPanel di Jagoan menyediakan **Setup Node.js App**, jadi hosting itu berpotensi menjalankan aplikasi Node.js. Ini jalur alternatif terhadap keputusan D6 (belum dicoba).
 - Setiap push ke `main` membangun ulang semua project Vercel yang terhubung ke repo ini (saat ini empat: dua demo dan dua thelorry).
 
+**Data demo thelorry (26 Nov 2026)**
+
+- `seeds/demo/logistics/thelorry/`: struktur organisasi (satu legal employer, kantor pusat dan 3 depot), 205 karyawan (106 driver, 38 helper), 218 headcount (13 kursi kosong), jadwal kerja, dan kebijakan lembur (5 Eligibility Group dan 10 Overtime Matrix). Dihasilkan oleh `generate.mjs` dengan benih tetap, jadi hasilnya selalu sama.
+- Data ini **belum tampil di aplikasi**. Profil non-sekolah menambahkan struktur dari database di atas seed korporat bawaan, jadi satu-satunya legal employer "Thelorry" baru bisa tampil lewat profil demo baru di kode (lihat bagian 2.8).
+
 ### 2.4 Keputusan yang perlu disetujui
 
 | No | Keputusan | Usulan |
@@ -247,7 +252,7 @@ Catatan:
 | D9 | Update ke klien: serentak atau bergelombang | **Sudah diputuskan: rilis kuartalan dengan jendela pilihan (cohort), seperti Oracle HCM Cloud** (lihat 2.6) |
 | D10 | Kalender kuartalan: bulan rilis dan jendela A/B, selang TEST ke PROD, masa pengamatan, kriteria lolos gerbang | Belum ditentukan |
 | D11 | Batas pemilihan jendela, cohort bawaan bagi yang tidak memilih, dan masa dukungan versi lama | Belum ditentukan. Usulan: bawaan B, tidak boleh melewati kuartal |
-| D12 | Vertikal untuk thelorry (fleet management): pakai `outsourcing` atau tambah `logistics` | Belum ditentukan. Tergantung pola kerja driver |
+| D12 | Vertikal untuk thelorry (fleet management): pakai `outsourcing` atau tambah `logistics` | Usulan: `logistics`. Data demo sudah dibuat di `seeds/demo/logistics/thelorry/` dan konsep lembur supir di `docs/KONSEP_LEMBUR_SUPIR.md`. Belum terhubung ke aplikasi (lihat bagian 2.8) |
 
 ### 2.6 Update modul ke semua klien
 
@@ -292,6 +297,17 @@ Aturan:
 - Satu bug di modul bersama berdampak ke semua klien. Mitigasinya adalah rilis bertahap per cohort dengan gerbang, tes otomatis di staging, dan rollback cepat (memasang kembali image versi sebelumnya).
 - Kecepatan update dibatasi oleh klien yang paling sensitif. Klien yang meminta pembekuan versi memerlukan aturan jelas: berapa lama versi lama masih didukung (D11).
 - Kalau semua klien memilih jendela B, jendela A tidak berfungsi sebagai pengamat. Perlu ada klien tetap di cohort A (internal atau yang bersedia).
+
+### 2.8 Menampilkan data thelorry di aplikasi (usulan, belum dikerjakan)
+
+Profil sekolah (`NEXT_PUBLIC_DEMO_PROFILE=school`) mengganti seed korporat di sekitar 40 berkas. Untuk thelorry ada dua jalan:
+
+| Opsi | Isi | Risiko |
+|---|---|---|
+| A. Profil `thelorry` baru | Tambah cabang profil di store struktur, karyawan, akun, shift, headcount, dan lembur; store lain dikosongkan seperti profil sekolah | Menyentuh banyak berkas yang dipakai demo sekolah; perlu uji ulang keduanya |
+| B. Muat langsung ke database | Skrip memuat JSON ke tabel Neon thelorry | Tidak ada perubahan kode, tetapi seed korporat bawaan tetap tampil bersama data thelorry |
+
+Rekomendasi: opsi A, dikerjakan di cabang terpisah dan diuji sebelum digabung.
 
 ### 2.7 Urutan pengerjaan yang diusulkan
 

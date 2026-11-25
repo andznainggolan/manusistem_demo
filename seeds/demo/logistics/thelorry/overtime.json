@@ -1,0 +1,369 @@
+{
+  "eligibilityGroups": [
+    {
+      "id": 1,
+      "name": "Driver Linehaul Senior - Lembur Hari Kerja",
+      "active": true,
+      "companyIds": [
+        1
+      ],
+      "departmentIds": [
+        8,
+        13,
+        18
+      ],
+      "gradeFromId": 5,
+      "gradeToId": 5,
+      "location": "",
+      "employmentType": "",
+      "autoApprovePlan": false,
+      "autoApproveRealization": false,
+      "compensationType": "Overtime Allowance",
+      "matrixId": 4,
+      "notes": "Plan disetujui Supervisor Operasi; realisasi disetujui Supervisor lalu HR. Lembur berdasarkan perintah tertulis (digital)."
+    },
+    {
+      "id": 2,
+      "name": "Driver Linehaul - Lembur Hari Kerja",
+      "active": true,
+      "companyIds": [
+        1
+      ],
+      "departmentIds": [
+        8,
+        13,
+        18
+      ],
+      "gradeFromId": 4,
+      "gradeToId": 4,
+      "location": "",
+      "employmentType": "",
+      "autoApprovePlan": false,
+      "autoApproveRealization": false,
+      "compensationType": "Overtime Allowance",
+      "matrixId": 3,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "name": "Driver Distribusi - Lembur Hari Kerja",
+      "active": true,
+      "companyIds": [
+        1
+      ],
+      "departmentIds": [
+        9,
+        14,
+        19
+      ],
+      "gradeFromId": 2,
+      "gradeToId": 3,
+      "location": "",
+      "employmentType": "",
+      "autoApprovePlan": false,
+      "autoApproveRealization": false,
+      "compensationType": "Overtime Allowance",
+      "matrixId": 2,
+      "notes": "Lembur distribusi umumnya 1 sampai 2 jam akibat antrean bongkar dan kemacetan."
+    },
+    {
+      "id": 4,
+      "name": "Kernet dan Helper - Lembur Hari Kerja",
+      "active": true,
+      "companyIds": [
+        1
+      ],
+      "departmentIds": [
+        10,
+        15,
+        20
+      ],
+      "gradeFromId": 1,
+      "gradeToId": 1,
+      "location": "",
+      "employmentType": "",
+      "autoApprovePlan": false,
+      "autoApproveRealization": false,
+      "compensationType": "Overtime Allowance",
+      "matrixId": 1,
+      "notes": "Mengikuti jam lembur driver yang didampingi."
+    },
+    {
+      "id": 5,
+      "name": "Dispatcher, Admin dan Mekanik - Lembur Hari Kerja",
+      "active": true,
+      "companyIds": [
+        1
+      ],
+      "departmentIds": [
+        7,
+        12,
+        17,
+        11,
+        16,
+        21
+      ],
+      "gradeFromId": 6,
+      "gradeToId": 6,
+      "location": "",
+      "employmentType": "",
+      "autoApprovePlan": false,
+      "autoApproveRealization": true,
+      "compensationType": "Overtime Allowance",
+      "matrixId": 5,
+      "notes": "Realisasi otomatis disetujui karena sudah tercatat di sistem absensi."
+    }
+  ],
+  "overtimeMatrices": [
+    {
+      "id": 1,
+      "name": "Kernet / Helper - Hari Kerja",
+      "active": true,
+      "tiers": [
+        {
+          "id": 1,
+          "hourFrom": 1,
+          "hourTo": 1,
+          "rate": 50290
+        },
+        {
+          "id": 2,
+          "hourFrom": 2,
+          "hourTo": 3,
+          "rate": 67050
+        }
+      ],
+      "restMinutes": 30,
+      "roundingToleranceMinutes": 30,
+      "notes": "Upah sebulan contoh Rp 5.800.000, upah sejam = 1/173. Jam ke-1 = 1,5 x, jam ke-2 dan ke-3 = 2 x. Dibatasi 3 jam per hari (batas keselamatan pengemudi); batas hukum umum 4 jam per hari dan 18 jam per minggu."
+    },
+    {
+      "id": 2,
+      "name": "Driver Distribusi - Hari Kerja",
+      "active": true,
+      "tiers": [
+        {
+          "id": 3,
+          "hourFrom": 1,
+          "hourTo": 1,
+          "rate": 58960
+        },
+        {
+          "id": 4,
+          "hourFrom": 2,
+          "hourTo": 3,
+          "rate": 78610
+        }
+      ],
+      "restMinutes": 30,
+      "roundingToleranceMinutes": 30,
+      "notes": "Upah sebulan contoh Rp 6.800.000, upah sejam = 1/173. Jam ke-1 = 1,5 x, jam ke-2 dan ke-3 = 2 x. Dibatasi 3 jam per hari (batas keselamatan pengemudi); batas hukum umum 4 jam per hari dan 18 jam per minggu."
+    },
+    {
+      "id": 3,
+      "name": "Driver Linehaul - Hari Kerja",
+      "active": true,
+      "tiers": [
+        {
+          "id": 5,
+          "hourFrom": 1,
+          "hourTo": 1,
+          "rate": 71100
+        },
+        {
+          "id": 6,
+          "hourFrom": 2,
+          "hourTo": 3,
+          "rate": 94800
+        }
+      ],
+      "restMinutes": 30,
+      "roundingToleranceMinutes": 30,
+      "notes": "Upah sebulan contoh Rp 8.200.000, upah sejam = 1/173. Jam ke-1 = 1,5 x, jam ke-2 dan ke-3 = 2 x. Dibatasi 3 jam per hari (batas keselamatan pengemudi); batas hukum umum 4 jam per hari dan 18 jam per minggu."
+    },
+    {
+      "id": 4,
+      "name": "Driver Linehaul Senior - Hari Kerja",
+      "active": true,
+      "tiers": [
+        {
+          "id": 7,
+          "hourFrom": 1,
+          "hourTo": 1,
+          "rate": 84970
+        },
+        {
+          "id": 8,
+          "hourFrom": 2,
+          "hourTo": 3,
+          "rate": 113290
+        }
+      ],
+      "restMinutes": 30,
+      "roundingToleranceMinutes": 30,
+      "notes": "Upah sebulan contoh Rp 9.800.000, upah sejam = 1/173. Jam ke-1 = 1,5 x, jam ke-2 dan ke-3 = 2 x. Dibatasi 3 jam per hari (batas keselamatan pengemudi); batas hukum umum 4 jam per hari dan 18 jam per minggu."
+    },
+    {
+      "id": 5,
+      "name": "Staf Operasi / Mekanik - Hari Kerja",
+      "active": true,
+      "tiers": [
+        {
+          "id": 9,
+          "hourFrom": 1,
+          "hourTo": 1,
+          "rate": 65900
+        },
+        {
+          "id": 10,
+          "hourFrom": 2,
+          "hourTo": 3,
+          "rate": 87860
+        }
+      ],
+      "restMinutes": 30,
+      "roundingToleranceMinutes": 30,
+      "notes": "Upah sebulan contoh Rp 7.600.000, upah sejam = 1/173. Jam ke-1 = 1,5 x, jam ke-2 dan ke-3 = 2 x. Dibatasi 3 jam per hari (batas keselamatan pengemudi); batas hukum umum 4 jam per hari dan 18 jam per minggu."
+    },
+    {
+      "id": 6,
+      "name": "Kernet / Helper - Hari Istirahat / Libur (5 hari kerja)",
+      "active": true,
+      "tiers": [
+        {
+          "id": 11,
+          "hourFrom": 1,
+          "hourTo": 8,
+          "rate": 67050
+        },
+        {
+          "id": 12,
+          "hourFrom": 9,
+          "hourTo": 9,
+          "rate": 100580
+        },
+        {
+          "id": 13,
+          "hourFrom": 10,
+          "hourTo": 11,
+          "rate": 134100
+        }
+      ],
+      "restMinutes": 60,
+      "roundingToleranceMinutes": 30,
+      "notes": "Berlaku bila bekerja pada hari istirahat mingguan atau libur resmi (pola 5 hari kerja): jam ke-1 s/d 8 = 2 x, jam ke-9 = 3 x, jam ke-10 dan ke-11 = 4 x. Maksimum 11 jam kerja (12 jam termasuk istirahat 1 jam)."
+    },
+    {
+      "id": 7,
+      "name": "Driver Distribusi - Hari Istirahat / Libur (5 hari kerja)",
+      "active": true,
+      "tiers": [
+        {
+          "id": 14,
+          "hourFrom": 1,
+          "hourTo": 8,
+          "rate": 78610
+        },
+        {
+          "id": 15,
+          "hourFrom": 9,
+          "hourTo": 9,
+          "rate": 117920
+        },
+        {
+          "id": 16,
+          "hourFrom": 10,
+          "hourTo": 11,
+          "rate": 157230
+        }
+      ],
+      "restMinutes": 60,
+      "roundingToleranceMinutes": 30,
+      "notes": "Berlaku bila bekerja pada hari istirahat mingguan atau libur resmi (pola 5 hari kerja): jam ke-1 s/d 8 = 2 x, jam ke-9 = 3 x, jam ke-10 dan ke-11 = 4 x. Maksimum 11 jam kerja (12 jam termasuk istirahat 1 jam)."
+    },
+    {
+      "id": 8,
+      "name": "Driver Linehaul - Hari Istirahat / Libur (5 hari kerja)",
+      "active": true,
+      "tiers": [
+        {
+          "id": 17,
+          "hourFrom": 1,
+          "hourTo": 8,
+          "rate": 94800
+        },
+        {
+          "id": 18,
+          "hourFrom": 9,
+          "hourTo": 9,
+          "rate": 142200
+        },
+        {
+          "id": 19,
+          "hourFrom": 10,
+          "hourTo": 11,
+          "rate": 189600
+        }
+      ],
+      "restMinutes": 60,
+      "roundingToleranceMinutes": 30,
+      "notes": "Berlaku bila bekerja pada hari istirahat mingguan atau libur resmi (pola 5 hari kerja): jam ke-1 s/d 8 = 2 x, jam ke-9 = 3 x, jam ke-10 dan ke-11 = 4 x. Maksimum 11 jam kerja (12 jam termasuk istirahat 1 jam)."
+    },
+    {
+      "id": 9,
+      "name": "Driver Linehaul Senior - Hari Istirahat / Libur (5 hari kerja)",
+      "active": true,
+      "tiers": [
+        {
+          "id": 20,
+          "hourFrom": 1,
+          "hourTo": 8,
+          "rate": 113290
+        },
+        {
+          "id": 21,
+          "hourFrom": 9,
+          "hourTo": 9,
+          "rate": 169940
+        },
+        {
+          "id": 22,
+          "hourFrom": 10,
+          "hourTo": 11,
+          "rate": 226590
+        }
+      ],
+      "restMinutes": 60,
+      "roundingToleranceMinutes": 30,
+      "notes": "Berlaku bila bekerja pada hari istirahat mingguan atau libur resmi (pola 5 hari kerja): jam ke-1 s/d 8 = 2 x, jam ke-9 = 3 x, jam ke-10 dan ke-11 = 4 x. Maksimum 11 jam kerja (12 jam termasuk istirahat 1 jam)."
+    },
+    {
+      "id": 10,
+      "name": "Staf Operasi / Mekanik - Hari Istirahat / Libur (5 hari kerja)",
+      "active": true,
+      "tiers": [
+        {
+          "id": 23,
+          "hourFrom": 1,
+          "hourTo": 8,
+          "rate": 87860
+        },
+        {
+          "id": 24,
+          "hourFrom": 9,
+          "hourTo": 9,
+          "rate": 131790
+        },
+        {
+          "id": 25,
+          "hourFrom": 10,
+          "hourTo": 11,
+          "rate": 175720
+        }
+      ],
+      "restMinutes": 60,
+      "roundingToleranceMinutes": 30,
+      "notes": "Berlaku bila bekerja pada hari istirahat mingguan atau libur resmi (pola 5 hari kerja): jam ke-1 s/d 8 = 2 x, jam ke-9 = 3 x, jam ke-10 dan ke-11 = 4 x. Maksimum 11 jam kerja (12 jam termasuk istirahat 1 jam)."
+    }
+  ]
+}

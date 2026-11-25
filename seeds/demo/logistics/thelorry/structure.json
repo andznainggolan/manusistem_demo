@@ -1,0 +1,835 @@
+{
+  "enterprises": [
+    {
+      "id": 1,
+      "code": "ENT001",
+      "name": "Thelorry",
+      "country": "Indonesia",
+      "industry": "Logistik dan Manajemen Armada",
+      "status": "Active"
+    }
+  ],
+  "divisions": [
+    {
+      "id": 1,
+      "enterpriseId": 1,
+      "code": "DIV001",
+      "name": "Thelorry Indonesia",
+      "headName": "",
+      "status": "Active"
+    }
+  ],
+  "companies": [
+    {
+      "id": 1,
+      "divisionId": 1,
+      "code": "CO001",
+      "companyCode": "THL",
+      "name": "PT Thelorry Indonesia",
+      "legalEntity": "PT",
+      "country": "Indonesia",
+      "status": "Active",
+      "emailDomain": "thelorry-demo.id"
+    }
+  ],
+  "businessUnits": [
+    {
+      "id": 1,
+      "companyId": 1,
+      "code": "BU001",
+      "name": "Kantor Pusat (Jakarta)",
+      "costCenter": "CC-001",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "companyId": 1,
+      "code": "BU002",
+      "name": "Depot Jakarta (Cakung)",
+      "costCenter": "CC-002",
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "companyId": 1,
+      "code": "BU003",
+      "name": "Depot Surabaya (Rungkut)",
+      "costCenter": "CC-003",
+      "status": "Active"
+    },
+    {
+      "id": 4,
+      "companyId": 1,
+      "code": "BU004",
+      "name": "Depot Semarang (Kaligawe)",
+      "costCenter": "CC-004",
+      "status": "Active"
+    }
+  ],
+  "departments": [
+    {
+      "id": 1,
+      "businessUnitId": 1,
+      "code": "DEPT001",
+      "name": "Direksi",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "businessUnitId": 1,
+      "code": "DEPT002",
+      "name": "Operasi dan Armada",
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "businessUnitId": 1,
+      "code": "DEPT003",
+      "name": "Keselamatan dan Kepatuhan (HSE)",
+      "status": "Active"
+    },
+    {
+      "id": 4,
+      "businessUnitId": 1,
+      "code": "DEPT004",
+      "name": "Keuangan",
+      "status": "Active"
+    },
+    {
+      "id": 5,
+      "businessUnitId": 1,
+      "code": "DEPT005",
+      "name": "SDM dan Umum",
+      "status": "Active"
+    },
+    {
+      "id": 6,
+      "businessUnitId": 1,
+      "code": "DEPT006",
+      "name": "Komersial dan Layanan Pelanggan",
+      "status": "Active"
+    },
+    {
+      "id": 7,
+      "businessUnitId": 2,
+      "code": "DEPT007",
+      "name": "Dispatch dan Kontrol - Jakarta",
+      "status": "Active"
+    },
+    {
+      "id": 8,
+      "businessUnitId": 2,
+      "code": "DEPT008",
+      "name": "Driver Linehaul (Jarak Jauh) - Jakarta",
+      "status": "Active"
+    },
+    {
+      "id": 9,
+      "businessUnitId": 2,
+      "code": "DEPT009",
+      "name": "Driver Distribusi (Dalam Kota) - Jakarta",
+      "status": "Active"
+    },
+    {
+      "id": 10,
+      "businessUnitId": 2,
+      "code": "DEPT010",
+      "name": "Kernet dan Helper - Jakarta",
+      "status": "Active"
+    },
+    {
+      "id": 11,
+      "businessUnitId": 2,
+      "code": "DEPT011",
+      "name": "Workshop Armada - Jakarta",
+      "status": "Active"
+    },
+    {
+      "id": 12,
+      "businessUnitId": 3,
+      "code": "DEPT012",
+      "name": "Dispatch dan Kontrol - Surabaya",
+      "status": "Active"
+    },
+    {
+      "id": 13,
+      "businessUnitId": 3,
+      "code": "DEPT013",
+      "name": "Driver Linehaul (Jarak Jauh) - Surabaya",
+      "status": "Active"
+    },
+    {
+      "id": 14,
+      "businessUnitId": 3,
+      "code": "DEPT014",
+      "name": "Driver Distribusi (Dalam Kota) - Surabaya",
+      "status": "Active"
+    },
+    {
+      "id": 15,
+      "businessUnitId": 3,
+      "code": "DEPT015",
+      "name": "Kernet dan Helper - Surabaya",
+      "status": "Active"
+    },
+    {
+      "id": 16,
+      "businessUnitId": 3,
+      "code": "DEPT016",
+      "name": "Workshop Armada - Surabaya",
+      "status": "Active"
+    },
+    {
+      "id": 17,
+      "businessUnitId": 4,
+      "code": "DEPT017",
+      "name": "Dispatch dan Kontrol - Semarang",
+      "status": "Active"
+    },
+    {
+      "id": 18,
+      "businessUnitId": 4,
+      "code": "DEPT018",
+      "name": "Driver Linehaul (Jarak Jauh) - Semarang",
+      "status": "Active"
+    },
+    {
+      "id": 19,
+      "businessUnitId": 4,
+      "code": "DEPT019",
+      "name": "Driver Distribusi (Dalam Kota) - Semarang",
+      "status": "Active"
+    },
+    {
+      "id": 20,
+      "businessUnitId": 4,
+      "code": "DEPT020",
+      "name": "Kernet dan Helper - Semarang",
+      "status": "Active"
+    },
+    {
+      "id": 21,
+      "businessUnitId": 4,
+      "code": "DEPT021",
+      "name": "Workshop Armada - Semarang",
+      "status": "Active"
+    }
+  ],
+  "jobFamilies": [
+    {
+      "id": 1,
+      "code": "JF001",
+      "name": "Management",
+      "description": "Direksi, general manager, manajer, kepala depot",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "code": "JF002",
+      "name": "Driver",
+      "description": "Pengemudi linehaul (jarak jauh) dan distribusi (dalam kota)",
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "code": "JF003",
+      "name": "Operations Support",
+      "description": "Dispatcher, supervisor operasi, kernet dan helper",
+      "status": "Active"
+    },
+    {
+      "id": 4,
+      "code": "JF004",
+      "name": "Technical",
+      "description": "Mekanik dan workshop armada",
+      "status": "Active"
+    },
+    {
+      "id": 5,
+      "code": "JF005",
+      "name": "Staff",
+      "description": "Staf keuangan, SDM, umum, komersial, HSE, dan admin",
+      "status": "Active"
+    }
+  ],
+  "grades": [
+    {
+      "id": 1,
+      "code": "T1",
+      "pc": 1,
+      "name": "Kernet / Helper",
+      "category": "Armada",
+      "minSalary": 5600000,
+      "maxSalary": 6800000,
+      "isBoard": false,
+      "isIntern": false,
+      "isNonMgr": true,
+      "isMgr": false
+    },
+    {
+      "id": 2,
+      "code": "D1",
+      "pc": 2,
+      "name": "Driver Distribusi Junior",
+      "category": "Armada",
+      "minSalary": 6000000,
+      "maxSalary": 7200000,
+      "isBoard": false,
+      "isIntern": false,
+      "isNonMgr": true,
+      "isMgr": false
+    },
+    {
+      "id": 3,
+      "code": "D2",
+      "pc": 3,
+      "name": "Driver Distribusi",
+      "category": "Armada",
+      "minSalary": 6500000,
+      "maxSalary": 8000000,
+      "isBoard": false,
+      "isIntern": false,
+      "isNonMgr": true,
+      "isMgr": false
+    },
+    {
+      "id": 4,
+      "code": "D3",
+      "pc": 4,
+      "name": "Driver Linehaul",
+      "category": "Armada",
+      "minSalary": 7500000,
+      "maxSalary": 9500000,
+      "isBoard": false,
+      "isIntern": false,
+      "isNonMgr": true,
+      "isMgr": false
+    },
+    {
+      "id": 5,
+      "code": "D4",
+      "pc": 5,
+      "name": "Driver Linehaul Senior",
+      "category": "Armada",
+      "minSalary": 9000000,
+      "maxSalary": 11000000,
+      "isBoard": false,
+      "isIntern": false,
+      "isNonMgr": true,
+      "isMgr": false
+    },
+    {
+      "id": 6,
+      "code": "S1",
+      "pc": 6,
+      "name": "Staf / Dispatcher / Mekanik",
+      "category": "Staf",
+      "minSalary": 6500000,
+      "maxSalary": 10000000,
+      "isBoard": false,
+      "isIntern": false,
+      "isNonMgr": true,
+      "isMgr": false
+    },
+    {
+      "id": 7,
+      "code": "S2",
+      "pc": 7,
+      "name": "Supervisor / Kepala Depot",
+      "category": "Manajerial",
+      "minSalary": 11000000,
+      "maxSalary": 16000000,
+      "isBoard": false,
+      "isIntern": false,
+      "isNonMgr": false,
+      "isMgr": true
+    },
+    {
+      "id": 8,
+      "code": "M1",
+      "pc": 8,
+      "name": "Manajer / General Manager",
+      "category": "Manajerial",
+      "minSalary": 16000000,
+      "maxSalary": 28000000,
+      "isBoard": false,
+      "isIntern": false,
+      "isNonMgr": false,
+      "isMgr": true
+    },
+    {
+      "id": 9,
+      "code": "E1",
+      "pc": 9,
+      "name": "Direksi",
+      "category": "Manajerial",
+      "minSalary": 30000000,
+      "maxSalary": 60000000,
+      "isBoard": true,
+      "isIntern": false,
+      "isNonMgr": false,
+      "isMgr": false
+    }
+  ],
+  "positions": [
+    {
+      "id": 101,
+      "departmentId": 1,
+      "jobFamilyId": 1,
+      "gradeId": 9,
+      "code": "POS101",
+      "name": "Direktur Utama",
+      "status": "Active"
+    },
+    {
+      "id": 102,
+      "departmentId": 1,
+      "jobFamilyId": 1,
+      "gradeId": 9,
+      "code": "POS102",
+      "name": "Direktur Operasi",
+      "status": "Active"
+    },
+    {
+      "id": 103,
+      "departmentId": 2,
+      "jobFamilyId": 1,
+      "gradeId": 8,
+      "code": "POS103",
+      "name": "General Manager Operasi",
+      "status": "Active"
+    },
+    {
+      "id": 104,
+      "departmentId": 2,
+      "jobFamilyId": 1,
+      "gradeId": 8,
+      "code": "POS104",
+      "name": "Manajer Armada dan Aset",
+      "status": "Active"
+    },
+    {
+      "id": 105,
+      "departmentId": 2,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS105",
+      "name": "Fleet Planner",
+      "status": "Active"
+    },
+    {
+      "id": 106,
+      "departmentId": 2,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS106",
+      "name": "Control Tower Analyst",
+      "status": "Active"
+    },
+    {
+      "id": 107,
+      "departmentId": 3,
+      "jobFamilyId": 1,
+      "gradeId": 8,
+      "code": "POS107",
+      "name": "Manajer HSE",
+      "status": "Active"
+    },
+    {
+      "id": 108,
+      "departmentId": 3,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS108",
+      "name": "Safety dan Compliance Officer",
+      "status": "Active"
+    },
+    {
+      "id": 109,
+      "departmentId": 3,
+      "jobFamilyId": 2,
+      "gradeId": 5,
+      "code": "POS109",
+      "name": "Driver Trainer",
+      "status": "Active"
+    },
+    {
+      "id": 110,
+      "departmentId": 4,
+      "jobFamilyId": 1,
+      "gradeId": 8,
+      "code": "POS110",
+      "name": "Finance Manager",
+      "status": "Active"
+    },
+    {
+      "id": 111,
+      "departmentId": 4,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS111",
+      "name": "Staf Keuangan",
+      "status": "Active"
+    },
+    {
+      "id": 112,
+      "departmentId": 4,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS112",
+      "name": "Payroll dan Time Administrator",
+      "status": "Active"
+    },
+    {
+      "id": 113,
+      "departmentId": 5,
+      "jobFamilyId": 1,
+      "gradeId": 8,
+      "code": "POS113",
+      "name": "HR dan GA Manager",
+      "status": "Active"
+    },
+    {
+      "id": 114,
+      "departmentId": 5,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS114",
+      "name": "HR Officer",
+      "status": "Active"
+    },
+    {
+      "id": 115,
+      "departmentId": 5,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS115",
+      "name": "GA Staff",
+      "status": "Active"
+    },
+    {
+      "id": 116,
+      "departmentId": 6,
+      "jobFamilyId": 1,
+      "gradeId": 8,
+      "code": "POS116",
+      "name": "Commercial Manager",
+      "status": "Active"
+    },
+    {
+      "id": 117,
+      "departmentId": 6,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS117",
+      "name": "Customer Service Staff",
+      "status": "Active"
+    },
+    {
+      "id": 118,
+      "departmentId": 6,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS118",
+      "name": "Account Executive",
+      "status": "Active"
+    },
+    {
+      "id": 119,
+      "departmentId": 7,
+      "jobFamilyId": 1,
+      "gradeId": 7,
+      "code": "POS119",
+      "name": "Kepala Depot",
+      "status": "Active"
+    },
+    {
+      "id": 120,
+      "departmentId": 7,
+      "jobFamilyId": 3,
+      "gradeId": 7,
+      "code": "POS120",
+      "name": "Supervisor Operasi",
+      "status": "Active"
+    },
+    {
+      "id": 121,
+      "departmentId": 7,
+      "jobFamilyId": 3,
+      "gradeId": 6,
+      "code": "POS121",
+      "name": "Dispatcher",
+      "status": "Active"
+    },
+    {
+      "id": 122,
+      "departmentId": 7,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS122",
+      "name": "Admin Depot",
+      "status": "Active"
+    },
+    {
+      "id": 123,
+      "departmentId": 8,
+      "jobFamilyId": 2,
+      "gradeId": 5,
+      "code": "POS123",
+      "name": "Driver Linehaul Senior",
+      "status": "Active"
+    },
+    {
+      "id": 124,
+      "departmentId": 8,
+      "jobFamilyId": 2,
+      "gradeId": 4,
+      "code": "POS124",
+      "name": "Driver Linehaul",
+      "status": "Active"
+    },
+    {
+      "id": 125,
+      "departmentId": 9,
+      "jobFamilyId": 2,
+      "gradeId": 3,
+      "code": "POS125",
+      "name": "Driver Distribusi",
+      "status": "Active"
+    },
+    {
+      "id": 126,
+      "departmentId": 9,
+      "jobFamilyId": 2,
+      "gradeId": 2,
+      "code": "POS126",
+      "name": "Driver Distribusi Junior",
+      "status": "Active"
+    },
+    {
+      "id": 127,
+      "departmentId": 10,
+      "jobFamilyId": 3,
+      "gradeId": 1,
+      "code": "POS127",
+      "name": "Kernet / Helper",
+      "status": "Active"
+    },
+    {
+      "id": 128,
+      "departmentId": 11,
+      "jobFamilyId": 4,
+      "gradeId": 7,
+      "code": "POS128",
+      "name": "Kepala Workshop",
+      "status": "Active"
+    },
+    {
+      "id": 129,
+      "departmentId": 11,
+      "jobFamilyId": 4,
+      "gradeId": 6,
+      "code": "POS129",
+      "name": "Mekanik",
+      "status": "Active"
+    },
+    {
+      "id": 130,
+      "departmentId": 12,
+      "jobFamilyId": 1,
+      "gradeId": 7,
+      "code": "POS130",
+      "name": "Kepala Depot",
+      "status": "Active"
+    },
+    {
+      "id": 131,
+      "departmentId": 12,
+      "jobFamilyId": 3,
+      "gradeId": 7,
+      "code": "POS131",
+      "name": "Supervisor Operasi",
+      "status": "Active"
+    },
+    {
+      "id": 132,
+      "departmentId": 12,
+      "jobFamilyId": 3,
+      "gradeId": 6,
+      "code": "POS132",
+      "name": "Dispatcher",
+      "status": "Active"
+    },
+    {
+      "id": 133,
+      "departmentId": 12,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS133",
+      "name": "Admin Depot",
+      "status": "Active"
+    },
+    {
+      "id": 134,
+      "departmentId": 13,
+      "jobFamilyId": 2,
+      "gradeId": 5,
+      "code": "POS134",
+      "name": "Driver Linehaul Senior",
+      "status": "Active"
+    },
+    {
+      "id": 135,
+      "departmentId": 13,
+      "jobFamilyId": 2,
+      "gradeId": 4,
+      "code": "POS135",
+      "name": "Driver Linehaul",
+      "status": "Active"
+    },
+    {
+      "id": 136,
+      "departmentId": 14,
+      "jobFamilyId": 2,
+      "gradeId": 3,
+      "code": "POS136",
+      "name": "Driver Distribusi",
+      "status": "Active"
+    },
+    {
+      "id": 137,
+      "departmentId": 14,
+      "jobFamilyId": 2,
+      "gradeId": 2,
+      "code": "POS137",
+      "name": "Driver Distribusi Junior",
+      "status": "Active"
+    },
+    {
+      "id": 138,
+      "departmentId": 15,
+      "jobFamilyId": 3,
+      "gradeId": 1,
+      "code": "POS138",
+      "name": "Kernet / Helper",
+      "status": "Active"
+    },
+    {
+      "id": 139,
+      "departmentId": 16,
+      "jobFamilyId": 4,
+      "gradeId": 7,
+      "code": "POS139",
+      "name": "Kepala Workshop",
+      "status": "Active"
+    },
+    {
+      "id": 140,
+      "departmentId": 16,
+      "jobFamilyId": 4,
+      "gradeId": 6,
+      "code": "POS140",
+      "name": "Mekanik",
+      "status": "Active"
+    },
+    {
+      "id": 141,
+      "departmentId": 17,
+      "jobFamilyId": 1,
+      "gradeId": 7,
+      "code": "POS141",
+      "name": "Kepala Depot",
+      "status": "Active"
+    },
+    {
+      "id": 142,
+      "departmentId": 17,
+      "jobFamilyId": 3,
+      "gradeId": 7,
+      "code": "POS142",
+      "name": "Supervisor Operasi",
+      "status": "Active"
+    },
+    {
+      "id": 143,
+      "departmentId": 17,
+      "jobFamilyId": 3,
+      "gradeId": 6,
+      "code": "POS143",
+      "name": "Dispatcher",
+      "status": "Active"
+    },
+    {
+      "id": 144,
+      "departmentId": 17,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS144",
+      "name": "Admin Depot",
+      "status": "Active"
+    },
+    {
+      "id": 145,
+      "departmentId": 18,
+      "jobFamilyId": 2,
+      "gradeId": 5,
+      "code": "POS145",
+      "name": "Driver Linehaul Senior",
+      "status": "Active"
+    },
+    {
+      "id": 146,
+      "departmentId": 18,
+      "jobFamilyId": 2,
+      "gradeId": 4,
+      "code": "POS146",
+      "name": "Driver Linehaul",
+      "status": "Active"
+    },
+    {
+      "id": 147,
+      "departmentId": 19,
+      "jobFamilyId": 2,
+      "gradeId": 3,
+      "code": "POS147",
+      "name": "Driver Distribusi",
+      "status": "Active"
+    },
+    {
+      "id": 148,
+      "departmentId": 19,
+      "jobFamilyId": 2,
+      "gradeId": 2,
+      "code": "POS148",
+      "name": "Driver Distribusi Junior",
+      "status": "Active"
+    },
+    {
+      "id": 149,
+      "departmentId": 20,
+      "jobFamilyId": 3,
+      "gradeId": 1,
+      "code": "POS149",
+      "name": "Kernet / Helper",
+      "status": "Active"
+    },
+    {
+      "id": 150,
+      "departmentId": 21,
+      "jobFamilyId": 4,
+      "gradeId": 7,
+      "code": "POS150",
+      "name": "Kepala Workshop",
+      "status": "Active"
+    },
+    {
+      "id": 151,
+      "departmentId": 21,
+      "jobFamilyId": 4,
+      "gradeId": 6,
+      "code": "POS151",
+      "name": "Mekanik",
+      "status": "Active"
+    }
+  ]
+}

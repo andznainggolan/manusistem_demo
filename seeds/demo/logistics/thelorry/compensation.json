@@ -1,0 +1,1232 @@
+[
+  {
+    "employeeId": 1001,
+    "basicSalary": 45000000,
+    "fixedAllowance": 0,
+    "monthlyWage": 45000000
+  },
+  {
+    "employeeId": 1002,
+    "basicSalary": 38000000,
+    "fixedAllowance": 0,
+    "monthlyWage": 38000000
+  },
+  {
+    "employeeId": 1003,
+    "basicSalary": 26000000,
+    "fixedAllowance": 0,
+    "monthlyWage": 26000000
+  },
+  {
+    "employeeId": 1004,
+    "basicSalary": 21000000,
+    "fixedAllowance": 0,
+    "monthlyWage": 21000000
+  },
+  {
+    "employeeId": 1005,
+    "basicSalary": 9000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 9600000
+  },
+  {
+    "employeeId": 1006,
+    "basicSalary": 9000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 9600000
+  },
+  {
+    "employeeId": 1007,
+    "basicSalary": 8500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 9100000
+  },
+  {
+    "employeeId": 1008,
+    "basicSalary": 8500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 9100000
+  },
+  {
+    "employeeId": 1009,
+    "basicSalary": 19000000,
+    "fixedAllowance": 0,
+    "monthlyWage": 19000000
+  },
+  {
+    "employeeId": 1010,
+    "basicSalary": 8500000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 9000000
+  },
+  {
+    "employeeId": 1011,
+    "basicSalary": 10000000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 11000000
+  },
+  {
+    "employeeId": 1012,
+    "basicSalary": 20000000,
+    "fixedAllowance": 0,
+    "monthlyWage": 20000000
+  },
+  {
+    "employeeId": 1013,
+    "basicSalary": 7500000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 8000000
+  },
+  {
+    "employeeId": 1014,
+    "basicSalary": 8000000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 8500000
+  },
+  {
+    "employeeId": 1015,
+    "basicSalary": 20000000,
+    "fixedAllowance": 0,
+    "monthlyWage": 20000000
+  },
+  {
+    "employeeId": 1016,
+    "basicSalary": 7800000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 8300000
+  },
+  {
+    "employeeId": 1017,
+    "basicSalary": 7800000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 8300000
+  },
+  {
+    "employeeId": 1018,
+    "basicSalary": 6800000,
+    "fixedAllowance": 400000,
+    "monthlyWage": 7200000
+  },
+  {
+    "employeeId": 1019,
+    "basicSalary": 20000000,
+    "fixedAllowance": 0,
+    "monthlyWage": 20000000
+  },
+  {
+    "employeeId": 1020,
+    "basicSalary": 6800000,
+    "fixedAllowance": 400000,
+    "monthlyWage": 7200000
+  },
+  {
+    "employeeId": 1021,
+    "basicSalary": 6800000,
+    "fixedAllowance": 400000,
+    "monthlyWage": 7200000
+  },
+  {
+    "employeeId": 1022,
+    "basicSalary": 8000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8600000
+  },
+  {
+    "employeeId": 1023,
+    "basicSalary": 15000000,
+    "fixedAllowance": 1500000,
+    "monthlyWage": 16500000
+  },
+  {
+    "employeeId": 1024,
+    "basicSalary": 11000000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 12000000
+  },
+  {
+    "employeeId": 1025,
+    "basicSalary": 11000000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 12000000
+  },
+  {
+    "employeeId": 1026,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1027,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1028,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1029,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1030,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1031,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1032,
+    "basicSalary": 6600000,
+    "fixedAllowance": 400000,
+    "monthlyWage": 7000000
+  },
+  {
+    "employeeId": 1033,
+    "basicSalary": 6600000,
+    "fixedAllowance": 400000,
+    "monthlyWage": 7000000
+  },
+  {
+    "employeeId": 1034,
+    "basicSalary": 11000000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 12000000
+  },
+  {
+    "employeeId": 1035,
+    "basicSalary": 7000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 7600000
+  },
+  {
+    "employeeId": 1036,
+    "basicSalary": 7000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 7600000
+  },
+  {
+    "employeeId": 1037,
+    "basicSalary": 7000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 7600000
+  },
+  {
+    "employeeId": 1038,
+    "basicSalary": 7000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 7600000
+  },
+  {
+    "employeeId": 1039,
+    "basicSalary": 7000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 7600000
+  },
+  {
+    "employeeId": 1040,
+    "basicSalary": 8500000,
+    "fixedAllowance": 1300000,
+    "monthlyWage": 9800000
+  },
+  {
+    "employeeId": 1041,
+    "basicSalary": 8500000,
+    "fixedAllowance": 1300000,
+    "monthlyWage": 9800000
+  },
+  {
+    "employeeId": 1042,
+    "basicSalary": 8500000,
+    "fixedAllowance": 1300000,
+    "monthlyWage": 9800000
+  },
+  {
+    "employeeId": 1043,
+    "basicSalary": 8500000,
+    "fixedAllowance": 1300000,
+    "monthlyWage": 9800000
+  },
+  {
+    "employeeId": 1044,
+    "basicSalary": 8500000,
+    "fixedAllowance": 1300000,
+    "monthlyWage": 9800000
+  },
+  {
+    "employeeId": 1045,
+    "basicSalary": 8500000,
+    "fixedAllowance": 1300000,
+    "monthlyWage": 9800000
+  },
+  {
+    "employeeId": 1046,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1047,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1048,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1049,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1050,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1051,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1052,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1053,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1054,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1055,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1056,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1057,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1058,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1059,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1060,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1061,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1062,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1063,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1064,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1065,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1066,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1067,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1068,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1069,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1070,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1071,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1072,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1073,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1074,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1075,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1076,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1077,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1078,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1079,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1080,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1081,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1082,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1083,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1084,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1085,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1086,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1087,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1088,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1089,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1090,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1091,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1092,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1093,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1094,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1095,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1096,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1097,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1098,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1099,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1100,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1101,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1102,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1103,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1104,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1105,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1106,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1107,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1108,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1109,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1110,
+    "basicSalary": 15000000,
+    "fixedAllowance": 1500000,
+    "monthlyWage": 16500000
+  },
+  {
+    "employeeId": 1111,
+    "basicSalary": 11000000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 12000000
+  },
+  {
+    "employeeId": 1112,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1113,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1114,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1115,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1116,
+    "basicSalary": 6600000,
+    "fixedAllowance": 400000,
+    "monthlyWage": 7000000
+  },
+  {
+    "employeeId": 1117,
+    "basicSalary": 11000000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 12000000
+  },
+  {
+    "employeeId": 1118,
+    "basicSalary": 7000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 7600000
+  },
+  {
+    "employeeId": 1119,
+    "basicSalary": 7000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 7600000
+  },
+  {
+    "employeeId": 1120,
+    "basicSalary": 7000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 7600000
+  },
+  {
+    "employeeId": 1121,
+    "basicSalary": 7000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 7600000
+  },
+  {
+    "employeeId": 1122,
+    "basicSalary": 8500000,
+    "fixedAllowance": 1300000,
+    "monthlyWage": 9800000
+  },
+  {
+    "employeeId": 1123,
+    "basicSalary": 8500000,
+    "fixedAllowance": 1300000,
+    "monthlyWage": 9800000
+  },
+  {
+    "employeeId": 1124,
+    "basicSalary": 8500000,
+    "fixedAllowance": 1300000,
+    "monthlyWage": 9800000
+  },
+  {
+    "employeeId": 1125,
+    "basicSalary": 8500000,
+    "fixedAllowance": 1300000,
+    "monthlyWage": 9800000
+  },
+  {
+    "employeeId": 1126,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1127,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1128,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1129,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1130,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1131,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1132,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1133,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1134,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1135,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1136,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1137,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1138,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1139,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1140,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1141,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1142,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1143,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1144,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1145,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1146,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1147,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1148,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1149,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1150,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1151,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1152,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1153,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1154,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1155,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1156,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1157,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1158,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1159,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1160,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1161,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1162,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1163,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1164,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1165,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1166,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1167,
+    "basicSalary": 15000000,
+    "fixedAllowance": 1500000,
+    "monthlyWage": 16500000
+  },
+  {
+    "employeeId": 1168,
+    "basicSalary": 11000000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 12000000
+  },
+  {
+    "employeeId": 1169,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1170,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1171,
+    "basicSalary": 7500000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 8100000
+  },
+  {
+    "employeeId": 1172,
+    "basicSalary": 6600000,
+    "fixedAllowance": 400000,
+    "monthlyWage": 7000000
+  },
+  {
+    "employeeId": 1173,
+    "basicSalary": 11000000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 12000000
+  },
+  {
+    "employeeId": 1174,
+    "basicSalary": 7000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 7600000
+  },
+  {
+    "employeeId": 1175,
+    "basicSalary": 7000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 7600000
+  },
+  {
+    "employeeId": 1176,
+    "basicSalary": 7000000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 7600000
+  },
+  {
+    "employeeId": 1177,
+    "basicSalary": 8500000,
+    "fixedAllowance": 1300000,
+    "monthlyWage": 9800000
+  },
+  {
+    "employeeId": 1178,
+    "basicSalary": 8500000,
+    "fixedAllowance": 1300000,
+    "monthlyWage": 9800000
+  },
+  {
+    "employeeId": 1179,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1180,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1181,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1182,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1183,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1184,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1185,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1186,
+    "basicSalary": 7200000,
+    "fixedAllowance": 1000000,
+    "monthlyWage": 8200000
+  },
+  {
+    "employeeId": 1187,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1188,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1189,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1190,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1191,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1192,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1193,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1194,
+    "basicSalary": 6000000,
+    "fixedAllowance": 800000,
+    "monthlyWage": 6800000
+  },
+  {
+    "employeeId": 1195,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1196,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1197,
+    "basicSalary": 5600000,
+    "fixedAllowance": 600000,
+    "monthlyWage": 6200000
+  },
+  {
+    "employeeId": 1198,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1199,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1200,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1201,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1202,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1203,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1204,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1205,
+    "basicSalary": 5300000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 5800000
+  }
+]

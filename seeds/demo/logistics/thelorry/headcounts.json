@@ -1,0 +1,1964 @@
+[
+  {
+    "id": 1,
+    "positionId": 101,
+    "code": "HC0001",
+    "name": "Direktur Utama 01",
+    "employeeId": 1001,
+    "supervisorHeadcountId": null,
+    "status": "Active"
+  },
+  {
+    "id": 2,
+    "positionId": 102,
+    "code": "HC0002",
+    "name": "Direktur Operasi 01",
+    "employeeId": 1002,
+    "supervisorHeadcountId": 1,
+    "status": "Active"
+  },
+  {
+    "id": 3,
+    "positionId": 103,
+    "code": "HC0003",
+    "name": "General Manager Operasi 01",
+    "employeeId": 1003,
+    "supervisorHeadcountId": 2,
+    "status": "Active"
+  },
+  {
+    "id": 4,
+    "positionId": 104,
+    "code": "HC0004",
+    "name": "Manajer Armada dan Aset 01",
+    "employeeId": 1004,
+    "supervisorHeadcountId": 3,
+    "status": "Active"
+  },
+  {
+    "id": 5,
+    "positionId": 105,
+    "code": "HC0005",
+    "name": "Fleet Planner 01",
+    "employeeId": 1005,
+    "supervisorHeadcountId": 4,
+    "status": "Active"
+  },
+  {
+    "id": 6,
+    "positionId": 105,
+    "code": "HC0006",
+    "name": "Fleet Planner 02",
+    "employeeId": 1006,
+    "supervisorHeadcountId": 4,
+    "status": "Active"
+  },
+  {
+    "id": 7,
+    "positionId": 106,
+    "code": "HC0007",
+    "name": "Control Tower Analyst 01",
+    "employeeId": 1007,
+    "supervisorHeadcountId": 3,
+    "status": "Active"
+  },
+  {
+    "id": 8,
+    "positionId": 106,
+    "code": "HC0008",
+    "name": "Control Tower Analyst 02",
+    "employeeId": 1008,
+    "supervisorHeadcountId": 3,
+    "status": "Active"
+  },
+  {
+    "id": 9,
+    "positionId": 107,
+    "code": "HC0009",
+    "name": "Manajer HSE 01",
+    "employeeId": 1009,
+    "supervisorHeadcountId": 2,
+    "status": "Active"
+  },
+  {
+    "id": 10,
+    "positionId": 108,
+    "code": "HC0010",
+    "name": "Safety dan Compliance Officer 01",
+    "employeeId": 1010,
+    "supervisorHeadcountId": 9,
+    "status": "Active"
+  },
+  {
+    "id": 11,
+    "positionId": 109,
+    "code": "HC0011",
+    "name": "Driver Trainer 01",
+    "employeeId": 1011,
+    "supervisorHeadcountId": 9,
+    "status": "Active"
+  },
+  {
+    "id": 12,
+    "positionId": 110,
+    "code": "HC0012",
+    "name": "Finance Manager 01",
+    "employeeId": 1012,
+    "supervisorHeadcountId": 1,
+    "status": "Active"
+  },
+  {
+    "id": 13,
+    "positionId": 111,
+    "code": "HC0013",
+    "name": "Staf Keuangan 01",
+    "employeeId": 1013,
+    "supervisorHeadcountId": 12,
+    "status": "Active"
+  },
+  {
+    "id": 14,
+    "positionId": 112,
+    "code": "HC0014",
+    "name": "Payroll dan Time Administrator 01",
+    "employeeId": 1014,
+    "supervisorHeadcountId": 12,
+    "status": "Active"
+  },
+  {
+    "id": 15,
+    "positionId": 113,
+    "code": "HC0015",
+    "name": "HR dan GA Manager 01",
+    "employeeId": 1015,
+    "supervisorHeadcountId": 1,
+    "status": "Active"
+  },
+  {
+    "id": 16,
+    "positionId": 114,
+    "code": "HC0016",
+    "name": "HR Officer 01",
+    "employeeId": 1016,
+    "supervisorHeadcountId": 15,
+    "status": "Active"
+  },
+  {
+    "id": 17,
+    "positionId": 114,
+    "code": "HC0017",
+    "name": "HR Officer 02",
+    "employeeId": 1017,
+    "supervisorHeadcountId": 15,
+    "status": "Active"
+  },
+  {
+    "id": 18,
+    "positionId": 115,
+    "code": "HC0018",
+    "name": "GA Staff 01",
+    "employeeId": 1018,
+    "supervisorHeadcountId": 15,
+    "status": "Active"
+  },
+  {
+    "id": 19,
+    "positionId": 116,
+    "code": "HC0019",
+    "name": "Commercial Manager 01",
+    "employeeId": 1019,
+    "supervisorHeadcountId": 1,
+    "status": "Active"
+  },
+  {
+    "id": 20,
+    "positionId": 117,
+    "code": "HC0020",
+    "name": "Customer Service Staff 01",
+    "employeeId": 1020,
+    "supervisorHeadcountId": 19,
+    "status": "Active"
+  },
+  {
+    "id": 21,
+    "positionId": 117,
+    "code": "HC0021",
+    "name": "Customer Service Staff 02",
+    "employeeId": 1021,
+    "supervisorHeadcountId": 19,
+    "status": "Active"
+  },
+  {
+    "id": 22,
+    "positionId": 118,
+    "code": "HC0022",
+    "name": "Account Executive 01",
+    "employeeId": 1022,
+    "supervisorHeadcountId": 19,
+    "status": "Active"
+  },
+  {
+    "id": 23,
+    "positionId": 119,
+    "code": "HC0023",
+    "name": "Kepala Depot 01",
+    "employeeId": 1023,
+    "supervisorHeadcountId": 3,
+    "status": "Active"
+  },
+  {
+    "id": 24,
+    "positionId": 120,
+    "code": "HC0024",
+    "name": "Supervisor Operasi 01",
+    "employeeId": 1024,
+    "supervisorHeadcountId": 23,
+    "status": "Active"
+  },
+  {
+    "id": 25,
+    "positionId": 120,
+    "code": "HC0025",
+    "name": "Supervisor Operasi 02",
+    "employeeId": 1025,
+    "supervisorHeadcountId": 23,
+    "status": "Active"
+  },
+  {
+    "id": 26,
+    "positionId": 121,
+    "code": "HC0026",
+    "name": "Dispatcher 01",
+    "employeeId": 1026,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 27,
+    "positionId": 121,
+    "code": "HC0027",
+    "name": "Dispatcher 02",
+    "employeeId": 1027,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 28,
+    "positionId": 121,
+    "code": "HC0028",
+    "name": "Dispatcher 03",
+    "employeeId": 1028,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 29,
+    "positionId": 121,
+    "code": "HC0029",
+    "name": "Dispatcher 04",
+    "employeeId": 1029,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 30,
+    "positionId": 121,
+    "code": "HC0030",
+    "name": "Dispatcher 05",
+    "employeeId": 1030,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 31,
+    "positionId": 121,
+    "code": "HC0031",
+    "name": "Dispatcher 06",
+    "employeeId": 1031,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 32,
+    "positionId": 122,
+    "code": "HC0032",
+    "name": "Admin Depot 01",
+    "employeeId": 1032,
+    "supervisorHeadcountId": 23,
+    "status": "Active"
+  },
+  {
+    "id": 33,
+    "positionId": 122,
+    "code": "HC0033",
+    "name": "Admin Depot 02",
+    "employeeId": 1033,
+    "supervisorHeadcountId": 23,
+    "status": "Active"
+  },
+  {
+    "id": 34,
+    "positionId": 123,
+    "code": "HC0034",
+    "name": "Driver Linehaul Senior 01",
+    "employeeId": 1040,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 35,
+    "positionId": 123,
+    "code": "HC0035",
+    "name": "Driver Linehaul Senior 02",
+    "employeeId": 1041,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 36,
+    "positionId": 123,
+    "code": "HC0036",
+    "name": "Driver Linehaul Senior 03",
+    "employeeId": 1042,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 37,
+    "positionId": 123,
+    "code": "HC0037",
+    "name": "Driver Linehaul Senior 04",
+    "employeeId": 1043,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 38,
+    "positionId": 123,
+    "code": "HC0038",
+    "name": "Driver Linehaul Senior 05",
+    "employeeId": 1044,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 39,
+    "positionId": 123,
+    "code": "HC0039",
+    "name": "Driver Linehaul Senior 06",
+    "employeeId": 1045,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 40,
+    "positionId": 124,
+    "code": "HC0040",
+    "name": "Driver Linehaul 01",
+    "employeeId": 1046,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 41,
+    "positionId": 124,
+    "code": "HC0041",
+    "name": "Driver Linehaul 02",
+    "employeeId": 1047,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 42,
+    "positionId": 124,
+    "code": "HC0042",
+    "name": "Driver Linehaul 03",
+    "employeeId": 1048,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 43,
+    "positionId": 124,
+    "code": "HC0043",
+    "name": "Driver Linehaul 04",
+    "employeeId": 1049,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 44,
+    "positionId": 124,
+    "code": "HC0044",
+    "name": "Driver Linehaul 05",
+    "employeeId": 1050,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 45,
+    "positionId": 124,
+    "code": "HC0045",
+    "name": "Driver Linehaul 06",
+    "employeeId": 1051,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 46,
+    "positionId": 124,
+    "code": "HC0046",
+    "name": "Driver Linehaul 07",
+    "employeeId": 1052,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 47,
+    "positionId": 124,
+    "code": "HC0047",
+    "name": "Driver Linehaul 08",
+    "employeeId": 1053,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 48,
+    "positionId": 124,
+    "code": "HC0048",
+    "name": "Driver Linehaul 09",
+    "employeeId": 1054,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 49,
+    "positionId": 124,
+    "code": "HC0049",
+    "name": "Driver Linehaul 10",
+    "employeeId": 1055,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 50,
+    "positionId": 124,
+    "code": "HC0050",
+    "name": "Driver Linehaul 11",
+    "employeeId": 1056,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 51,
+    "positionId": 124,
+    "code": "HC0051",
+    "name": "Driver Linehaul 12",
+    "employeeId": 1057,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 52,
+    "positionId": 124,
+    "code": "HC0052",
+    "name": "Driver Linehaul 13",
+    "employeeId": 1058,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 53,
+    "positionId": 124,
+    "code": "HC0053",
+    "name": "Driver Linehaul 14",
+    "employeeId": 1059,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 54,
+    "positionId": 124,
+    "code": "HC0054",
+    "name": "Driver Linehaul 15",
+    "employeeId": 1060,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 55,
+    "positionId": 124,
+    "code": "HC0055",
+    "name": "Driver Linehaul 16",
+    "employeeId": 1061,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 56,
+    "positionId": 124,
+    "code": "HC0056",
+    "name": "Driver Linehaul 17",
+    "employeeId": 1062,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 57,
+    "positionId": 124,
+    "code": "HC0057",
+    "name": "Driver Linehaul 18",
+    "employeeId": 1063,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 58,
+    "positionId": 124,
+    "code": "HC0058",
+    "name": "Driver Linehaul 19",
+    "employeeId": 1064,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 59,
+    "positionId": 124,
+    "code": "HC0059",
+    "name": "Driver Linehaul 20",
+    "employeeId": 1065,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 60,
+    "positionId": 124,
+    "code": "HC0060",
+    "name": "Driver Linehaul 21",
+    "employeeId": 1066,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 61,
+    "positionId": 124,
+    "code": "HC0061",
+    "name": "Driver Linehaul 22",
+    "employeeId": 1067,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 62,
+    "positionId": 125,
+    "code": "HC0062",
+    "name": "Driver Distribusi 01",
+    "employeeId": 1068,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 63,
+    "positionId": 125,
+    "code": "HC0063",
+    "name": "Driver Distribusi 02",
+    "employeeId": 1069,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 64,
+    "positionId": 125,
+    "code": "HC0064",
+    "name": "Driver Distribusi 03",
+    "employeeId": 1070,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 65,
+    "positionId": 125,
+    "code": "HC0065",
+    "name": "Driver Distribusi 04",
+    "employeeId": 1071,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 66,
+    "positionId": 125,
+    "code": "HC0066",
+    "name": "Driver Distribusi 05",
+    "employeeId": 1072,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 67,
+    "positionId": 125,
+    "code": "HC0067",
+    "name": "Driver Distribusi 06",
+    "employeeId": 1073,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 68,
+    "positionId": 125,
+    "code": "HC0068",
+    "name": "Driver Distribusi 07",
+    "employeeId": 1074,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 69,
+    "positionId": 125,
+    "code": "HC0069",
+    "name": "Driver Distribusi 08",
+    "employeeId": 1075,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 70,
+    "positionId": 125,
+    "code": "HC0070",
+    "name": "Driver Distribusi 09",
+    "employeeId": 1076,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 71,
+    "positionId": 125,
+    "code": "HC0071",
+    "name": "Driver Distribusi 10",
+    "employeeId": 1077,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 72,
+    "positionId": 125,
+    "code": "HC0072",
+    "name": "Driver Distribusi 11",
+    "employeeId": 1078,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 73,
+    "positionId": 125,
+    "code": "HC0073",
+    "name": "Driver Distribusi 12",
+    "employeeId": 1079,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 74,
+    "positionId": 125,
+    "code": "HC0074",
+    "name": "Driver Distribusi 13",
+    "employeeId": 1080,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 75,
+    "positionId": 125,
+    "code": "HC0075",
+    "name": "Driver Distribusi 14",
+    "employeeId": 1081,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 76,
+    "positionId": 125,
+    "code": "HC0076",
+    "name": "Driver Distribusi 15",
+    "employeeId": 1082,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 77,
+    "positionId": 125,
+    "code": "HC0077",
+    "name": "Driver Distribusi 16",
+    "employeeId": 1083,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 78,
+    "positionId": 125,
+    "code": "HC0078",
+    "name": "Driver Distribusi 17",
+    "employeeId": 1084,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 79,
+    "positionId": 125,
+    "code": "HC0079",
+    "name": "Driver Distribusi 18",
+    "employeeId": 1085,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 80,
+    "positionId": 126,
+    "code": "HC0080",
+    "name": "Driver Distribusi Junior 01",
+    "employeeId": 1086,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 81,
+    "positionId": 126,
+    "code": "HC0081",
+    "name": "Driver Distribusi Junior 02",
+    "employeeId": 1087,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 82,
+    "positionId": 126,
+    "code": "HC0082",
+    "name": "Driver Distribusi Junior 03",
+    "employeeId": 1088,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 83,
+    "positionId": 126,
+    "code": "HC0083",
+    "name": "Driver Distribusi Junior 04",
+    "employeeId": 1089,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 84,
+    "positionId": 126,
+    "code": "HC0084",
+    "name": "Driver Distribusi Junior 05",
+    "employeeId": 1090,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 85,
+    "positionId": 126,
+    "code": "HC0085",
+    "name": "Driver Distribusi Junior 06",
+    "employeeId": 1091,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 86,
+    "positionId": 127,
+    "code": "HC0086",
+    "name": "Kernet / Helper 01",
+    "employeeId": 1092,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 87,
+    "positionId": 127,
+    "code": "HC0087",
+    "name": "Kernet / Helper 02",
+    "employeeId": 1093,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 88,
+    "positionId": 127,
+    "code": "HC0088",
+    "name": "Kernet / Helper 03",
+    "employeeId": 1094,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 89,
+    "positionId": 127,
+    "code": "HC0089",
+    "name": "Kernet / Helper 04",
+    "employeeId": 1095,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 90,
+    "positionId": 127,
+    "code": "HC0090",
+    "name": "Kernet / Helper 05",
+    "employeeId": 1096,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 91,
+    "positionId": 127,
+    "code": "HC0091",
+    "name": "Kernet / Helper 06",
+    "employeeId": 1097,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 92,
+    "positionId": 127,
+    "code": "HC0092",
+    "name": "Kernet / Helper 07",
+    "employeeId": 1098,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 93,
+    "positionId": 127,
+    "code": "HC0093",
+    "name": "Kernet / Helper 08",
+    "employeeId": 1099,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 94,
+    "positionId": 127,
+    "code": "HC0094",
+    "name": "Kernet / Helper 09",
+    "employeeId": 1100,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 95,
+    "positionId": 127,
+    "code": "HC0095",
+    "name": "Kernet / Helper 10",
+    "employeeId": 1101,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 96,
+    "positionId": 127,
+    "code": "HC0096",
+    "name": "Kernet / Helper 11",
+    "employeeId": 1102,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 97,
+    "positionId": 127,
+    "code": "HC0097",
+    "name": "Kernet / Helper 12",
+    "employeeId": 1103,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 98,
+    "positionId": 127,
+    "code": "HC0098",
+    "name": "Kernet / Helper 13",
+    "employeeId": 1104,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 99,
+    "positionId": 127,
+    "code": "HC0099",
+    "name": "Kernet / Helper 14",
+    "employeeId": 1105,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 100,
+    "positionId": 127,
+    "code": "HC0100",
+    "name": "Kernet / Helper 15",
+    "employeeId": 1106,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 101,
+    "positionId": 127,
+    "code": "HC0101",
+    "name": "Kernet / Helper 16",
+    "employeeId": 1107,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 102,
+    "positionId": 127,
+    "code": "HC0102",
+    "name": "Kernet / Helper 17",
+    "employeeId": 1108,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 103,
+    "positionId": 127,
+    "code": "HC0103",
+    "name": "Kernet / Helper 18",
+    "employeeId": 1109,
+    "supervisorHeadcountId": 25,
+    "status": "Active"
+  },
+  {
+    "id": 104,
+    "positionId": 128,
+    "code": "HC0104",
+    "name": "Kepala Workshop 01",
+    "employeeId": 1034,
+    "supervisorHeadcountId": 23,
+    "status": "Active"
+  },
+  {
+    "id": 105,
+    "positionId": 129,
+    "code": "HC0105",
+    "name": "Mekanik 01",
+    "employeeId": 1035,
+    "supervisorHeadcountId": 104,
+    "status": "Active"
+  },
+  {
+    "id": 106,
+    "positionId": 129,
+    "code": "HC0106",
+    "name": "Mekanik 02",
+    "employeeId": 1036,
+    "supervisorHeadcountId": 104,
+    "status": "Active"
+  },
+  {
+    "id": 107,
+    "positionId": 129,
+    "code": "HC0107",
+    "name": "Mekanik 03",
+    "employeeId": 1037,
+    "supervisorHeadcountId": 104,
+    "status": "Active"
+  },
+  {
+    "id": 108,
+    "positionId": 129,
+    "code": "HC0108",
+    "name": "Mekanik 04",
+    "employeeId": 1038,
+    "supervisorHeadcountId": 104,
+    "status": "Active"
+  },
+  {
+    "id": 109,
+    "positionId": 129,
+    "code": "HC0109",
+    "name": "Mekanik 05",
+    "employeeId": 1039,
+    "supervisorHeadcountId": 104,
+    "status": "Active"
+  },
+  {
+    "id": 110,
+    "positionId": 130,
+    "code": "HC0110",
+    "name": "Kepala Depot 01",
+    "employeeId": 1110,
+    "supervisorHeadcountId": 3,
+    "status": "Active"
+  },
+  {
+    "id": 111,
+    "positionId": 131,
+    "code": "HC0111",
+    "name": "Supervisor Operasi 01",
+    "employeeId": 1111,
+    "supervisorHeadcountId": 110,
+    "status": "Active"
+  },
+  {
+    "id": 112,
+    "positionId": 132,
+    "code": "HC0112",
+    "name": "Dispatcher 01",
+    "employeeId": 1112,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 113,
+    "positionId": 132,
+    "code": "HC0113",
+    "name": "Dispatcher 02",
+    "employeeId": 1113,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 114,
+    "positionId": 132,
+    "code": "HC0114",
+    "name": "Dispatcher 03",
+    "employeeId": 1114,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 115,
+    "positionId": 132,
+    "code": "HC0115",
+    "name": "Dispatcher 04",
+    "employeeId": 1115,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 116,
+    "positionId": 133,
+    "code": "HC0116",
+    "name": "Admin Depot 01",
+    "employeeId": 1116,
+    "supervisorHeadcountId": 110,
+    "status": "Active"
+  },
+  {
+    "id": 117,
+    "positionId": 134,
+    "code": "HC0117",
+    "name": "Driver Linehaul Senior 01",
+    "employeeId": 1122,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 118,
+    "positionId": 134,
+    "code": "HC0118",
+    "name": "Driver Linehaul Senior 02",
+    "employeeId": 1123,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 119,
+    "positionId": 134,
+    "code": "HC0119",
+    "name": "Driver Linehaul Senior 03",
+    "employeeId": 1124,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 120,
+    "positionId": 134,
+    "code": "HC0120",
+    "name": "Driver Linehaul Senior 04",
+    "employeeId": 1125,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 121,
+    "positionId": 135,
+    "code": "HC0121",
+    "name": "Driver Linehaul 01",
+    "employeeId": 1126,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 122,
+    "positionId": 135,
+    "code": "HC0122",
+    "name": "Driver Linehaul 02",
+    "employeeId": 1127,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 123,
+    "positionId": 135,
+    "code": "HC0123",
+    "name": "Driver Linehaul 03",
+    "employeeId": 1128,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 124,
+    "positionId": 135,
+    "code": "HC0124",
+    "name": "Driver Linehaul 04",
+    "employeeId": 1129,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 125,
+    "positionId": 135,
+    "code": "HC0125",
+    "name": "Driver Linehaul 05",
+    "employeeId": 1130,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 126,
+    "positionId": 135,
+    "code": "HC0126",
+    "name": "Driver Linehaul 06",
+    "employeeId": 1131,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 127,
+    "positionId": 135,
+    "code": "HC0127",
+    "name": "Driver Linehaul 07",
+    "employeeId": 1132,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 128,
+    "positionId": 135,
+    "code": "HC0128",
+    "name": "Driver Linehaul 08",
+    "employeeId": 1133,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 129,
+    "positionId": 135,
+    "code": "HC0129",
+    "name": "Driver Linehaul 09",
+    "employeeId": 1134,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 130,
+    "positionId": 135,
+    "code": "HC0130",
+    "name": "Driver Linehaul 10",
+    "employeeId": 1135,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 131,
+    "positionId": 135,
+    "code": "HC0131",
+    "name": "Driver Linehaul 11",
+    "employeeId": 1136,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 132,
+    "positionId": 135,
+    "code": "HC0132",
+    "name": "Driver Linehaul 12",
+    "employeeId": 1137,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 133,
+    "positionId": 135,
+    "code": "HC0133",
+    "name": "Driver Linehaul 13",
+    "employeeId": 1138,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 134,
+    "positionId": 135,
+    "code": "HC0134",
+    "name": "Driver Linehaul 14",
+    "employeeId": 1139,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 135,
+    "positionId": 136,
+    "code": "HC0135",
+    "name": "Driver Distribusi 01",
+    "employeeId": 1140,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 136,
+    "positionId": 136,
+    "code": "HC0136",
+    "name": "Driver Distribusi 02",
+    "employeeId": 1141,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 137,
+    "positionId": 136,
+    "code": "HC0137",
+    "name": "Driver Distribusi 03",
+    "employeeId": 1142,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 138,
+    "positionId": 136,
+    "code": "HC0138",
+    "name": "Driver Distribusi 04",
+    "employeeId": 1143,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 139,
+    "positionId": 136,
+    "code": "HC0139",
+    "name": "Driver Distribusi 05",
+    "employeeId": 1144,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 140,
+    "positionId": 136,
+    "code": "HC0140",
+    "name": "Driver Distribusi 06",
+    "employeeId": 1145,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 141,
+    "positionId": 136,
+    "code": "HC0141",
+    "name": "Driver Distribusi 07",
+    "employeeId": 1146,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 142,
+    "positionId": 136,
+    "code": "HC0142",
+    "name": "Driver Distribusi 08",
+    "employeeId": 1147,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 143,
+    "positionId": 136,
+    "code": "HC0143",
+    "name": "Driver Distribusi 09",
+    "employeeId": 1148,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 144,
+    "positionId": 136,
+    "code": "HC0144",
+    "name": "Driver Distribusi 10",
+    "employeeId": 1149,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 145,
+    "positionId": 136,
+    "code": "HC0145",
+    "name": "Driver Distribusi 11",
+    "employeeId": 1150,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 146,
+    "positionId": 137,
+    "code": "HC0146",
+    "name": "Driver Distribusi Junior 01",
+    "employeeId": 1151,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 147,
+    "positionId": 137,
+    "code": "HC0147",
+    "name": "Driver Distribusi Junior 02",
+    "employeeId": 1152,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 148,
+    "positionId": 137,
+    "code": "HC0148",
+    "name": "Driver Distribusi Junior 03",
+    "employeeId": 1153,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 149,
+    "positionId": 137,
+    "code": "HC0149",
+    "name": "Driver Distribusi Junior 04",
+    "employeeId": 1154,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 150,
+    "positionId": 138,
+    "code": "HC0150",
+    "name": "Kernet / Helper 01",
+    "employeeId": 1155,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 151,
+    "positionId": 138,
+    "code": "HC0151",
+    "name": "Kernet / Helper 02",
+    "employeeId": 1156,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 152,
+    "positionId": 138,
+    "code": "HC0152",
+    "name": "Kernet / Helper 03",
+    "employeeId": 1157,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 153,
+    "positionId": 138,
+    "code": "HC0153",
+    "name": "Kernet / Helper 04",
+    "employeeId": 1158,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 154,
+    "positionId": 138,
+    "code": "HC0154",
+    "name": "Kernet / Helper 05",
+    "employeeId": 1159,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 155,
+    "positionId": 138,
+    "code": "HC0155",
+    "name": "Kernet / Helper 06",
+    "employeeId": 1160,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 156,
+    "positionId": 138,
+    "code": "HC0156",
+    "name": "Kernet / Helper 07",
+    "employeeId": 1161,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 157,
+    "positionId": 138,
+    "code": "HC0157",
+    "name": "Kernet / Helper 08",
+    "employeeId": 1162,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 158,
+    "positionId": 138,
+    "code": "HC0158",
+    "name": "Kernet / Helper 09",
+    "employeeId": 1163,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 159,
+    "positionId": 138,
+    "code": "HC0159",
+    "name": "Kernet / Helper 10",
+    "employeeId": 1164,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 160,
+    "positionId": 138,
+    "code": "HC0160",
+    "name": "Kernet / Helper 11",
+    "employeeId": 1165,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 161,
+    "positionId": 138,
+    "code": "HC0161",
+    "name": "Kernet / Helper 12",
+    "employeeId": 1166,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 162,
+    "positionId": 139,
+    "code": "HC0162",
+    "name": "Kepala Workshop 01",
+    "employeeId": 1117,
+    "supervisorHeadcountId": 110,
+    "status": "Active"
+  },
+  {
+    "id": 163,
+    "positionId": 140,
+    "code": "HC0163",
+    "name": "Mekanik 01",
+    "employeeId": 1118,
+    "supervisorHeadcountId": 162,
+    "status": "Active"
+  },
+  {
+    "id": 164,
+    "positionId": 140,
+    "code": "HC0164",
+    "name": "Mekanik 02",
+    "employeeId": 1119,
+    "supervisorHeadcountId": 162,
+    "status": "Active"
+  },
+  {
+    "id": 165,
+    "positionId": 140,
+    "code": "HC0165",
+    "name": "Mekanik 03",
+    "employeeId": 1120,
+    "supervisorHeadcountId": 162,
+    "status": "Active"
+  },
+  {
+    "id": 166,
+    "positionId": 140,
+    "code": "HC0166",
+    "name": "Mekanik 04",
+    "employeeId": 1121,
+    "supervisorHeadcountId": 162,
+    "status": "Active"
+  },
+  {
+    "id": 167,
+    "positionId": 141,
+    "code": "HC0167",
+    "name": "Kepala Depot 01",
+    "employeeId": 1167,
+    "supervisorHeadcountId": 3,
+    "status": "Active"
+  },
+  {
+    "id": 168,
+    "positionId": 142,
+    "code": "HC0168",
+    "name": "Supervisor Operasi 01",
+    "employeeId": 1168,
+    "supervisorHeadcountId": 167,
+    "status": "Active"
+  },
+  {
+    "id": 169,
+    "positionId": 143,
+    "code": "HC0169",
+    "name": "Dispatcher 01",
+    "employeeId": 1169,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 170,
+    "positionId": 143,
+    "code": "HC0170",
+    "name": "Dispatcher 02",
+    "employeeId": 1170,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 171,
+    "positionId": 143,
+    "code": "HC0171",
+    "name": "Dispatcher 03",
+    "employeeId": 1171,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 172,
+    "positionId": 144,
+    "code": "HC0172",
+    "name": "Admin Depot 01",
+    "employeeId": 1172,
+    "supervisorHeadcountId": 167,
+    "status": "Active"
+  },
+  {
+    "id": 173,
+    "positionId": 145,
+    "code": "HC0173",
+    "name": "Driver Linehaul Senior 01",
+    "employeeId": 1177,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 174,
+    "positionId": 145,
+    "code": "HC0174",
+    "name": "Driver Linehaul Senior 02",
+    "employeeId": 1178,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 175,
+    "positionId": 146,
+    "code": "HC0175",
+    "name": "Driver Linehaul 01",
+    "employeeId": 1179,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 176,
+    "positionId": 146,
+    "code": "HC0176",
+    "name": "Driver Linehaul 02",
+    "employeeId": 1180,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 177,
+    "positionId": 146,
+    "code": "HC0177",
+    "name": "Driver Linehaul 03",
+    "employeeId": 1181,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 178,
+    "positionId": 146,
+    "code": "HC0178",
+    "name": "Driver Linehaul 04",
+    "employeeId": 1182,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 179,
+    "positionId": 146,
+    "code": "HC0179",
+    "name": "Driver Linehaul 05",
+    "employeeId": 1183,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 180,
+    "positionId": 146,
+    "code": "HC0180",
+    "name": "Driver Linehaul 06",
+    "employeeId": 1184,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 181,
+    "positionId": 146,
+    "code": "HC0181",
+    "name": "Driver Linehaul 07",
+    "employeeId": 1185,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 182,
+    "positionId": 146,
+    "code": "HC0182",
+    "name": "Driver Linehaul 08",
+    "employeeId": 1186,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 183,
+    "positionId": 147,
+    "code": "HC0183",
+    "name": "Driver Distribusi 01",
+    "employeeId": 1187,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 184,
+    "positionId": 147,
+    "code": "HC0184",
+    "name": "Driver Distribusi 02",
+    "employeeId": 1188,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 185,
+    "positionId": 147,
+    "code": "HC0185",
+    "name": "Driver Distribusi 03",
+    "employeeId": 1189,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 186,
+    "positionId": 147,
+    "code": "HC0186",
+    "name": "Driver Distribusi 04",
+    "employeeId": 1190,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 187,
+    "positionId": 147,
+    "code": "HC0187",
+    "name": "Driver Distribusi 05",
+    "employeeId": 1191,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 188,
+    "positionId": 147,
+    "code": "HC0188",
+    "name": "Driver Distribusi 06",
+    "employeeId": 1192,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 189,
+    "positionId": 147,
+    "code": "HC0189",
+    "name": "Driver Distribusi 07",
+    "employeeId": 1193,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 190,
+    "positionId": 147,
+    "code": "HC0190",
+    "name": "Driver Distribusi 08",
+    "employeeId": 1194,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 191,
+    "positionId": 148,
+    "code": "HC0191",
+    "name": "Driver Distribusi Junior 01",
+    "employeeId": 1195,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 192,
+    "positionId": 148,
+    "code": "HC0192",
+    "name": "Driver Distribusi Junior 02",
+    "employeeId": 1196,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 193,
+    "positionId": 148,
+    "code": "HC0193",
+    "name": "Driver Distribusi Junior 03",
+    "employeeId": 1197,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 194,
+    "positionId": 149,
+    "code": "HC0194",
+    "name": "Kernet / Helper 01",
+    "employeeId": 1198,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 195,
+    "positionId": 149,
+    "code": "HC0195",
+    "name": "Kernet / Helper 02",
+    "employeeId": 1199,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 196,
+    "positionId": 149,
+    "code": "HC0196",
+    "name": "Kernet / Helper 03",
+    "employeeId": 1200,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 197,
+    "positionId": 149,
+    "code": "HC0197",
+    "name": "Kernet / Helper 04",
+    "employeeId": 1201,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 198,
+    "positionId": 149,
+    "code": "HC0198",
+    "name": "Kernet / Helper 05",
+    "employeeId": 1202,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 199,
+    "positionId": 149,
+    "code": "HC0199",
+    "name": "Kernet / Helper 06",
+    "employeeId": 1203,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 200,
+    "positionId": 149,
+    "code": "HC0200",
+    "name": "Kernet / Helper 07",
+    "employeeId": 1204,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 201,
+    "positionId": 149,
+    "code": "HC0201",
+    "name": "Kernet / Helper 08",
+    "employeeId": 1205,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 202,
+    "positionId": 150,
+    "code": "HC0202",
+    "name": "Kepala Workshop 01",
+    "employeeId": 1173,
+    "supervisorHeadcountId": 167,
+    "status": "Active"
+  },
+  {
+    "id": 203,
+    "positionId": 151,
+    "code": "HC0203",
+    "name": "Mekanik 01",
+    "employeeId": 1174,
+    "supervisorHeadcountId": 202,
+    "status": "Active"
+  },
+  {
+    "id": 204,
+    "positionId": 151,
+    "code": "HC0204",
+    "name": "Mekanik 02",
+    "employeeId": 1175,
+    "supervisorHeadcountId": 202,
+    "status": "Active"
+  },
+  {
+    "id": 205,
+    "positionId": 151,
+    "code": "HC0205",
+    "name": "Mekanik 03",
+    "employeeId": 1176,
+    "supervisorHeadcountId": 202,
+    "status": "Active"
+  },
+  {
+    "id": 206,
+    "positionId": 124,
+    "code": "HC0206",
+    "name": "Driver Linehaul 23",
+    "employeeId": null,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 207,
+    "positionId": 124,
+    "code": "HC0207",
+    "name": "Driver Linehaul 24",
+    "employeeId": null,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 208,
+    "positionId": 124,
+    "code": "HC0208",
+    "name": "Driver Linehaul 25",
+    "employeeId": null,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 209,
+    "positionId": 125,
+    "code": "HC0209",
+    "name": "Driver Distribusi 19",
+    "employeeId": null,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 210,
+    "positionId": 125,
+    "code": "HC0210",
+    "name": "Driver Distribusi 20",
+    "employeeId": null,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 211,
+    "positionId": 127,
+    "code": "HC0211",
+    "name": "Kernet / Helper 19",
+    "employeeId": null,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 212,
+    "positionId": 127,
+    "code": "HC0212",
+    "name": "Kernet / Helper 20",
+    "employeeId": null,
+    "supervisorHeadcountId": 24,
+    "status": "Active"
+  },
+  {
+    "id": 213,
+    "positionId": 135,
+    "code": "HC0213",
+    "name": "Driver Linehaul 15",
+    "employeeId": null,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 214,
+    "positionId": 135,
+    "code": "HC0214",
+    "name": "Driver Linehaul 16",
+    "employeeId": null,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 215,
+    "positionId": 136,
+    "code": "HC0215",
+    "name": "Driver Distribusi 12",
+    "employeeId": null,
+    "supervisorHeadcountId": 111,
+    "status": "Active"
+  },
+  {
+    "id": 216,
+    "positionId": 146,
+    "code": "HC0216",
+    "name": "Driver Linehaul 09",
+    "employeeId": null,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 217,
+    "positionId": 147,
+    "code": "HC0217",
+    "name": "Driver Distribusi 09",
+    "employeeId": null,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  },
+  {
+    "id": 218,
+    "positionId": 149,
+    "code": "HC0218",
+    "name": "Kernet / Helper 09",
+    "employeeId": null,
+    "supervisorHeadcountId": 168,
+    "status": "Active"
+  }
+]

@@ -1,0 +1,956 @@
+[
+  {
+    "employeeId": 1040,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2029-05-19",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Tronton / Trailer",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH-S"
+  },
+  {
+    "employeeId": 1041,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2028-02-25",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Tronton / Trailer",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH-S"
+  },
+  {
+    "employeeId": 1042,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-03-06",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Tronton / Trailer",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH-S"
+  },
+  {
+    "employeeId": 1043,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2027-12-18",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Tronton / Trailer",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH-S"
+  },
+  {
+    "employeeId": 1044,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2027-08-17",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Tronton / Trailer",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH-S"
+  },
+  {
+    "employeeId": 1045,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-08-24",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Tronton / Trailer",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH-S"
+  },
+  {
+    "employeeId": 1046,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-04-12",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1047,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-02-05",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1048,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2027-12-22",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1049,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2029-11-28",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1050,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-02-04",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1051,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2027-09-11",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1052,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2028-02-10",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1053,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2027-04-11",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1054,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-11-06",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1055,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-03-13",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1056,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2029-11-09",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1057,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-10-19",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1058,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2031-03-26",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1059,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2028-03-17",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1060,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2031-03-02",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1061,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2027-07-03",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1062,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2028-09-05",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1063,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2027-10-26",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1064,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-05-25",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1065,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2028-11-25",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1066,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2027-10-04",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1067,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2029-06-09",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1068,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2028-08-15",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1069,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2031-01-11",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1070,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2031-02-12",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1071,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2027-09-04",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1072,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2027-11-13",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1073,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2029-06-23",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1074,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2027-04-20",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1075,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2028-03-01",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1076,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2030-04-23",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1077,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2031-06-18",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1078,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2027-03-26",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1079,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2030-03-08",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1080,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2028-04-11",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1081,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2028-05-17",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1082,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2031-11-09",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1083,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2030-10-13",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1084,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2027-06-09",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1085,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2030-02-16",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1086,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2030-02-02",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD-J"
+  },
+  {
+    "employeeId": 1087,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2028-06-23",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD-J"
+  },
+  {
+    "employeeId": 1088,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2030-04-27",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD-J"
+  },
+  {
+    "employeeId": 1089,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2028-09-03",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD-J"
+  },
+  {
+    "employeeId": 1090,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2030-12-13",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD-J"
+  },
+  {
+    "employeeId": 1091,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2029-01-19",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Jakarta (Cakung)",
+    "tag": "DD-J"
+  },
+  {
+    "employeeId": 1122,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2027-04-26",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Tronton / Trailer",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH-S"
+  },
+  {
+    "employeeId": 1123,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2028-04-22",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Tronton / Trailer",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH-S"
+  },
+  {
+    "employeeId": 1124,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-04-19",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Tronton / Trailer",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH-S"
+  },
+  {
+    "employeeId": 1125,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-10-10",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Tronton / Trailer",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH-S"
+  },
+  {
+    "employeeId": 1126,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2031-06-18",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1127,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-03-13",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1128,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2031-03-26",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1129,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2028-09-25",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1130,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2029-05-08",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1131,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-08-26",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1132,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2029-03-09",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1133,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2029-04-10",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1134,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2031-02-26",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1135,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2027-10-08",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1136,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-02-28",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1137,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2031-06-02",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1138,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2028-03-23",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1139,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2029-06-15",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1140,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2030-09-15",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1141,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2031-03-12",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1142,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2031-05-05",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1143,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2030-07-10",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1144,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2031-02-22",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1145,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2028-02-20",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1146,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2030-02-24",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1147,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2027-09-02",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1148,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2028-12-11",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1149,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2029-12-16",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1150,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2029-01-08",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1151,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2031-11-25",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD-J"
+  },
+  {
+    "employeeId": 1152,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2031-10-25",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD-J"
+  },
+  {
+    "employeeId": 1153,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2031-08-21",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD-J"
+  },
+  {
+    "employeeId": 1154,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2031-01-08",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Surabaya (Rungkut)",
+    "tag": "DD-J"
+  },
+  {
+    "employeeId": 1177,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2028-03-28",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Tronton / Trailer",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "LH-S"
+  },
+  {
+    "employeeId": 1178,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2029-07-27",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Tronton / Trailer",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "LH-S"
+  },
+  {
+    "employeeId": 1179,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-11-10",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1180,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-11-20",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1181,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2028-02-26",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1182,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2027-11-21",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1183,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2029-07-16",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1184,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2029-01-14",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1185,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2030-03-25",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1186,
+    "licenseClass": "SIM B2 Umum",
+    "licenseExpiry": "2029-09-12",
+    "routeType": "Linehaul antar kota",
+    "vehicleClass": "Fuso / CDE-Wingbox",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "LH"
+  },
+  {
+    "employeeId": 1187,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2029-09-24",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1188,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2031-10-21",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1189,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2031-03-05",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1190,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2027-04-01",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1191,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2029-05-11",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1192,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2029-04-24",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1193,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2028-01-16",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1194,
+    "licenseClass": "SIM B1 Umum",
+    "licenseExpiry": "2030-01-26",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "CDD",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "DD"
+  },
+  {
+    "employeeId": 1195,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2029-03-09",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "DD-J"
+  },
+  {
+    "employeeId": 1196,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2029-10-21",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "DD-J"
+  },
+  {
+    "employeeId": 1197,
+    "licenseClass": "SIM B1",
+    "licenseExpiry": "2030-11-02",
+    "routeType": "Distribusi dalam kota",
+    "vehicleClass": "Blind Van / Pickup",
+    "homeDepot": "Depot Semarang (Kaligawe)",
+    "tag": "DD-J"
+  }
+]

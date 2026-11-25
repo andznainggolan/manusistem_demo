@@ -1,0 +1,1637 @@
+{
+  "shifts": [
+    {
+      "id": 1,
+      "name": "Distribusi Pagi",
+      "startTime": "07:00",
+      "endTime": "16:00",
+      "breakMinutes": 60
+    },
+    {
+      "id": 2,
+      "name": "Distribusi Siang",
+      "startTime": "12:00",
+      "endTime": "21:00",
+      "breakMinutes": 60
+    },
+    {
+      "id": 3,
+      "name": "Linehaul Malam",
+      "startTime": "20:00",
+      "endTime": "05:00",
+      "breakMinutes": 60
+    },
+    {
+      "id": 4,
+      "name": "Kantor",
+      "startTime": "08:00",
+      "endTime": "17:00",
+      "breakMinutes": 60
+    },
+    {
+      "id": 5,
+      "name": "Dispatch Pagi",
+      "startTime": "06:00",
+      "endTime": "15:00",
+      "breakMinutes": 60
+    },
+    {
+      "id": 6,
+      "name": "Dispatch Siang",
+      "startTime": "14:00",
+      "endTime": "23:00",
+      "breakMinutes": 60
+    },
+    {
+      "id": 7,
+      "name": "Dispatch Malam",
+      "startTime": "22:00",
+      "endTime": "07:00",
+      "breakMinutes": 60
+    }
+  ],
+  "patterns": [
+    {
+      "id": 1,
+      "name": "Distribusi Pagi 5 Hari",
+      "entries": [
+        {
+          "day": "Monday",
+          "shiftId": 1
+        },
+        {
+          "day": "Tuesday",
+          "shiftId": 1
+        },
+        {
+          "day": "Wednesday",
+          "shiftId": 1
+        },
+        {
+          "day": "Thursday",
+          "shiftId": 1
+        },
+        {
+          "day": "Friday",
+          "shiftId": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Distribusi Siang 5 Hari",
+      "entries": [
+        {
+          "day": "Monday",
+          "shiftId": 2
+        },
+        {
+          "day": "Tuesday",
+          "shiftId": 2
+        },
+        {
+          "day": "Wednesday",
+          "shiftId": 2
+        },
+        {
+          "day": "Thursday",
+          "shiftId": 2
+        },
+        {
+          "day": "Friday",
+          "shiftId": 2
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Linehaul Malam 5 Hari",
+      "entries": [
+        {
+          "day": "Monday",
+          "shiftId": 3
+        },
+        {
+          "day": "Tuesday",
+          "shiftId": 3
+        },
+        {
+          "day": "Wednesday",
+          "shiftId": 3
+        },
+        {
+          "day": "Thursday",
+          "shiftId": 3
+        },
+        {
+          "day": "Friday",
+          "shiftId": 3
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Kantor 5 Hari",
+      "entries": [
+        {
+          "day": "Monday",
+          "shiftId": 4
+        },
+        {
+          "day": "Tuesday",
+          "shiftId": 4
+        },
+        {
+          "day": "Wednesday",
+          "shiftId": 4
+        },
+        {
+          "day": "Thursday",
+          "shiftId": 4
+        },
+        {
+          "day": "Friday",
+          "shiftId": 4
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Dispatch Rotasi 3 Shift",
+      "entries": [
+        {
+          "day": "Monday",
+          "shiftId": 5
+        },
+        {
+          "day": "Tuesday",
+          "shiftId": 5
+        },
+        {
+          "day": "Wednesday",
+          "shiftId": 6
+        },
+        {
+          "day": "Thursday",
+          "shiftId": 6
+        },
+        {
+          "day": "Friday",
+          "shiftId": 7
+        },
+        {
+          "day": "Saturday",
+          "shiftId": 7
+        }
+      ]
+    }
+  ],
+  "schedules": [
+    {
+      "id": 1,
+      "name": "Driver Distribusi Pagi",
+      "patternId": 1,
+      "effectiveDate": "2026-12-01"
+    },
+    {
+      "id": 2,
+      "name": "Driver Distribusi Siang",
+      "patternId": 2,
+      "effectiveDate": "2026-12-01"
+    },
+    {
+      "id": 3,
+      "name": "Driver Linehaul Malam",
+      "patternId": 3,
+      "effectiveDate": "2026-12-01"
+    },
+    {
+      "id": 4,
+      "name": "Kantor dan Workshop",
+      "patternId": 4,
+      "effectiveDate": "2026-12-01"
+    },
+    {
+      "id": 5,
+      "name": "Dispatcher Rotasi",
+      "patternId": 5,
+      "effectiveDate": "2026-12-01"
+    }
+  ],
+  "assignments": [
+    {
+      "id": 1,
+      "userId": 1004,
+      "name": "Budi Maulana",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 2,
+      "userId": 1005,
+      "name": "Maman Gunadi",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 3,
+      "userId": 1006,
+      "name": "Nur Rahman",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 4,
+      "userId": 1007,
+      "name": "Rudi Saputra",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 5,
+      "userId": 1008,
+      "name": "Sutrisno Wijaya",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 6,
+      "userId": 1009,
+      "name": "Dedi Wijaya",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 7,
+      "userId": 1010,
+      "name": "Hendra Wijaya",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 8,
+      "userId": 1011,
+      "name": "Jaya Wijaya",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 9,
+      "userId": 1012,
+      "name": "Slamet Ramadhan",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 10,
+      "userId": 1013,
+      "name": "Putri Santoso",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 11,
+      "userId": 1014,
+      "name": "Rina Sihombing",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 12,
+      "userId": 1015,
+      "name": "Tika Susanto",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 13,
+      "userId": 1016,
+      "name": "Rani Kurnia",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 14,
+      "userId": 1017,
+      "name": "Nanda Kurnia",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 15,
+      "userId": 1018,
+      "name": "Nanda Harahap",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 16,
+      "userId": 1019,
+      "name": "Joko Simanjuntak",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 17,
+      "userId": 1020,
+      "name": "Sari Aditya",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 18,
+      "userId": 1021,
+      "name": "Maya Siregar",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 19,
+      "userId": 1022,
+      "name": "Oki Ramadhan",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 20,
+      "userId": 1023,
+      "name": "Gilang Utomo",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 21,
+      "userId": 1024,
+      "name": "Nanda Saputra",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 22,
+      "userId": 1025,
+      "name": "Prasetyo Rahman",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 23,
+      "userId": 1026,
+      "name": "Parjo Kusuma",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 24,
+      "userId": 1027,
+      "name": "Bambang Gunadi",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 25,
+      "userId": 1028,
+      "name": "Putri Kusuma",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 26,
+      "userId": 1029,
+      "name": "Edi Harahap",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 27,
+      "userId": 1030,
+      "name": "Heru Yulianto",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 28,
+      "userId": 1031,
+      "name": "Maya Lubis",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 29,
+      "userId": 1032,
+      "name": "Maya Setiawan",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 30,
+      "userId": 1033,
+      "name": "Lestari Simanjuntak",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 31,
+      "userId": 1034,
+      "name": "Yanto Ramadhan",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 32,
+      "userId": 1035,
+      "name": "Dedi Maulana",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 33,
+      "userId": 1036,
+      "name": "Dimas Saputra",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 34,
+      "userId": 1037,
+      "name": "Hasan Suryadi",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 35,
+      "userId": 1038,
+      "name": "Mulyadi Wibowo",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 36,
+      "userId": 1039,
+      "name": "Jaya Hidayat",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 37,
+      "userId": 1040,
+      "name": "Hendra Rahman",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 38,
+      "userId": 1041,
+      "name": "Vino Ramadhan",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 39,
+      "userId": 1042,
+      "name": "Edi Permana",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 40,
+      "userId": 1043,
+      "name": "Oki Maulana",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 41,
+      "userId": 1044,
+      "name": "Budi Firmansyah",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 42,
+      "userId": 1045,
+      "name": "Lukman Hutapea",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 43,
+      "userId": 1046,
+      "name": "Zainal Pratama",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 44,
+      "userId": 1047,
+      "name": "Dimas Ramadhan",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 45,
+      "userId": 1048,
+      "name": "Hasan Susanto",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 46,
+      "userId": 1049,
+      "name": "Untung Hakim",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 47,
+      "userId": 1050,
+      "name": "Hendra Suryadi",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 48,
+      "userId": 1051,
+      "name": "Joko Pratama",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 49,
+      "userId": 1052,
+      "name": "Ridwan Siregar",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 50,
+      "userId": 1053,
+      "name": "Bagus Firmansyah",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 51,
+      "userId": 1054,
+      "name": "Maman Firmansyah",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 52,
+      "userId": 1055,
+      "name": "Jaya Santoso",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 53,
+      "userId": 1056,
+      "name": "Lukman Susanto",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 54,
+      "userId": 1057,
+      "name": "Sutrisno Maulana",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 55,
+      "userId": 1058,
+      "name": "Krisna Kusuma",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 56,
+      "userId": 1059,
+      "name": "Eko Aditya",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 57,
+      "userId": 1060,
+      "name": "Rizky Gunadi",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 58,
+      "userId": 1061,
+      "name": "Lutfi Purnomo",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 59,
+      "userId": 1062,
+      "name": "Mulyadi Setiawan",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 60,
+      "userId": 1063,
+      "name": "Joko Wibowo",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 61,
+      "userId": 1064,
+      "name": "Irfan Utomo",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 62,
+      "userId": 1065,
+      "name": "Ridwan Yulianto",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 63,
+      "userId": 1066,
+      "name": "Maman Suryadi",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 64,
+      "userId": 1067,
+      "name": "Arief Lubis",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 65,
+      "userId": 1068,
+      "name": "Bambang Utomo",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 66,
+      "userId": 1069,
+      "name": "Gunawan Suryadi",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 67,
+      "userId": 1070,
+      "name": "Wahyu Ramadhan",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 68,
+      "userId": 1071,
+      "name": "Jaya Ramadhan",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 69,
+      "userId": 1072,
+      "name": "Agus Aditya",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 70,
+      "userId": 1073,
+      "name": "Wawan Sihombing",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 71,
+      "userId": 1074,
+      "name": "Taufik Saputra",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 72,
+      "userId": 1075,
+      "name": "Kurniawan Purnomo",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 73,
+      "userId": 1076,
+      "name": "Irfan Sihombing",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 74,
+      "userId": 1077,
+      "name": "Hendra Purnomo",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 75,
+      "userId": 1078,
+      "name": "Maman Yulianto",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 76,
+      "userId": 1079,
+      "name": "Kurniawan Rahman",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 77,
+      "userId": 1080,
+      "name": "Faisal Setiawan",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 78,
+      "userId": 1081,
+      "name": "Jaya Gunadi",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 79,
+      "userId": 1082,
+      "name": "Gunawan Utomo",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 80,
+      "userId": 1083,
+      "name": "Andi Kusuma",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 81,
+      "userId": 1084,
+      "name": "Ridwan Harahap",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 82,
+      "userId": 1085,
+      "name": "Dedi Suryadi",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 83,
+      "userId": 1086,
+      "name": "Parjo Purnomo",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 84,
+      "userId": 1087,
+      "name": "Agus Suryadi",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 85,
+      "userId": 1088,
+      "name": "Fajar Siregar",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 86,
+      "userId": 1089,
+      "name": "Fajar Maulana",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 87,
+      "userId": 1090,
+      "name": "Sutrisno Nasution",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 88,
+      "userId": 1091,
+      "name": "Novan Hakim",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 89,
+      "userId": 1092,
+      "name": "Joko Kusuma",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 90,
+      "userId": 1093,
+      "name": "Lutfi Utomo",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 91,
+      "userId": 1094,
+      "name": "Bambang Nasution",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 92,
+      "userId": 1095,
+      "name": "Edi Wijaya",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 93,
+      "userId": 1096,
+      "name": "Eko Ramadhan",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 94,
+      "userId": 1097,
+      "name": "Gilang Hidayat",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 95,
+      "userId": 1098,
+      "name": "Ridwan Simanjuntak",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 96,
+      "userId": 1099,
+      "name": "Usman Maulana",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 97,
+      "userId": 1100,
+      "name": "Wahyu Yulianto",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 98,
+      "userId": 1101,
+      "name": "Lukman Hidayat",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 99,
+      "userId": 1102,
+      "name": "Hendra Wibowo",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 100,
+      "userId": 1103,
+      "name": "Imam Hakim",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 101,
+      "userId": 1104,
+      "name": "Lutfi Kusuma",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 102,
+      "userId": 1105,
+      "name": "Yanto Hutapea",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 103,
+      "userId": 1106,
+      "name": "Eko Harahap",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 104,
+      "userId": 1107,
+      "name": "Wawan Firmansyah",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 105,
+      "userId": 1108,
+      "name": "Dimas Pratama",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 106,
+      "userId": 1109,
+      "name": "Prasetyo Aditya",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 107,
+      "userId": 1110,
+      "name": "Rudi Utomo",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 108,
+      "userId": 1111,
+      "name": "Yanto Simanjuntak",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 109,
+      "userId": 1112,
+      "name": "Krisna Setiawan",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 110,
+      "userId": 1113,
+      "name": "Lukman Suryadi",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 111,
+      "userId": 1114,
+      "name": "Yuni Wibowo",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 112,
+      "userId": 1115,
+      "name": "Untung Sihombing",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 113,
+      "userId": 1116,
+      "name": "Vina Kusuma",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 114,
+      "userId": 1117,
+      "name": "Hendra Pratama",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 115,
+      "userId": 1118,
+      "name": "Parjo Wijaya",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 116,
+      "userId": 1119,
+      "name": "Wahyu Pratama",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 117,
+      "userId": 1120,
+      "name": "Eko Gunadi",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 118,
+      "userId": 1121,
+      "name": "Tri Siregar",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 119,
+      "userId": 1122,
+      "name": "Wahyu Santoso",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 120,
+      "userId": 1123,
+      "name": "Bagus Kusuma",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 121,
+      "userId": 1124,
+      "name": "Bagus Simanjuntak",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 122,
+      "userId": 1125,
+      "name": "Maman Saputra",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 123,
+      "userId": 1126,
+      "name": "Mulyadi Saputra",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 124,
+      "userId": 1127,
+      "name": "Faisal Lubis",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 125,
+      "userId": 1128,
+      "name": "Budi Gunadi",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 126,
+      "userId": 1129,
+      "name": "Kurniawan Wibowo",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 127,
+      "userId": 1130,
+      "name": "Wahyu Kurnia",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 128,
+      "userId": 1131,
+      "name": "Kurniawan Firmansyah",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 129,
+      "userId": 1132,
+      "name": "Novan Susanto",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 130,
+      "userId": 1133,
+      "name": "Hasan Lubis",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 131,
+      "userId": 1134,
+      "name": "Lutfi Wijaya",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 132,
+      "userId": 1135,
+      "name": "Hendra Harahap",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 133,
+      "userId": 1136,
+      "name": "Kurniawan Yulianto",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 134,
+      "userId": 1137,
+      "name": "Fajar Aditya",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 135,
+      "userId": 1138,
+      "name": "Novan Rahman",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 136,
+      "userId": 1139,
+      "name": "Zainal Setiawan",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 137,
+      "userId": 1140,
+      "name": "Gilang Nasution",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 138,
+      "userId": 1141,
+      "name": "Parjo Sihombing",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 139,
+      "userId": 1142,
+      "name": "Edi Hidayat",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 140,
+      "userId": 1143,
+      "name": "Untung Siregar",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 141,
+      "userId": 1144,
+      "name": "Oki Simanjuntak",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 142,
+      "userId": 1145,
+      "name": "Mulyadi Utomo",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 143,
+      "userId": 1146,
+      "name": "Yusuf Rahman",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 144,
+      "userId": 1147,
+      "name": "Bagus Yulianto",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 145,
+      "userId": 1148,
+      "name": "Nanda Yulianto",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 146,
+      "userId": 1149,
+      "name": "Untung Hutapea",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 147,
+      "userId": 1150,
+      "name": "Tri Rahman",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 148,
+      "userId": 1151,
+      "name": "Wawan Setiawan",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 149,
+      "userId": 1152,
+      "name": "Rizky Kurnia",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 150,
+      "userId": 1153,
+      "name": "Eko Saputra",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 151,
+      "userId": 1154,
+      "name": "Wahyu Siregar",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 152,
+      "userId": 1155,
+      "name": "Mulyadi Santoso",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 153,
+      "userId": 1156,
+      "name": "Agus Saputra",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 154,
+      "userId": 1157,
+      "name": "Usman Yulianto",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 155,
+      "userId": 1158,
+      "name": "Mulyadi Pratama",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 156,
+      "userId": 1159,
+      "name": "Eko Simanjuntak",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 157,
+      "userId": 1160,
+      "name": "Candra Siregar",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 158,
+      "userId": 1161,
+      "name": "Sutrisno Kusuma",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 159,
+      "userId": 1162,
+      "name": "Gilang Setiawan",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 160,
+      "userId": 1163,
+      "name": "Oki Suryadi",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 161,
+      "userId": 1164,
+      "name": "Agus Pratama",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 162,
+      "userId": 1165,
+      "name": "Untung Susanto",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 163,
+      "userId": 1166,
+      "name": "Krisna Utomo",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 164,
+      "userId": 1167,
+      "name": "Agus Setiawan",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 165,
+      "userId": 1168,
+      "name": "Joko Hidayat",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 166,
+      "userId": 1169,
+      "name": "Jaya Nugroho",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 167,
+      "userId": 1170,
+      "name": "Andi Pratama",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 168,
+      "userId": 1171,
+      "name": "Dewi Kurnia",
+      "scheduleId": 5,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 169,
+      "userId": 1172,
+      "name": "Ayu Wijaya",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 170,
+      "userId": 1173,
+      "name": "Slamet Rahman",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 171,
+      "userId": 1174,
+      "name": "Gunawan Saputra",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 172,
+      "userId": 1175,
+      "name": "Imam Aditya",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 173,
+      "userId": 1176,
+      "name": "Prasetyo Sihombing",
+      "scheduleId": 4,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 174,
+      "userId": 1177,
+      "name": "Arief Gunadi",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 175,
+      "userId": 1178,
+      "name": "Oki Saputra",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 176,
+      "userId": 1179,
+      "name": "Oki Nugroho",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 177,
+      "userId": 1180,
+      "name": "Lukman Harahap",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 178,
+      "userId": 1181,
+      "name": "Parjo Wibowo",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 179,
+      "userId": 1182,
+      "name": "Zainal Kurnia",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 180,
+      "userId": 1183,
+      "name": "Maman Santoso",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 181,
+      "userId": 1184,
+      "name": "Gilang Pratama",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 182,
+      "userId": 1185,
+      "name": "Imam Saputra",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 183,
+      "userId": 1186,
+      "name": "Lutfi Hidayat",
+      "scheduleId": 3,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 184,
+      "userId": 1187,
+      "name": "Zainal Nugroho",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 185,
+      "userId": 1188,
+      "name": "Taufik Susanto",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 186,
+      "userId": 1189,
+      "name": "Edi Firmansyah",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 187,
+      "userId": 1190,
+      "name": "Hendra Hakim",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 188,
+      "userId": 1191,
+      "name": "Oki Sihombing",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 189,
+      "userId": 1192,
+      "name": "Lukman Lubis",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 190,
+      "userId": 1193,
+      "name": "Kurniawan Aditya",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 191,
+      "userId": 1194,
+      "name": "Yogi Yulianto",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 192,
+      "userId": 1195,
+      "name": "Usman Aditya",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 193,
+      "userId": 1196,
+      "name": "Rudi Yulianto",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 194,
+      "userId": 1197,
+      "name": "Usman Wijaya",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 195,
+      "userId": 1198,
+      "name": "Krisna Wijaya",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 196,
+      "userId": 1199,
+      "name": "Yanto Kusuma",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 197,
+      "userId": 1200,
+      "name": "Arief Kusuma",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 198,
+      "userId": 1201,
+      "name": "Gunawan Ramadhan",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 199,
+      "userId": 1202,
+      "name": "Arief Setiawan",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 200,
+      "userId": 1203,
+      "name": "Slamet Nugroho",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 201,
+      "userId": 1204,
+      "name": "Nanda Santoso",
+      "scheduleId": 1,
+      "startDate": "2026-12-01"
+    },
+    {
+      "id": 202,
+      "userId": 1205,
+      "name": "Mulyadi Sihombing",
+      "scheduleId": 2,
+      "startDate": "2026-12-01"
+    }
+  ]
+}
