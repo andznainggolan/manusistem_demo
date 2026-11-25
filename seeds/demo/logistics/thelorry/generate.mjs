@@ -240,6 +240,24 @@ DEPOTS.forEach((d) => {
   // Vacant seats are added in buildHeadcounts
 })
 
+// ─── Extra named logins for demo scenarios ──────────────────────────────
+// Only the email handle (and for the PKWT driver, the supervisor) changes; no random draw is involved,
+// so every name, NIK and id stays exactly as before.
+const setHandle = (e, handle) => { if (e) e.email = `${handle}@${DOMAIN}` }
+const jktPos = (key) => posByKey[`JKT.${key}`].id
+const spvJkt = employees.find((e) => e.email.startsWith('spv.jkt@'))
+let pkwt = employees.find((e) => e.positionId === jktPos('lh') && e.employmentType === 'Contract' && e.managerId === spvJkt.id)
+if (!pkwt) {
+  pkwt = employees.find((e) => e.positionId === jktPos('lh') && e.employmentType === 'Contract') || employees.filter((e) => e.positionId === jktPos('lh')).pop()
+  pkwt.employmentType = 'Contract'; pkwt.joinDate = '2026-03-02'; pkwt.managerId = spvJkt.id
+}
+setHandle(pkwt, 'driver.pkwt.jkt')
+setHandle(employees.find((e) => e.positionId === jktPos('mek')), 'mekanik.jkt')
+setHandle(employees.find((e) => e.positionId === jktPos('wsh')), 'wsh.jkt')
+setHandle(employees.find((e) => e.positionId === jktPos('adm')), 'admin.depot.jkt')
+setHandle(employees.find((e) => e.positionId === posByKey.finstaff.id), 'finance.staff')
+setHandle(employees.find((e) => e.positionId === posByKey.cs.id), 'cs.komersial')
+
 // ─── Headcounts: one seat per employee + open seats ─────────────────────
 const empsByPos = {}
 employees.forEach((e) => { (empsByPos[e.positionId] ||= []).push(e) })
@@ -265,7 +283,7 @@ DEPOTS.forEach((d) => {
 headcounts.forEach((h) => { h.supervisorHeadcountId = h._sup ? (seatOfEmp[h._sup] ?? null) : null; delete h._sup })
 
 // ─── Users (key roles and a few sample drivers have a login) ────────────
-const users = employees.filter((e) => /^(direktur|gm\.|mgr\.|fleet|control|hse|driver|hr\.|payroll|kepala|spv|dispatch|helper)/.test(e.email.split('@')[0]))
+const users = employees.filter((e) => /^(direktur|gm\.|mgr\.|fleet|control|hse|driver|hr\.|payroll|kepala|spv|dispatch|helper|mekanik|wsh|admin\.|finance|cs\.)/.test(e.email.split('@')[0]))
   .map((e) => ({ id: e.id, employeeId: e.id, username: e.email.split('@')[0], password: 'pass123', name: e.name, role: e.role, dept: e.department, position: e.position, email: e.email }))
 users.push({ id: 900001, employeeId: null, username: 'admin', password: 'pass123', name: 'Admin Support', role: 'superadmin', dept: '-', position: 'System Administrator (Support)', email: `admin@${DOMAIN}` })
 

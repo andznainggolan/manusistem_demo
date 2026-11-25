@@ -110,6 +110,17 @@
     "email": "mgr.keuangan@thelorry-demo.id"
   },
   {
+    "id": 1013,
+    "employeeId": 1013,
+    "username": "finance.staff",
+    "password": "pass123",
+    "name": "Putri Santoso",
+    "role": "employee",
+    "dept": "Keuangan",
+    "position": "Staf Keuangan",
+    "email": "finance.staff@thelorry-demo.id"
+  },
+  {
     "id": 1014,
     "employeeId": 1014,
     "username": "payroll.admin",
@@ -154,6 +165,17 @@
     "email": "mgr.komersial@thelorry-demo.id"
   },
   {
+    "id": 1020,
+    "employeeId": 1020,
+    "username": "cs.komersial",
+    "password": "pass123",
+    "name": "Sari Aditya",
+    "role": "employee",
+    "dept": "Komersial dan Layanan Pelanggan",
+    "position": "Customer Service Staff",
+    "email": "cs.komersial@thelorry-demo.id"
+  },
+  {
     "id": 1023,
     "employeeId": 1023,
     "username": "kepala.jkt",
@@ -187,6 +209,39 @@
     "email": "dispatch.jkt@thelorry-demo.id"
   },
   {
+    "id": 1032,
+    "employeeId": 1032,
+    "username": "admin.depot.jkt",
+    "password": "pass123",
+    "name": "Maya Setiawan",
+    "role": "employee",
+    "dept": "Dispatch dan Kontrol - Jakarta",
+    "position": "Admin Depot",
+    "email": "admin.depot.jkt@thelorry-demo.id"
+  },
+  {
+    "id": 1034,
+    "employeeId": 1034,
+    "username": "wsh.jkt",
+    "password": "pass123",
+    "name": "Yanto Ramadhan",
+    "role": "manager",
+    "dept": "Workshop Armada - Jakarta",
+    "position": "Kepala Workshop",
+    "email": "wsh.jkt@thelorry-demo.id"
+  },
+  {
+    "id": 1035,
+    "employeeId": 1035,
+    "username": "mekanik.jkt",
+    "password": "pass123",
+    "name": "Dedi Maulana",
+    "role": "employee",
+    "dept": "Workshop Armada - Jakarta",
+    "position": "Mekanik",
+    "email": "mekanik.jkt@thelorry-demo.id"
+  },
+  {
     "id": 1040,
     "employeeId": 1040,
     "username": "driver.lhs.jkt",
@@ -207,6 +262,17 @@
     "dept": "Driver Linehaul (Jarak Jauh) - Jakarta",
     "position": "Driver Linehaul",
     "email": "driver.lh.jkt@thelorry-demo.id"
+  },
+  {
+    "id": 1050,
+    "employeeId": 1050,
+    "username": "driver.pkwt.jkt",
+    "password": "pass123",
+    "name": "Hendra Suryadi",
+    "role": "employee",
+    "dept": "Driver Linehaul (Jarak Jauh) - Jakarta",
+    "position": "Driver Linehaul",
+    "email": "driver.pkwt.jkt@thelorry-demo.id"
   },
   {
     "id": 1068,

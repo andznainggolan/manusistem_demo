@@ -132,20 +132,71 @@ export const THELORRY_INTERVIEWS = [
 // ─── Login screen: demo accounts ─────────────────────────────────────────
 const demo = (label, username) => ({ label, username, password: 'pass123' })
 export const THELORRY_DEMO_GROUPS = [
-  { title: 'Manajemen', accounts: [
-    demo('Direktur Utama (Admin Sistem)', 'direktur.utama'), demo('Direktur Operasi', 'direktur.operasi'),
-    demo('General Manager Operasi', 'gm.operasi'), demo('Manajer HSE', 'mgr.hse'),
+  { title: '1. Driver: absensi, cuti, dan slip gaji', accounts: [
+    demo('Driver Distribusi (shift pagi)', 'driver.dd.jkt'),
+    demo('Driver Distribusi Junior', 'driver.ddj.jkt'),
+    demo('Driver Linehaul (shift malam)', 'driver.lh.jkt'),
+    demo('Driver Linehaul Senior', 'driver.lhs.jkt'),
+    demo('Driver Linehaul kontrak (PKWT)', 'driver.pkwt.jkt'),
+    demo('Kernet / Helper (kontrak)', 'helper.jkt'),
   ] },
-  { title: 'HR dan Payroll', accounts: [
-    demo('HR dan GA Manager', 'mgr.hr'), demo('HR Officer', 'hr.officer'), demo('Payroll dan Time Administrator', 'payroll.admin'),
+  { title: '2. Lembur supir: kasus jam tugas (lihat Time Entries)', accounts: [
+    demo('Driver Distribusi: pulang 18:20, lembur 2 jam', 'driver.dd.jkt'),
+    demo('Driver Linehaul: trip malam lebih dari 12 jam, kerja Sabtu', 'driver.lh.jkt'),
+    demo('Driver Linehaul Senior: lembur 4 jam, lewat batas harian', 'driver.lhs.jkt'),
+    demo('Kernet: lembur 40 menit dan 25 menit (pembulatan)', 'helper.jkt'),
   ] },
-  { title: 'Depot Jakarta', accounts: [
-    demo('Kepala Depot', 'kepala.jkt'), demo('Supervisor Operasi', 'spv.jkt'), demo('Dispatcher', 'dispatch.jkt'),
-    demo('Driver Linehaul Senior', 'driver.lhs.jkt'), demo('Driver Linehaul', 'driver.lh.jkt'),
-    demo('Driver Distribusi', 'driver.dd.jkt'), demo('Kernet / Helper', 'helper.jkt'),
+  { title: '3. Atasan: persetujuan berjenjang', accounts: [
+    demo('Supervisor Operasi (atasan langsung)', 'spv.jkt'),
+    demo('Kepala Depot Jakarta (atasan berikutnya)', 'kepala.jkt'),
+    demo('General Manager Operasi', 'gm.operasi'),
   ] },
-  { title: 'Depot Lain', accounts: [
-    demo('Kepala Depot Surabaya', 'kepala.sby'), demo('Driver Linehaul Surabaya', 'driver.lh.sby'),
-    demo('Kepala Depot Semarang', 'kepala.smg'), demo('Driver Distribusi Semarang', 'driver.dd.smg'),
+  { title: '4. Dispatch dan operasi armada', accounts: [
+    demo('Dispatcher Jakarta', 'dispatch.jkt'),
+    demo('Dispatcher Surabaya', 'dispatch.sby'),
+    demo('Dispatcher Semarang', 'dispatch.smg'),
+    demo('Control Tower Analyst', 'control.tower'),
+    demo('Fleet Planner', 'fleet.planner'),
+    demo('Manajer Armada dan Aset', 'mgr.armada'),
+  ] },
+  { title: '5. HR: kebijakan lembur, Time Entries, struktur', accounts: [
+    demo('HR dan GA Manager', 'mgr.hr'),
+    demo('HR Officer', 'hr.officer'),
+    demo('Payroll dan Time Administrator', 'payroll.admin'),
+  ] },
+  { title: '6. Rekrutmen driver (Career Site)', accounts: [
+    demo('Kepala Depot Jakarta (peminta driver)', 'kepala.jkt'),
+    demo('HR Officer (kelola lowongan dan kandidat)', 'hr.officer'),
+    demo('Kepala Depot Surabaya (lowongan internal)', 'kepala.sby'),
+  ] },
+  { title: '7. Keselamatan dan kepatuhan (HSE)', accounts: [
+    demo('Manajer HSE', 'mgr.hse'),
+    demo('Safety dan Compliance Officer', 'hse.officer'),
+    demo('Driver Trainer', 'driver.trainer'),
+  ] },
+  { title: '8. Workshop armada', accounts: [
+    demo('Kepala Workshop Jakarta', 'wsh.jkt'),
+    demo('Mekanik Jakarta', 'mekanik.jkt'),
+    demo('Admin Depot Jakarta', 'admin.depot.jkt'),
+  ] },
+  { title: '9. Keuangan dan komersial', accounts: [
+    demo('Finance Manager', 'mgr.keuangan'),
+    demo('Staf Keuangan', 'finance.staff'),
+    demo('Commercial Manager', 'mgr.komersial'),
+    demo('Customer Service', 'cs.komersial'),
+  ] },
+  { title: '10. Depot Surabaya dan Semarang', accounts: [
+    demo('Kepala Depot Surabaya', 'kepala.sby'),
+    demo('Supervisor Operasi Surabaya', 'spv.sby'),
+    demo('Driver Linehaul Surabaya', 'driver.lh.sby'),
+    demo('Driver Distribusi Surabaya (kontrak)', 'driver.dd.sby'),
+    demo('Kepala Depot Semarang', 'kepala.smg'),
+    demo('Driver Distribusi Semarang', 'driver.dd.smg'),
+    demo('Kernet Semarang', 'helper.smg'),
+  ] },
+  { title: '11. Direksi dan admin sistem', accounts: [
+    demo('Direktur Utama (Admin Sistem)', 'direktur.utama'),
+    demo('Direktur Operasi', 'direktur.operasi'),
+    demo('Admin Support', 'admin'),
   ] },
 ]
