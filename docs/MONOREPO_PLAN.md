@@ -197,8 +197,25 @@ Paket konfigurasi memindahkan **pengaturan**, bukan **data transaksi**.
 |---|---|---|---|
 | SOS | PROD | `https://sos.manusistem.com` | Ditetapkan |
 | SOS | TEST | `https://sos-test.manusistem.com` | Ditetapkan |
+| thelorry | PROD | `https://thelorry.manusistem.com` | Ditetapkan |
+| thelorry | TEST | `https://thelorry-test.manusistem.com` | Ditetapkan (mengikuti pola `<klien>-test`) |
 
 Pola umum: `https://<klien>.manusistem.com` untuk PROD dan `https://<klien>-test.manusistem.com` untuk TEST. Alamat tercatat di `APP_BASE_URL` pada `deploy/clients/<klien>/*.env`. Agar alamat ini bisa dipakai, DNS `manusistem.com` harus diarahkan ke tempat image dijalankan (D6) dan tiap subdomain memerlukan sertifikat HTTPS.
+
+**Klien thelorry (demo produk)**
+
+thelorry adalah perusahaan fleet management. Dipakai sebagai klien untuk mendemokan produk, dengan karakter: **headcount besar, mayoritas driver**.
+
+Persiapan lingkungan (tidak mengubah kode aplikasi):
+- `deploy/clients/thelorry/test.env` dan `prod.env` berisi hanya nilai non-rahasia (`CLIENT_ID`, `APP_ENV`, `APP_BASE_URL`).
+- Dua project Vercel (`thelorry-test`, `thelorry`), masing-masing dengan database Neon sendiri, dihubungkan ke domain di tabel di atas.
+
+Hal yang menjadi perhatian karena banyak driver (usulan, perlu diuji sebelum demo):
+- **Skala data.** Daftar karyawan, Headcount, Org Chart, dan Payroll Run perlu diuji dengan ratusan sampai ribuan driver. Sebagian besar data modul disimpan sebagai satu baris JSON di `AppState`, sehingga ukuran data langsung memengaruhi kecepatan muat.
+- **Kehadiran driver.** Modul Time & Labor sudah punya Shift, Work Schedule, Time Entries, Overtime Matrix, dan Geofencing. Pola kerja driver (shift malam, lembur, kehadiran di lokasi) perlu dipetakan ke fitur-fitur itu.
+- **Akun driver.** Banyak driver tidak punya email kerja. Login memakai NIK dan perlu cara impor akun massal (impor Excel sudah ada untuk karyawan).
+- **Vertikal.** Fleet management tidak termasuk tiga vertikal di rencana (education, outsourcing, corporate). Perlu diputuskan: memakai `outsourcing`, atau menambah vertikal `logistics` (D12).
+- **Data demo.** Bila thelorry hanya untuk demo, datanya fiktif di `seeds/demo/<vertikal>`. Data karyawan asli thelorry tidak boleh masuk repo yang public.
 
 ### 2.4 Keputusan yang perlu disetujui
 
@@ -215,6 +232,7 @@ Pola umum: `https://<klien>.manusistem.com` untuk PROD dan `https://<klien>-test
 | D9 | Update ke klien: serentak atau bergelombang | **Sudah diputuskan: rilis kuartalan dengan jendela pilihan (cohort), seperti Oracle HCM Cloud** (lihat 2.6) |
 | D10 | Kalender kuartalan: bulan rilis dan jendela A/B, selang TEST ke PROD, masa pengamatan, kriteria lolos gerbang | Belum ditentukan |
 | D11 | Batas pemilihan jendela, cohort bawaan bagi yang tidak memilih, dan masa dukungan versi lama | Belum ditentukan. Usulan: bawaan B, tidak boleh melewati kuartal |
+| D12 | Vertikal untuk thelorry (fleet management): pakai `outsourcing` atau tambah `logistics` | Belum ditentukan. Tergantung pola kerja driver |
 
 ### 2.6 Update modul ke semua klien
 
