@@ -334,6 +334,13 @@ export const useStructureStore = create(persist((set) => ({
     : state),
   merge: (persisted, current) => {
     const merged = { ...current, ...persisted }
+    // Thelorry: seats added to the seed after an environment was first saved (e.g. IT Support) must still appear
+    if (IS_THELORRY && Array.isArray(persisted?.headcounts)) {
+      const have = new Set(persisted.headcounts.map(h => String(h.id)))
+      const haveCode = new Set(persisted.headcounts.map(h => h.code).filter(Boolean))
+      const missing = THELORRY_HEADCOUNTS.filter(h => !have.has(String(h.id)) && !haveCode.has(h.code)).map(x => ({ ...x }))
+      if (missing.length) merged.headcounts = [...persisted.headcounts, ...missing]
+    }
     if (IS_SEEDED && Array.isArray(persisted?.headcounts)) {
       _hcId = Math.max(_hcId, Math.max(0, ...persisted.headcounts.map(h => Number(h.id) || 0)) + 1)
     }

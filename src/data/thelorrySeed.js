@@ -197,6 +197,6 @@ export const THELORRY_DEMO_GROUPS = [
   { title: '11. Direksi dan admin sistem', accounts: [
     demo('Direktur Utama (Admin Sistem)', 'direktur.utama'),
     demo('Direktur Operasi', 'direktur.operasi'),
-    demo('Admin Support', 'admin'),
+    demo('IT Support (admin sistem)', 'admin'),
   ] },
 ]

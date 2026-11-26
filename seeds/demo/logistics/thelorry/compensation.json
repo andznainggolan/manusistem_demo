@@ -1228,5 +1228,11 @@
     "basicSalary": 5300000,
     "fixedAllowance": 500000,
     "monthlyWage": 5800000
+  },
+  {
+    "employeeId": 1206,
+    "basicSalary": 8000000,
+    "fixedAllowance": 500000,
+    "monthlyWage": 8500000
   }
 ]

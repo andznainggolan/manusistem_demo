@@ -58,6 +58,9 @@ DEPOTS.forEach((d) => DEPOT_DEPTS.forEach((n, i) => {
   departments.push({ id, businessUnitId: d.buId, code: `DEPT${String(id).padStart(3, '0')}`, name: `${n} - ${d.city}`, status: 'Active' })
 }))
 
+// IT department added last so every existing department id stays unchanged
+departments.push({ id: 22, businessUnitId: 1, code: 'DEPT022', name: 'Teknologi Informasi (IT)', status: 'Active' })
+
 const jobFamilies = [
   { id: 1, code: 'JF001', name: 'Management', description: 'Direksi, general manager, manajer, kepala depot', status: 'Active' },
   { id: 2, code: 'JF002', name: 'Driver', description: 'Pengemudi linehaul (jarak jauh) dan distribusi (dalam kota)', status: 'Active' },
@@ -130,6 +133,11 @@ DEPOTS.forEach((d) => DEPOT_POS.forEach(([key, name, off, jf, gr, basic, allow])
   const p = { id: ++posId, departmentId: d.deptBase + off, jobFamilyId: jf, gradeId: gr, code: `POS${String(posId).padStart(3, '0')}`, name, status: 'Active' }
   positions.push(p); posByKey[`${d.key}.${key}`] = { ...p, basic, allow }
 }))
+// IT Support position appended last so existing position ids stay unchanged
+{
+  const p = { id: ++posId, departmentId: 22, jobFamilyId: 5, gradeId: 6, code: `POS${String(posId).padStart(3, '0')}`, name: 'IT Support', status: 'Active' }
+  positions.push(p); posByKey.it = { ...p, basic: 8 * M, allow: 500000 }
+}
 
 // ─── People ──────────────────────────────────────────────────────────────
 // Headcount plan per depot: [position key, employees, vacant seats]
@@ -240,6 +248,9 @@ DEPOTS.forEach((d) => {
   // Vacant seats are added in buildHeadcounts
 })
 
+// IT Support employee (holder of the admin login) - created last so no earlier random draw shifts
+const itSupport = addEmployee({ posKey: 'it', managerId: mgrhr.id, role: 'superadmin', city: 'Jakarta', handle: 'admin', ages: [26, 36], join: [2021, 2024] })
+
 // ─── Extra named logins for demo scenarios ──────────────────────────────
 // Only the email handle (and for the PKWT driver, the supervisor) changes; no random draw is involved,
 // so every name, NIK and id stays exactly as before.
@@ -272,7 +283,7 @@ const addSeat = (positionId, employeeId, supEmp) => {
   headcounts.push(h)
   if (employeeId) seatOfEmp[employeeId] = h.id
 }
-positions.forEach((p) => (empsByPos[p.id] || []).forEach((e) => addSeat(p.id, e.id, e.managerId)))
+positions.filter((p) => p.id !== posByKey.it.id).forEach((p) => (empsByPos[p.id] || []).forEach((e) => addSeat(p.id, e.id, e.managerId)))
 DEPOTS.forEach((d) => {
   const head = employees.find((e) => e.positionId === posByKey[`${d.key}.head`].id)
   const spv = employees.find((e) => e.positionId === posByKey[`${d.key}.spv`].id)
@@ -280,12 +291,14 @@ DEPOTS.forEach((d) => {
     for (let i = 0; i < PLAN[d.key][key][1]; i++) addSeat(posByKey[`${d.key}.${key}`].id, null, spv?.id ?? head.id)
   })
 })
+// IT Support seat appended after the vacant seats so existing seat ids stay unchanged
+addSeat(posByKey.it.id, itSupport.id, itSupport.managerId)
 headcounts.forEach((h) => { h.supervisorHeadcountId = h._sup ? (seatOfEmp[h._sup] ?? null) : null; delete h._sup })
 
 // ─── Users (key roles and a few sample drivers have a login) ────────────
 const users = employees.filter((e) => /^(direktur|gm\.|mgr\.|fleet|control|hse|driver|hr\.|payroll|kepala|spv|dispatch|helper|mekanik|wsh|admin\.|finance|cs\.)/.test(e.email.split('@')[0]))
   .map((e) => ({ id: e.id, employeeId: e.id, username: e.email.split('@')[0], password: 'pass123', name: e.name, role: e.role, dept: e.department, position: e.position, email: e.email }))
-users.push({ id: 900001, employeeId: null, username: 'admin', password: 'pass123', name: 'Admin Support', role: 'superadmin', dept: '-', position: 'System Administrator (Support)', email: `admin@${DOMAIN}` })
+users.push({ id: itSupport.id, employeeId: itSupport.id, username: 'admin', password: 'pass123', name: itSupport.name, role: 'superadmin', dept: itSupport.department, position: itSupport.position, email: itSupport.email })
 
 // ─── Time & Labor ───────────────────────────────────────────────────────
 const shifts = [

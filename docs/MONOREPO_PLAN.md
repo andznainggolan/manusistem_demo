@@ -234,7 +234,7 @@ Catatan:
 
 **Data demo thelorry (26 Nov 2026)**
 
-- `seeds/demo/logistics/thelorry/`: struktur organisasi (satu legal employer, kantor pusat dan 3 depot), 205 karyawan (106 driver, 38 helper), 218 headcount (13 kursi kosong), jadwal kerja, dan kebijakan lembur (5 Eligibility Group dan 10 Overtime Matrix). Dihasilkan oleh `generate.mjs` dengan benih tetap, jadi hasilnya selalu sama.
+- `seeds/demo/logistics/thelorry/`: struktur organisasi (satu legal employer, kantor pusat dan 3 depot), 206 karyawan (106 driver, 38 helper), 219 headcount (termasuk departemen IT dan 1 IT Support) (13 kursi kosong), jadwal kerja, dan kebijakan lembur (5 Eligibility Group dan 10 Overtime Matrix). Dihasilkan oleh `generate.mjs` dengan benih tetap, jadi hasilnya selalu sama.
 - Data ini **belum tampil di aplikasi**. Profil non-sekolah menambahkan struktur dari database di atas seed korporat bawaan, jadi satu-satunya legal employer "Thelorry" baru bisa tampil lewat profil demo baru di kode (lihat bagian 2.8).
 
 ### 2.4 Keputusan yang perlu disetujui

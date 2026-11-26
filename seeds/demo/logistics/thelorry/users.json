@@ -484,14 +484,14 @@
     "email": "helper.smg@thelorry-demo.id"
   },
   {
-    "id": 900001,
-    "employeeId": null,
+    "id": 1206,
+    "employeeId": 1206,
     "username": "admin",
     "password": "pass123",
-    "name": "Admin Support",
+    "name": "Yogi Siregar",
     "role": "superadmin",
-    "dept": "-",
-    "position": "System Administrator (Support)",
+    "dept": "Teknologi Informasi (IT)",
+    "position": "IT Support",
     "email": "admin@thelorry-demo.id"
   }
 ]

@@ -213,6 +213,13 @@
       "code": "DEPT021",
       "name": "Workshop Armada - Semarang",
       "status": "Active"
+    },
+    {
+      "id": 22,
+      "businessUnitId": 1,
+      "code": "DEPT022",
+      "name": "Teknologi Informasi (IT)",
+      "status": "Active"
     }
   ],
   "jobFamilies": [
@@ -829,6 +836,15 @@
       "gradeId": 6,
       "code": "POS151",
       "name": "Mekanik",
+      "status": "Active"
+    },
+    {
+      "id": 152,
+      "departmentId": 22,
+      "jobFamilyId": 5,
+      "gradeId": 6,
+      "code": "POS152",
+      "name": "IT Support",
       "status": "Active"
     }
   ]
